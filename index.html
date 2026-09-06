@@ -294,6 +294,15 @@
         <button class="close-btn" id="closeModal">&times;</button>
       </div>
       <canvas id="gameCanvas" width="640" height="480"></canvas>
+      <div id="mobileControls" style="display: flex; justify-content: space-between; width: 100%; max-width: 640px; padding: 12px 20px; box-sizing: border-box;">
+  <div style="display: flex; gap: 12px;">
+    <button id="btnLeft" style="width: 55px; height: 55px; font-size: 24px; border-radius: 50%; border: none; background: #444; color: #fff; touch-action: manipulation;">◀</button>
+    <button id="btnRight" style="width: 55px; height: 55px; font-size: 24px; border-radius: 50%; border: none; background: #444; color: #fff; touch-action: manipulation;">▶</button>
+  </div>
+  <div>
+    <button id="btnJump" style="width: 55px; height: 55px; font-size: 24px; border-radius: 50%; border: none; background: #e74c3c; color: #fff; font-weight: bold; touch-action: manipulation;">▲</button>
+  </div>
+      </div>
       <div class="game-controls-info">
         Controls: <strong>Arrow Left/Right</strong> or <strong>A/D</strong> to move, <strong>Space/Up/W</strong> to jump. Beware of shifting traps!
       </div>
