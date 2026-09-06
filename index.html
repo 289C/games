@@ -354,6 +354,18 @@
     const keys = {};
     window.addEventListener("keydown", (e) => (keys[e.code] = true));
     window.addEventListener("keyup", (e) => (keys[e.code] = false));
+    function bindTouchBtn(btnId, keyCode) {
+  const btn = document.getElementById(btnId);
+  if (!btn) return;
+  btn.addEventListener("touchstart", (e) => { e.preventDefault(); keys[keyCode] = true; }, { passive: false });
+  btn.addEventListener("touchend", (e) => { e.preventDefault(); keys[keyCode] = false; }, { passive: false });
+  btn.addEventListener("mousedown", () => { keys[keyCode] = true; });
+  btn.addEventListener("mouseup", () => { keys[keyCode] = false; });
+}
+
+bindTouchBtn("btnLeft", "ArrowLeft");
+bindTouchBtn("btnRight", "ArrowRight");
+bindTouchBtn("btnJump", "Space");
 
     const player = {
       x: 50,
