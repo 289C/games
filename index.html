@@ -2,10 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FriendsGame - Play Free Games</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Level Devil - FriendsGame</title>
+
+  <!-- Emoji Favicon for Browser Tab -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👿</text></svg>">
 
+  <!-- Firebase App SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
 
@@ -22,6 +25,7 @@
       margin: 0;
       padding: 0;
       font-family: var(--font-family);
+      -webkit-tap-highlight-color: transparent;
     }
 
     body {
@@ -52,14 +56,17 @@
     }
 
     .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
       background: #007bff;
       color: white;
       font-weight: 900;
-      font-size: 20px;
+      font-size: 18px;
       padding: 6px 14px;
       border-radius: 12px;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
     }
 
     .creator-badge {
@@ -87,7 +94,7 @@
       box-shadow: 0 4px 10px rgba(220, 39, 67, 0.4);
     }
 
-    /* Poki-style Bento Grid */
+    /* Bento Grid */
     main {
       max-width: 1100px;
       margin: 30px auto 0;
@@ -99,7 +106,6 @@
       gap: 16px;
     }
 
-    /* Responsive adjustments */
     @media (min-width: 600px) {
       main {
         grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
@@ -115,10 +121,10 @@
       cursor: pointer;
       box-shadow: var(--card-shadow);
       transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
-      background-size: cover;
-      background-position: center;
       display: flex;
-      align-items: flex-end;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       text-decoration: none;
     }
 
@@ -135,6 +141,19 @@
     .card-wide {
       grid-column: span 2;
       grid-row: span 1;
+    }
+
+    .game-hero-emoji {
+      font-size: 72px;
+      line-height: 1;
+      filter: drop-shadow(0 6px 12px rgba(0,0,0,0.4));
+      user-select: none;
+      transition: transform 0.2s ease;
+      margin-bottom: 20px;
+    }
+
+    .game-card:hover .game-hero-emoji {
+      transform: scale(1.15) rotate(-4deg);
     }
 
     .card-overlay {
@@ -166,6 +185,7 @@
       border-radius: 8px;
       letter-spacing: 0.5px;
       text-transform: uppercase;
+      z-index: 2;
     }
 
     .badge-featured {
@@ -182,7 +202,7 @@
       z-index: 1000;
       justify-content: center;
       align-items: center;
-      padding: 16px;
+      padding: 12px;
     }
 
     .modal-content {
@@ -193,13 +213,13 @@
       flex-direction: column;
       align-items: center;
       width: 100%;
-      max-width: 660px;
+      max-width: 640px;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     }
 
     .modal-header {
       width: 100%;
-      padding: 12px 20px;
+      padding: 12px 18px;
       background: #2b2b36;
       display: flex;
       justify-content: space-between;
@@ -207,16 +227,23 @@
       color: #fff;
     }
 
+    .modal-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
     .close-btn {
       background: none;
       border: none;
       color: #fff;
-      font-size: 24px;
+      font-size: 26px;
       cursor: pointer;
+      line-height: 1;
     }
 
     #gameCanvas {
-      background: #333;
+      background: #22222b;
       display: block;
       width: 100%;
       max-width: 640px;
@@ -224,19 +251,75 @@
       aspect-ratio: 4 / 3;
     }
 
+    /* Mobile Controls */
+    .mobile-controls-panel {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      background: #18181f;
+      padding: 14px 24px;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .d-pad {
+      display: flex;
+      gap: 16px;
+    }
+
+    .ctrl-btn {
+      width: 58px;
+      height: 58px;
+      font-size: 22px;
+      border-radius: 50%;
+      border: none;
+      background: #333342;
+      color: #fff;
+      font-weight: bold;
+      touch-action: manipulation;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 4px 0 #1f1f28;
+    }
+
+    .ctrl-btn:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 #1f1f28;
+      background: #444455;
+    }
+
+    .jump-btn {
+      background: #e74c3c;
+      box-shadow: 0 4px 0 #a82315;
+    }
+
+    .jump-btn:active {
+      background: #ff5252;
+      box-shadow: 0 1px 0 #a82315;
+    }
+
     .game-controls-info {
-      padding: 10px;
-      color: #aaa;
-      font-size: 12px;
+      padding: 8px;
+      color: #888;
+      font-size: 11px;
       text-align: center;
+      background: #18181f;
+      width: 100%;
     }
   </style>
 </head>
 <body>
 
+  <!-- Header -->
   <header>
     <div class="brand">
-      <div class="brand-logo">👿 FriendsGame</div>
+      <div class="brand-logo">
+        <span>👿</span>
+        <span>FriendsGame</span>
+      </div>
     </div>
     <div class="creator-badge">
       <a class="insta-btn" href="https://www.instagram.com/_satish_official_16?stkn=MTNzNXZ2cWpkdmRtNA==" target="_blank" rel="noopener noreferrer">
@@ -246,16 +329,19 @@
     </div>
   </header>
 
+  <!-- Grid -->
   <main>
+    <!-- Featured Playable Game Card -->
     <div class="game-card card-large" id="launchLevelDevil" style="background: linear-gradient(135deg, #1b1b2f, #162447);">
       <span class="badge badge-featured">Playable • 50 Levels</span>
-      <div style="font-size: 64px; text-align: center; margin: auto;">👿</div>
+      <div class="game-hero-emoji">👿</div>
       <div class="card-overlay">
-        <div class="game-title" style="font-size: 19px;">Level Devil: 50 Trolls</div>
-        <small style="opacity: 0.85;">Can you dodge the changing traps?</small>
+        <div class="game-title" style="font-size: 19px;">👿 Level Devil</div>
+        <small style="opacity: 0.9;">Tap to play all 50 troll levels</small>
       </div>
     </div>
 
+    <!-- Coming Soon Placeholders -->
     <div class="game-card card-wide" style="background: linear-gradient(135deg, #f39c12, #d35400);">
       <span class="badge">Coming Soon</span>
       <div class="card-overlay"><div class="game-title">Plane Simulator</div></div>
@@ -287,24 +373,30 @@
     </div>
   </main>
 
+  <!-- Modal Screen for Game -->
   <div class="modal-backdrop" id="gameModal">
     <div class="modal-content">
       <div class="modal-header">
-        <span id="levelDisplay" style="font-weight: bold;">Level 1 / 50</span>
+        <div class="modal-title-wrap">
+          <span style="font-size: 20px;">👿</span>
+          <span id="levelDisplay" style="font-weight: bold;">Level 1 / 50</span>
+        </div>
         <button class="close-btn" id="closeModal">&times;</button>
       </div>
+
       <canvas id="gameCanvas" width="640" height="480"></canvas>
-      <div id="mobileControls" style="display: flex; justify-content: space-between; width: 100%; max-width: 640px; padding: 12px 20px; box-sizing: border-box;">
-  <div style="display: flex; gap: 12px;">
-    <button id="btnLeft" style="width: 55px; height: 55px; font-size: 24px; border-radius: 50%; border: none; background: #444; color: #fff; touch-action: manipulation;">◀</button>
-    <button id="btnRight" style="width: 55px; height: 55px; font-size: 24px; border-radius: 50%; border: none; background: #444; color: #fff; touch-action: manipulation;">▶</button>
-  </div>
-  <div>
-    <button id="btnJump" style="width: 55px; height: 55px; font-size: 24px; border-radius: 50%; border: none; background: #e74c3c; color: #fff; font-weight: bold; touch-action: manipulation;">▲</button>
-  </div>
+
+      <!-- On-Screen Controls for Mobile -->
+      <div class="mobile-controls-panel">
+        <div class="d-pad">
+          <button class="ctrl-btn" id="btnLeft">◀</button>
+          <button class="ctrl-btn" id="btnRight">▶</button>
+        </div>
+        <button class="ctrl-btn jump-btn" id="btnJump">▲</button>
       </div>
+
       <div class="game-controls-info">
-        Controls: <strong>Arrow Left/Right</strong> or <strong>A/D</strong> to move, <strong>Space/Up/W</strong> to jump. Beware of shifting traps!
+        PC: <strong>A / D</strong> or <strong>Arrows</strong> to move, <strong>Space / W</strong> to jump.
       </div>
     </div>
   </div>
@@ -322,7 +414,6 @@
       measurementId: "G-PW5H3G97QR"
     };
 
-    // Initialize Firebase
     if (typeof firebase !== 'undefined' && firebase.initializeApp) {
       firebase.initializeApp(firebaseConfig);
     }
@@ -342,7 +433,51 @@
       stopGame();
     });
 
-    // --- Level Devil Engine (50 Levels) ---
+    // --- Unified Input System (Keyboard + Mobile Touch) ---
+    const inputState = { left: false, right: false, jump: false };
+
+    // Keyboard (PC)
+    window.addEventListener("keydown", (e) => {
+      if (e.code === "ArrowLeft" || e.code === "KeyA") inputState.left = true;
+      if (e.code === "ArrowRight" || e.code === "KeyD") inputState.right = true;
+      if (e.code === "ArrowUp" || e.code === "KeyW" || e.code === "Space") inputState.jump = true;
+    });
+
+    window.addEventListener("keyup", (e) => {
+      if (e.code === "ArrowLeft" || e.code === "KeyA") inputState.left = false;
+      if (e.code === "ArrowRight" || e.code === "KeyD") inputState.right = false;
+      if (e.code === "ArrowUp" || e.code === "KeyW" || e.code === "Space") inputState.jump = false;
+    });
+
+    // Touch Buttons (Mobile)
+    function registerButton(elementId, actionKey) {
+      const btn = document.getElementById(elementId);
+      if (!btn) return;
+
+      const onPress = (e) => {
+        if (e.cancelable) e.preventDefault();
+        inputState[actionKey] = true;
+      };
+
+      const onRelease = (e) => {
+        if (e.cancelable) e.preventDefault();
+        inputState[actionKey] = false;
+      };
+
+      btn.addEventListener("touchstart", onPress, { passive: false });
+      btn.addEventListener("touchend", onRelease, { passive: false });
+      btn.addEventListener("touchcancel", onRelease, { passive: false });
+      btn.addEventListener("mousedown", onPress);
+      btn.addEventListener("mouseup", onRelease);
+      btn.addEventListener("mouseleave", onRelease);
+      btn.addEventListener("contextmenu", (e) => e.preventDefault());
+    }
+
+    registerButton("btnLeft", "left");
+    registerButton("btnRight", "right");
+    registerButton("btnJump", "jump");
+
+    // --- Game Engine ---
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
     const levelDisplay = document.getElementById("levelDisplay");
@@ -351,22 +486,6 @@
     const TOTAL_LEVELS = 50;
     let animationFrameId;
 
-    const keys = {};
-    window.addEventListener("keydown", (e) => (keys[e.code] = true));
-    window.addEventListener("keyup", (e) => (keys[e.code] = false));
-    function bindTouchBtn(btnId, keyCode) {
-  const btn = document.getElementById(btnId);
-  if (!btn) return;
-  btn.addEventListener("touchstart", (e) => { e.preventDefault(); keys[keyCode] = true; }, { passive: false });
-  btn.addEventListener("touchend", (e) => { e.preventDefault(); keys[keyCode] = false; }, { passive: false });
-  btn.addEventListener("mousedown", () => { keys[keyCode] = true; });
-  btn.addEventListener("mouseup", () => { keys[keyCode] = false; });
-}
-
-bindTouchBtn("btnLeft", "ArrowLeft");
-bindTouchBtn("btnRight", "ArrowRight");
-bindTouchBtn("btnJump", "Space");
-
     const player = {
       x: 50,
       y: 350,
@@ -374,17 +493,16 @@ bindTouchBtn("btnJump", "Space");
       height: 24,
       vx: 0,
       vy: 0,
-      speed: 3.8,
+      speed: 4,
       jumpForce: -9.5,
       isGrounded: false
     };
 
-    let door = { x: 550, y: 340, width: 30, height: 45, originalX: 550 };
+    let door = { x: 550, y: 355, width: 30, height: 45 };
     let platforms = [];
     let spikes = [];
     let trollTriggered = false;
 
-    // Build procedural variations introducing mechanics as levels climb
     function initLevel(lvl) {
       trollTriggered = false;
       levelDisplay.textContent = `Level ${lvl} / ${TOTAL_LEVELS}`;
@@ -395,33 +513,26 @@ bindTouchBtn("btnJump", "Space");
 
       // Base Platforms
       platforms = [
-        { x: 0, y: 400, width: 640, height: 80, initialY: 400 },
-        { x: 180, y: 320, width: 90, height: 20, initialY: 320, dynamic: false },
-        { x: 330, y: 260, width: 100, height: 20, initialY: 260, dynamic: false }
+        { x: 0, y: 400, width: 640, height: 80 },
+        { x: 180, y: 320, width: 90, height: 20, dynamic: false },
+        { x: 330, y: 260, width: 100, height: 20, dynamic: false }
       ];
 
-      // Reset standard door position
       door.x = 550;
       door.y = 355;
-      door.originalX = 550;
-
       spikes = [];
 
-      // Add troll mechanics based on level tiers
+      // Troll variations per level
       if (lvl >= 2) {
-        // Spike pit near mid
         spikes.push({ x: 280, y: 380, width: 30, height: 20, hidden: lvl > 15 });
       }
       if (lvl >= 5) {
-        // Falling or collapsing platform
         platforms[1].dynamic = true;
       }
       if (lvl >= 10) {
-        // Floor opens up in the middle
-        platforms.push({ x: 440, y: 340, width: 70, height: 20, moves: true, speed: 1.5, dir: 1 });
+        platforms.push({ x: 440, y: 340, width: 70, height: 20, moves: true, speed: 1.8, dir: 1 });
       }
       if (lvl >= 20) {
-        // Double spike surprises
         spikes.push({ x: 450, y: 380, width: 40, height: 20, hidden: true });
       }
     }
@@ -436,39 +547,38 @@ bindTouchBtn("btnJump", "Space");
     }
 
     function update() {
-      // Input movement (invert controls troll on every 7th level)
+      // Inverted controls troll on every 7th level
       const invert = currentLevel % 7 === 0;
-      const leftKey = invert ? (keys["ArrowRight"] || keys["KeyD"]) : (keys["ArrowLeft"] || keys["KeyA"]);
-      const rightKey = invert ? (keys["ArrowLeft"] || keys["KeyA"]) : (keys["ArrowRight"] || keys["KeyD"]);
+      const moveLeft = invert ? inputState.right : inputState.left;
+      const moveRight = invert ? inputState.left : inputState.right;
 
-      if (leftKey) player.vx = -player.speed;
-      else if (rightKey) player.vx = player.speed;
+      if (moveLeft) player.vx = -player.speed;
+      else if (moveRight) player.vx = player.speed;
       else player.vx = 0;
 
-      if ((keys["Space"] || keys["ArrowUp"] || keys["KeyW"]) && player.isGrounded) {
+      if (inputState.jump && player.isGrounded) {
         player.vy = player.jumpForce;
         player.isGrounded = false;
       }
 
-      // Gravity
-      player.vy += 0.45;
+      player.vy += 0.45; // Gravity
       player.x += player.vx;
       player.y += player.vy;
 
-      // Dynamic Troll Event: Door moves away on approach (levels 3+)
+      // Troll: Moving door on level 3+
       if (currentLevel >= 3 && player.x > door.x - 120 && !trollTriggered) {
-        door.x += 60;
+        door.x += 50;
         trollTriggered = true;
       }
 
-      // Dynamic Platform movement
+      // Moving / falling platforms
       platforms.forEach((plat) => {
         if (plat.moves) {
           plat.x += plat.speed * plat.dir;
           if (plat.x > 500 || plat.x < 360) plat.dir *= -1;
         }
         if (plat.dynamic && trollTriggered) {
-          plat.y += 3; // Drops out from under player
+          plat.y += 3;
         }
       });
 
@@ -488,28 +598,28 @@ bindTouchBtn("btnJump", "Space");
         }
       });
 
-      // Spike Collisions
+      // Spikes collision
       spikes.forEach((spike) => {
         if (spike.hidden && player.x > spike.x - 40) {
-          spike.hidden = false; // Pop up surprise trap
+          spike.hidden = false;
         }
         if (!spike.hidden && checkCollision(player, spike)) {
-          initLevel(currentLevel); // Reset current level on death
+          initLevel(currentLevel);
         }
       });
 
-      // Pit death
+      // Bottom death
       if (player.y > 480) {
         initLevel(currentLevel);
       }
 
-      // Check Door clear
+      // Door clear
       if (checkCollision(player, door)) {
         if (currentLevel < TOTAL_LEVELS) {
           currentLevel++;
           initLevel(currentLevel);
         } else {
-          alert("Congratulations! You conquered all 50 Troll Levels!");
+          alert("🏆 Congratulations Satish! You cleared all 50 Troll Levels!");
           currentLevel = 1;
           initLevel(currentLevel);
         }
@@ -517,23 +627,22 @@ bindTouchBtn("btnJump", "Space");
     }
 
     function render() {
-      // Clear Screen
       ctx.fillStyle = "#22222b";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Draw Door
+      // Door
       ctx.fillStyle = "#f1c40f";
       ctx.fillRect(door.x, door.y, door.width, door.height);
       ctx.fillStyle = "#2c3e50";
       ctx.fillRect(door.x + 4, door.y + 4, door.width - 8, door.height - 4);
 
-      // Draw Platforms
+      // Platforms
       ctx.fillStyle = "#34495e";
       platforms.forEach((p) => {
         ctx.fillRect(p.x, p.y, p.width, p.height);
       });
 
-      // Draw Spikes
+      // Spikes
       spikes.forEach((s) => {
         if (!s.hidden) {
           ctx.fillStyle = "#e74c3c";
@@ -545,11 +654,11 @@ bindTouchBtn("btnJump", "Space");
         }
       });
 
-      // Draw Player (Level Devil cube style)
+      // Player
       ctx.fillStyle = "#ffffff";
       ctx.fillRect(player.x, player.y, player.width, player.height);
 
-      // Eyes
+      // Player Eyes
       ctx.fillStyle = "#111";
       const eyeOffset = player.vx < 0 ? 3 : 11;
       ctx.fillRect(player.x + eyeOffset, player.y + 6, 4, 6);
@@ -569,9 +678,8 @@ bindTouchBtn("btnJump", "Space");
     }
 
     function stopGame() {
-      cancelAnimationFrame(animationFrameId);
-    }
-  </script>
+        cancelAnimationFrame(animationFrameId);
+  }
+</script>
 </body>
-  </html>
-  
+</html>
