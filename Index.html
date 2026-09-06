@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FriendsGame - Play Free Games</title>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+
+  <style>
+    :root {
+      --bg-gradient: linear-gradient(135deg, #70f3db 0%, #3fe1ca 45%, #66d9ea 100%);
+      --card-radius: 20px;
+      --card-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: var(--font-family);
+    }
+
+    body {
+      background: var(--bg-gradient);
+      min-height: 100vh;
+      color: #333;
+      padding-bottom: 40px;
+    }
+
+    /* Top Navbar */
+    header {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 24px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-logo {
+      background: #007bff;
+      color: white;
+      font-weight: 900;
+      font-size: 20px;
+      padding: 6px 14px;
+      border-radius: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .creator-badge {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .insta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      color: #fff;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 13px;
+      padding: 7px 14px;
+      border-radius: 25px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .insta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(220, 39, 67, 0.4);
+    }
+
+    /* Poki-style Bento Grid */
+    main {
+      max-width: 1100px;
+      margin: 30px auto 0;
+      padding: 0 16px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      grid-auto-rows: 140px;
+      grid-auto-flow: dense;
+      gap: 16px;
+    }
+
+    /* Responsive adjustments */
+    @media (min-width: 600px) {
+      main {
+        grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+        grid-auto-rows: 170px;
+        gap: 20px;
+      }
+    }
+
+    .game-card {
+      position: relative;
+      border-radius: var(--card-radius);
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow: var(--card-shadow);
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      align-items: flex-end;
+      text-decoration: none;
+    }
+
+    .game-card:hover {
+      transform: scale(1.04);
+      box-shadow: 0 14px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    .card-large {
+      grid-column: span 2;
+      grid-row: span 2;
+    }
+
+    .card-wide {
+      grid-column: span 2;
+      grid-row: span 1;
+    }
+
+    .card-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(0deg, rgba(0, 0, 0, 0.75) 0%, transparent 60%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 14px;
+      color: white;
+    }
+
+    .game-title {
+      font-weight: 700;
+      font-size: 15px;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+    }
+
+    .badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.7);
+      color: #ffeb3b;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 4px 8px;
+      border-radius: 8px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .badge-featured {
+      background: #ff4757;
+      color: #fff;
+    }
+
+    /* Modal for Level Devil Game */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+
+    .modal-content {
+      background: #1e1e24;
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 660px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-header {
+      width: 100%;
+      padding: 12px 20px;
+      background: #2b2b36;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #fff;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    #gameCanvas {
+      background: #333;
+      display: block;
+      width: 100%;
+      max-width: 640px;
+      height: auto;
+      aspect-ratio: 4 / 3;
+    }
+
+    .game-controls-info {
+      padding: 10px;
+      color: #aaa;
+      font-size: 12px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <div class="brand-logo">PlayHub</div>
+    </div>
+    <div class="creator-badge">
+      <a class="insta-btn" href="https://www.instagram.com/_satish_official_16?stkn=MTNzNXZ2cWpkdmRtNA==" target="_blank" rel="noopener noreferrer">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+        Created by Satish
+      </a>
+    </div>
+  </header>
+
+  <main>
+    <div class="game-card card-large" id="launchLevelDevil" style="background: linear-gradient(135deg, #1b1b2f, #162447);">
+      <span class="badge badge-featured">Playable • 50 Levels</span>
+      <div class="card-overlay">
+        <div class="game-title" style="font-size: 19px;">Level Devil: 50 Trolls</div>
+        <small style="opacity: 0.85;">Can you dodge the changing traps?</small>
+      </div>
+    </div>
+
+    <div class="game-card card-wide" style="background: linear-gradient(135deg, #f39c12, #d35400);">
+      <span class="badge">Coming Soon</span>
+      <div class="card-overlay"><div class="game-title">Plane Simulator</div></div>
+    </div>
+
+    <div class="game-card" style="background: linear-gradient(135deg, #27ae60, #2ecc71);">
+      <span class="badge">Coming Soon</span>
+      <div class="card-overlay"><div class="game-title">Math Rush</div></div>
+    </div>
+
+    <div class="game-card" style="background: linear-gradient(135deg, #e74c3c, #c0392b);">
+      <span class="badge">Coming Soon</span>
+      <div class="card-overlay"><div class="game-title">Cryzen Ops</div></div>
+    </div>
+
+    <div class="game-card card-large" style="background: linear-gradient(135deg, #8e44ad, #3498db);">
+      <span class="badge">Coming Soon</span>
+      <div class="card-overlay"><div class="game-title">Scary Teacher Escape</div></div>
+    </div>
+
+    <div class="game-card" style="background: linear-gradient(135deg, #34495e, #2c3e50);">
+      <span class="badge">Coming Soon</span>
+      <div class="card-overlay"><div class="game-title">Hotel Idle</div></div>
+    </div>
+
+    <div class="game-card card-wide" style="background: linear-gradient(135deg, #ff7675, #d63031);">
+      <span class="badge">Coming Soon</span>
+      <div class="card-overlay"><div class="game-title">Custom Craft</div></div>
+    </div>
+  </main>
+
+  <div class="modal-backdrop" id="gameModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span id="levelDisplay" style="font-weight: bold;">Level 1 / 50</span>
+        <button class="close-btn" id="closeModal">&times;</button>
+      </div>
+      <canvas id="gameCanvas" width="640" height="480"></canvas>
+      <div class="game-controls-info">
+        Controls: <strong>Arrow Left/Right</strong> or <strong>A/D</strong> to move, <strong>Space/Up/W</strong> to jump. Beware of shifting traps!
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- Firebase Configuration ---
+    const firebaseConfig = {
+      apiKey: "AIzaSyBzLchy5M2fLne4c7Ghw1KNN8wVrlZdd8M",
+      authDomain: "friendsgame-872f5.firebaseapp.com",
+      databaseURL: "https://friendsgame-872f5-default-rtdb.firebaseio.com",
+      projectId: "friendsgame-872f5",
+      storageBucket: "friendsgame-872f5.firebasestorage.app",
+      messagingSenderId: "522534013233",
+      appId: "1:522534013233:web:f5faa6e6795023d0420810",
+      measurementId: "G-PW5H3G97QR"
+    };
+
+    // Initialize Firebase
+    if (typeof firebase !== 'undefined' && firebase.initializeApp) {
+      firebase.initializeApp(firebaseConfig);
+    }
+
+    // --- Modal Management ---
+    const modal = document.getElementById("gameModal");
+    const launchBtn = document.getElementById("launchLevelDevil");
+    const closeBtn = document.getElementById("closeModal");
+
+    launchBtn.addEventListener("click", () => {
+      modal.style.display = "flex";
+      startGame();
+    });
+
+    closeBtn.addEventListener("click", () => {
+      modal.style.display = "none";
+      stopGame();
+    });
+
+    // --- Level Devil Engine (50 Levels) ---
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+    const levelDisplay = document.getElementById("levelDisplay");
+
+    let currentLevel = 1;
+    const TOTAL_LEVELS = 50;
+    let animationFrameId;
+
+    const keys = {};
+    window.addEventListener("keydown", (e) => (keys[e.code] = true));
+    window.addEventListener("keyup", (e) => (keys[e.code] = false));
+
+    const player = {
+      x: 50,
+      y: 350,
+      width: 24,
+      height: 24,
+      vx: 0,
+      vy: 0,
+      speed: 3.8,
+      jumpForce: -9.5,
+      isGrounded: false
+    };
+
+    let door = { x: 550, y: 340, width: 30, height: 45, originalX: 550 };
+    let platforms = [];
+    let spikes = [];
+    let trollTriggered = false;
+
+    // Build procedural variations introducing mechanics as levels climb
+    function initLevel(lvl) {
+      trollTriggered = false;
+      levelDisplay.textContent = `Level ${lvl} / ${TOTAL_LEVELS}`;
+      player.x = 40;
+      player.y = 350;
+      player.vx = 0;
+      player.vy = 0;
+
+      // Base Platforms
+      platforms = [
+        { x: 0, y: 400, width: 640, height: 80, initialY: 400 },
+        { x: 180, y: 320, width: 90, height: 20, initialY: 320, dynamic: false },
+        { x: 330, y: 260, width: 100, height: 20, initialY: 260, dynamic: false }
+      ];
+
+      // Reset standard door position
+      door.x = 550;
+      door.y = 355;
+      door.originalX = 550;
+
+      spikes = [];
+
+      // Add troll mechanics based on level tiers
+      if (lvl >= 2) {
+        // Spike pit near mid
+        spikes.push({ x: 280, y: 380, width: 30, height: 20, hidden: lvl > 15 });
+      }
+      if (lvl >= 5) {
+        // Falling or collapsing platform
+        platforms[1].dynamic = true;
+      }
+      if (lvl >= 10) {
+        // Floor opens up in the middle
+        platforms.push({ x: 440, y: 340, width: 70, height: 20, moves: true, speed: 1.5, dir: 1 });
+      }
+      if (lvl >= 20) {
+        // Double spike surprises
+        spikes.push({ x: 450, y: 380, width: 40, height: 20, hidden: true });
+      }
+    }
+
+    function checkCollision(r1, r2) {
+      return (
+        r1.x < r2.x + r2.width &&
+        r1.x + r1.width > r2.x &&
+        r1.y < r2.y + r2.height &&
+        r1.y + r1.height > r2.y
+      );
+    }
+
+    function update() {
+      // Input movement (invert controls troll on every 7th level)
+      const invert = currentLevel % 7 === 0;
+      const leftKey = invert ? (keys["ArrowRight"] || keys["KeyD"]) : (keys["ArrowLeft"] || keys["KeyA"]);
+      const rightKey = invert ? (keys["ArrowLeft"] || keys["KeyA"]) : (keys["ArrowRight"] || keys["KeyD"]);
+
+      if (leftKey) player.vx = -player.speed;
+      else if (rightKey) player.vx = player.speed;
+      else player.vx = 0;
+
+      if ((keys["Space"] || keys["ArrowUp"] || keys["KeyW"]) && player.isGrounded) {
+        player.vy = player.jumpForce;
+        player.isGrounded = false;
+      }
+
+      // Gravity
+      player.vy += 0.45;
+      player.x += player.vx;
+      player.y += player.vy;
+
+      // Dynamic Troll Event: Door moves away on approach (levels 3+)
+      if (currentLevel >= 3 && player.x > door.x - 120 && !trollTriggered) {
+        door.x += 60;
+        trollTriggered = true;
+      }
+
+      // Dynamic Platform movement
+      platforms.forEach((plat) => {
+        if (plat.moves) {
+          plat.x += plat.speed * plat.dir;
+          if (plat.x > 500 || plat.x < 360) plat.dir *= -1;
+        }
+        if (plat.dynamic && trollTriggered) {
+          plat.y += 3; // Drops out from under player
+        }
+      });
+
+      // Platform collisions
+      player.isGrounded = false;
+      platforms.forEach((p) => {
+        if (
+          player.x < p.x + p.width &&
+          player.x + player.width > p.x &&
+          player.y + player.height >= p.y &&
+          player.y + player.height <= p.y + 16 &&
+          player.vy >= 0
+        ) {
+          player.isGrounded = true;
+          player.vy = 0;
+          player.y = p.y - player.height;
+        }
+      });
+
+      // Spike Collisions
+      spikes.forEach((spike) => {
+        if (spike.hidden && player.x > spike.x - 40) {
+          spike.hidden = false; // Pop up surprise trap
+        }
+        if (!spike.hidden && checkCollision(player, spike)) {
+          initLevel(currentLevel); // Reset current level on death
+        }
+      });
+
+      // Pit death
+      if (player.y > 480) {
+        initLevel(currentLevel);
+      }
+
+      // Check Door clear
+      if (checkCollision(player, door)) {
+        if (currentLevel < TOTAL_LEVELS) {
+          currentLevel++;
+          initLevel(currentLevel);
+        } else {
+          alert("Congratulations! You conquered all 50 Troll Levels!");
+          currentLevel = 1;
+          initLevel(currentLevel);
+        }
+      }
+    }
+
+    function render() {
+      // Clear Screen
+      ctx.fillStyle = "#22222b";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Draw Door
+      ctx.fillStyle = "#f1c40f";
+      ctx.fillRect(door.x, door.y, door.width, door.height);
+      ctx.fillStyle = "#2c3e50";
+      ctx.fillRect(door.x + 4, door.y + 4, door.width - 8, door.height - 4);
+
+      // Draw Platforms
+      ctx.fillStyle = "#34495e";
+      platforms.forEach((p) => {
+        ctx.fillRect(p.x, p.y, p.width, p.height);
+      });
+
+      // Draw Spikes
+      spikes.forEach((s) => {
+        if (!s.hidden) {
+          ctx.fillStyle = "#e74c3c";
+          ctx.beginPath();
+          ctx.moveTo(s.x, s.y + s.height);
+          ctx.lineTo(s.x + s.width / 2, s.y);
+          ctx.lineTo(s.x + s.width, s.y + s.height);
+          ctx.fill();
+        }
+      });
+
+      // Draw Player (Level Devil cube style)
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(player.x, player.y, player.width, player.height);
+
+      // Eyes
+      ctx.fillStyle = "#111";
+      const eyeOffset = player.vx < 0 ? 3 : 11;
+      ctx.fillRect(player.x + eyeOffset, player.y + 6, 4, 6);
+      ctx.fillRect(player.x + eyeOffset + 6, player.y + 6, 4, 6);
+    }
+
+    function gameLoop() {
+      update();
+      render();
+      animationFrameId = requestAnimationFrame(gameLoop);
+    }
+
+    function startGame() {
+      initLevel(currentLevel);
+      cancelAnimationFrame(animationFrameId);
+      animationFrameId = requestAnimationFrame(gameLoop);
+    }
+
+    function stopGame() {
+      cancelAnimationFrame(animationFrameId);
+    }
+  </script>
+</body>
+  </html>
+  
