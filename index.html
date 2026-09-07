@@ -1636,12 +1636,190 @@ if (instantMathBtn) {
   instantMathBtn.onclick = runSpeedMath;
 }
  
-    function runReflexTest() {
-      const start = Date.now();
-      alert("🎯 REFLEX TEST:\nGet ready... Click OK as fast as you can right now!");
-      const diff = Date.now() - start;
-      alert(`⚡ Reaction time: ${diff}ms!`);
+  // ============================================================================
+// TAP REFLEX ARCADE ENGINE (ANIMATED REACTIVE PAD + GAMER RANK SYSTEM)
+// ============================================================================
+
+let reflexState = "idle"; // "idle", "waiting", "ready", "finished"
+let reflexStartTime = 0;
+let reflexTimer = null;
+let reflexBest = localStorage.getItem("tapReflexBest") || null;
+
+function runReflexTest() {
+  showReflexModal();
+  initReflexGame();
+}
+
+function showReflexModal() {
+  let modal = document.getElementById("reflexModal");
+  if (!modal) {
+    modal = document.createElement("div");
+    modal.id = "reflexModal";
+    modal.style.cssText = "position: fixed; inset: 0; background: rgba(8, 6, 18, 0.94); backdrop-filter: blur(10px); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 99999; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;";
+    document.body.appendChild(modal);
+  }
+
+  modal.innerHTML = `
+    <div id="reflexCard" style="background: #141226; border: 2px solid #00f0ff; border-radius: 24px; padding: 22px; width: 90%; max-width: 360px; text-align: center; box-shadow: 0 0 35px rgba(0, 240, 255, 0.3); position: relative;">
+      <button onclick="closeReflexModal()" style="position: absolute; right: 14px; top: 14px; background: rgba(255,255,255,0.1); border: none; color: #fff; width: 32px; height: 32px; border-radius: 50%; font-size: 16px; cursor: pointer;">✕</button>
+
+      <!-- Logo Header -->
+      <img src="tap-reflex.jpg" onerror="this.style.display='none'" alt="Tap Reflex" style="width: 80px; height: 80px; border-radius: 18px; object-fit: cover; box-shadow: 0 4px 15px rgba(0,0,0,0.6); margin-bottom: 10px; border: 2px solid #00f0ff;">
+
+      <div style="display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 12px; font-size: 13px;">
+        <span style="color: #00f0ff;">BEST: <span id="reflexBestTxt">${reflexBest ? reflexBest + " ms" : "--"}</span></span>
+        <span style="color: #a29bfe;">ARCADE MODE</span>
+      </div>
+
+      <!-- Interactive Tap Arena Pad -->
+      <div id="reflexPad" style="
+        width: 100%; height: 210px; border-radius: 18px; display: flex; flex-direction: column;
+        align-items: center; justify-content: center; cursor: pointer; user-select: none;
+        transition: background 0.15s, transform 0.08s; box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+      ">
+        <div id="reflexIcon" style="font-size: 40px; margin-bottom: 6px;">⚡</div>
+        <div id="reflexStatus" style="font-size: 22px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase;">TAP TO START</div>
+        <div id="reflexSubtext" style="font-size: 13px; opacity: 0.8; margin-top: 4px;">Wait for Green...</div>
+      </div>
+    </div>
+  `;
+  modal.style.display = "flex";
+
+  const pad = document.getElementById("reflexPad");
+  pad.addEventListener("mousedown", handleReflexAction);
+  pad.addEventListener("touchstart", (e) => {
+    e.preventDefault();
+    handleReflexAction();
+  }, { passive: false });
+}
+
+function closeReflexModal() {
+  clearTimeout(reflexTimer);
+  reflexState = "idle";
+  const modal = document.getElementById("reflexModal");
+  if (modal) modal.style.display = "none";
+}
+
+function initReflexGame() {
+  clearTimeout(reflexTimer);
+  reflexState = "idle";
+  const pad = document.getElementById("reflexPad");
+  const icon = document.getElementById("reflexIcon");
+  const status = document.getElementById("reflexStatus");
+  const sub = document.getElementById("reflexSubtext");
+
+  if (!pad) return;
+  pad.style.background = "#252140";
+  pad.style.border = "2px solid #3d3568";
+  icon.textContent = "⚡";
+  status.textContent = "TAP TO START";
+  status.style.color = "#ffffff";
+  sub.textContent = "Touch anywhere on this box";
+}
+
+function handleReflexAction() {
+  const pad = document.getElementById("reflexPad");
+  const icon = document.getElementById("reflexIcon");
+  const status = document.getElementById("reflexStatus");
+  const sub = document.getElementById("reflexSubtext");
+
+  // 1. Start Challenge
+  if (reflexState === "idle" || reflexState === "finished") {
+    reflexState = "waiting";
+    pad.style.background = "#ff4757"; // RED: Wait
+    pad.style.border = "2px solid #ff6b81";
+    icon.textContent = "🛑";
+    status.textContent = "WAIT FOR GREEN...";
+    status.style.color = "#fff";
+    sub.textContent = "Do NOT tap yet!";
+
+    // Random trigger delay between 1.8s and 4.8s
+    const randomDelay = Math.floor(Math.random() * 3000) + 1800;
+    reflexTimer = setTimeout(() => {
+      reflexState = "ready";
+      reflexStartTime = performance.now();
+      pad.style.background = "#2ed573"; // GREEN: Strike!
+      pad.style.border = "3px solid #7bed9f";
+      icon.textContent = "⚡";
+      status.textContent = "TAP NOW!";
+      sub.textContent = "QUICK!";
+      pad.style.transform = "scale(1.03)";
+      setTimeout(() => pad.style.transform = "scale(1)", 100);
+    }, randomDelay);
+    return;
+  }
+
+  // 2. Tapped Too Early Penalty
+  if (reflexState === "waiting") {
+    clearTimeout(reflexTimer);
+    reflexState = "finished";
+    pad.style.background = "#57606f";
+    pad.style.border = "2px solid #747d8c";
+    icon.textContent = "❌";
+    status.textContent = "TOO EARLY!";
+    status.style.color = "#ffa502";
+    sub.textContent = "Tap to try again";
+    return;
+  }
+
+  // 3. Successful Reactive Strike
+  if (reflexState === "ready") {
+    const elapsed = Math.round(performance.now() - reflexStartTime);
+    reflexState = "finished";
+
+    // Best Record Check
+    if (!reflexBest || elapsed < reflexBest) {
+      reflexBest = elapsed;
+      localStorage.setItem("tapReflexBest", reflexBest);
+      const bTxt = document.getElementById("reflexBestTxt");
+      if (bTxt) bTxt.textContent = reflexBest + " ms";
     }
+
+    // Assign Gamer Rank
+    let rank = "🐢 Turtle Pace";
+    let rankColor = "#ced6e0";
+    if (elapsed < 190) { rank = "⚡ GODLIKE REFLEX"; rankColor = "#00f0ff"; }
+    else if (elapsed < 240) { rank = "🔥 PRO GAMER"; rankColor = "#ff4757"; }
+    else if (elapsed < 300) { rank = "🎯 AVERAGE HUMAN"; rankColor = "#2ed573"; }
+
+    pad.style.background = "#1e1b38";
+    pad.style.border = `2px solid ${rankColor}`;
+    icon.textContent = "🏆";
+    status.textContent = `${elapsed} ms`;
+    status.style.color = rankColor;
+    sub.textContent = `${rank} • Tap to retry`;
+
+    spawnReflexRings(pad);
+  }
+}
+
+function spawnReflexRings(target) {
+  const rect = target.getBoundingClientRect();
+  for (let i = 0; i < 12; i++) {
+    const p = document.createElement("div");
+    p.textContent = ["⚡", "✨", "🟢", "💥"][Math.floor(Math.random() * 4)];
+    p.style.cssText = `position: fixed; left: ${rect.left + rect.width / 2}px; top: ${rect.top + rect.height / 2}px; font-size: 18px; pointer-events: none; z-index: 100000; transition: transform 0.5s ease-out, opacity 0.5s;`;
+    document.body.appendChild(p);
+    setTimeout(() => {
+      const angle = Math.random() * Math.PI * 2;
+      const dist = Math.random() * 80 + 30;
+      p.style.transform = `translate(${Math.cos(angle) * dist}px, ${Math.sin(angle) * dist}px) scale(0.4)`;
+      p.style.opacity = "0";
+    }, 20);
+    setTimeout(() => p.remove(), 550);
+  }
+}
+
+// Auto-wire listener fallback
+document.addEventListener("DOMContentLoaded", () => {
+  const reflexBtn = document.getElementById("openReflexGame") || 
+                    Array.from(document.querySelectorAll(".game-tile, .tile-name"))
+                         .find(el => el.textContent.includes("Reflex"));
+  if (reflexBtn) {
+    reflexBtn.onclick = runReflexTest;
+  }
+});
+    
      // =========================================================================
     // 5. 3D SPEED RACING CAR ENGINE (AI BOT & 1v1 MULTIPLAYER)
     // =========================================================================
