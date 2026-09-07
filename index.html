@@ -864,16 +864,12 @@
           else if (ldPlayer.vy < 0) { ldPlayer.y = p.y + p.h; ldPlayer.vy = 0; }
         }
       });
-
-
-
-  
-  // Reset Player
-  ldPlayer.x = 25;
-  ldPlayer.y = H - 70;
-  ldPlayer.vx = 0;
-  ldPlayer.vy = 0;
-  ldPlayer.grounded = false;
+      // Reset Player
+       ldPlayer.x = 25;
+       ldPlayer.y = H - 70;
+       ldPlayer.vx = 0;
+      ldPlayer.vy = 0;
+      ldPlayer.grounded = false;
 
   if (ldTitle) {
     ldTitle.textContent = `Level Devil: STAGE ${lvl}/200 ${ldControlsInverted ? "⚠ INVERTED CONTROLS" : "⚠ TRAPS ACTIVE"}`;
