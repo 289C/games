@@ -385,7 +385,25 @@
       </div>
     </div>
   </main>
-
+<!-- Card: Free Fire Mini -->
+    <div class="game-card card-wide" id="launchFreeFire" style="background: linear-gradient(135deg, rgba(235, 94, 40, 0.3) 0%, rgba(22, 22, 30, 0.8) 100%); border-color: #ff4757;">
+      <span class="badge" style="background: #ff4757; color: #fff;">Survive • Battle Royale</span>
+      <div class="game-hero-emoji">🔥🔫</div>
+      <div class="card-overlay">
+        <div class="game-title">Free Fire: Mini Royale</div>
+        <div class="game-desc">Loot, dodge the blue zone, eliminate bots & get the BOOYAH!</div>
+      </div>
+    </div>
+  <!-- Card: Temple Run -->
+    <div class="game-card card-large" id="launchTempleRun" style="background: linear-gradient(135deg, rgba(230, 126, 34, 0.3) 0%, rgba(22, 22, 30, 0.8) 100%); border-color: #e67e22;">
+      <span class="badge" style="background: #e67e22; color: #fff;">Solo & 1v1 Duel</span>
+      <img src="temple-run.jpg" alt="Temple Run Logo" style="width: 56px; height: 56px; border-radius: 14px; margin: 12px 0; object-fit: cover; box-shadow: 0 4px 14px rgba(0,0,0,0.6);" />
+      <div class="card-overlay">
+        <div class="game-title">Temple Run 3D</div>
+        <div class="game-desc">Play Solo or Invite a friend with code to see who runs further!</div>
+      </div>
+    </div>
+  
   <!-- MODAL 1: Level Devil -->
   <div class="modal-backdrop" id="gameModal">
     <div class="modal-content">
@@ -410,15 +428,7 @@
       <div class="game-controls-info">Desktop: A / D / Arrows = Move | Space / W / Up = Jump</div>
     </div>
   </div>
-    <!-- Card: Free Fire Mini -->
-    <div class="game-card card-wide" id="launchFreeFire" style="background: linear-gradient(135deg, rgba(235, 94, 40, 0.3) 0%, rgba(22, 22, 30, 0.8) 100%); border-color: #ff4757;">
-      <span class="badge" style="background: #ff4757; color: #fff;">Survive • Battle Royale</span>
-      <div class="game-hero-emoji">🔥🔫</div>
-      <div class="card-overlay">
-        <div class="game-title">Free Fire: Mini Royale</div>
-        <div class="game-desc">Loot, dodge the blue zone, eliminate bots & get the BOOYAH!</div>
-      </div>
-    </div>
+    
   
   <!-- MODAL 2: Tic-Tac-Toe -->
   <div class="modal-backdrop" id="tttModal">
@@ -430,15 +440,6 @@
         </div>
         <button class="close-btn" id="closeTttModal">&times;</button>
       </div>
-          <!-- Card: Temple Run -->
-    <div class="game-card card-large" id="launchTempleRun" style="background: linear-gradient(135deg, rgba(230, 126, 34, 0.3) 0%, rgba(22, 22, 30, 0.8) 100%); border-color: #e67e22;">
-      <span class="badge" style="background: #e67e22; color: #fff;">Solo & 1v1 Duel</span>
-      <img src="temple-run.jpg" alt="Temple Run Logo" style="width: 56px; height: 56px; border-radius: 14px; margin: 12px 0; object-fit: cover; box-shadow: 0 4px 14px rgba(0,0,0,0.6);" />
-      <div class="card-overlay">
-        <div class="game-title">Temple Run 3D</div>
-        <div class="game-desc">Play Solo or Invite a friend with code to see who runs further!</div>
-      </div>
-    </div>
       
       <!-- Mode Selector -->
       <div style="display: flex; gap: 8px; margin-top: 14px; justify-content: center;">
@@ -464,6 +465,41 @@
       <button id="tttResetBtn" style="margin-top: 16px; padding: 10px 22px; border: none; border-radius: 20px; background: #e74c3c; color: #fff; font-size: 13px; font-weight: bold; cursor: pointer;">Restart Game</button>
     </div>
   </div>
+    <!-- MODAL: Temple Run Solo & Multiplayer -->
+  <div class="modal-backdrop" id="trModal">
+    <div class="modal-content" style="max-width: 640px;">
+      <div class="modal-header">
+        <div style="font-weight: bold; display: flex; align-items: center; gap: 8px;">
+          <img src="temple-run.jpg" style="width: 22px; height: 22px; border-radius: 6px; object-fit: cover;" />
+          <span id="trStats">Score: 0 | Coins: 0</span>
+        </div>
+        <button class="close-btn" id="closeTrModal">&times;</button>
+      </div>
+
+      <!-- Mode Selection & Room Bar -->
+      <div style="width: 100%; background: #16181f; padding: 10px 14px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: center; border-bottom: 1px solid #282836;">
+        <button id="trSoloBtn" style="background: #2ed573; color: #111; border: none; padding: 6px 12px; border-radius: 12px; font-weight: bold; font-size: 12px; cursor: pointer;">🏃 Solo Play</button>
+        <button id="trCreateRoomBtn" style="background: #e67e22; color: #fff; border: none; padding: 6px 12px; border-radius: 12px; font-weight: bold; font-size: 12px; cursor: pointer;">➕ Invite Friend</button>
+        <input id="trJoinInput" type="text" placeholder="5-digit code" maxlength="5" style="width: 110px; padding: 6px 10px; border-radius: 12px; border: 1px solid #3d3d4e; background: #22222d; color: #fff; text-align: center; text-transform: uppercase; font-weight: bold; font-size: 12px;" />
+        <button id="trJoinRoomBtn" style="background: #00cec9; color: #111; border: none; padding: 6px 12px; border-radius: 12px; font-weight: bold; font-size: 12px; cursor: pointer;">🔗 Join</button>
+        <span id="trRoomStatus" style="font-size: 12px; font-weight: bold; color: #f1c40f; width: 100%; text-align: center; margin-top: 4px;">Current Mode: Solo Run</span>
+      </div>
+
+      <canvas id="trCanvas" width="600" height="440" style="background: #11140e; width: 100%; aspect-ratio: 4/3; display: block;"></canvas>
+
+      <!-- Mobile Touch Controls -->
+      <div class="mobile-controls-panel">
+        <div class="d-pad">
+          <button class="ctrl-btn" id="trLeft">◀</button>
+          <button class="ctrl-btn" id="trSlide">▼</button>
+          <button class="ctrl-btn" id="trRight">▶</button>
+        </div>
+        <button class="ctrl-btn jump-btn" id="trJump" style="background: #e67e22; border-color: #d35400;">▲</button>
+      </div>
+      <div class="game-controls-info">Controls: A/D or Left/Right = Switch Lanes | W/Up = Jump | S/Down = Slide</div>
+    </div>
+  </div>
+  
   <!-- MODAL 3: Free Fire Mini Royale -->
   <div class="modal-backdrop" id="ffModal">
     <div class="modal-content" style="max-width: 660px;">
