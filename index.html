@@ -1242,6 +1242,398 @@
       const diff = Date.now() - start;
       alert(`⚡ Reaction time: ${diff}ms!`);
     }
+        // =========================================================================
+    // 5. 3D SPEED RACING CAR ENGINE (AI BOT & 1v1 MULTIPLAYER)
+    // =========================================================================
+    const carModal = document.getElementById("carModal");
+    const openCarBtn = document.getElementById("openCarGame");
+    const closeCarBtn = document.getElementById("closeCarBtn");
+    const carCanvas = document.getElementById("carCanvas");
+    const carCtx = carCanvas.getContext("2d");
+    const carScoreDisplay = document.getElementById("carScoreDisplay");
+    const carRoomStatus = document.getElementById("carRoomStatus");
+    const carModeBotBtn = document.getElementById("carModeBotBtn");
+    const carCreateRoomBtn = document.getElementById("carCreateRoomBtn");
+    const carJoinRoomBtn = document.getElementById("carJoinRoomBtn");
+    const carRoomCodeInput = document.getElementById("carRoomCodeInput");
+
+    let carRunning = false;
+    let carAnimId = null;
+
+    let carSpeed = 0;
+    const carMaxSpeed = 260;
+    const carAccel = 1.8;
+    const carFriction = 0.985;
+    let carX = 0;
+    let carDistance = 0;
+
+    const carKeys = { left: false, right: false, gas: false, brake: false };
+    let rivals = [];
+    let trafficCars = [];
+
+    let carRoomId = null;
+    let carPlayerRole = "bot";
+    let carRoomRef = null;
+
+    openCarBtn.addEventListener("click", () => {
+      carModal.style.display = "flex";
+      startCarVsBot();
+    });
+
+    closeCarBtn.addEventListener("click", () => {
+      carModal.style.display = "none";
+      carRunning = false;
+      cancelAnimationFrame(carAnimId);
+      if (carRoomRef) carRoomRef.off();
+    });
+
+    carModeBotBtn.addEventListener("click", startCarVsBot);
+
+    function startCarVsBot() {
+      if (carRoomRef) carRoomRef.off();
+      carRoomId = null;
+      carPlayerRole = "bot";
+      carRoomStatus.textContent = "Mode: Race vs AI Bot (Finish 1500m to win!)";
+      initCarRace();
+      carRunning = true;
+      carGameLoop();
+    }
+
+    carCreateRoomBtn.addEventListener("click", () => {
+      if (typeof firebase === "undefined" || !firebase.apps.length) {
+        alert("Firebase is not connected! You can play vs AI Bot.");
+        return;
+      }
+      carRoomId = Math.floor(10000 + Math.random() * 90000).toString();
+      carPlayerRole = "host";
+      carRoomRef = firebase.database().ref("car_rooms/" + carRoomId);
+      carRoomRef.set({
+        hostDist: 0,
+        guestDist: 0,
+        status: "waiting"
+      });
+      carRoomStatus.textContent = `Room Code: ${carRoomId} (Share with a friend!)`;
+
+      carRoomRef.on("value", (snap) => {
+        const val = snap.val();
+        if (!val) return;
+        if (val.status === "racing" && !carRunning) {
+          carRoomStatus.textContent = `Friend connected in Room ${carRoomId}! Race started!`;
+          initCarRace();
+          carRunning = true;
+          carGameLoop();
+        }
+        if (val.hostDist >= 1500 || val.guestDist >= 1500) {
+          concludeCarDuel(val.hostDist, val.guestDist);
+        }
+      });
+    });
+
+    carJoinRoomBtn.addEventListener("click", () => {
+      const code = carRoomCodeInput.value.trim().toUpperCase();
+      if (code.length < 5 || typeof firebase === "undefined" || !firebase.apps.length) return;
+      carRoomId = code;
+      carPlayerRole = "guest";
+      carRoomRef = firebase.database().ref("car_rooms/" + carRoomId);
+
+      carRoomRef.once("value", (snap) => {
+        if (!snap.exists()) {
+          alert("Room code not found!");
+          startCarVsBot();
+          return;
+        }
+        carRoomRef.update({ status: "racing" });
+        carRoomStatus.textContent = `Joined Room: ${carRoomId}! Race started!`;
+        carRoomRef.on("value", (s) => {
+          const val = s.val();
+          if (val && (val.hostDist >= 1500 || val.guestDist >= 1500)) {
+            concludeCarDuel(val.guestDist, val.hostDist);
+          }
+        });
+        initCarRace();
+        carRunning = true;
+        carGameLoop();
+      });
+    });
+
+    window.addEventListener("keydown", (e) => {
+      if (!carRunning) return;
+      if (e.code === "ArrowLeft" || e.code === "KeyA") carKeys.left = true;
+      if (e.code === "ArrowRight" || e.code === "KeyD") carKeys.right = true;
+      if (e.code === "ArrowUp" || e.code === "KeyW") carKeys.gas = true;
+      if (e.code === "ArrowDown" || e.code === "KeyS") carKeys.brake = true;
+    });
+
+    window.addEventListener("keyup", (e) => {
+      if (e.code === "ArrowLeft" || e.code === "KeyA") carKeys.left = false;
+      if (e.code === "ArrowRight" || e.code === "KeyD") carKeys.right = false;
+      if (e.code === "ArrowUp" || e.code === "KeyW") carKeys.gas = false;
+      if (e.code === "ArrowDown" || e.code === "KeyS") carKeys.brake = false;
+    });
+
+    function bindCarTouch(id, k) {
+      const b = document.getElementById(id);
+      if (!b) return;
+      const onStart = (e) => { if (e.cancelable) e.preventDefault(); carKeys[k] = true; };
+      const onEnd = (e) => { if (e.cancelable) e.preventDefault(); carKeys[k] = false; };
+      b.addEventListener("touchstart", onStart, { passive: false });
+      b.addEventListener("touchend", onEnd);
+      b.addEventListener("mousedown", onStart);
+      b.addEventListener("mouseup", onEnd);
+    }
+    bindCarTouch("carSteerLeft", "left");
+    bindCarTouch("carSteerRight", "right");
+    bindCarTouch("carGasBtn", "gas");
+    bindCarTouch("carBrakeBtn", "brake");
+
+    function initCarRace() {
+      carSpeed = 60;
+      carX = 0;
+      carDistance = 0;
+      trafficCars = [];
+
+      rivals = [
+        { name: "Apex Bot", x: 0.35, distance: 30, speed: 180, color: "#e67e22" }
+      ];
+
+      for (let i = 1; i <= 6; i++) {
+        trafficCars.push({
+          z: i * 180 + Math.random() * 80,
+          laneX: (Math.random() * 1.4) - 0.7,
+          color: i % 2 === 0 ? "#ffffff" : "#2ed573",
+          speed: 80 + Math.random() * 40
+        });
+      }
+    }
+
+    function updateCarPhysics() {
+      if (carKeys.gas) {
+        carSpeed = Math.min(carMaxSpeed, carSpeed + carAccel);
+      } else if (carKeys.brake) {
+        carSpeed = Math.max(0, carSpeed - 4.5);
+      } else {
+        carSpeed = Math.max(0, carSpeed * carFriction);
+      }
+
+      const steerPower = 0.00018 * carSpeed;
+      if (carKeys.left) carX -= steerPower;
+      if (carKeys.right) carX += steerPower;
+
+      if (Math.abs(carX) > 0.85) {
+        carSpeed = Math.max(20, carSpeed - 3);
+      }
+      carX = Math.max(-1.15, Math.min(1.15, carX));
+
+      carDistance += carSpeed * 0.04;
+
+      rivals.forEach(r => {
+        r.distance += r.speed * 0.04;
+        if (carDistance > r.distance + 40) r.speed = Math.min(250, r.speed + 0.8);
+        else if (r.distance > carDistance + 60) r.speed = Math.max(140, r.speed - 0.5);
+      });
+
+      if (carRoomId && carRoomRef && carPlayerRole !== "bot") {
+        if (carPlayerRole === "host") carRoomRef.update({ hostDist: Math.floor(carDistance) });
+        if (carPlayerRole === "guest") carRoomRef.update({ guestDist: Math.floor(carDistance) });
+      }
+
+      trafficCars.forEach(t => {
+        t.z -= (carSpeed - t.speed) * 0.1;
+        if (t.z < 10) {
+          if (Math.abs(carX - t.laneX) < 0.32) {
+            carSpeed = 25;
+            carDistance = Math.max(0, carDistance - 15);
+          }
+        }
+        if (t.z <= -20) {
+          t.z = 700 + Math.random() * 200;
+          t.laneX = (Math.random() * 1.4) - 0.7;
+        }
+      });
+
+      if (carDistance >= 1500 && carPlayerRole === "bot") {
+        carRunning = false;
+        cancelAnimationFrame(carAnimId);
+        const botWon = rivals[0].distance > carDistance;
+        renderRaceFinish(botWon ? "💀 AI BOT WON!" : "🏆 1ST PLACE WINNER!", !botWon);
+        return;
+      }
+
+      carScoreDisplay.textContent = `Speed: ${Math.floor(carSpeed)} KM/H | Distance: ${Math.floor(carDistance)}m / 1500m`;
+    }
+
+    function renderCarScene() {
+      carCtx.clearRect(0, 0, carCanvas.width, carCanvas.height);
+      const horizonY = 160;
+      const bottomY = carCanvas.height;
+      const midX = carCanvas.width / 2;
+
+      const sky = carCtx.createLinearGradient(0, 0, 0, horizonY);
+      sky.addColorStop(0, "#3a7bd5");
+      sky.addColorStop(1, "#f1c40f");
+      carCtx.fillStyle = sky;
+      carCtx.fillRect(0, 0, carCanvas.width, horizonY);
+
+      carCtx.fillStyle = "#2c3e50";
+      carCtx.fillRect(40, horizonY - 45, 70, 45);
+      carCtx.fillRect(130, horizonY - 65, 85, 65);
+      carCtx.fillRect(230, horizonY - 40, 60, 40);
+      carCtx.fillRect(420, horizonY - 55, 90, 55);
+      carCtx.fillRect(530, horizonY - 35, 60, 35);
+
+      carCtx.fillStyle = "#27ae60";
+      carCtx.fillRect(0, horizonY, carCanvas.width, bottomY - horizonY);
+
+      const roadW = 220;
+      carCtx.fillStyle = "#34495e";
+      carCtx.beginPath();
+      carCtx.moveTo(midX - 50, horizonY);
+      carCtx.lineTo(midX + 50, horizonY);
+      carCtx.lineTo(midX + roadW + 120, bottomY);
+      carCtx.lineTo(midX - roadW - 120, bottomY);
+      carCtx.fill();
+
+      carCtx.fillStyle = "#e74c3c";
+      carCtx.beginPath();
+      carCtx.moveTo(midX - 54, horizonY);
+      carCtx.lineTo(midX - 50, horizonY);
+      carCtx.lineTo(midX - roadW - 120, bottomY);
+      carCtx.lineTo(midX - roadW - 135, bottomY);
+      carCtx.fill();
+
+      carCtx.beginPath();
+      carCtx.moveTo(midX + 50, horizonY);
+      carCtx.lineTo(midX + 54, horizonY);
+      carCtx.lineTo(midX + roadW + 135, bottomY);
+      carCtx.lineTo(midX + roadW + 120, bottomY);
+      carCtx.fill();
+
+      carCtx.strokeStyle = "#ffffff";
+      carCtx.lineWidth = 4;
+      const dashOffset = (carDistance * 3) % 40;
+      carCtx.setLineDash([20, 20]);
+      carCtx.lineDashOffset = -dashOffset;
+      carCtx.beginPath();
+      carCtx.moveTo(midX, horizonY);
+      carCtx.lineTo(midX, bottomY);
+      carCtx.stroke();
+      carCtx.setLineDash([]);
+
+      const sortedEntities = [...trafficCars.map(t => ({ ...t, kind: "traffic" }))];
+      rivals.forEach(r => {
+        const relativeZ = 200 + (r.distance - carDistance) * 3;
+        if (relativeZ > 0 && relativeZ < 800) {
+          sortedEntities.push({ z: relativeZ, laneX: r.x, color: r.color, kind: "rival", name: r.name });
+        }
+      });
+      sortedEntities.sort((a, b) => b.z - a.z);
+
+      sortedEntities.forEach(ent => {
+        const depth = 1 - (ent.z / 750);
+        if (depth <= 0) return;
+        const eY = horizonY + depth * (bottomY - horizonY);
+        const eX = midX + ent.laneX * (roadW * depth * 1.5);
+        const scale = 0.2 + depth * 0.9;
+
+        carCtx.fillStyle = ent.color;
+        const cW = 55 * scale;
+        const cH = 28 * scale;
+        carCtx.fillRect(eX - cW / 2, eY - cH, cW, cH);
+        carCtx.fillStyle = "#111";
+        carCtx.fillRect(eX - cW / 2 + 4 * scale, eY - 6 * scale, 10 * scale, 6 * scale);
+        carCtx.fillRect(eX + cW / 2 - 14 * scale, eY - 6 * scale, 10 * scale, 6 * scale);
+
+        carCtx.fillStyle = "#ff0000";
+        carCtx.fillRect(eX - cW / 2 + 3 * scale, eY - 14 * scale, 8 * scale, 4 * scale);
+        carCtx.fillRect(eX + cW / 2 - 11 * scale, eY - 14 * scale, 8 * scale, 4 * scale);
+      });
+
+      const playerScreenX = midX + carX * (roadW * 0.9);
+      const playerScreenY = bottomY - 50;
+
+      carCtx.fillStyle = "rgba(46, 204, 113, 0.45)";
+      carCtx.beginPath();
+      carCtx.ellipse(playerScreenX, playerScreenY + 12, 50, 14, 0, 0, Math.PI * 2);
+      carCtx.fill();
+
+      carCtx.fillStyle = "#e74c3c";
+      carCtx.beginPath();
+      carCtx.roundRect(playerScreenX - 44, playerScreenY - 30, 88, 42, 8);
+      carCtx.fill();
+
+      carCtx.fillStyle = "#ffffff";
+      carCtx.fillRect(playerScreenX - 10, playerScreenY - 30, 7, 42);
+      carCtx.fillRect(playerScreenX + 3, playerScreenY - 30, 7, 42);
+
+      carCtx.fillStyle = "#1e272e";
+      carCtx.beginPath();
+      carCtx.roundRect(playerScreenX - 30, playerScreenY - 26, 60, 22, 6);
+      carCtx.fill();
+
+      if (carKeys.gas && carSpeed > 100) {
+        carCtx.fillStyle = "#00cec9";
+        carCtx.beginPath();
+        carCtx.arc(playerScreenX - 22, playerScreenY + 16, 6, 0, Math.PI * 2);
+        carCtx.arc(playerScreenX + 22, playerScreenY + 16, 6, 0, Math.PI * 2);
+        carCtx.fill();
+      }
+
+      carCtx.fillStyle = "#ff3838";
+      carCtx.fillRect(playerScreenX - 38, playerScreenY - 10, 14, 6);
+      carCtx.fillRect(playerScreenX + 24, playerScreenY - 10, 14, 6);
+
+      carCtx.fillStyle = "rgba(0, 0, 0, 0.65)";
+      carCtx.beginPath();
+      carCtx.roundRect(carCanvas.width - 125, 12, 112, 56, 12);
+      carCtx.fill();
+      carCtx.fillStyle = "#f1c40f";
+      carCtx.font = "900 18px sans-serif";
+      carCtx.fillText(`${Math.floor(carSpeed)}`, carCanvas.width - 105, 38);
+      carCtx.font = "bold 11px sans-serif";
+      carCtx.fillStyle = "#ffffff";
+      carCtx.fillText("KM / H", carCanvas.width - 65, 38);
+
+      carCtx.fillStyle = "#2c3e50";
+      carCtx.fillRect(carCanvas.width - 115, 48, 92, 8);
+      carCtx.fillStyle = "#00cec9";
+      carCtx.fillRect(carCanvas.width - 115, 48, (carSpeed / carMaxSpeed) * 92, 8);
+    }
+
+    function renderRaceFinish(title, won) {
+      carCtx.fillStyle = "rgba(0, 0, 0, 0.88)";
+      carCtx.fillRect(0, 0, carCanvas.width, carCanvas.height);
+      carCtx.textAlign = "center";
+      carCtx.fillStyle = won ? "#00cec9" : "#ff4757";
+      carCtx.font = "900 36px sans-serif";
+      carCtx.fillText(title, carCanvas.width / 2, carCanvas.height / 2 - 20);
+      carCtx.fillStyle = "#ffffff";
+      carCtx.font = "bold 16px sans-serif";
+      carCtx.fillText(`Final Distance: ${Math.floor(carDistance)}m`, carCanvas.width / 2, carCanvas.height / 2 + 15);
+      carCtx.fillStyle = "#f1c40f";
+      carCtx.font = "14px sans-serif";
+      carCtx.fillText("Tap screen to race again", carCanvas.width / 2, carCanvas.height / 2 + 50);
+
+      carCanvas.addEventListener("click", () => {
+        initCarRace();
+        carRunning = true;
+        carGameLoop();
+      }, { once: true });
+    }
+
+    function concludeCarDuel(myDist, friendDist) {
+      carRunning = false;
+      cancelAnimationFrame(carAnimId);
+      const won = myDist > friendDist;
+      renderRaceFinish(won ? "🏆 YOU WON 1v1!" : "💀 FRIEND WON!", won);
+    }
+
+    function carGameLoop() {
+      if (carRunning) {
+        updateCarPhysics();
+        renderCarScene();
+        carAnimId = requestAnimationFrame(carGameLoop);
+      }
+      }
   </script>
 </body>
 </html>
