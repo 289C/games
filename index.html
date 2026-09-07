@@ -983,7 +983,126 @@ function ldUpdate() {
     let dist = Math.hypot(ldPlayer.x - ldDoor.x, ldPlayer.y - ldDoor.y);
     if (dist < 70 && !ldDoor.fleeing) {
       ldDoor.fleeing = true;
+      ldDoor.x = (ldDoor.x > W / 2) ? 30 : W - 55;
+    }
+  }
 
+  // Reach Door Goal
+  if (
+    ldPlayer.x < ldDoor.x + ldDoor.w &&
+    ldPlayer.x + ldPlayer.w > ldDoor.x &&
+    ldPlayer.y < ldDoor.y + ldDoor.h &&
+    ldPlayer.y + ldPlayer.h > ldDoor.y
+  ) {
+    if (ldLevel < 200) {
+      ldLevel++;
+      buildLdLevel(ldLevel);
+    } else {
+      alert("IMPOSSIBLE! You conquered all 200 Level Devil stages!");
+      ldLevel = 1;
+      buildLdLevel(1);
+    }
+  }
+
+  // Fall off-screen
+  if (ldPlayer.y > H + 20) ldDie();
+}
+
+function ldDraw() {
+  const W = ldCanvas.width || 600;
+  const H = ldCanvas.height || 360;
+
+  ldCtx.save();
+  if (ldShake > 0) {
+    ldCtx.translate((Math.random() - 0.5) * ldShake, (Math.random() - 0.5) * ldShake);
+    ldShake *= 0.85;
+    if (ldShake < 0.5) ldShake = 0;
+  }
+
+  // Background
+  ldCtx.fillStyle = ldCurTheme.bg;
+  ldCtx.fillRect(0, 0, W, H);
+
+  // Platforms
+  ldPlatforms.forEach(plat => {
+    ldCtx.fillStyle = plat.type === "crumble" ? "#e67e22" : ldCurTheme.platform;
+    ldCtx.fillRect(plat.x, plat.y, plat.w, plat.h);
+  });
+
+  // Fake Platforms
+  ldFakePlatforms.forEach(fake => {
+    ldCtx.fillStyle = fake.triggered ? "#ff4757" : ldCurTheme.platform;
+    ldCtx.fillRect(fake.x, fake.y, fake.w, fake.h);
+  });
+
+  // Spikes
+  ldCtx.fillStyle = ldCurTheme.spike;
+  ldSpikes.forEach(s => {
+    ldCtx.beginPath();
+    ldCtx.moveTo(s.x, s.y + s.h);
+    ldCtx.lineTo(s.x + s.w / 2, s.y);
+    ldCtx.lineTo(s.x + s.w, s.y + s.h);
+    ldCtx.fill();
+  });
+
+  // Falling Ceilings
+  ldCtx.fillStyle = "#a29bfe";
+  ldFallingCeilings.forEach(c => {
+    ldCtx.fillRect(c.x, c.y, c.w, c.h);
+  });
+
+  // Door
+  ldCtx.fillStyle = "#2ecc71";
+  ldCtx.fillRect(ldDoor.x, ldDoor.y, ldDoor.w, ldDoor.h);
+  ldCtx.fillStyle = "#27ae60";
+  ldCtx.fillRect(ldDoor.x + 4, ldDoor.y + 4, ldDoor.w - 8, ldDoor.h - 4);
+
+  // Player
+  ldCtx.fillStyle = "#ffffff";
+  ldCtx.fillRect(ldPlayer.x, ldPlayer.y, ldPlayer.w, ldPlayer.h);
+
+  ldCtx.restore();
+}
+
+function ldLoop() {
+  if (!ldRunning) return;
+  ldUpdate();
+  ldDraw();
+  ldAnimId = requestAnimationFrame(ldLoop);
+}
+
+// Modal and Controls hooks
+if (openLd) {
+  openLd.addEventListener("click", () => {
+    if (ldModal) ldModal.style.display = "flex";
+    ldLevel = 1;
+    ldDeaths = 0;
+    buildLdLevel(ldLevel);
+    ldRunning = true;
+    ldLoop();
+  });
+}
+
+if (closeLd) {
+  closeLd.addEventListener("click", () => {
+    if (ldModal) ldModal.style.display = "none";
+    ldRunning = false;
+    cancelAnimationFrame(ldAnimId);
+  });
+}
+
+window.addEventListener("keydown", (e) => {
+  if (e.code === "ArrowLeft" || e.code === "KeyA") ldInput.left = true;
+  if (e.code === "ArrowRight" || e.code === "KeyD") ldInput.right = true;
+  if (e.code === "ArrowUp" || e.code === "Space" || e.code === "KeyW") ldInput.jump = true;
+});
+
+window.addEventListener("keyup", (e) => {
+  if (e.code === "ArrowLeft" || e.code === "KeyA") ldInput.left = false;
+  if (e.code === "ArrowRight" || e.code === "KeyD") ldInput.right = false;
+  if (e.code === "ArrowUp" || e.code === "Space" || e.code === "KeyW") ldInput.jump = false;
+});
+    
     // =========================================================================
     // 2. TEMPLE RUN 3D ENGINE (SOLO + 1v1 DUEL)
     // =========================================================================
