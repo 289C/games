@@ -1236,6 +1236,440 @@
         ffAnimationId = requestAnimationFrame(ffLoop);
       }
           }
+        // =========================================================================
+    // TEMPLE RUN ENGINE (SOLO + 1v1 DUEL)
+    // =========================================================================
+    const trModal = document.getElementById("trModal");
+    const launchTrBtn = document.getElementById("launchTempleRun");
+    const closeTrBtn = document.getElementById("closeTrModal");
+    const trCanvas = document.getElementById("trCanvas");
+    const trCtx = trCanvas.getContext("2d");
+    const trStats = document.getElementById("trStats");
+    const trRoomStatus = document.getElementById("trRoomStatus");
+    const trSoloBtn = document.getElementById("trSoloBtn");
+    const trCreateRoomBtn = document.getElementById("trCreateRoomBtn");
+    const trJoinRoomBtn = document.getElementById("trJoinRoomBtn");
+    const trJoinInput = document.getElementById("trJoinInput");
+
+    let trAnimationId = null;
+    let trRunning = false;
+    let trScore = 0;
+    let trCoins = 0;
+    let trSpeed = 5;
+
+    // Room & Player Mode
+    let trRoomId = null;
+    let trPlayerRole = "solo"; // "solo", "host", or "guest"
+    let trRoomRef = null;
+
+    const trLanes = [-110, 0, 110];
+    let trPlayer = {
+      lane: 1,
+      currentX: 0,
+      targetX: 0,
+      y: 0,
+      vy: 0,
+      isJumping: false,
+      isSliding: false,
+      slideTimer: 0
+    };
+
+    let trObjects = [];
+    let trSpawnCounter = 0;
+
+    launchTrBtn.addEventListener("click", () => {
+      trModal.style.display = "flex";
+      startSoloMode();
+    });
+
+    closeTrBtn.addEventListener("click", () => {
+      trModal.style.display = "none";
+      trRunning = false;
+      cancelAnimationFrame(trAnimationId);
+      if (trRoomRef) trRoomRef.off();
+    });
+
+    // --- Mode Buttons ---
+    trSoloBtn.addEventListener("click", () => {
+      if (trRoomRef) trRoomRef.off();
+      startSoloMode();
+    });
+
+    function startSoloMode() {
+      trRoomId = null;
+      trPlayerRole = "solo";
+      trRoomStatus.textContent = "Current Mode: Solo Run (Play to beat high score!)";
+      initTempleRun();
+      trRunning = true;
+      trGameLoop();
+    }
+
+    // --- Invite Friend (Create Room) ---
+    trCreateRoomBtn.addEventListener("click", () => {
+      if (typeof firebase === "undefined" || !firebase.apps.length) {
+        alert("Firebase is not connected!");
+        return;
+      }
+      trRoomId = Math.floor(10000 + Math.random() * 90000).toString();
+      trPlayerRole = "host";
+      trRoomRef = firebase.database().ref("temple_rooms/" + trRoomId);
+
+      trRoomRef.set({
+        hostScore: null,
+        guestScore: null,
+        status: "waiting"
+      });
+
+      trRoomStatus.textContent = `Room Code: ${trRoomId} (Ask friend to join!)`;
+
+      trRoomRef.on("value", (snap) => {
+        const val = snap.val();
+        if (!val) return;
+        if (val.status === "ready" && !trRunning) {
+          trRoomStatus.textContent = `Friend connected in Room ${trRoomId}! Running!`;
+          initTempleRun();
+          trRunning = true;
+          trGameLoop();
+        }
+        checkDuelResult(val);
+      });
+    });
+
+    // --- Join Friend Room ---
+    trJoinRoomBtn.addEventListener("click", () => {
+      const code = trJoinInput.value.trim().toUpperCase();
+      if (code.length < 5) {
+        alert("Enter the 5-digit room code!");
+        return;
+      }
+      if (typeof firebase === "undefined" || !firebase.apps.length) return;
+
+      trRoomId = code;
+      trPlayerRole = "guest";
+      trRoomRef = firebase.database().ref("temple_rooms/" + trRoomId);
+
+      trRoomRef.once("value", (snap) => {
+        if (!snap.exists()) {
+          alert("Room code does not exist!");
+          startSoloMode();
+          return;
+        }
+
+        trRoomRef.update({ status: "ready" });
+        trRoomStatus.textContent = `Joined Room: ${trRoomId}! Running!`;
+
+        trRoomRef.on("value", (s) => {
+          checkDuelResult(s.val());
+        });
+
+        initTempleRun();
+        trRunning = true;
+        trGameLoop();
+      });
+    });
+
+    function checkDuelResult(val) {
+      if (!val) return;
+      if (val.hostScore !== null && val.guestScore !== null) {
+        const myScore = trPlayerRole === "host" ? val.hostScore : val.guestScore;
+        const friendScore = trPlayerRole === "host" ? val.guestScore : val.hostScore;
+        renderDuelWinner(myScore, friendScore);
+      }
+    }
+
+    // --- Keyboard & Touch Controls ---
+    window.addEventListener("keydown", (e) => {
+      if (!trRunning) return;
+      if (e.code === "KeyA" || e.code === "ArrowLeft") shiftLane(-1);
+      if (e.code === "KeyD" || e.code === "ArrowRight") shiftLane(1);
+      if ((e.code === "KeyW" || e.code === "ArrowUp" || e.code === "Space") && !trPlayer.isJumping) jumpPlayer();
+      if ((e.code === "KeyS" || e.code === "ArrowDown") && !trPlayer.isSliding) slidePlayer();
+    });
+
+    function bindTrTouch(id, fn) {
+      const btn = document.getElementById(id);
+      if (!btn) return;
+      const fire = (e) => { if (e.cancelable) e.preventDefault(); fn(); };
+      btn.addEventListener("touchstart", fire, { passive: false });
+      btn.addEventListener("mousedown", fire);
+    }
+
+    bindTrTouch("trLeft", () => shiftLane(-1));
+    bindTrTouch("trRight", () => shiftLane(1));
+    bindTrTouch("trJump", () => jumpPlayer());
+    bindTrTouch("trSlide", () => slidePlayer());
+
+    function shiftLane(dir) {
+      trPlayer.lane = Math.max(0, Math.min(2, trPlayer.lane + dir));
+      trPlayer.targetX = trLanes[trPlayer.lane];
+    }
+
+    function jumpPlayer() {
+      if (trPlayer.isJumping || trPlayer.isSliding) return;
+      trPlayer.vy = -14;
+      trPlayer.isJumping = true;
+    }
+
+    function slidePlayer() {
+      if (trPlayer.isJumping) trPlayer.vy = 16;
+      trPlayer.isSliding = true;
+      trPlayer.slideTimer = 35;
+    }
+
+    function initTempleRun() {
+      trScore = 0;
+      trCoins = 0;
+      trSpeed = 5;
+      trObjects = [];
+      trSpawnCounter = 0;
+      trPlayer = { lane: 1, currentX: 0, targetX: 0, y: 0, vy: 0, isJumping: false, isSliding: false, slideTimer: 0 };
+      updateTrStats();
+    }
+
+    function updateTrStats() {
+      trStats.textContent = `Score: ${Math.floor(trScore)}m | Coins: ${trCoins}`;
+    }
+
+    function updateTempleRun() {
+      trScore += trSpeed * 0.05;
+      trSpeed = Math.min(13, trSpeed + 0.001);
+
+      trPlayer.currentX += (trPlayer.targetX - trPlayer.currentX) * 0.25;
+
+      if (trPlayer.isJumping) {
+        trPlayer.y += trPlayer.vy;
+        trPlayer.vy += 0.8;
+        if (trPlayer.y >= 0) {
+          trPlayer.y = 0;
+          trPlayer.vy = 0;
+          trPlayer.isJumping = false;
+        }
+      }
+
+      if (trPlayer.isSliding) {
+        trPlayer.slideTimer--;
+        if (trPlayer.slideTimer <= 0) trPlayer.isSliding = false;
+      }
+
+      trSpawnCounter++;
+      if (trSpawnCounter > 55 - Math.min(25, Math.floor(trSpeed * 2))) {
+        trSpawnCounter = 0;
+        const lane = Math.floor(Math.random() * 3);
+        const r = Math.random();
+
+        if (r < 0.4) trObjects.push({ z: 600, lane: lane, type: "low_barrier" });
+        else if (r < 0.7) trObjects.push({ z: 600, lane: lane, type: "high_barrier" });
+        else trObjects.push({ z: 600, lane: lane, type: "coin" });
+      }
+
+      for (let i = trObjects.length - 1; i >= 0; i--) {
+        const obj = trObjects[i];
+        obj.z -= trSpeed * 2.2;
+
+        if (obj.z <= 50 && obj.z >= 10 && obj.lane === trPlayer.lane) {
+          if (obj.type === "coin") {
+            trCoins += 1;
+            trObjects.splice(i, 1);
+            continue;
+          }
+          if (obj.type === "low_barrier" && trPlayer.y > -25) {
+            handleCrash();
+            return;
+          }
+          if (obj.type === "high_barrier" && !trPlayer.isSliding) {
+            handleCrash();
+            return;
+          }
+        }
+        if (obj.z <= 0) trObjects.splice(i, 1);
+      }
+
+      updateTrStats();
+    }
+
+    function renderTempleRun() {
+      trCtx.clearRect(0, 0, trCanvas.width, trCanvas.height);
+
+      const horizonY = 140;
+      const bottomY = trCanvas.height;
+      const midX = trCanvas.width / 2;
+
+      // Sky
+      const skyGrad = trCtx.createLinearGradient(0, 0, 0, horizonY);
+      skyGrad.addColorStop(0, "#081c15");
+      skyGrad.addColorStop(1, "#1b4332");
+      trCtx.fillStyle = skyGrad;
+      trCtx.fillRect(0, 0, trCanvas.width, horizonY);
+
+      // Path
+      trCtx.fillStyle = "#5c4033";
+      trCtx.beginPath();
+      trCtx.moveTo(midX - 45, horizonY);
+      trCtx.lineTo(midX + 45, horizonY);
+      trCtx.lineTo(midX + 220, bottomY);
+      trCtx.lineTo(midX - 220, bottomY);
+      trCtx.fill();
+
+      trCtx.fillStyle = "#8a7356";
+      trCtx.beginPath();
+      trCtx.moveTo(midX - 35, horizonY);
+      trCtx.lineTo(midX + 35, horizonY);
+      trCtx.lineTo(midX + 175, bottomY);
+      trCtx.lineTo(midX - 175, bottomY);
+      trCtx.fill();
+
+      // Dividers
+      trCtx.strokeStyle = "rgba(0,0,0,0.3)";
+      trCtx.lineWidth = 2;
+      [-1, 1].forEach(side => {
+        trCtx.beginPath();
+        trCtx.moveTo(midX + side * 12, horizonY);
+        trCtx.lineTo(midX + side * 60, bottomY);
+        trCtx.stroke();
+      });
+
+      // Obstacles
+      const sortedObjs = [...trObjects].sort((a, b) => b.z - a.z);
+      sortedObjs.forEach(obj => {
+        const depth = 1 - (obj.z / 600);
+        if (depth < 0) return;
+
+        const screenY = horizonY + depth * (bottomY - horizonY);
+        const laneOffset = trLanes[obj.lane] * depth * 1.5;
+        const screenX = midX + laneOffset;
+        const scale = 0.2 + depth * 0.9;
+
+        if (obj.type === "coin") {
+          trCtx.fillStyle = "#f1c40f";
+          trCtx.beginPath();
+          trCtx.arc(screenX, screenY - 20 * scale, 10 * scale, 0, Math.PI * 2);
+          trCtx.fill();
+        } else if (obj.type === "low_barrier") {
+          trCtx.fillStyle = "#3e2723";
+          const logW = 60 * scale;
+          const logH = 20 * scale;
+          trCtx.fillRect(screenX - logW / 2, screenY - logH, logW, logH);
+          trCtx.fillStyle = "#e74c3c";
+          trCtx.fillRect(screenX - logW / 2, screenY - logH, logW, 4 * scale);
+        } else if (obj.type === "high_barrier") {
+          trCtx.fillStyle = "#2c3e50";
+          const beamW = 66 * scale;
+          const beamH = 14 * scale;
+          trCtx.fillRect(screenX - beamW / 2, screenY - (42 * scale), beamW, beamH);
+          trCtx.fillRect(screenX - beamW / 2, screenY - (42 * scale), 6 * scale, 42 * scale);
+          trCtx.fillRect(screenX + beamW / 2 - 6 * scale, screenY - (42 * scale), 6 * scale, 42 * scale);
+        }
+      });
+
+      // Runner
+      const pScreenX = midX + trPlayer.currentX;
+      const pScreenY = bottomY - 35 + trPlayer.y;
+
+      if (trPlayer.isSliding) {
+        trCtx.fillStyle = "#e67e22";
+        trCtx.fillRect(pScreenX - 18, pScreenY + 8, 36, 16);
+      } else {
+        trCtx.fillStyle = "rgba(0,0,0,0.3)";
+        trCtx.beginPath();
+        trCtx.ellipse(pScreenX, bottomY - 28, 16, 7, 0, 0, Math.PI * 2);
+        trCtx.fill();
+
+        trCtx.fillStyle = "#e67e22";
+        trCtx.fillRect(pScreenX - 12, pScreenY - 32, 24, 26);
+        trCtx.fillStyle = "#f5cd79";
+        trCtx.beginPath();
+        trCtx.arc(pScreenX, pScreenY - 40, 10, 0, Math.PI * 2);
+        trCtx.fill();
+
+        trCtx.fillStyle = "#2c3e50";
+        trCtx.fillRect(pScreenX - 9, pScreenY - 6, 6, 12);
+        trCtx.fillRect(pScreenX + 3, pScreenY - 6, 6, 12);
+      }
+    }
+
+    function handleCrash() {
+      trRunning = false;
+      cancelAnimationFrame(trAnimationId);
+      const finalScore = Math.floor(trScore);
+
+      if (trRoomId && trPlayerRole !== "solo") {
+        // Multi-player crash: upload score to Firebase
+        const updateData = {};
+        if (trPlayerRole === "host") updateData.hostScore = finalScore;
+        if (trPlayerRole === "guest") updateData.guestScore = finalScore;
+        trRoomRef.update(updateData);
+
+        trCtx.fillStyle = "rgba(0, 0, 0, 0.85)";
+        trCtx.fillRect(0, 0, trCanvas.width, trCanvas.height);
+        trCtx.fillStyle = "#e74c3c";
+        trCtx.font = "900 32px sans-serif";
+        trCtx.textAlign = "center";
+        trCtx.fillText("💥 YOU CRASHED! 💥", trCanvas.width / 2, trCanvas.height / 2 - 25);
+        trCtx.fillStyle = "#f1c40f";
+        trCtx.font = "bold 18px sans-serif";
+        trCtx.fillText(`Your Score: ${finalScore}m`, trCanvas.width / 2, trCanvas.height / 2 + 10);
+        trCtx.fillStyle = "#ffffff";
+        trCtx.font = "14px sans-serif";
+        trCtx.fillText("Waiting for opponent to crash...", trCanvas.width / 2, trCanvas.height / 2 + 40);
+      } else {
+        // Solo game over screen
+        trCtx.fillStyle = "rgba(0, 0, 0, 0.75)";
+        trCtx.fillRect(0, 0, trCanvas.width, trCanvas.height);
+        trCtx.fillStyle = "#e74c3c";
+        trCtx.font = "900 36px sans-serif";
+        trCtx.textAlign = "center";
+        trCtx.fillText("💥 PLAYER OUT! 💥", trCanvas.width / 2, trCanvas.height / 2 - 15);
+        trCtx.fillStyle = "#ffffff";
+        trCtx.font = "bold 16px sans-serif";
+        trCtx.fillText(`Distance: ${finalScore}m | Coins: ${trCoins}`, trCanvas.width / 2, trCanvas.height / 2 + 25);
+        trCtx.fillStyle = "#f1c40f";
+        trCtx.font = "14px sans-serif";
+        trCtx.fillText("Tap screen to restart", trCanvas.width / 2, trCanvas.height / 2 + 55);
+
+        trCanvas.addEventListener("click", () => {
+          initTempleRun();
+          trRunning = true;
+          trGameLoop();
+        }, { once: true });
+      }
+    }
+
+    function renderDuelWinner(myScore, opScore) {
+      trCtx.fillStyle = "rgba(0, 0, 0, 0.9)";
+      trCtx.fillRect(0, 0, trCanvas.width, trCanvas.height);
+      trCtx.textAlign = "center";
+
+      if (myScore > opScore) {
+        trCtx.fillStyle = "#00cec9";
+        trCtx.font = "900 38px sans-serif";
+        trCtx.fillText("🏆 YOU WON! 🏆", trCanvas.width / 2, trCanvas.height / 2 - 30);
+      } else if (myScore < opScore) {
+        trCtx.fillStyle = "#ff4757";
+        trCtx.font = "900 38px sans-serif";
+        trCtx.fillText("💀 YOU LOST! 💀", trCanvas.width / 2, trCanvas.height / 2 - 30);
+      } else {
+        trCtx.fillStyle = "#f1c40f";
+        trCtx.font = "900 38px sans-serif";
+        trCtx.fillText("🤝 IT'S A TIE! 🤝", trCanvas.width / 2, trCanvas.height / 2 - 30);
+      }
+
+      trCtx.fillStyle = "#ffffff";
+      trCtx.font = "bold 18px sans-serif";
+      trCtx.fillText(`Your Score: ${myScore}m`, trCanvas.width / 2, trCanvas.height / 2 + 15);
+      trCtx.fillText(`Friend Score: ${opScore}m`, trCanvas.width / 2, trCanvas.height / 2 + 45);
+
+      trCtx.fillStyle = "#a4b0be";
+      trCtx.font = "13px sans-serif";
+      trCtx.fillText("Tap 'Solo Play' or invite again to restart", trCanvas.width / 2, trCanvas.height / 2 + 80);
+    }
+
+    function trGameLoop() {
+      if (trRunning) {
+        updateTempleRun();
+        renderTempleRun();
+        trAnimationId = requestAnimationFrame(trGameLoop);
+      }
+    }
     
   </script>
 </body>
