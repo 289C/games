@@ -812,25 +812,6 @@ tttCells.forEach((cell) => {
 
   });
 });
-function makeAiMove() {
-  if (!tttGameActive) return;
-
-  // 1. Check if AI can win
-  let move = findBestSpot("O");
-  // 2. Check if AI needs to block player
-  if (move === null) move = findBestSpot("X");
-  // 3. Take center if open
-  if (move === null && tttBoardState[4] === "") move = 4;
-  // 4. Pick any remaining open square
-  if (move === null) {
-    const openSquares = [];
-    tttBoardState.forEach((val, idx) => {
-      if (val === "") openSquares.push(idx);
-    });
-    if (openSquares.length > 0) {
-      move = openSquares[Math.floor(Math.random() * openSquares.length)];
-    }
-  }
 
   // Play the chosen move
   if (move !== null) {
