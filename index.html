@@ -801,8 +801,15 @@ tttCells.forEach((cell) => {
       return;
     }
 
-    currentPlayer = currentPlayer === "X" ? "O" : "X";
-    tttStatus.textContent = `Player ${currentPlayer}'s Turn`;
+    if (isBotMode && tttGameActive) {
+  currentPlayer = "O";
+  tttStatus.textContent = "🤖 Bot Thinking...";
+  setTimeout(makeAiMove, 350);
+} else {
+  currentPlayer = currentPlayer === "X" ? "O" : "X";
+  tttStatus.textContent = `Player ${currentPlayer}'s Turn`;
+}
+
   });
 });
 function makeAiMove() {
@@ -863,6 +870,81 @@ function findBestSpot(symbol) {
     const [a, b, c] = pattern;
     const values = [tttBoardState[a], tttBoardState[b], tttBoardState[c]];
     if (values.filter(v => v === symbol).length === 2 && values.includes("")) {
+      if (tttBoardState[a] === "") return a;
+      if (tttBoardState[b] === "") return b;
+      if (tttBoardState[c] === "") return c;
+    }
+  }
+  return null;
+}
+// --- Mode Switch Buttons ---
+const modeWrap = document.createElement("div");
+modeWrap.style.cssText = "display: flex; gap: 8px; margin: 10px 0; justify-content: center;";
+modeWrap.innerHTML = `
+  <button id="btnModeBot" style="padding: 6px 12px; border: none; border-radius: 12px; background: #00cec9; color: #111; font-weight: bold; cursor: pointer;">🤖 vs Bot</button>
+  <button id="btnMode2P" style="padding: 6px 12px; border: none; border-radius: 12px; background: #333342; color: #fff; font-weight: bold; cursor: pointer;">👥 2 Players</button>
+`;
+tttStatus.parentNode.insertBefore(modeWrap, tttStatus);
+
+let isBotMode = true;
+
+document.getElementById("btnModeBot").addEventListener("click", () => {
+  isBotMode = true;
+  document.getElementById("btnModeBot").style.background = "#00cec9";
+  document.getElementById("btnModeBot").style.color = "#111";
+  document.getElementById("btnMode2P").style.background = "#333342";
+  document.getElementById("btnMode2P").style.color = "#fff";
+  resetTicTacToe();
+});
+
+document.getElementById("btnMode2P").addEventListener("click", () => {
+  isBotMode = false;
+  document.getElementById("btnMode2P").style.background = "#00cec9";
+  document.getElementById("btnMode2P").style.color = "#111";
+  document.getElementById("btnModeBot").style.background = "#333342";
+  document.getElementById("btnModeBot").style.color = "#fff";
+  resetTicTacToe();
+});
+
+// --- AI Move Logic ---
+function makeAiMove() {
+  if (!tttGameActive) return;
+
+  let move = findWinningSpot("O") ?? findWinningSpot("X");
+  if (move === null && tttBoardState[4] === "") move = 4;
+  if (move === null) {
+    const emptySpots = tttBoardState.map((v, i) => (v === "" ? i : null)).filter(v => v !== null);
+    if (emptySpots.length > 0) move = emptySpots[Math.floor(Math.random() * emptySpots.length)];
+  }
+
+  if (move !== null) {
+    tttBoardState[move] = "O";
+    tttCells[move].textContent = "O";
+    tttCells[move].style.color = "#ff7675";
+
+    for (let [a, b, c] of winPatterns) {
+      if (tttBoardState[a] && tttBoardState[a] === tttBoardState[b] && tttBoardState[a] === tttBoardState[c]) {
+        tttStatus.textContent = "🤖 Bot Won!";
+        tttGameActive = false;
+        return;
+      }
+    }
+
+    if (!tttBoardState.includes("")) {
+      tttStatus.textContent = "🤝 It's a Draw!";
+      tttGameActive = false;
+      return;
+    }
+
+    currentPlayer = "X";
+    tttStatus.textContent = "Your Turn (X)";
+  }
+}
+
+function findWinningSpot(symbol) {
+  for (let [a, b, c] of winPatterns) {
+    const vals = [tttBoardState[a], tttBoardState[b], tttBoardState[c]];
+    if (vals.filter(v => v === symbol).length === 2 && vals.includes("")) {
       if (tttBoardState[a] === "") return a;
       if (tttBoardState[b] === "") return b;
       if (tttBoardState[c] === "") return c;
