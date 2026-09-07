@@ -1439,10 +1439,7 @@ setTimeout(() => {
 
     // =========================================================================
     // 4. MINI ARCADE EXTRAS
-    // =========================================================================
-    // ============================================================================
-// SPEED MATH RUSH - JUICED ARCADE ENGINE WITH PARTICLES & ANIMATIONS
-// ============================================================================
+   // ========================================================================= 
 
 let mathScore = 0;
 let mathStreak = 0;
@@ -1614,7 +1611,31 @@ function createMathSparkles(target) {
     setTimeout(() => p.remove(), 550);
   }
     }
+    // Ensure mobile and desktop click listeners attach automatically
+document.addEventListener("DOMContentLoaded", () => {
+  const mathBtn = document.getElementById("openMathRush") || 
+                  Array.from(document.querySelectorAll(".game-tile, .tile-name"))
+                       .find(el => el.textContent.includes("Math Rush"));
+                       
+  if (mathBtn) {
+    mathBtn.style.cursor = "pointer";
+    mathBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      runSpeedMath();
+    });
+    mathBtn.addEventListener("touchend", (e) => {
+      e.preventDefault();
+      runSpeedMath();
+    });
+  }
+});
 
+// Immediate hook in case DOMContentLoaded already fired
+const instantMathBtn = document.getElementById("openMathRush");
+if (instantMathBtn) {
+  instantMathBtn.onclick = runSpeedMath;
+}
+ 
     function runReflexTest() {
       const start = Date.now();
       alert("🎯 REFLEX TEST:\nGet ready... Click OK as fast as you can right now!");
