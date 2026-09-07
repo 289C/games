@@ -744,6 +744,77 @@
 
     function stopGame() {
         cancelAnimationFrame(animationFrameId);
+      // --- Tic-Tac-Toe Logic ---
+const tttModal = document.getElementById("tttModal");
+const launchTttBtn = document.getElementById("launchTicTacToe");
+const closeTttBtn = document.getElementById("closeTttModal");
+const tttStatus = document.getElementById("tttStatus");
+const tttResetBtn = document.getElementById("tttResetBtn");
+const tttCells = document.querySelectorAll(".ttt-cell");
+
+let tttBoardState = ["", "", "", "", "", "", "", "", ""];
+let currentPlayer = "X";
+let tttGameActive = true;
+
+const winPatterns = [
+  [0, 1, 2], [3, 4, 5], [6, 7, 8],
+  [0, 3, 6], [1, 4, 7], [2, 5, 8],
+  [0, 4, 8], [2, 4, 6]
+];
+
+launchTttBtn.addEventListener("click", () => {
+  tttModal.style.display = "flex";
+  resetTicTacToe();
+});
+
+closeTttBtn.addEventListener("click", () => {
+  tttModal.style.display = "none";
+});
+
+tttCells.forEach((cell) => {
+  cell.addEventListener("click", () => {
+    const idx = parseInt(cell.getAttribute("data-idx"));
+    if (tttBoardState[idx] !== "" || !tttGameActive) return;
+
+    tttBoardState[idx] = currentPlayer;
+    cell.textContent = currentPlayer;
+    cell.style.color = currentPlayer === "X" ? "#00cec9" : "#ff7675";
+
+    let roundWon = false;
+    for (let pattern of winPatterns) {
+      const [a, b, c] = pattern;
+      if (tttBoardState[a] && tttBoardState[a] === tttBoardState[b] && tttBoardState[a] === tttBoardState[c]) {
+        roundWon = true;
+        break;
+      }
+    }
+
+    if (roundWon) {
+      tttStatus.textContent = `🎉 Player ${currentPlayer} Wins!`;
+      tttGameActive = false;
+      return;
+    }
+
+    if (!tttBoardState.includes("")) {
+      tttStatus.textContent = "🤝 It's a Draw!";
+      tttGameActive = false;
+      return;
+    }
+
+    currentPlayer = currentPlayer === "X" ? "O" : "X";
+    tttStatus.textContent = `Player ${currentPlayer}'s Turn`;
+  });
+});
+
+function resetTicTacToe() {
+  tttBoardState = ["", "", "", "", "", "", "", "", ""];
+  currentPlayer = "X";
+  tttGameActive = true;
+  tttStatus.textContent = "Player X's Turn";
+  tttCells.forEach((cell) => { cell.textContent = ""; });
+}
+
+tttResetBtn.addEventListener("click", resetTicTacToe);    
   }
 </script>
 </body>
