@@ -1675,6 +1675,93 @@
         carAnimId = requestAnimationFrame(carGameLoop);
       }
       }
+        // =========================================================================
+    // 6. VIDEO PLAYER & PLAYLIST CONTROLLER
+    // =========================================================================
+    const videoModal = document.getElementById("videoModal");
+    const openVideoHub = document.getElementById("openVideoHub");
+    const closeVideoBtn = document.getElementById("closeVideoBtn");
+    const mainVideoPlayer = document.getElementById("mainVideoPlayer");
+    const currentVideoTitle = document.getElementById("currentVideoTitle");
+    const playlistContainer = document.getElementById("videoPlaylistContainer");
+    const localVideoUpload = document.getElementById("localVideoUpload");
+
+    // Add any videos you want here (MP4 files in your repository or web links)
+    const videoPlaylist = [
+      {
+        title: "🔥 Daily Highlights & Clips",
+        desc: "Watch the latest highlight reel and community shorts",
+        src: "video1.mp4", // Replace or upload video1.mp4 to your GitHub repo
+        badge: "Featured"
+      },
+      {
+        title: "🏎️ Speed Car Action Trailer",
+        desc: "High-octane highway drifting showcase",
+        src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+        badge: "1080p"
+      },
+      {
+        title: "🕹️ Level Devil Impossible Run",
+        desc: "Full rage-game walkthrough & troll fails",
+        src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+        badge: "Arcade"
+      }
+    ];
+
+    function renderPlaylist() {
+      playlistContainer.innerHTML = "";
+      videoPlaylist.forEach((item, index) => {
+        const itemEl = document.createElement("div");
+        itemEl.style.cssText = "display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: #201e36; border-radius: 14px; cursor: pointer; transition: 0.2s; border: 1px solid rgba(255,255,255,0.06);";
+        itemEl.innerHTML = `
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 38px; height: 38px; border-radius: 10px; background: var(--accent-color); display: flex; align-items: center; justify-content: center; font-size: 16px;">▶️</div>
+            <div>
+              <div style="font-size: 13px; font-weight: 700; color: #fff;">${item.title}</div>
+              <div style="font-size: 11px; color: #a0a0b2;">${item.desc}</div>
+            </div>
+          </div>
+          <span style="font-size: 10px; font-weight: 800; background: rgba(255,255,255,0.08); padding: 4px 8px; border-radius: 8px; color: #f1c40f;">${item.badge}</span>
+        `;
+        itemEl.addEventListener("click", () => playVideo(item));
+        itemEl.addEventListener("mouseenter", () => itemEl.style.background = "#2b2848");
+        itemEl.addEventListener("mouseleave", () => itemEl.style.background = "#201e36");
+        playlistContainer.appendChild(itemEl);
+      });
+    }
+
+    function playVideo(item) {
+      currentVideoTitle.textContent = item.title;
+      mainVideoPlayer.src = item.src;
+      mainVideoPlayer.play().catch(() => {});
+    }
+
+    // Open & Close Modal
+    openVideoHub.addEventListener("click", () => {
+      videoModal.style.display = "flex";
+      renderPlaylist();
+      if (!mainVideoPlayer.src && videoPlaylist.length > 0) {
+        playVideo(videoPlaylist[0]);
+      }
+    });
+
+    closeVideoBtn.addEventListener("click", () => {
+      videoModal.style.display = "none";
+      mainVideoPlayer.pause();
+    });
+
+    // Handle Local User Upload
+    localVideoUpload.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const fileURL = URL.createObjectURL(file);
+        playVideo({
+          title: "📁 " + file.name,
+          src: fileURL
+        });
+      }
+    });
+    
   </script>
 </body>
 </html>
