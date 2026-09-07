@@ -455,7 +455,33 @@
       <button id="tttResetBtn" style="margin-top: 16px; padding: 10px 22px; border: none; border-radius: 20px; background: #e74c3c; color: #fff; font-size: 13px; font-weight: bold; cursor: pointer;">Restart Game</button>
     </div>
   </div>
+  <!-- MODAL 3: Free Fire Mini Royale -->
+  <div class="modal-backdrop" id="ffModal">
+    <div class="modal-content" style="max-width: 660px;">
+      <div class="modal-header">
+        <div style="font-weight: bold; display: flex; align-items: center; gap: 8px;">
+          <span>🔥</span>
+          <span id="ffStats">Alive: 6 | Kills: 0 | HP: 100</span>
+        </div>
+        <button class="close-btn" id="closeFfModal">&times;</button>
+      </div>
 
+      <canvas id="ffCanvas" width="640" height="440" style="background: #2b3024; width: 100%; aspect-ratio: 4/3; display: block;"></canvas>
+
+      <!-- Mobile Controls Panel -->
+      <div class="mobile-controls-panel">
+        <div class="d-pad">
+          <button class="ctrl-btn" id="ffLeft">◀</button>
+          <button class="ctrl-btn" id="ffUp">▲</button>
+          <button class="ctrl-btn" id="ffDown">▼</button>
+          <button class="ctrl-btn" id="ffRight">▶</button>
+        </div>
+        <button class="ctrl-btn jump-btn" id="ffShoot" style="background: #ff4757; border-color: #ff6b81;">🎯</button>
+      </div>
+      <div class="game-controls-info">Controls: WASD / Arrows to Move | Left Click or Tap Screen to Aim & Shoot</div>
+    </div>
+  </div>
+  
   <script>
     // --- Firebase Initialization ---
     const firebaseConfig = {
