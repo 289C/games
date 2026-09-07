@@ -865,44 +865,7 @@
         }
       });
 
-      ldTrollActions.forEach(a => a());
 
-      for (let s of ldSpikes) {
-        if (ldPlayer.x + ldPlayer.w - 4 > s.x && ldPlayer.x + 4 < s.x + s.w && ldPlayer.y + ldPlayer.h > s.y && ldPlayer.y < s.y + s.h) {
-          killLd(); return;
-        }
-      }
-
-      if (ldPlayer.y > ldCanvas.height + 40) { killLd(); return; }
-
-      if (ldPlayer.x + ldPlayer.w > ldDoor.x + 4 && ldPlayer.x < ldDoor.x + ldDoor.w - 4 && ldPlayer.y + ldPlayer.h > ldDoor.y && ldPlayer.y < ldDoor.y + ldDoor.h) {
-        if (ldLevel < 200) { ldLevel++; buildLdLevel(ldLevel); }
-        else { alert("🏆 Unbelievable! You cleared all 200 Level Devil stages!"); ldLevel = 1; buildLdLevel(1); }
-      }
-    }
-
-    function killLd() {
-      ldDeaths++;
-      buildLdLevel(ldLevel);
-    }
-
-    function renderLd() {
-      ldCtx.fillStyle = ldCurTheme.bg;
-      ldCtx.fillRect(0, 0, ldCanvas.width, ldCanvas.height);
-
-      if (ldControlsInverted) {
-        ldCtx.fillStyle = "rgba(235, 77, 75, 0.15)";
-        ldCtx.fillRect(0, 0, ldCanvas.width, ldCanvas.height);
-      }
-
-      // Door
-      ldCtx.fillStyle = "#ffffff";
-      ldCtx.beginPath(); ldCtx.roundRect(ldDoor.x, ldDoor.y, ldDoor.w, ldDoor.h, [14, 14, 0, 0]); ldCtx.fill();
-      ldCtx.fillStyle = "#1e293b";
-      ldCtx.beginPath(); ldCtx.roundRect(ldDoor.x + 4, ldDoor.y + 4, ldDoor.w - 8, ldDoor.h - 4, [10, 10, 0, 0]); ldCtx.fill();
-
-      // Platforms
-      ldCtx.fillStyle = ldCurTheme.platform;
 // ============================================================================
 // 1. LEVEL DEVIL 200-STAGE HARDCORE TROLL ENGINE (MINIMUM 2 CHALLENGES PER LVL)
 // ============================================================================
