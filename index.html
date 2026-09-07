@@ -438,7 +438,34 @@
       </div>
     </div>
   </div>
+  <div class="modal-backdrop" id="tttModal">
+    <div class="modal-content" style="max-width: 400px; padding-bottom: 20px;">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <span style="font-size: 20px;">❌⭕</span>
+          <span style="font-weight: bold;">Tic-Tac-Toe</span>
+        </div>
+        <button class="close-btn" id="closeTttModal">&times;</button>
+      </div>
 
+      <div id="tttStatus" style="color: #ffeb3b; font-size: 18px; font-weight: bold; margin: 16px 0 10px;">Player X's Turn</div>
+
+      <div id="tttBoard" style="display: grid; grid-template-columns: repeat(3, 85px); grid-template-rows: repeat(3, 85px); gap: 10px; background: #2b2b36; padding: 12px; border-radius: 16px;">
+        <button class="ttt-cell" data-idx="0"></button>
+        <button class="ttt-cell" data-idx="1"></button>
+        <button class="ttt-cell" data-idx="2"></button>
+        <button class="ttt-cell" data-idx="3"></button>
+        <button class="ttt-cell" data-idx="4"></button>
+        <button class="ttt-cell" data-idx="5"></button>
+        <button class="ttt-cell" data-idx="6"></button>
+        <button class="ttt-cell" data-idx="7"></button>
+        <button class="ttt-cell" data-idx="8"></button>
+      </div>
+
+      <button id="tttResetBtn" style="margin-top: 16px; padding: 10px 24px; border: none; border-radius: 20px; background: #e74c3c; color: #fff; font-size: 14px; font-weight: bold; cursor: pointer;">Restart Game</button>
+    </div>
+  </div>
+    
   <script>
     // --- Firebase Configuration ---
     const firebaseConfig = {
