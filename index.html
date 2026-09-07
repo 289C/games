@@ -714,62 +714,486 @@
           currentLevel = 1;
           initLevel(currentLevel);
         }
+    // =========================================================================
+    // LEVEL DEVIL 200-LEVEL PROCEDURAL TROLL ENGINE (2 TO 5 TROLLS PER LEVEL)
+    // =========================================================================
+    const modal = document.getElementById("gameModal");
+    const launchBtn = document.getElementById("launchLevelDevil");
+    const closeBtn = document.getElementById("closeModal");
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+    const levelDisplay = document.getElementById("levelDisplay");
+
+    let currentLevel = 1;
+    let deathCount = 0;
+    const TOTAL_LEVELS = 200;
+    let animationFrameId = null;
+
+    const inputState = { left: false, right: false, jump: false };
+
+    canvas.width = 640;
+    canvas.height = 420;
+
+    let player = {
+      x: 50,
+      y: 300,
+      w: 18,
+      h: 24,
+      vx: 0,
+      vy: 0,
+      speed: 3.8,
+      jumpForce: -10.2,
+      grounded: false,
+      facing: 1
+    };
+
+    let door = { x: 570, y: 304, w: 26, h: 36, targetX: 570, targetY: 304, hasFled: false };
+    let platforms = [];
+    let fakePlatforms = [];
+    let spikes = [];
+    let movingHazards = [];
+    let trollActions = [];
+    let controlsInverted = false;
+    let activeFeaturesCount = 2;
+
+    const colorPalettes = [
+      { bg: "#f3c969", platform: "#1e3a5f", spike: "#d90429" }, // Golden & Blue
+      { bg: "#cd8d7a", platform: "#4a1c40", spike: "#f43f5e" }, // Purple Dusk
+      { bg: "#a8dadc", platform: "#1d3557", spike: "#e63946" }, // Retro Teal
+      { bg: "#95d5b2", platform: "#081c15", spike: "#d00000" }, // Poison Forest
+      { bg: "#f4a261", platform: "#264653", spike: "#b5179e" }, // Desert Ruins
+      { bg: "#e0aaff", platform: "#240046", spike: "#ff0054" }  // Synthwave Void
+    ];
+    let currentTheme = colorPalettes[0];
+
+    launchBtn.addEventListener("click", () => {
+      modal.style.display = "flex";
+      currentLevel = 1;
+      deathCount = 0;
+      buildLevel(currentLevel);
+      startGameLoop();
+    });
+
+    closeBtn.addEventListener("click", () => {
+      modal.style.display = "none";
+      cancelAnimationFrame(animationFrameId);
+    });
+
+    // Controls
+    window.addEventListener("keydown", (e) => {
+      let kLeft = !controlsInverted ? (e.code === "ArrowLeft" || e.code === "KeyA") : (e.code === "ArrowRight" || e.code === "KeyD");
+      let kRight = !controlsInverted ? (e.code === "ArrowRight" || e.code === "KeyD") : (e.code === "ArrowLeft" || e.code === "KeyA");
+
+      if (kLeft) inputState.left = true;
+      if (kRight) inputState.right = true;
+      if (e.code === "ArrowUp" || e.code === "KeyW" || e.code === "Space") {
+        if (!inputState.jump && player.grounded) {
+          player.vy = player.jumpForce;
+          player.grounded = false;
+        }
+        inputState.jump = true;
       }
+    });
+
+    window.addEventListener("keyup", (e) => {
+      if (e.code === "ArrowLeft" || e.code === "KeyA") {
+        if (!controlsInverted) inputState.left = false; else inputState.right = false;
+      }
+      if (e.code === "ArrowRight" || e.code === "KeyD") {
+        if (!controlsInverted) inputState.right = false; else inputState.left = false;
+      }
+      if (e.code === "ArrowUp" || e.code === "KeyW" || e.code === "Space") inputState.jump = false;
+    });
+
+    function bindTouchBtn(btnId, action) {
+      const b = document.getElementById(btnId);
+      if (!b) return;
+      const start = (e) => {
+        if (e.cancelable) e.preventDefault();
+        if (action === "jump") {
+          if (player.grounded) player.vy = player.jumpForce;
+          inputState.jump = true;
+        } else {
+          let dir = action;
+          if (controlsInverted) dir = action === "left" ? "right" : "left";
+          inputState[dir] = true;
+        }
+      };
+      const end = (e) => {
+        if (e.cancelable) e.preventDefault();
+        inputState.left = false;
+        inputState.right = false;
+      };
+      b.addEventListener("touchstart", start, { passive: false });
+      b.addEventListener("touchend", end, { passive: false });
+      b.addEventListener("mousedown", start);
+      b.addEventListener("mouseup", end);
+    }
+    bindTouchBtn("btnLeft", "left");
+    bindTouchBtn("btnRight", "right");
+    bindTouchBtn("btnJump", "jump");
+
+    // Pseudo-Random Number Generator based on Level Seed
+    function seededRandom(seed) {
+      const x = Math.sin(seed++) * 10000;
+      return x - Math.floor(x);
     }
 
-    function render() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // =========================================================================
+    // 200-LEVEL GENERATOR ENGINE (MIN 2, MAX 5 FEATURES PER LEVEL)
+    // =========================================================================
+    function buildLevel(lvl) {
+      levelDisplay.textContent = `Level ${lvl} / 200 | Deaths: ${deathCount}`;
+      currentTheme = colorPalettes[(lvl - 1) % colorPalettes.length];
 
-      // Door
-      ctx.fillStyle = "#f1c40f";
-      ctx.fillRect(door.x, door.y, door.w, door.h);
-      ctx.fillStyle = "#2c3e50";
-      ctx.fillRect(door.x + 4, door.y + 4, door.w - 8, door.h);
+      player.x = 45;
+      player.y = 300;
+      player.vx = 0;
+      player.vy = 0;
+      controlsInverted = false;
 
-      // Platforms
-      ctx.fillStyle = "#34495e";
-      for (let p of platforms) {
-        ctx.fillRect(p.x, p.y, p.w, p.h);
+      platforms = [];
+      fakePlatforms = [];
+      spikes = [];
+      movingHazards = [];
+      trollActions = [];
+
+      door = { x: 570, y: 304, w: 26, h: 36, targetX: 570, targetY: 304, hasFled: false };
+
+      // Base Platforms
+      platforms.push({ x: 10, y: 340, w: 120, h: 50 }); // Spawn ledge
+      platforms.push({ x: 530, y: 340, w: 100, h: 50 }); // Exit ledge
+
+      // Procedural Bridge / Stepping Pillars
+      let seed = lvl * 1337;
+      let rand = () => { seed++; return seededRandom(seed); };
+
+      const bridgeSegments = 3;
+      const stepWidth = 85;
+      for (let i = 0; i < bridgeSegments; i++) {
+        let px = 140 + i * 130;
+        let py = 320 - Math.floor(rand() * 40);
+        platforms.push({ x: px, y: py, w: stepWidth, h: 35, id: `plat_${i}`, drop: false });
       }
 
-      // Spikes
-      ctx.fillStyle = "#e74c3c";
+      // Bottom death pit
+      for (let sx = 10; sx < 630; sx += 32) {
+        spikes.push({ x: sx, y: 398, w: 22, h: 18 });
+      }
+
+      // Feature count increases with stage: Min 2, Max 5 features
+      activeFeaturesCount = Math.min(5, Math.max(2, Math.floor(2 + (lvl / 50))));
+
+      // Pool of 9 Troll Features
+      const featurePool = [
+        "falling_platform",
+        "runaway_door",
+        "ceiling_guillotine",
+        "pop_up_spikes",
+        "drop_stalactite",
+        "reverse_controls",
+        "moving_patrol_saw",
+        "fake_stepping_stone",
+        "jumping_door"
+      ];
+
+      // Shuffle and pick between 2 and 5 features deterministically for this level
+      let selectedFeatures = [];
+      let tempPool = [...featurePool];
+      for (let f = 0; f < activeFeaturesCount; f++) {
+        let pickIdx = Math.floor(rand() * tempPool.length);
+        selectedFeatures.push(tempPool[pickIdx]);
+        tempPool.splice(pickIdx, 1);
+      }
+
+      // --- APPLY THE SELECTED TROLL FEATURES ---
+      selectedFeatures.forEach(feat => {
+        if (feat === "falling_platform") {
+          // Feature 1: Middle platform falls into spikes on contact
+          const targetPlat = platforms[2];
+          trollActions.push(() => {
+            if (player.x > targetPlat.x - 10 && player.x < targetPlat.x + targetPlat.w && player.grounded) {
+              targetPlat.drop = true;
+            }
+            if (targetPlat.drop) targetPlat.y += 6.5;
+          });
+        }
+        else if (feat === "runaway_door") {
+          // Feature 2: Door flees to the starting zone
+          trollActions.push(() => {
+            if (player.x > 460 && !door.hasFled) {
+              door.hasFled = true;
+              door.targetX = 60;
+            }
+            door.x += (door.targetX - door.x) * 0.14;
+          });
+        }
+        else if (feat === "jumping_door") {
+          // Feature 3: Door flies straight up into the sky
+          platforms.push({ x: 520, y: 150, w: 100, h: 20 });
+          trollActions.push(() => {
+            if (player.x > 490 && !door.hasFled) {
+              door.hasFled = true;
+              door.targetY = 114;
+            }
+            door.y += (door.targetY - door.y) * 0.12;
+          });
+        }
+        else if (feat === "ceiling_guillotine") {
+          // Feature 4: Giant ceiling block crushes the player midway
+          const guillotine = { x: 260 + Math.floor(rand() * 80), y: -120, w: 36, h: 240, dropped: false };
+          platforms.push(guillotine);
+          trollActions.push(() => {
+            if (player.x > guillotine.x - 45 && !guillotine.dropped) {
+              guillotine.y += 19;
+              if (guillotine.y >= 100) guillotine.dropped = true;
+            }
+          });
+        }
+        else if (feat === "pop_up_spikes") {
+          // Feature 5: Invisible spikes pop up from the landing ledge
+          const popSpike = { x: 540, y: 340, w: 24, h: 0, maxH: 22 };
+          spikes.push(popSpike);
+          trollActions.push(() => {
+            if (player.x > 460 && popSpike.h < popSpike.maxH) {
+              popSpike.h += 5;
+              popSpike.y -= 5;
+            }
+          });
+        }
+        else if (feat === "drop_stalactite") {
+          // Feature 6: Falling ceiling spike
+          const dropSpike = { x: 200 + Math.floor(rand() * 180), y: 10, w: 24, h: 22, vy: 0, active: false };
+          spikes.push(dropSpike);
+          trollActions.push(() => {
+            if (player.x > dropSpike.x - 30 && !dropSpike.active) dropSpike.active = true;
+            if (dropSpike.active && dropSpike.y < 320) {
+              dropSpike.vy += 0.85;
+              dropSpike.y += dropSpike.vy;
+            }
+          });
+        }
+        else if (feat === "reverse_controls") {
+          // Feature 7: Control reversal zone in the middle of the screen
+          trollActions.push(() => {
+            if (player.x > 210 && player.x < 420) {
+              controlsInverted = true;
+            } else {
+              controlsInverted = false;
+            }
+          });
+        }
+        else if (feat === "moving_patrol_saw") {
+          // Feature 8: Oscillating hazard hovering over platforms
+          movingHazards.push({
+            x: 220,
+            y: 260,
+            radius: 12,
+            minX: 160,
+            maxX: 420,
+            vx: 3 + rand() * 2
+          });
+        }
+        else if (feat === "fake_stepping_stone") {
+          // Feature 9: Fake platform with no physical collision
+          fakePlatforms.push({ x: 270, y: 270, w: 75, h: 25 });
+        }
+      });
+    }
+
+    // =========================================================================
+    // PHYSICS & COLLISION LOOP
+    // =========================================================================
+    function updateDevil() {
+      // Horizontal motion
+      if (inputState.left) {
+        player.vx = -player.speed;
+        player.facing = -1;
+      } else if (inputState.right) {
+        player.vx = player.speed;
+        player.facing = 1;
+      } else {
+        player.vx *= 0.65;
+      }
+
+      // Gravity
+      player.vy += 0.55;
+      if (player.vy > 12) player.vy = 12;
+
+      // X position & platform walls
+      player.x += player.vx;
+      platforms.forEach(p => {
+        if (
+          player.x < p.x + p.w &&
+          player.x + player.w > p.x &&
+          player.y < p.y + p.h &&
+          player.y + player.h > p.y
+        ) {
+          if (player.vx > 0) player.x = p.x - player.w;
+          else if (player.vx < 0) player.x = p.x + p.w;
+        }
+      });
+
+      // Y position & platform landings
+      player.y += player.vy;
+      player.grounded = false;
+      platforms.forEach(p => {
+        if (
+          player.x + 3 < p.x + p.w &&
+          player.x + player.w - 3 > p.x &&
+          player.y < p.y + p.h &&
+          player.y + player.h > p.y
+        ) {
+          if (player.vy > 0) {
+            player.y = p.y - player.h;
+            player.vy = 0;
+            player.grounded = true;
+          } else if (player.vy < 0) {
+            player.y = p.y + p.h;
+            player.vy = 0;
+          }
+        }
+      });
+
+      // Execute dynamic level trolls
+      trollActions.forEach(action => action());
+
+      // Update Moving Hazards
+      movingHazards.forEach(h => {
+        h.x += h.vx;
+        if (h.x <= h.minX || h.x >= h.maxX) h.vx *= -1;
+
+        // Circle vs Box collision
+        let nearestX = Math.max(player.x, Math.min(h.x, player.x + player.w));
+        let nearestY = Math.max(player.y, Math.min(h.y, player.y + player.h));
+        let dx = h.x - nearestX;
+        let dy = h.y - nearestY;
+        if ((dx * dx + dy * dy) < (h.radius * h.radius)) {
+          killPlayer();
+          return;
+        }
+      });
+
+      // Spike Hitboxes
       for (let s of spikes) {
-        if (!s.hidden) {
-          ctx.beginPath();
-          ctx.moveTo(s.x, s.y + s.h);
-          ctx.lineTo(s.x + s.w / 2, s.y);
-          ctx.lineTo(s.x + s.w, s.y + s.h);
-          ctx.fill();
+        if (
+          player.x + player.w - 4 > s.x &&
+          player.x + 4 < s.x + s.w &&
+          player.y + player.h > s.y &&
+          player.y < s.y + s.h
+        ) {
+          killPlayer();
+          return;
         }
       }
 
-      // Player
-      ctx.fillStyle = "#ffffff";
-      ctx.fillRect(player.x, player.y, player.w, player.h);
+      // Void death
+      if (player.y > canvas.height + 40) {
+        killPlayer();
+        return;
+      }
 
-      const eyeX = player.x + (player.vx < 0 ? 4 : 14);
-      ctx.fillStyle = "#111111";
-      ctx.fillRect(eyeX, player.y + 5, 3, 5);
-      ctx.fillRect(eyeX + 4, player.y + 5, 3, 5);
-    }
-
-    function gameLoop() {
-      update();
-      render();
-      animationFrameId = requestAnimationFrame(gameLoop);
-    }
-
-    function startGame() {
-      if (!animationFrameId) gameLoop();
-    }
-
-    function stopGame() {
-      if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId);
-        animationFrameId = null;
+      // Reach Door (Next Stage)
+      if (
+        player.x + player.w > door.x + 4 &&
+        player.x < door.x + door.w - 4 &&
+        player.y + player.h > door.y + 4 &&
+        player.y < door.y + door.h
+      ) {
+        if (currentLevel < TOTAL_LEVELS) {
+          currentLevel++;
+          buildLevel(currentLevel);
+        } else {
+          alert(`🏆 UNBELIEVABLE! You cleared all 200 levels with ${deathCount} total deaths!`);
+          currentLevel = 1;
+          deathCount = 0;
+          buildLevel(currentLevel);
+        }
       }
     }
+
+    function killPlayer() {
+      deathCount++;
+      buildLevel(currentLevel);
+    }
+
+    function renderDevil() {
+      // 1. Stage Pastel Background
+      ctx.fillStyle = currentTheme.bg;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Inverted Controls Warning Overlay
+      if (controlsInverted) {
+        ctx.fillStyle = "rgba(235, 77, 75, 0.15)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "#eb4d4b";
+        ctx.font = "900 13px sans-serif";
+        ctx.fillText("⚠️ CURSED ZONE: CONTROLS INVERTED ⚠️", canvas.width / 2 - 120, 30);
+      }
+
+      // 2. Door
+      ctx.fillStyle = "#ffffff";
+      ctx.beginPath();
+      ctx.roundRect(door.x, door.y, door.w, door.h, [14, 14, 0, 0]);
+      ctx.fill();
+      ctx.fillStyle = "#1e293b";
+      ctx.beginPath();
+      ctx.roundRect(door.x + 4, door.y + 4, door.w - 8, door.h - 4, [10, 10, 0, 0]);
+      ctx.fill();
+
+      // 3. Fake Platforms
+      fakePlatforms.forEach(fp => {
+        ctx.fillStyle = currentTheme.platform;
+        ctx.fillRect(fp.x, fp.y, fp.w, fp.h);
+      });
+
+      // 4. Real Solid Platforms
+      ctx.fillStyle = currentTheme.platform;
+      platforms.forEach(p => {
+        ctx.fillRect(p.x, p.y, p.w, p.h);
+      });
+
+      // 5. Spikes
+      ctx.fillStyle = currentTheme.spike;
+      spikes.forEach(s => {
+        if (s.h <= 0) return;
+        ctx.beginPath();
+        ctx.moveTo(s.x, s.y + s.h);
+        ctx.lineTo(s.x + s.w / 2, s.y);
+        ctx.lineTo(s.x + s.w, s.y + s.h);
+        ctx.closePath();
+        ctx.fill();
+      });
+
+      // 6. Moving Hazard Orbs
+      movingHazards.forEach(h => {
+        ctx.fillStyle = "#d00000";
+        ctx.beginPath();
+        ctx.arc(h.x, h.y, h.radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "#ffffff";
+        ctx.beginPath();
+        ctx.arc(h.x, h.y, 4, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // 7. Player Character
+      ctx.fillStyle = "#111116";
+      ctx.fillRect(player.x, player.y + 4, player.w, player.h - 4);
+      ctx.fillRect(player.x + 2, player.y, player.w - 4, 6);
+
+      // Player Eyes
+      ctx.fillStyle = "#ffffff";
+      const eyeX = player.facing === 1 ? player.x + player.w - 6 : player.x + 3;
+      ctx.fillRect(eyeX, player.y + 5, 3, 4);
+    }
+
+    function startGameLoop() {
+      updateDevil();
+      renderDevil();
+      animationFrameId = requestAnimationFrame(startGameLoop);
+    }
+
         // =========================================================================
     // TIC-TAC-TOE ENGINE (AI Bot & 2 Players)
     // =========================================================================
