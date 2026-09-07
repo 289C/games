@@ -216,7 +216,23 @@
       max-width: 640px;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     }
-
+.ttt-cell {
+  background: #18181f;
+  border: 2px solid #333342;
+  border-radius: 12px;
+  font-size: 36px;
+  font-weight: 900;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, transform 0.1s ease;
+  user-select: none;
+}
+.ttt-cell:hover { background: #252530; }
+.ttt-cell:active { transform: scale(0.94); }
+    
     .modal-header {
       width: 100%;
       padding: 12px 18px;
@@ -340,6 +356,16 @@
         <small style="opacity: 0.9;">Tap to play all 50 troll levels</small>
       </div>
     </div>
+    <!-- Tic-Tac-Toe Game Card -->
+<div class="game-card card-wide" id="launchTicTacToe" style="background: linear-gradient(135deg, #0984e3, #6c5ce7);">
+  <span class="badge badge-featured">Playable • 2 Player</span>
+  <div class="game-hero-emoji" style="font-size: 56px;">❌⭕</div>
+  <div class="card-overlay">
+    <div class="game-title" style="font-size: 18px;">Tic-Tac-Toe</div>
+    <small style="opacity: 0.9;">Play with friends</small>
+  </div>
+</div>
+    
 
     <!-- Coming Soon Placeholders -->
         <!-- Plane Simulator -->
