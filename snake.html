@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Cyber Snake</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      background: radial-gradient(circle at 50% 30%, #17152b 0%, #0d0c15 100%);
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow: hidden;
+      touch-action: none;
+    }
+
+    .hud {
+      display: flex;
+      justify-content: space-between;
+      width: 320px;
+      margin-bottom: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .hud .score-box {
+      color: #00f0ff;
+      text-shadow: 0 0 10px rgba(0, 240, 255, 0.6);
+    }
+    .hud .high-box {
+      color: #ff007b;
+      text-shadow: 0 0 10px rgba(255, 0, 123, 0.6);
+    }
+
+    .canvas-container {
+      position: relative;
+      border-radius: 16px;
+      padding: 3px;
+      background: linear-gradient(135deg, #00f0ff, #ff007b);
+      box-shadow: 0 0 30px rgba(108, 92, 231, 0.4);
+    }
+
+    canvas {
+      display: block;
+      background: #0d0c15;
+      border-radius: 14px;
+    }
+
+    /* Mobile Controls */
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(3, 62px);
+      gap: 10px;
+      margin-top: 18px;
+    }
+    .btn {
+      width: 62px;
+      height: 62px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #00f0ff;
+      font-size: 22px;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+      transition: transform 0.05s, background 0.1s;
+    }
+    .btn:active {
+      transform: scale(0.92);
+      background: rgba(0, 240, 255, 0.25);
+      box-shadow: 0 0 12px #00f0ff;
+    }
+    #btn-up { grid-column: 2; }
+    #btn-left { grid-column: 1; grid-row: 2; }
+    #btn-down { grid-column: 2; grid-row: 2; }
+    #btn-right { grid-column: 3; grid-row: 2; }
+
+    .back-btn {
+      margin-top: 14px;
+      color: #7b789e;
+      text-decoration: none;
+      font-size: 13px;
+      transition: color 0.2s;
+    }
+    .back-btn:hover {
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="hud">
+    <div class="score-box">Score: <span id="score">0</span></div>
+    <div class="high-box">Best: <span id="best">0</span></div>
+  </div>
+
+  <div class="canvas-container" id="canvasBox">
+    <canvas id="gameCanvas" width="320" height="320"></canvas>
+  </div>
+
+  <!-- Touch Pad for Mobile -->
+  <div class="controls">
+    <div class="btn" id="btn-up">▲</div>
+    <div class="btn" id="btn-left">◀</div>
+    <div class="btn" id="btn-down">▼</div>
+    <div class="btn" id="btn-right">▶</div>
+  </div>
+
+  <a href="index.html" class="back-btn">← Back to Hub</a>
+
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+    const scoreEl = document.getElementById("score");
+    const bestEl = document.getElementById("best");
+    const canvasBox = document.getElementById("canvasBox");
+
+    const grid = 16;
+    const tileCount = 20;
+
+    let snake = [{ x: 10, y: 10 }, { x: 9, y: 10 }, { x: 8, y: 10 }];
+    let dx = 1, dy = 0;
+    let nextDx = 1, nextDy = 0;
+    let food = { x: 15, y: 10 };
+    let particles = [];
+    let score = 0;
+    let best = localStorage.getItem("snakeBest") || 0;
+    bestEl.textContent = best;
+
+    let gameSpeed = 110;
+    let lastTime = 0;
+    let gameOver = false;
+    let foodGlow = 0;
+
+    function randomFood() {
+      food = {
+        x: Math.floor(Math.random() * tileCount),
+        y: Math.floor(Math.random() * tileCount)
+      };
+      // Prevent spawning inside snake
+      for (let segment of snake) {
+        if (segment.x === food.x && segment.y === food.y) return randomFood();
+      }
+    }
+
+    function createExplosion(x, y, color) {
+      for (let i = 0; i < 18; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 3 + 1;
+        particles.push({
+          x: x * grid + grid / 2,
+          y: y * grid + grid / 2,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          size: Math.random() * 3 + 2,
+          color: color,
+          alpha: 1
+        });
+      }
+    }
+
+    function update() {
+      if (gameOver) return;
+
+      dx = nextDx;
+      dy = nextDy;
+
+      const head = { x: snake[0].x + dx, y: snake[0].y + dy };
+
+      // Wall collision
+      if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount) {
+        return triggerGameOver();
+      }
+
+      // Self collision
+      for (let segment of snake) {
+        if (segment.x === head.x && segment.y === head.y) {
+          return triggerGameOver();
+        }
+      }
+
+      snake.unshift(head);
+
+      // Eat Food
+      if (head.x === food.x && head.y === food.y) {
+        score += 10;
+        scoreEl.textContent = score;
+        if (score > best) {
+          best = score;
+          bestEl.textContent = best;
+          localStorage.setItem("snakeBest", best);
+        }
+        createExplosion(food.x, food.y, "#ff007b");
+        randomFood();
+
+        // Speed up progressively
+        if (gameSpeed > 60) gameSpeed -= 1.5;
+      } else {
+        snake.pop();
+      }
+    }
+
+    function triggerGameOver() {
+      gameOver = true;
+      canvasBox.style.transform = "translate(4px, 4px)";
+      setTimeout(() => canvasBox.style.transform = "translate(-4px, -4px)", 50);
+      setTimeout(() => canvasBox.style.transform = "none", 100);
+    }
+
+    function resetGame() {
+      snake = [{ x: 10, y: 10 }, { x: 9, y: 10 }, { x: 8, y: 10 }];
+      dx = 1; dy = 0;
+      nextDx = 1; nextDy = 0;
+      score = 0;
+      gameSpeed = 110;
+      scoreEl.textContent = "0";
+      gameOver = false;
+      randomFood();
+    }
+
+    function draw() {
+      // Clear with motion-blur fade
+      ctx.fillStyle = "rgba(13, 12, 21, 0.4)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Subtle grid dots
+      ctx.fillStyle = "rgba(255, 255, 255, 0.04)";
+      for (let x = 0; x < tileCount; x++) {
+        for (let y = 0; y < tileCount; y++) {
+          ctx.fillRect(x * grid + grid / 2 - 1, y * grid + grid / 2 - 1, 2, 2);
+        }
+      }
+
+      // Draw Animated Food
+      foodGlow += 0.08;
+      const glowScale = Math.sin(foodGlow) * 2;
+      ctx.save();
+      ctx.shadowBlur = 15;
+      ctx.shadowColor = "#ff007b";
+      ctx.fillStyle = "#ff007b";
+      ctx.beginPath();
+      ctx.arc(
+        food.x * grid + grid / 2,
+        food.y * grid + grid / 2,
+        grid / 2 - 2 + glowScale,
+        0,
+        Math.PI * 2
+      );
+      ctx.fill();
+      ctx.restore();
+
+      // Draw Snake with Neon Gradient
+      snake.forEach((part, index) => {
+        ctx.save();
+        if (index === 0) {
+          ctx.fillStyle = "#ffffff";
+          ctx.shadowBlur = 18;
+          ctx.shadowColor = "#00f0ff";
+        } else {
+          ctx.fillStyle = "#00f0ff";
+          ctx.shadowBlur = 10;
+          ctx.shadowColor = "#00f0ff";
+        }
+
+        const size = grid - 2;
+        ctx.fillRect(part.x * grid + 1, part.y * grid + 1, size, size);
+        ctx.restore();
+      });
+
+      // Draw Particles
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.alpha -= 0.03;
+
+        if (p.alpha <= 0) {
+          particles.splice(i, 1);
+          continue;
+        }
+
+        ctx.save();
+        ctx.globalAlpha = p.alpha;
+        ctx.fillStyle = p.color;
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      // Game Over Screen
+      if (gameOver) {
+        ctx.fillStyle = "rgba(13, 12, 21, 0.85)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.font = "bold 22px sans-serif";
+        ctx.fillStyle = "#ff007b";
+        ctx.shadowBlur = 12;
+        ctx.shadowColor = "#ff007b";
+        ctx.textAlign = "center";
+        ctx.fillText("SYSTEM FAILURE", canvas.width / 2, canvas.height / 2 - 10);
+
+        ctx.shadowBlur = 0;
+        ctx.font = "14px sans-serif";
+        ctx.fillStyle = "#fff";
+        ctx.fillText("Tap screen to restart", canvas.width / 2, canvas.height / 2 + 25);
+      }
+    }
+
+    function loop(time) {
+      if (time - lastTime > gameSpeed) {
+        update();
+        lastTime = time;
+      }
+      draw();
+      requestAnimationFrame(loop);
+    }
+
+    // Direction handler
+    function setDirection(x, y) {
+      if (x !== 0 && dx === -x) return;
+      if (y !== 0 && dy === -y) return;
+      nextDx = x;
+      nextDy = y;
+    }
+
+    // Controls
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowUp") setDirection(0, -1);
+      if (e.key === "ArrowDown") setDirection(0, 1);
+      if (e.key === "ArrowLeft") setDirection(-1, 0);
+      if (e.key === "ArrowRight") setDirection(1, 0);
+      if (gameOver && (e.key === " " || e.key === "Enter")) resetGame();
+    });
+
+    document.getElementById("btn-up").onclick = () => setDirection(0, -1);
+    document.getElementById("btn-down").onclick = () => setDirection(0, 1);
+    document.getElementById("btn-left").onclick = () => setDirection(-1, 0);
+    document.getElementById("btn-right").onclick = () => setDirection(1, 0);
+
+    // Touch Swipe Support
+    let touchStartX = 0, touchStartY = 0;
+    canvas.addEventListener("touchstart", (e) => {
+      if (gameOver) { resetGame(); return; }
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    });
+
+    canvas.addEventListener("touchend", (e) => {
+      const deltaX = e.changedTouches[0].clientX - touchStartX;
+      const deltaY = e.changedTouches[0].clientY - touchStartY;
+      if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 20) {
+        setDirection(deltaX > 0 ? 1 : -1, 0);
+      } else if (Math.abs(deltaY) > 20) {
+        setDirection(0, deltaY > 0 ? 1 : -1);
+      }
+    });
+
+    randomFood();
+    requestAnimationFrame(loop);
+  </script>
+</body>
+</html>
