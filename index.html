@@ -805,7 +805,72 @@ tttCells.forEach((cell) => {
     tttStatus.textContent = `Player ${currentPlayer}'s Turn`;
   });
 });
+function makeAiMove() {
+  if (!tttGameActive) return;
 
+  // 1. Check if AI can win
+  let move = findBestSpot("O");
+  // 2. Check if AI needs to block player
+  if (move === null) move = findBestSpot("X");
+  // 3. Take center if open
+  if (move === null && tttBoardState[4] === "") move = 4;
+  // 4. Pick any remaining open square
+  if (move === null) {
+    const openSquares = [];
+    tttBoardState.forEach((val, idx) => {
+      if (val === "") openSquares.push(idx);
+    });
+    if (openSquares.length > 0) {
+      move = openSquares[Math.floor(Math.random() * openSquares.length)];
+    }
+  }
+
+  // Play the chosen move
+  if (move !== null) {
+    tttBoardState[move] = "O";
+    tttCells[move].textContent = "O";
+    tttCells[move].style.color = "#ff7675";
+
+    // Check if AI won
+    let roundWon = false;
+    for (let pattern of winPatterns) {
+      const [a, b, c] = pattern;
+      if (tttBoardState[a] && tttBoardState[a] === tttBoardState[b] && tttBoardState[a] === tttBoardState[c]) {
+        roundWon = true;
+        break;
+      }
+    }
+
+    if (roundWon) {
+      tttStatus.textContent = "🤖 AI Won!";
+      tttGameActive = false;
+      return;
+    }
+
+    if (!tttBoardState.includes("")) {
+      tttStatus.textContent = "🤝 It's a Draw!";
+      tttGameActive = false;
+      return;
+    }
+
+    currentPlayer = "X";
+    tttStatus.textContent = "Player X's Turn";
+  }
+}
+
+function findBestSpot(symbol) {
+  for (let pattern of winPatterns) {
+    const [a, b, c] = pattern;
+    const values = [tttBoardState[a], tttBoardState[b], tttBoardState[c]];
+    if (values.filter(v => v === symbol).length === 2 && values.includes("")) {
+      if (tttBoardState[a] === "") return a;
+      if (tttBoardState[b] === "") return b;
+      if (tttBoardState[c] === "") return c;
+    }
+  }
+  return null;
+}
+      
 function resetTicTacToe() {
   tttBoardState = ["", "", "", "", "", "", "", "", ""];
   currentPlayer = "X";
