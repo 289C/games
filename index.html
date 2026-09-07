@@ -885,6 +885,312 @@
     }
 
     tttResetBtn.addEventListener("click", resetTicTacToe);
+        // =========================================================================
+    // FREE FIRE: MINI ROYALE ENGINE
+    // =========================================================================
+    const ffModal = document.getElementById("ffModal");
+    const launchFfBtn = document.getElementById("launchFreeFire");
+    const closeFfBtn = document.getElementById("closeFfModal");
+    const ffCanvas = document.getElementById("ffCanvas");
+    const ffCtx = ffCanvas.getContext("2d");
+    const ffStats = document.getElementById("ffStats");
+
+    let ffAnimationId = null;
+    let ffRunning = false;
+    let ffKills = 0;
+
+    const ffKeys = { left: false, right: false, up: false, down: false };
+
+    let ffPlayer = { x: 320, y: 220, r: 12, hp: 100, maxHp: 100, speed: 3.5, angle: 0 };
+    let ffBullets = [];
+    let ffEnemies = [];
+    let ffMedkits = [];
+    let ffZone = { x: 320, y: 220, r: 350, minR: 40, shrinkRate: 0.12 };
+
+    launchFfBtn.addEventListener("click", () => {
+      ffModal.style.display = "flex";
+      initFreeFire();
+      ffRunning = true;
+      ffLoop();
+    });
+
+    closeFfBtn.addEventListener("click", () => {
+      ffModal.style.display = "none";
+      ffRunning = false;
+      cancelAnimationFrame(ffAnimationId);
+    });
+
+    window.addEventListener("keydown", (e) => {
+      if (e.code === "KeyA" || e.code === "ArrowLeft") ffKeys.left = true;
+      if (e.code === "KeyD" || e.code === "ArrowRight") ffKeys.right = true;
+      if (e.code === "KeyW" || e.code === "ArrowUp") ffKeys.up = true;
+      if (e.code === "KeyS" || e.code === "ArrowDown") ffKeys.down = true;
+      if (e.code === "Space") shootPlayerBullet();
+    });
+
+    window.addEventListener("keyup", (e) => {
+      if (e.code === "KeyA" || e.code === "ArrowLeft") ffKeys.left = false;
+      if (e.code === "KeyD" || e.code === "ArrowRight") ffKeys.right = false;
+      if (e.code === "KeyW" || e.code === "ArrowUp") ffKeys.up = false;
+      if (e.code === "KeyS" || e.code === "ArrowDown") ffKeys.down = false;
+    });
+
+    ffCanvas.addEventListener("mousemove", (e) => {
+      const rect = ffCanvas.getBoundingClientRect();
+      const mx = (e.clientX - rect.left) * (ffCanvas.width / rect.width);
+      const my = (e.clientY - rect.top) * (ffCanvas.height / rect.height);
+      ffPlayer.angle = Math.atan2(my - ffPlayer.y, mx - ffPlayer.x);
+    });
+
+    ffCanvas.addEventListener("mousedown", () => {
+      shootPlayerBullet();
+    });
+
+    function bindFfBtn(id, key) {
+      const b = document.getElementById(id);
+      if (!b) return;
+      const s = (e) => { if (e.cancelable) e.preventDefault(); ffKeys[key] = true; };
+      const en = (e) => { if (e.cancelable) e.preventDefault(); ffKeys[key] = false; };
+      b.addEventListener("touchstart", s, { passive: false });
+      b.addEventListener("touchend", en, { passive: false });
+      b.addEventListener("touchcancel", en, { passive: false });
+      b.addEventListener("mousedown", s);
+      b.addEventListener("mouseup", en);
+      b.addEventListener("mouseleave", en);
+    }
+
+    bindFfBtn("ffLeft", "left");
+    bindFfBtn("ffRight", "right");
+    bindFfBtn("ffUp", "up");
+    bindFfBtn("ffDown", "down");
+
+    document.getElementById("ffShoot")?.addEventListener("click", () => {
+      shootPlayerBullet();
+    });
+
+    function shootPlayerBullet() {
+      if (!ffRunning || ffPlayer.hp <= 0) return;
+      ffBullets.push({
+        x: ffPlayer.x + Math.cos(ffPlayer.angle) * 16,
+        y: ffPlayer.y + Math.sin(ffPlayer.angle) * 16,
+        vx: Math.cos(ffPlayer.angle) * 8,
+        vy: Math.sin(ffPlayer.angle) * 8,
+        fromPlayer: true
+      });
+    }
+
+    function initFreeFire() {
+      ffKills = 0;
+      ffBullets = [];
+      ffPlayer = { x: 320, y: 220, r: 12, hp: 100, maxHp: 100, speed: 3.5, angle: 0 };
+      ffZone = { x: 320, y: 220, r: 350, minR: 50, shrinkRate: 0.15 };
+
+      ffEnemies = [];
+      for (let i = 0; i < 5; i++) {
+        ffEnemies.push({
+          x: Math.random() * (ffCanvas.width - 80) + 40,
+          y: Math.random() * (ffCanvas.height - 80) + 40,
+          r: 12,
+          hp: 60,
+          speed: 1.5,
+          angle: 0,
+          cooldown: Math.floor(Math.random() * 60)
+        });
+      }
+
+      ffMedkits = [
+        { x: 100, y: 120, r: 9 },
+        { x: 520, y: 320, r: 9 },
+        { x: 200, y: 360, r: 9 }
+      ];
+
+      updateFfStats();
+    }
+
+    function updateFfStats() {
+      const alive = ffEnemies.filter(e => e.hp > 0).length + (ffPlayer.hp > 0 ? 1 : 0);
+      ffStats.textContent = `Alive: ${alive} | Kills: ${ffKills} | HP: ${Math.max(0, Math.round(ffPlayer.hp))}`;
+    }
+
+    function updateFreeFire() {
+      if (ffPlayer.hp <= 0) return;
+
+      if (ffKeys.left) ffPlayer.x -= ffPlayer.speed;
+      if (ffKeys.right) ffPlayer.x += ffPlayer.speed;
+      if (ffKeys.up) ffPlayer.y -= ffPlayer.speed;
+      if (ffKeys.down) ffPlayer.y += ffPlayer.speed;
+
+      ffPlayer.x = Math.max(ffPlayer.r, Math.min(ffCanvas.width - ffPlayer.r, ffPlayer.x));
+      ffPlayer.y = Math.max(ffPlayer.r, Math.min(ffCanvas.height - ffPlayer.r, ffPlayer.y));
+
+      if (ffZone.r > ffZone.minR) ffZone.r -= ffZone.shrinkRate;
+
+      const distToCenter = Math.hypot(ffPlayer.x - ffZone.x, ffPlayer.y - ffZone.y);
+      if (distToCenter > ffZone.r) {
+        ffPlayer.hp -= 0.18;
+      }
+
+      ffMedkits = ffMedkits.filter(m => {
+        if (Math.hypot(ffPlayer.x - m.x, ffPlayer.y - m.y) < ffPlayer.r + m.r) {
+          ffPlayer.hp = Math.min(ffPlayer.maxHp, ffPlayer.hp + 40);
+          return false;
+        }
+        return true;
+      });
+
+      for (let i = ffBullets.length - 1; i >= 0; i--) {
+        const b = ffBullets[i];
+        b.x += b.vx;
+        b.y += b.vy;
+
+        if (b.fromPlayer) {
+          for (let enemy of ffEnemies) {
+            if (enemy.hp > 0 && Math.hypot(b.x - enemy.x, b.y - enemy.y) < enemy.r + 4) {
+              enemy.hp -= 35;
+              ffBullets.splice(i, 1);
+              if (enemy.hp <= 0) ffKills++;
+              break;
+            }
+          }
+        } else {
+          if (Math.hypot(b.x - ffPlayer.x, b.y - ffPlayer.y) < ffPlayer.r + 4) {
+            ffPlayer.hp -= 18;
+            ffBullets.splice(i, 1);
+          }
+        }
+
+        if (b.x < 0 || b.x > ffCanvas.width || b.y < 0 || b.y > ffCanvas.height) {
+          ffBullets.splice(i, 1);
+        }
+      }
+
+      ffEnemies.forEach(enemy => {
+        if (enemy.hp <= 0) return;
+
+        const toCenterX = ffZone.x - enemy.x;
+        const toCenterY = ffZone.y - enemy.y;
+        const dCenter = Math.hypot(toCenterX, toCenterY);
+        if (dCenter > ffZone.r - 20) {
+          enemy.x += (toCenterX / dCenter) * enemy.speed;
+          enemy.y += (toCenterY / dCenter) * enemy.speed;
+        }
+
+        enemy.angle = Math.atan2(ffPlayer.y - enemy.y, ffPlayer.x - enemy.x);
+
+        enemy.cooldown--;
+        if (enemy.cooldown <= 0 && Math.hypot(ffPlayer.x - enemy.x, ffPlayer.y - enemy.y) < 280) {
+          ffBullets.push({
+            x: enemy.x + Math.cos(enemy.angle) * 14,
+            y: enemy.y + Math.sin(enemy.angle) * 14,
+            vx: Math.cos(enemy.angle) * 5,
+            vy: Math.sin(enemy.angle) * 5,
+            fromPlayer: false
+          });
+          enemy.cooldown = 80 + Math.floor(Math.random() * 40);
+        }
+      });
+
+      updateFfStats();
+    }
+
+    function renderFreeFire() {
+      ffCtx.clearRect(0, 0, ffCanvas.width, ffCanvas.height);
+
+      // Safe / Danger zone
+      ffCtx.fillStyle = "rgba(9, 132, 227, 0.28)";
+      ffCtx.fillRect(0, 0, ffCanvas.width, ffCanvas.height);
+
+      ffCtx.save();
+      ffCtx.beginPath();
+      ffCtx.arc(ffZone.x, ffZone.y, ffZone.r, 0, Math.PI * 2);
+      ffCtx.clip();
+      ffCtx.fillStyle = "#2d3420";
+      ffCtx.fillRect(0, 0, ffCanvas.width, ffCanvas.height);
+      ffCtx.restore();
+
+      ffCtx.strokeStyle = "#00cec9";
+      ffCtx.lineWidth = 3;
+      ffCtx.beginPath();
+      ffCtx.arc(ffZone.x, ffZone.y, ffZone.r, 0, Math.PI * 2);
+      ffCtx.stroke();
+
+      // Medkits
+      ffMedkits.forEach(m => {
+        ffCtx.fillStyle = "#2ed573";
+        ffCtx.fillRect(m.x - 8, m.y - 8, 16, 16);
+        ffCtx.fillStyle = "#ffffff";
+        ffCtx.font = "bold 12px sans-serif";
+        ffCtx.fillText("+", m.x - 4, m.y + 4);
+      });
+
+      // Bullets
+      ffBullets.forEach(b => {
+        ffCtx.fillStyle = b.fromPlayer ? "#ffeaa7" : "#ff4757";
+        ffCtx.beginPath();
+        ffCtx.arc(b.x, b.y, 3.5, 0, Math.PI * 2);
+        ffCtx.fill();
+      });
+
+      // Bots
+      ffEnemies.forEach(e => {
+        if (e.hp <= 0) return;
+        ffCtx.fillStyle = "#eb4d4b";
+        ffCtx.beginPath();
+        ffCtx.arc(e.x, e.y, e.r, 0, Math.PI * 2);
+        ffCtx.fill();
+
+        ffCtx.strokeStyle = "#1e1e24";
+        ffCtx.lineWidth = 4;
+        ffCtx.beginPath();
+        ffCtx.moveTo(e.x, e.y);
+        ffCtx.lineTo(e.x + Math.cos(e.angle) * 18, e.y + Math.sin(e.angle) * 18);
+        ffCtx.stroke();
+      });
+
+      // Player
+      if (ffPlayer.hp > 0) {
+        ffCtx.fillStyle = "#f1c40f";
+        ffCtx.beginPath();
+        ffCtx.arc(ffPlayer.x, ffPlayer.y, ffPlayer.r, 0, Math.PI * 2);
+        ffCtx.fill();
+
+        ffCtx.strokeStyle = "#ffffff";
+        ffCtx.lineWidth = 4;
+        ffCtx.beginPath();
+        ffCtx.moveTo(ffPlayer.x, ffPlayer.y);
+        ffCtx.lineTo(ffPlayer.x + Math.cos(ffPlayer.angle) * 18, ffPlayer.y + Math.sin(ffPlayer.angle) * 18);
+        ffCtx.stroke();
+      }
+
+      // End game banners
+      const aliveEnemies = ffEnemies.filter(e => e.hp > 0).length;
+      if (aliveEnemies === 0 && ffPlayer.hp > 0) {
+        ffCtx.fillStyle = "rgba(0,0,0,0.65)";
+        ffCtx.fillRect(0, 0, ffCanvas.width, ffCanvas.height);
+        ffCtx.fillStyle = "#f1c40f";
+        ffCtx.font = "900 48px sans-serif";
+        ffCtx.textAlign = "center";
+        ffCtx.fillText("🏆 BOOYAH! 🏆", ffCanvas.width / 2, ffCanvas.height / 2 - 10);
+        ffCtx.fillStyle = "#ffffff";
+        ffCtx.font = "bold 18px sans-serif";
+        ffCtx.fillText(`Total Kills: ${ffKills}`, ffCanvas.width / 2, ffCanvas.height / 2 + 30);
+      } else if (ffPlayer.hp <= 0) {
+        ffCtx.fillStyle = "rgba(0,0,0,0.7)";
+        ffCtx.fillRect(0, 0, ffCanvas.width, ffCanvas.height);
+        ffCtx.fillStyle = "#ff4757";
+        ffCtx.font = "900 42px sans-serif";
+        ffCtx.textAlign = "center";
+        ffCtx.fillText("💀 ELIMINATED 💀", ffCanvas.width / 2, ffCanvas.height / 2);
+      }
+    }
+
+    function ffLoop() {
+      if (ffRunning) {
+        updateFreeFire();
+        renderFreeFire();
+        ffAnimationId = requestAnimationFrame(ffLoop);
+      }
+                              }
   </script>
 </body>
 </html>
