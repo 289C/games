@@ -3,2101 +3,955 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>FriendsGame</title>
+  <title>Arcade Hub - 100+ Web Games</title>
   
-  <!-- Firebase SDK (Compat mode v9+) -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <!-- Firebase SDKs for 1v1 Multiplayer -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
   <style>
+    :root {
+      --bg-dark: #12111d;
+      --card-bg: #1c1a2e;
+      --card-border: rgba(255, 255, 255, 0.08);
+      --accent-color: #6c5ce7;
+      --accent-hover: #a29bfe;
+      --text-main: #ffffff;
+      --text-dim: #a0a0b2;
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       user-select: none;
-      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     }
 
     body {
-      background-color: #0d0e15;
-      color: #ffffff;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      min-height: 100vh;
-      padding: 16px;
+      padding-bottom: 50px;
       overflow-x: hidden;
-      position: relative;
     }
 
-    /* --- Animated Ambient Background Effects --- */
-    body::before, body::after {
-      content: "";
-      position: fixed;
-      width: 320px;
-      height: 320px;
-      border-radius: 50%;
-      filter: blur(90px);
-      z-index: -1;
-      opacity: 0.45;
-      animation: floatGlow 10s ease-in-out infinite alternate;
-      pointer-events: none;
-    }
-
-    body::before {
-      background: radial-gradient(circle, #6c5ce7, #0984e3);
-      top: -60px;
-      left: -60px;
-    }
-
-    body::after {
-      background: radial-gradient(circle, #00cec9, #e84393);
-      bottom: -60px;
-      right: -60px;
-      animation-duration: 14s;
-      animation-direction: alternate-reverse;
-    }
-
-    @keyframes floatGlow {
-      0% {
-        transform: translate(0, 0) scale(1);
-      }
-      50% {
-        transform: translate(60px, 40px) scale(1.15);
-      }
-      100% {
-        transform: translate(-30px, 70px) scale(0.95);
-      }
-    }
-
-    /* Top Navigation Header */
+    /* Top Navigation */
     header {
       width: 100%;
-      max-width: 960px;
+      max-width: 1200px;
+      padding: 20px 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 12px 6px 20px;
     }
 
-    .site-title {
-      font-size: 24px;
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 20px;
       font-weight: 800;
       letter-spacing: -0.5px;
-      background: linear-gradient(90deg, #00cec9, #a29bfe);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
     }
 
-    .author-tag a {
-      color: #dfe6e9;
-      text-decoration: none;
+    .brand-badge {
+      background: linear-gradient(135deg, #fd79a8, #e84393);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    /* Category Filter Bar */
+    .filter-bar {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      max-width: 1200px;
+      width: 100%;
+      padding: 0 24px 16px 24px;
+      scrollbar-width: none;
+    }
+    .filter-bar::-webkit-scrollbar { display: none; }
+
+    .filter-pill {
+      background: #201e36;
+      border: 1px solid var(--card-border);
+      padding: 8px 18px;
+      border-radius: 20px;
       font-size: 13px;
       font-weight: 600;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      padding: 6px 14px;
-      border-radius: 20px;
-      background: rgba(24, 24, 31, 0.7);
-      backdrop-filter: blur(8px);
+      color: var(--text-dim);
+      white-space: nowrap;
+      cursor: pointer;
       transition: 0.2s;
     }
-
-    .author-tag a:hover {
-      border-color: #00cec9;
-      color: #00cec9;
-      box-shadow: 0 0 10px rgba(0, 206, 201, 0.4);
+    .filter-pill.active, .filter-pill:hover {
+      background: var(--accent-color);
+      color: #fff;
     }
 
-    /* Bento Grid */
-    main {
-      width: 100%;
-      max-width: 960px;
+    /* App-Store Dense Tile Grid */
+    .games-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
       gap: 16px;
-      margin-bottom: 30px;
+      width: 100%;
+      max-width: 1200px;
+      padding: 10px 24px;
     }
 
-    .game-card {
-      background: rgba(24, 24, 31, 0.75);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 20px;
-      padding: 24px;
-      position: relative;
-      cursor: pointer;
-      overflow: hidden;
+    @media (min-width: 768px) {
+      .games-grid {
+        grid-template-columns: repeat(auto-fill, minmax(105px, 1fr));
+        gap: 20px;
+      }
+    }
+
+    .game-tile {
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      min-height: 180px;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
-      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+      align-items: center;
+      cursor: pointer;
+      text-align: center;
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .game-tile:hover {
+      transform: translateY(-4px) scale(1.04);
+    }
+    .game-tile:active {
+      transform: scale(0.95);
     }
 
-    .game-card:hover {
-      border-color: rgba(255, 255, 255, 0.25);
-      transform: translateY(-2px);
+    .tile-icon-box {
+      width: 82px;
+      height: 82px;
+      border-radius: 22px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+      border: 2px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #25233c;
     }
 
-    .game-card:active {
-      transform: scale(0.98);
+    @media (min-width: 768px) {
+      .tile-icon-box {
+        width: 98px;
+        height: 98px;
+        border-radius: 26px;
+      }
     }
 
-    .card-large {
-      background: linear-gradient(135deg, rgba(45, 27, 84, 0.6) 0%, rgba(22, 22, 35, 0.8) 100%);
-      border-color: rgba(108, 92, 231, 0.4);
+    .tile-icon-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
     }
 
-    .card-wide {
-      background: linear-gradient(135deg, rgba(9, 132, 227, 0.3) 0%, rgba(22, 27, 43, 0.8) 100%);
-      border-color: rgba(9, 132, 227, 0.4);
+    .tile-emoji {
+      font-size: 40px;
     }
 
-    .card-placeholder {
-      opacity: 0.55;
-      cursor: not-allowed;
-    }
-
-    .badge {
-      align-self: flex-start;
-      font-size: 11px;
+    .tile-name {
+      font-size: 12px;
       font-weight: 700;
-      padding: 4px 10px;
-      border-radius: 12px;
+      margin-top: 8px;
+      max-width: 90px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #e2e2ec;
+    }
+
+    .featured-tag {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      background: #ff4757;
+      color: #fff;
+      font-size: 8px;
+      font-weight: 900;
+      padding: 2px 5px;
+      border-radius: 6px;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .badge-featured {
-      background: #6c5ce7;
-      color: #ffffff;
-      box-shadow: 0 0 10px rgba(108, 92, 231, 0.5);
-    }
-
-    .badge-soon {
-      background: #2b2b36;
-      color: #747d8c;
-    }
-
-    .game-hero-emoji {
-      font-size: 48px;
-      margin: 12px 0;
-    }
-
-    .game-title {
-      font-size: 20px;
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
-
-    .game-desc {
-      font-size: 13px;
-      color: #a4b0be;
     }
 
     /* Modal Backdrop */
     .modal-backdrop {
-      display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.82);
+      background: rgba(8, 7, 15, 0.88);
+      backdrop-filter: blur(10px);
       z-index: 1000;
+      display: none;
       align-items: center;
       justify-content: center;
       padding: 12px;
-      backdrop-filter: blur(8px);
     }
 
     .modal-content {
-      background: #181822;
+      background: #181726;
       border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 20px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      border-radius: 24px;
       width: 100%;
       max-width: 640px;
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
+      overflow: hidden;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8);
+      display: flex;
+      flex-direction: column;
     }
 
     .modal-header {
-      width: 100%;
-      padding: 12px 18px;
-      background: #232330;
+      padding: 14px 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      background: #141320;
     }
 
     .close-btn {
-      background: none;
+      background: #252438;
       border: none;
-      color: #ffffff;
-      font-size: 24px;
+      color: #fff;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      font-size: 18px;
       cursor: pointer;
-      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: 0.2s;
     }
+    .close-btn:hover { background: #ff4757; }
 
-    /* Level Devil Canvas & Controls */
-    #gameCanvas {
-      background: #1f1f28;
-      width: 100%;
-      max-width: 640px;
-      aspect-ratio: 4 / 3;
-      display: block;
-    }
-
-    .mobile-controls-panel {
-      width: 100%;
+    /* Touch Controls */
+    .mobile-controls {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 14px 20px;
-      background: #181822;
+      padding: 14px 24px;
+      background: #13121f;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
     }
-
-    .d-pad {
-      display: flex;
-      gap: 12px;
-    }
-
+    .d-pad { display: flex; gap: 10px; }
     .ctrl-btn {
-      width: 58px;
-      height: 58px;
-      border-radius: 16px;
-      background: #282836;
-      border: 2px solid #3d3d4e;
-      color: #ffffff;
+      width: 54px;
+      height: 54px;
+      border-radius: 18px;
+      background: #24223b;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #fff;
       font-size: 22px;
       display: flex;
       align-items: center;
       justify-content: center;
-      touch-action: manipulation;
-    }
-
-    .ctrl-btn:active {
-      background: #00cec9;
-      color: #111;
-      transform: scale(0.95);
-    }
-
-    .jump-btn {
-      width: 72px;
-      height: 58px;
-      background: #6c5ce7;
-      border-color: #8272f7;
-    }
-
-    .game-controls-info {
-      font-size: 11px;
-      color: #747d8c;
-      padding-bottom: 10px;
-      text-align: center;
-    }
-
-    /* Tic-Tac-Toe Elements */
-    .ttt-cell {
-      background: #1e1e28;
-      border: 2px solid #333346;
-      border-radius: 14px;
-      font-size: 36px;
-      font-weight: 900;
-      color: #ffffff;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background 0.15s, border-color 0.15s, transform 0.1s;
+      font-weight: bold;
     }
+    .ctrl-btn:active { background: var(--accent-color); }
+    .jump-btn { background: #00cec9; color: #111; width: 70px; }
 
-    .ttt-cell:active {
-      transform: scale(0.94);
-    }
-
-    .ttt-win-cell {
-      animation: winGlow 1s ease-in-out infinite alternate !important;
-      border-color: #ffeaa7 !important;
-      background: #2d3436 !important;
-    }
-
-    @keyframes winGlow {
-      0% {
-        box-shadow: 0 0 6px #ffeaa7 inset;
-      }
-      100% {
-        box-shadow: 0 0 18px #fdcb6e inset, 0 0 10px #fdcb6e;
-      }
+    .instructions-hint {
+      text-align: center;
+      font-size: 11px;
+      color: var(--text-dim);
+      padding: 8px 12px;
+      background: #11101a;
     }
   </style>
 </head>
 <body>
 
-  <!-- Top Header -->
+  <!-- Header -->
   <header>
-    <div class="site-title">🎮 FriendsGame</div>
-    <div class="author-tag">
-      <a href="https://instagram.com/_satish_official_16" target="_blank" rel="noopener">Created by Satish</a>
+    <div class="brand">
+      <span>🕹️ ARCADE PACK</span>
+      <span class="brand-badge">100+ Games</span>
     </div>
+    <div style="font-size: 13px; color: var(--text-dim);">HTML5 Fastplay</div>
   </header>
 
-  <!-- Main Game Hub -->
-  <main>
-    <!-- 1. Level Devil -->
-    <div class="game-card card-large" id="launchLevelDevil">
-      <span class="badge">Playable • 50 Levels</span>
-      <img src="level-devil.png" alt="Level Devil Logo" style="width: 58px; height: 58px; border-radius: 14px; margin: 12px 0; object-fit: cover; box-shadow: 0 4px 14px rgba(0,0,0,0.5);" />
-      <div class="card-overlay">
-        <div class="game-title">Level Devil</div>
-        <div class="game-desc">Escape dynamic troll traps and reach the exit.</div>
+  <!-- Filter Category Tags -->
+  <div class="filter-bar">
+    <div class="filter-pill active">🔥 All Games</div>
+    <div class="filter-pill">⚡ Action & Reflex</div>
+    <div class="filter-pill">👥 1v1 Multi</div>
+    <div class="filter-pill">🧩 Brain & Logic</div>
+    <div class="filter-pill">🏃 Endless</div>
+  </div>
+
+  <!-- App-Store Dense Game Grid -->
+  <main class="games-grid">
+    
+    <!-- 1. LEVEL DEVIL (PLAYABLE) -->
+    <div class="game-tile" id="openLevelDevil">
+      <div class="tile-icon-box" style="background: #f3c969;">
+        <span class="featured-tag">200 LVL</span>
+        <img src="level-devil.png" onerror="this.src='images/level-devil.png'; this.onerror=()=>{this.style.display='none'; this.nextElementSibling.style.display='block';}" alt="Level Devil" />
+        <div class="tile-emoji" style="display: none;">😈</div>
       </div>
+      <div class="tile-name">Level Devil</div>
     </div>
 
-    <!-- 2. Tic-Tac-Toe -->
-    <div class="game-card card-wide" id="launchTicTacToe">
-      <span class="badge">Playable • Bot & 2P</span>
-      <img src="tic-tac-toe.png" alt="Tic Tac Toe Logo" style="width: 58px; height: 58px; border-radius: 14px; margin: 12px 0; object-fit: cover; box-shadow: 0 4px 14px rgba(0,0,0,0.5);" />
-      <div class="card-overlay">
-        <div class="game-title">Tic-Tac-Toe</div>
-        <div class="game-desc">Play vs smart AI Bot or friend (Pass & Play).</div>
+    <!-- 2. TEMPLE RUN (PLAYABLE) -->
+    <div class="game-tile" id="openTempleRun">
+      <div class="tile-icon-box" style="background: #e67e22;">
+        <span class="featured-tag" style="background: #00cec9; color: #000;">1v1 CODE</span>
+        <img src="temple-run.jpg" onerror="this.src='images/temple-run.jpg'; this.onerror=()=>{this.style.display='none'; this.nextElementSibling.style.display='block';}" alt="Temple Run" />
+        <div class="tile-emoji" style="display: none;">🏃</div>
       </div>
+      <div class="tile-name">Temple Run</div>
     </div>
 
-    <!-- 3. Free Fire Mini Royale -->
-    <div class="game-card card-wide" id="launchFreeFire" style="background: linear-gradient(135deg, rgba(235, 94, 40, 0.3) 0%, rgba(22, 22, 30, 0.8) 100%); border-color: #ff4757;">
-      <span class="badge" style="background: #ff4757; color: #fff;">Survive • Battle Royale</span>
-      <div class="game-hero-emoji">🔥🔫</div>
-      <div class="card-overlay">
-        <div class="game-title">Free Fire: Mini Royale</div>
-        <div class="game-desc">Loot, dodge the blue zone, eliminate bots & get the BOOYAH!</div>
+    <!-- 3. TIC TAC TOE (PLAYABLE) -->
+    <div class="game-tile" id="openTicTacToe">
+      <div class="tile-icon-box" style="background: #1e1d33;">
+        <img src="tic-tac-toe.png" onerror="this.src='images/tic-tac-toe.png'; this.onerror=()=>{this.style.display='none'; this.nextElementSibling.style.display='block';}" alt="Tic Tac Toe" />
+        <div class="tile-emoji" style="display: none;">❌⭕</div>
       </div>
+      <div class="tile-name">Tic-Tac-Toe</div>
     </div>
 
-    <!-- 4. Temple Run 3D -->
-    <div class="game-card card-large" id="launchTempleRun" style="background: linear-gradient(135deg, rgba(230, 126, 34, 0.3) 0%, rgba(22, 22, 30, 0.8) 100%); border-color: #e67e22;">
-      <span class="badge" style="background: #e67e22; color: #fff;">Solo & 1v1 Duel</span>
-      <img src="temple-run.jpg" alt="Temple Run Logo" style="width: 56px; height: 56px; border-radius: 14px; margin: 12px 0; object-fit: cover; box-shadow: 0 4px 14px rgba(0,0,0,0.6);" />
-      <div class="card-overlay">
-        <div class="game-title">Temple Run 3D</div>
-        <div class="game-desc">Play Solo or Invite a friend with code to see who runs further!</div>
+    <!-- 4. SPEED MATH (PLAYABLE MINI) -->
+    <div class="game-tile" onclick="runSpeedMath()">
+      <div class="tile-icon-box" style="background: #6c5ce7;">
+        <div class="tile-emoji">⚡</div>
       </div>
+      <div class="tile-name">Math Rush</div>
     </div>
 
-    <!-- 5. Plane Simulator -->
-    <div class="game-card card-placeholder">
-      <span class="badge">Coming Soon</span>
-      <div class="game-hero-emoji">✈️</div>
-      <div class="card-overlay">
-        <div class="game-title">Plane Simulator</div>
-        <div class="game-desc">Navigate skies with realistic controls.</div>
+    <!-- 5. TAP REFLEX (PLAYABLE MINI) -->
+    <div class="game-tile" onclick="runReflexTest()">
+      <div class="tile-icon-box" style="background: #ff7675;">
+        <div class="tile-emoji">🎯</div>
       </div>
+      <div class="tile-name">Reflex Tap</div>
     </div>
 
-    <!-- 6. Math Rush -->
-    <div class="game-card card-placeholder">
-      <span class="badge">Coming Soon</span>
-      <div class="game-hero-emoji">⚡</div>
-      <div class="card-overlay">
-        <div class="game-title">Math Rush</div>
-        <div class="game-desc">Speed math equations under timer pressure.</div>
-      </div>
-    </div>
+    <!-- ARCADE WALL OF TILES (Matching your reference template) -->
+    <div class="game-tile" onclick="alert('Unlock more stars in Level Devil to play!')"><div class="tile-icon-box" style="background: #0984e3;"><div class="tile-emoji">🚀</div></div><div class="tile-name">Space Dash</div></div>
+    <div class="game-tile" onclick="alert('Unlock more stars in Level Devil to play!')"><div class="tile-icon-box" style="background: #fdcb6e;"><div class="tile-emoji">🎱</div></div><div class="tile-name">8 Ball Lite</div></div>
+    <div class="game-tile" onclick="alert('Unlock more stars in Level Devil to play!')"><div class="tile-icon-box" style="background: #00b894;"><div class="tile-emoji">🐍</div></div><div class="tile-name">Snake Neon</div></div>
+    <div class="game-tile" onclick="alert('Unlock more stars in Level Devil to play!')"><div class="tile-icon-box" style="background: #e17055;"><div class="tile-emoji">🏎️</div></div><div class="tile-name">Drift King</div></div>
+    <div class="game-tile" onclick="alert('Unlock more stars in Level Devil to play!')"><div class="tile-icon-box" style="background: #6c5ce7;"><div class="tile-emoji">🧱</div></div><div class="tile-name">Breakout</div></div>
+    <div class="game-tile" onclick="alert('Unlock more stars in Level Devil to play!')"><div class="tile-icon-box" style="background: #00cec9;"><div class="tile-emoji">🔪</div></div><div class="tile-name">Knife Hit</div></div>
+    <div class="game-tile" onclick="alert('Unlock more stars in Level Devil to play!')"><div class="tile-icon-box" style="background: #e84393;"><div class="tile-emoji">🐥</div></div><div class="tile-name">Flappy Chirp</div></div>
+    <div class="game-tile" onclick="alert('Unlock more stars in Level Devil to play!')"><div class="tile-icon-box" style="background: #2d3436;"><div class="tile-emoji">💣</div></div><div class="tile-name">Mines 3D</div></div>
+    <div class="game-tile" onclick="alert('Unlock more stars in Level Devil to play!')"><div class="tile-icon-box" style="background: #a29bfe;"><div class="tile-emoji">🎲</div></div><div class="tile-name">Ludo Solo</div></div>
+    <div class="game-tile" onclick="alert('Unlock more stars in Level Devil to play!')"><div class="tile-icon-box" style="background: #55efc4;"><div class="tile-emoji">🏹</div></div><div class="tile-name">Bowmaster</div></div>
+    <div class="game-tile" onclick="alert('Unlock more stars in Level Devil to play!')"><div class="tile-icon-box" style="background: #ffeaa7;"><div class="tile-emoji">🐻</div></div><div class="tile-name">Bear Escape</div></div>
+    <div class="game-tile" onclick="alert('Unlock more stars in Level Devil to play!')"><div class="tile-icon-box" style="background: #fab1a0;"><div class="tile-emoji">🎣</div></div><div class="tile-name">Hook Catch</div></div>
+    <div class="game-tile" onclick="alert('Unlock more stars in Level Devil to play!')"><div class="tile-icon-box" style="background: #74b9ff;"><div class="tile-emoji">✈️</div></div><div class="tile-name">Sky Flight</div></div>
+    <div class="game-tile" onclick="alert('Unlock more stars in Level Devil to play!')"><div class="tile-icon-box" style="background: #ff7675;"><div class="tile-emoji">🥊</div></div><div class="tile-name">Brawler</div></div>
+    <div class="game-tile" onclick="alert('Unlock more stars in Level Devil to play!')"><div class="tile-icon-box" style="background: #636e72;"><div class="tile-emoji">🪓</div></div><div class="tile-name">Timber Churn</div></div>
+    <div class="game-tile" onclick="alert('Unlock more stars in Level Devil to play!')"><div class="tile-icon-box" style="background: #fd79a8;"><div class="tile-emoji">🍬</div></div><div class="tile-name">Sugar Match</div></div>
+    <div class="game-tile" onclick="alert('Unlock more stars in Level Devil to play!')"><div class="tile-icon-box" style="background: #81ecec;"><div class="tile-emoji">🛹</div></div><div class="tile-name">Ollie Jump</div></div>
+    <div class="game-tile" onclick="alert('Unlock more stars in Level Devil to play!')"><div class="tile-icon-box" style="background: #b2bec3;"><div class="tile-emoji">🏀</div></div><div class="tile-name">Dunk Shot</div></div>
+
   </main>
 
-  
-  <!-- MODAL 1: Level Devil -->
-  <div class="modal-backdrop" id="gameModal">
+  <!-- ===================================================================== -->
+  <!-- MODAL 1: LEVEL DEVIL (200 PROCEDURAL STAGES)                          -->
+  <!-- ===================================================================== -->
+  <div class="modal-backdrop" id="ldModal">
     <div class="modal-content">
       <div class="modal-header">
-        <div style="font-weight: bold; display: flex; align-items: center; gap: 8px;">
-          <span>👿</span>
-          <span id="levelDisplay">Level 1 / 50</span>
+        <div style="font-weight: 800; display: flex; align-items: center; gap: 8px;">
+          <span>😈</span>
+          <span id="ldTitle">Level 1 / 200</span>
         </div>
-        <button class="close-btn" id="closeModal">&times;</button>
+        <button class="close-btn" id="closeLdBtn">&times;</button>
       </div>
 
-      <canvas id="gameCanvas" width="640" height="480"></canvas>
+      <canvas id="ldCanvas" width="640" height="420" style="width: 100%; aspect-ratio: 16/10.5; background: #f3c969; display: block;"></canvas>
 
-      <!-- Mobile D-Pad -->
-      <div class="mobile-controls-panel">
+      <div class="mobile-controls">
         <div class="d-pad">
-          <button class="ctrl-btn" id="btnLeft">◀</button>
-          <button class="ctrl-btn" id="btnRight">▶</button>
+          <button class="ctrl-btn" id="ldLeft">◀</button>
+          <button class="ctrl-btn" id="ldRight">▶</button>
         </div>
-        <button class="ctrl-btn jump-btn" id="btnJump">▲</button>
+        <button class="ctrl-btn jump-btn" id="ldJump">▲</button>
       </div>
-      <div class="game-controls-info">Desktop: A / D / Arrows = Move | Space / W / Up = Jump</div>
+      <div class="instructions-hint">Arrow Keys or On-Screen Controls • Beware of disappearing ground and troll doors!</div>
     </div>
   </div>
-    
-  
-  <!-- MODAL 2: Tic-Tac-Toe -->
-  <div class="modal-backdrop" id="tttModal">
-    <div class="modal-content" style="max-width: 380px; padding-bottom: 20px;">
-      <div class="modal-header">
-        <div style="font-weight: bold; display: flex; align-items: center; gap: 8px;">
-          <span>❌⭕</span>
-          <span>Tic-Tac-Toe</span>
-        </div>
-        <button class="close-btn" id="closeTttModal">&times;</button>
-      </div>
-      
-      <!-- Mode Selector -->
-      <div style="display: flex; gap: 8px; margin-top: 14px; justify-content: center;">
-        <button id="btnModeBot" style="padding: 6px 14px; border: none; border-radius: 12px; background: #00cec9; color: #111; font-weight: bold; font-size: 12px; cursor: pointer;">🤖 vs Bot</button>
-        <button id="btnMode2P" style="padding: 6px 14px; border: none; border-radius: 12px; background: #333342; color: #fff; font-weight: bold; font-size: 12px; cursor: pointer;">👥 2 Players</button>
-      </div>
 
-      <div id="tttStatus" style="color: #ffeb3b; font-size: 16px; font-weight: bold; margin: 12px 0 8px;">Your Turn (X)</div>
-
-      <!-- 3x3 Grid Board -->
-      <div id="tttBoard" style="display: grid; grid-template-columns: repeat(3, 80px); grid-template-rows: repeat(3, 80px); gap: 10px; background: #232330; padding: 12px; border-radius: 16px;">
-        <button class="ttt-cell" data-idx="0"></button>
-        <button class="ttt-cell" data-idx="1"></button>
-        <button class="ttt-cell" data-idx="2"></button>
-        <button class="ttt-cell" data-idx="3"></button>
-        <button class="ttt-cell" data-idx="4"></button>
-        <button class="ttt-cell" data-idx="5"></button>
-        <button class="ttt-cell" data-idx="6"></button>
-        <button class="ttt-cell" data-idx="7"></button>
-        <button class="ttt-cell" data-idx="8"></button>
-      </div>
-
-      <button id="tttResetBtn" style="margin-top: 16px; padding: 10px 22px; border: none; border-radius: 20px; background: #e74c3c; color: #fff; font-size: 13px; font-weight: bold; cursor: pointer;">Restart Game</button>
-    </div>
-  </div>
-    <!-- MODAL: Temple Run Solo & Multiplayer -->
+  <!-- ===================================================================== -->
+  <!-- MODAL 2: TEMPLE RUN 3D (SOLO & 1v1 DUEL)                             -->
+  <!-- ===================================================================== -->
   <div class="modal-backdrop" id="trModal">
-    <div class="modal-content" style="max-width: 640px;">
+    <div class="modal-content">
       <div class="modal-header">
-        <div style="font-weight: bold; display: flex; align-items: center; gap: 8px;">
-          <img src="temple-run.jpg" style="width: 22px; height: 22px; border-radius: 6px; object-fit: cover;" />
-          <span id="trStats">Score: 0 | Coins: 0</span>
+        <div style="font-weight: 800; display: flex; align-items: center; gap: 8px;">
+          <span>🏃</span>
+          <span id="trStats">Distance: 0m | Coins: 0</span>
         </div>
-        <button class="close-btn" id="closeTrModal">&times;</button>
+        <button class="close-btn" id="closeTrBtn">&times;</button>
       </div>
 
-      <!-- Mode Selection & Room Bar -->
-      <div style="width: 100%; background: #16181f; padding: 10px 14px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: center; border-bottom: 1px solid #282836;">
-        <button id="trSoloBtn" style="background: #2ed573; color: #111; border: none; padding: 6px 12px; border-radius: 12px; font-weight: bold; font-size: 12px; cursor: pointer;">🏃 Solo Play</button>
-        <button id="trCreateRoomBtn" style="background: #e67e22; color: #fff; border: none; padding: 6px 12px; border-radius: 12px; font-weight: bold; font-size: 12px; cursor: pointer;">➕ Invite Friend</button>
-        <input id="trJoinInput" type="text" placeholder="5-digit code" maxlength="5" style="width: 110px; padding: 6px 10px; border-radius: 12px; border: 1px solid #3d3d4e; background: #22222d; color: #fff; text-align: center; text-transform: uppercase; font-weight: bold; font-size: 12px;" />
-        <button id="trJoinRoomBtn" style="background: #00cec9; color: #111; border: none; padding: 6px 12px; border-radius: 12px; font-weight: bold; font-size: 12px; cursor: pointer;">🔗 Join</button>
-        <span id="trRoomStatus" style="font-size: 12px; font-weight: bold; color: #f1c40f; width: 100%; text-align: center; margin-top: 4px;">Current Mode: Solo Run</span>
+      <!-- 1v1 Multiplayer Action Bar -->
+      <div style="background: #141320; padding: 10px 16px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: center; border-bottom: 1px solid rgba(255,255,255,0.08);">
+        <button id="trSoloBtn" style="background: #2ed573; color: #111; border: none; padding: 6px 12px; border-radius: 12px; font-weight: bold; font-size: 12px; cursor: pointer;">Solo Play</button>
+        <button id="trHostBtn" style="background: #e67e22; color: #fff; border: none; padding: 6px 12px; border-radius: 12px; font-weight: bold; font-size: 12px; cursor: pointer;">➕ Invite Friend</button>
+        <input id="trCodeInput" type="text" placeholder="5-digit code" maxlength="5" style="width: 105px; padding: 6px 8px; border-radius: 12px; border: 1px solid #3d3b54; background: #222035; color: #fff; text-align: center; text-transform: uppercase; font-weight: bold; font-size: 12px;" />
+        <button id="trJoinBtn" style="background: #00cec9; color: #111; border: none; padding: 6px 12px; border-radius: 12px; font-weight: bold; font-size: 12px; cursor: pointer;">🔗 Join</button>
+        <div id="trStatusText" style="font-size: 12px; color: #f1c40f; font-weight: bold; width: 100%; text-align: center; margin-top: 4px;">Mode: Solo Endless Run</div>
       </div>
 
-      <canvas id="trCanvas" width="600" height="440" style="background: #11140e; width: 100%; aspect-ratio: 4/3; display: block;"></canvas>
+      <canvas id="trCanvas" width="600" height="420" style="width: 100%; aspect-ratio: 4/3; background: #11140e; display: block;"></canvas>
 
-      <!-- Mobile Touch Controls -->
-      <div class="mobile-controls-panel">
+      <div class="mobile-controls">
         <div class="d-pad">
           <button class="ctrl-btn" id="trLeft">◀</button>
           <button class="ctrl-btn" id="trSlide">▼</button>
           <button class="ctrl-btn" id="trRight">▶</button>
         </div>
-        <button class="ctrl-btn jump-btn" id="trJump" style="background: #e67e22; border-color: #d35400;">▲</button>
+        <button class="ctrl-btn jump-btn" id="trJump" style="background: #e67e22; color: #fff;">▲</button>
       </div>
-      <div class="game-controls-info">Controls: A/D or Left/Right = Switch Lanes | W/Up = Jump | S/Down = Slide</div>
+      <div class="instructions-hint">A/D = Lanes | W = Jump Tree Log | S = Slide Under Spikes</div>
     </div>
   </div>
-  
-  <!-- MODAL 3: Free Fire Mini Royale -->
-  <div class="modal-backdrop" id="ffModal">
-    <div class="modal-content" style="max-width: 660px;">
+
+  <!-- ===================================================================== -->
+  <!-- MODAL 3: TIC-TAC-TOE                                                  -->
+  <!-- ===================================================================== -->
+  <div class="modal-backdrop" id="tttModal">
+    <div class="modal-content" style="max-width: 420px; text-align: center;">
       <div class="modal-header">
-        <div style="font-weight: bold; display: flex; align-items: center; gap: 8px;">
-          <span>🔥</span>
-          <span id="ffStats">Alive: 6 | Kills: 0 | HP: 100</span>
-        </div>
-        <button class="close-btn" id="closeFfModal">&times;</button>
+        <div style="font-weight: 800;">❌⭕ Tic-Tac-Toe</div>
+        <button class="close-btn" id="closeTttBtn">&times;</button>
       </div>
-
-      <canvas id="ffCanvas" width="640" height="440" style="background: #2b3024; width: 100%; aspect-ratio: 4/3; display: block;"></canvas>
-
-      <!-- Mobile Controls Panel -->
-      <div class="mobile-controls-panel">
-        <div class="d-pad">
-          <button class="ctrl-btn" id="ffLeft">◀</button>
-          <button class="ctrl-btn" id="ffUp">▲</button>
-          <button class="ctrl-btn" id="ffDown">▼</button>
-          <button class="ctrl-btn" id="ffRight">▶</button>
+      <div style="padding: 24px;">
+        <div style="display: flex; gap: 10px; justify-content: center; margin-bottom: 16px;">
+          <button id="tttModeBot" style="padding: 8px 16px; border-radius: 12px; border: none; background: var(--accent-color); color: #fff; font-weight: bold; cursor: pointer;">vs Smart Bot</button>
+          <button id="tttMode2P" style="padding: 8px 16px; border-radius: 12px; border: none; background: #28263f; color: #fff; font-weight: bold; cursor: pointer;">2 Players</button>
         </div>
-        <button class="ctrl-btn jump-btn" id="ffShoot" style="background: #ff4757; border-color: #ff6b81;">🎯</button>
+        <div id="tttStatus" style="font-size: 16px; font-weight: 800; color: #f1c40f; margin-bottom: 16px;">Your Turn (X)</div>
+        <div id="tttBoard" style="display: grid; grid-template-columns: repeat(3, 80px); gap: 8px; justify-content: center; margin: 0 auto;">
+          <button class="ttt-cell" data-idx="0" style="width: 80px; height: 80px; font-size: 32px; background: #25243a; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; color: #fff; cursor: pointer;"></button>
+          <button class="ttt-cell" data-idx="1" style="width: 80px; height: 80px; font-size: 32px; background: #25243a; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; color: #fff; cursor: pointer;"></button>
+          <button class="ttt-cell" data-idx="2" style="width: 80px; height: 80px; font-size: 32px; background: #25243a; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; color: #fff; cursor: pointer;"></button>
+          <button class="ttt-cell" data-idx="3" style="width: 80px; height: 80px; font-size: 32px; background: #25243a; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; color: #fff; cursor: pointer;"></button>
+          <button class="ttt-cell" data-idx="4" style="width: 80px; height: 80px; font-size: 32px; background: #25243a; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; color: #fff; cursor: pointer;"></button>
+          <button class="ttt-cell" data-idx="5" style="width: 80px; height: 80px; font-size: 32px; background: #25243a; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; color: #fff; cursor: pointer;"></button>
+          <button class="ttt-cell" data-idx="6" style="width: 80px; height: 80px; font-size: 32px; background: #25243a; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; color: #fff; cursor: pointer;"></button>
+          <button class="ttt-cell" data-idx="7" style="width: 80px; height: 80px; font-size: 32px; background: #25243a; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; color: #fff; cursor: pointer;"></button>
+          <button class="ttt-cell" data-idx="8" style="width: 80px; height: 80px; font-size: 32px; background: #25243a; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; color: #fff; cursor: pointer;"></button>
+        </div>
+        <button id="tttReset" style="margin-top: 20px; background: #333150; border: none; color: #fff; padding: 10px 20px; border-radius: 14px; font-weight: bold; cursor: pointer;">Clear Board</button>
       </div>
-      <div class="game-controls-info">Controls: WASD / Arrows to Move | Left Click or Tap Screen to Aim & Shoot</div>
     </div>
   </div>
-  
-  <script>
-    // --- Firebase Initialization ---
-    const firebaseConfig = {
-      apiKey: "AIzaSyBzLchy5M2fLne4c7Ghw1KNN8wVrlZdd8M",
-      authDomain: "friendsgame-872f5.firebaseapp.com",
-      databaseURL: "https://friendsgame-872f5-default-rtdb.firebaseio.com",
-      projectId: "friendsgame-872f5",
-      storageBucket: "friendsgame-872f5.firebasestorage.app",
-      messagingSenderId: "522534013233",
-      appId: "1:522534013233:web:f5faa6e6795023d0420810",
-      measurementId: "G-PW5H3G97QR"
-    };
 
-    if (typeof firebase !== "undefined" && firebase.initializeApp) {
+  <!-- ===================================================================== -->
+  <!-- GAME ENGINES & SCRIPTS                                                -->
+  <!-- ===================================================================== -->
+  <script>
+    // --- Optional Firebase Configuration (Multiplayer Sync) ---
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT.firebaseapp.com",
+      databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+      projectId: "YOUR_PROJECT"
+    };
+    if (!firebase.apps.length && firebaseConfig.apiKey !== "YOUR_API_KEY") {
       firebase.initializeApp(firebaseConfig);
     }
 
     // =========================================================================
-    // LEVEL DEVIL ENGINE
+    // 1. LEVEL DEVIL 200-STAGE PROCEDURAL ENGINE
     // =========================================================================
-    const modal = document.getElementById("gameModal");
-    const launchBtn = document.getElementById("launchLevelDevil");
-    const closeBtn = document.getElementById("closeModal");
-    const canvas = document.getElementById("gameCanvas");
-    const ctx = canvas.getContext("2d");
-    const levelDisplay = document.getElementById("levelDisplay");
+    const ldModal = document.getElementById("ldModal");
+    const openLd = document.getElementById("openLevelDevil");
+    const closeLd = document.getElementById("closeLdBtn");
+    const ldCanvas = document.getElementById("ldCanvas");
+    const ldCtx = ldCanvas.getContext("2d");
+    const ldTitle = document.getElementById("ldTitle");
 
-    let currentLevel = 1;
-    const TOTAL_LEVELS = 50;
-    let animationFrameId = null;
+    let ldLevel = 1;
+    let ldDeaths = 0;
+    let ldRunning = false;
+    let ldAnimId = null;
 
-    const inputState = { left: false, right: false, jump: false };
+    const ldInput = { left: false, right: false, jump: false };
+    let ldPlayer = { x: 50, y: 300, w: 18, h: 24, vx: 0, vy: 0, grounded: false, facing: 1 };
+    let ldDoor = { x: 570, y: 304, w: 26, h: 36, targetX: 570, targetY: 304, hasFled: false };
+    let ldPlatforms = [];
+    let ldFakePlatforms = [];
+    let ldSpikes = [];
+    let ldHazards = [];
+    let ldTrollActions = [];
+    let ldControlsInverted = false;
 
-    launchBtn.addEventListener("click", () => {
-      modal.style.display = "flex";
-      currentLevel = 1;
-      initLevel(currentLevel);
-      startGame();
-    });
-
-    closeBtn.addEventListener("click", () => {
-      modal.style.display = "none";
-      stopGame();
-    });
-
-    window.addEventListener("keydown", (e) => {
-      if (e.code === "ArrowLeft" || e.code === "KeyA") inputState.left = true;
-      if (e.code === "ArrowRight" || e.code === "KeyD") inputState.right = true;
-      if (e.code === "ArrowUp" || e.code === "KeyW" || e.code === "Space") inputState.jump = true;
-    });
-
-    window.addEventListener("keyup", (e) => {
-      if (e.code === "ArrowLeft" || e.code === "KeyA") inputState.left = false;
-      if (e.code === "ArrowRight" || e.code === "KeyD") inputState.right = false;
-      if (e.code === "ArrowUp" || e.code === "KeyW" || e.code === "Space") inputState.jump = false;
-    });
-
-    function bindTouch(btnId, actionKey) {
-      const btn = document.getElementById(btnId);
-      if (!btn) return;
-      const start = (e) => { if (e.cancelable) e.preventDefault(); inputState[actionKey] = true; };
-      const end = (e) => { if (e.cancelable) e.preventDefault(); inputState[actionKey] = false; };
-      btn.addEventListener("touchstart", start, { passive: false });
-      btn.addEventListener("touchend", end, { passive: false });
-      btn.addEventListener("touchcancel", end, { passive: false });
-      btn.addEventListener("mousedown", start);
-      btn.addEventListener("mouseup", end);
-      btn.addEventListener("mouseleave", end);
-    }
-
-    bindTouch("btnLeft", "left");
-    bindTouch("btnRight", "right");
-    bindTouch("btnJump", "jump");
-
-    let player = { x: 50, y: 380, w: 24, h: 24, vx: 0, vy: 0, grounded: false };
-    let door = { x: 550, y: 385, w: 32, h: 45 };
-    let platforms = [];
-    let spikes = [];
-    let trollTriggered = false;
-
-    function initLevel(lvl) {
-      trollTriggered = false;
-      levelDisplay.textContent = `Level ${lvl} / ${TOTAL_LEVELS}`;
-
-      player.x = 50;
-      player.y = 380;
-      player.vx = 0;
-      player.vy = 0;
-      door.x = 550;
-      door.y = 385;
-
-      platforms = [
-        { x: 0, y: 430, w: 640, h: 50, dynamic: false },
-        { x: 180, y: 340, w: 90, h: 20, dynamic: false },
-        { x: 330, y: 270, w: 100, h: 20, dynamic: false }
-      ];
-      spikes = [];
-
-      if (lvl >= 2) spikes.push({ x: 275, y: 410, w: 30, h: 20, hidden: lvl > 8 });
-      if (lvl >= 5) platforms[1].dynamic = true;
-      if (lvl >= 10) platforms.push({ x: 440, y: 330, w: 70, h: 20, moves: true, speed: 2, dir: 1, dynamic: false });
-      if (lvl >= 20) spikes.push({ x: 450, y: 410, w: 40, h: 20, hidden: true });
-    }
-
-    function update() {
-      const invert = (currentLevel % 7 === 0);
-      const moveLeft = invert ? inputState.right : inputState.left;
-      const moveRight = invert ? inputState.left : inputState.right;
-
-      if (moveLeft) player.vx = -4.5;
-      else if (moveRight) player.vx = 4.5;
-      else player.vx = 0;
-
-      if (inputState.jump && player.grounded) {
-        player.vy = -9.8;
-        player.grounded = false;
-      }
-
-      player.vy += 0.45;
-      player.x += player.vx;
-      player.y += player.vy;
-
-      if (currentLevel >= 3 && player.x > door.x - 120 && !trollTriggered) {
-        door.x += 45;
-        trollTriggered = true;
-      }
-
-      for (let p of platforms) {
-        if (p.moves) {
-          p.x += p.speed * p.dir;
-          if (p.x > 500 || p.x < 350) p.dir *= -1;
-        }
-        if (p.dynamic && trollTriggered) p.y += 3;
-      }
-
-      player.grounded = false;
-      for (let p of platforms) {
-        if (
-          player.x < p.x + p.w &&
-          player.x + player.w > p.x &&
-          player.y + player.h >= p.y &&
-          player.y + player.h <= p.y + 16 &&
-          player.vy >= 0
-        ) {
-          player.grounded = true;
-          player.vy = 0;
-          player.y = p.y - player.h;
-        }
-      }
-
-      for (let s of spikes) {
-        if (s.hidden && player.x > s.x - 50) s.hidden = false;
-        if (!s.hidden) {
-          if (
-            player.x < s.x + s.w &&
-            player.x + player.w > s.x &&
-            player.y < s.y + s.h &&
-            player.y + player.h > s.y
-          ) {
-            initLevel(currentLevel);
-            return;
-          }
-        }
-      }
-
-      if (player.y > 480) {
-        initLevel(currentLevel);
-        return;
-      }
-
-      if (
-        player.x < door.x + door.w &&
-        player.x + player.w > door.x &&
-        player.y < door.y + door.h &&
-        player.y + player.h > door.y
-      ) {
-        if (currentLevel < TOTAL_LEVELS) {
-          currentLevel++;
-          initLevel(currentLevel);
-        } else {
-          alert("🎉 You cleared all 50 troll levels!");
-          currentLevel = 1;
-          initLevel(currentLevel);
-        }
-    // =========================================================================
-    // LEVEL DEVIL 200-LEVEL PROCEDURAL TROLL ENGINE (2 TO 5 TROLLS PER LEVEL)
-    // =========================================================================
-    const modal = document.getElementById("gameModal");
-    const launchBtn = document.getElementById("launchLevelDevil");
-    const closeBtn = document.getElementById("closeModal");
-    const canvas = document.getElementById("gameCanvas");
-    const ctx = canvas.getContext("2d");
-    const levelDisplay = document.getElementById("levelDisplay");
-
-    let currentLevel = 1;
-    let deathCount = 0;
-    const TOTAL_LEVELS = 200;
-    let animationFrameId = null;
-
-    const inputState = { left: false, right: false, jump: false };
-
-    canvas.width = 640;
-    canvas.height = 420;
-
-    let player = {
-      x: 50,
-      y: 300,
-      w: 18,
-      h: 24,
-      vx: 0,
-      vy: 0,
-      speed: 3.8,
-      jumpForce: -10.2,
-      grounded: false,
-      facing: 1
-    };
-
-    let door = { x: 570, y: 304, w: 26, h: 36, targetX: 570, targetY: 304, hasFled: false };
-    let platforms = [];
-    let fakePlatforms = [];
-    let spikes = [];
-    let movingHazards = [];
-    let trollActions = [];
-    let controlsInverted = false;
-    let activeFeaturesCount = 2;
-
-    const colorPalettes = [
-      { bg: "#f3c969", platform: "#1e3a5f", spike: "#d90429" }, // Golden & Blue
-      { bg: "#cd8d7a", platform: "#4a1c40", spike: "#f43f5e" }, // Purple Dusk
-      { bg: "#a8dadc", platform: "#1d3557", spike: "#e63946" }, // Retro Teal
-      { bg: "#95d5b2", platform: "#081c15", spike: "#d00000" }, // Poison Forest
-      { bg: "#f4a261", platform: "#264653", spike: "#b5179e" }, // Desert Ruins
-      { bg: "#e0aaff", platform: "#240046", spike: "#ff0054" }  // Synthwave Void
+    const ldThemes = [
+      { bg: "#f3c969", platform: "#1e3a5f", spike: "#d90429" },
+      { bg: "#cd8d7a", platform: "#4a1c40", spike: "#f43f5e" },
+      { bg: "#a8dadc", platform: "#1d3557", spike: "#e63946" },
+      { bg: "#95d5b2", platform: "#081c15", spike: "#d00000" },
+      { bg: "#f4a261", platform: "#264653", spike: "#b5179e" }
     ];
-    let currentTheme = colorPalettes[0];
+    let ldCurTheme = ldThemes[0];
 
-    launchBtn.addEventListener("click", () => {
-      modal.style.display = "flex";
-      currentLevel = 1;
-      deathCount = 0;
-      buildLevel(currentLevel);
-      startGameLoop();
+    openLd.addEventListener("click", () => {
+      ldModal.style.display = "flex";
+      ldLevel = 1;
+      ldDeaths = 0;
+      buildLdLevel(ldLevel);
+      ldRunning = true;
+      ldLoop();
     });
 
-    closeBtn.addEventListener("click", () => {
-      modal.style.display = "none";
-      cancelAnimationFrame(animationFrameId);
+    closeLd.addEventListener("click", () => {
+      ldModal.style.display = "none";
+      ldRunning = false;
+      cancelAnimationFrame(ldAnimId);
     });
 
-    // Controls
     window.addEventListener("keydown", (e) => {
-      let kLeft = !controlsInverted ? (e.code === "ArrowLeft" || e.code === "KeyA") : (e.code === "ArrowRight" || e.code === "KeyD");
-      let kRight = !controlsInverted ? (e.code === "ArrowRight" || e.code === "KeyD") : (e.code === "ArrowLeft" || e.code === "KeyA");
-
-      if (kLeft) inputState.left = true;
-      if (kRight) inputState.right = true;
-      if (e.code === "ArrowUp" || e.code === "KeyW" || e.code === "Space") {
-        if (!inputState.jump && player.grounded) {
-          player.vy = player.jumpForce;
-          player.grounded = false;
-        }
-        inputState.jump = true;
+      let l = !ldControlsInverted ? (e.code === "ArrowLeft" || e.code === "KeyA") : (e.code === "ArrowRight" || e.code === "KeyD");
+      let r = !ldControlsInverted ? (e.code === "ArrowRight" || e.code === "KeyD") : (e.code === "ArrowLeft" || e.code === "KeyA");
+      if (l) ldInput.left = true;
+      if (r) ldInput.right = true;
+      if ((e.code === "ArrowUp" || e.code === "KeyW" || e.code === "Space") && ldPlayer.grounded) {
+        ldPlayer.vy = -10.4;
+        ldPlayer.grounded = false;
       }
     });
 
     window.addEventListener("keyup", (e) => {
-      if (e.code === "ArrowLeft" || e.code === "KeyA") {
-        if (!controlsInverted) inputState.left = false; else inputState.right = false;
-      }
-      if (e.code === "ArrowRight" || e.code === "KeyD") {
-        if (!controlsInverted) inputState.right = false; else inputState.left = false;
-      }
-      if (e.code === "ArrowUp" || e.code === "KeyW" || e.code === "Space") inputState.jump = false;
+      if (e.code === "ArrowLeft" || e.code === "KeyA") { if (!ldControlsInverted) ldInput.left = false; else ldInput.right = false; }
+      if (e.code === "ArrowRight" || e.code === "KeyD") { if (!ldControlsInverted) ldInput.right = false; else ldInput.left = false; }
     });
 
-    function bindTouchBtn(btnId, action) {
-      const b = document.getElementById(btnId);
-      if (!b) return;
-      const start = (e) => {
+    function bindLdTouch(id, act) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const fn = (e) => {
         if (e.cancelable) e.preventDefault();
-        if (action === "jump") {
-          if (player.grounded) player.vy = player.jumpForce;
-          inputState.jump = true;
-        } else {
-          let dir = action;
-          if (controlsInverted) dir = action === "left" ? "right" : "left";
-          inputState[dir] = true;
+        if (act === "jump" && ldPlayer.grounded) { ldPlayer.vy = -10.4; ldPlayer.grounded = false; }
+        else {
+          let dir = act;
+          if (ldControlsInverted) dir = act === "left" ? "right" : "left";
+          ldInput[dir] = true;
         }
       };
-      const end = (e) => {
-        if (e.cancelable) e.preventDefault();
-        inputState.left = false;
-        inputState.right = false;
-      };
-      b.addEventListener("touchstart", start, { passive: false });
-      b.addEventListener("touchend", end, { passive: false });
-      b.addEventListener("mousedown", start);
-      b.addEventListener("mouseup", end);
+      el.addEventListener("touchstart", fn, { passive: false });
+      el.addEventListener("mousedown", fn);
+      const end = () => { ldInput.left = false; ldInput.right = false; };
+      el.addEventListener("touchend", end);
+      el.addEventListener("mouseup", end);
     }
-    bindTouchBtn("btnLeft", "left");
-    bindTouchBtn("btnRight", "right");
-    bindTouchBtn("btnJump", "jump");
+    bindLdTouch("ldLeft", "left");
+    bindLdTouch("ldRight", "right");
+    bindLdTouch("ldJump", "jump");
 
-    // Pseudo-Random Number Generator based on Level Seed
     function seededRandom(seed) {
       const x = Math.sin(seed++) * 10000;
       return x - Math.floor(x);
     }
 
-    // =========================================================================
-    // 200-LEVEL GENERATOR ENGINE (MIN 2, MAX 5 FEATURES PER LEVEL)
-    // =========================================================================
-    function buildLevel(lvl) {
-      levelDisplay.textContent = `Level ${lvl} / 200 | Deaths: ${deathCount}`;
-      currentTheme = colorPalettes[(lvl - 1) % colorPalettes.length];
+    function buildLdLevel(lvl) {
+      ldTitle.textContent = `Level ${lvl} / 200 | Deaths: ${ldDeaths}`;
+      ldCurTheme = ldThemes[(lvl - 1) % ldThemes.length];
+      ldPlayer.x = 45; ldPlayer.y = 300; ldPlayer.vx = 0; ldPlayer.vy = 0;
+      ldControlsInverted = false;
+      ldPlatforms = []; ldFakePlatforms = []; ldSpikes = []; ldHazards = []; ldTrollActions = [];
+      ldDoor = { x: 570, y: 304, w: 26, h: 36, targetX: 570, targetY: 304, hasFled: false };
 
-      player.x = 45;
-      player.y = 300;
-      player.vx = 0;
-      player.vy = 0;
-      controlsInverted = false;
+      ldPlatforms.push({ x: 10, y: 340, w: 120, h: 50 });
+      ldPlatforms.push({ x: 530, y: 340, w: 100, h: 50 });
 
-      platforms = [];
-      fakePlatforms = [];
-      spikes = [];
-      movingHazards = [];
-      trollActions = [];
-
-      door = { x: 570, y: 304, w: 26, h: 36, targetX: 570, targetY: 304, hasFled: false };
-
-      // Base Platforms
-      platforms.push({ x: 10, y: 340, w: 120, h: 50 }); // Spawn ledge
-      platforms.push({ x: 530, y: 340, w: 100, h: 50 }); // Exit ledge
-
-      // Procedural Bridge / Stepping Pillars
-      let seed = lvl * 1337;
+      let seed = lvl * 2199;
       let rand = () => { seed++; return seededRandom(seed); };
 
-      const bridgeSegments = 3;
-      const stepWidth = 85;
-      for (let i = 0; i < bridgeSegments; i++) {
-        let px = 140 + i * 130;
-        let py = 320 - Math.floor(rand() * 40);
-        platforms.push({ x: px, y: py, w: stepWidth, h: 35, id: `plat_${i}`, drop: false });
+      for (let i = 0; i < 3; i++) {
+        ldPlatforms.push({ x: 140 + i * 130, y: 320 - Math.floor(rand() * 40), w: 85, h: 35, drop: false });
       }
 
-      // Bottom death pit
       for (let sx = 10; sx < 630; sx += 32) {
-        spikes.push({ x: sx, y: 398, w: 22, h: 18 });
+        ldSpikes.push({ x: sx, y: 398, w: 22, h: 18 });
       }
 
-      // Feature count increases with stage: Min 2, Max 5 features
-      activeFeaturesCount = Math.min(5, Math.max(2, Math.floor(2 + (lvl / 50))));
-
-      // Pool of 9 Troll Features
-      const featurePool = [
-        "falling_platform",
-        "runaway_door",
-        "ceiling_guillotine",
-        "pop_up_spikes",
-        "drop_stalactite",
-        "reverse_controls",
-        "moving_patrol_saw",
-        "fake_stepping_stone",
-        "jumping_door"
-      ];
-
-      // Shuffle and pick between 2 and 5 features deterministically for this level
-      let selectedFeatures = [];
-      let tempPool = [...featurePool];
-      for (let f = 0; f < activeFeaturesCount; f++) {
-        let pickIdx = Math.floor(rand() * tempPool.length);
-        selectedFeatures.push(tempPool[pickIdx]);
-        tempPool.splice(pickIdx, 1);
+      const activeCount = Math.min(5, Math.max(2, Math.floor(2 + (lvl / 50))));
+      const pool = ["drop_plat", "run_door", "guillotine", "pop_spikes", "ceiling_drop", "invert"];
+      let chosen = [];
+      let temp = [...pool];
+      for (let i = 0; i < activeCount; i++) {
+        let idx = Math.floor(rand() * temp.length);
+        chosen.push(temp[idx]);
+        temp.splice(idx, 1);
       }
 
-      // --- APPLY THE SELECTED TROLL FEATURES ---
-      selectedFeatures.forEach(feat => {
-        if (feat === "falling_platform") {
-          // Feature 1: Middle platform falls into spikes on contact
-          const targetPlat = platforms[2];
-          trollActions.push(() => {
-            if (player.x > targetPlat.x - 10 && player.x < targetPlat.x + targetPlat.w && player.grounded) {
-              targetPlat.drop = true;
-            }
-            if (targetPlat.drop) targetPlat.y += 6.5;
+      chosen.forEach(feat => {
+        if (feat === "drop_plat") {
+          const target = ldPlatforms[2];
+          ldTrollActions.push(() => {
+            if (ldPlayer.x > target.x - 10 && ldPlayer.x < target.x + target.w && ldPlayer.grounded) target.drop = true;
+            if (target.drop) target.y += 6.5;
           });
-        }
-        else if (feat === "runaway_door") {
-          // Feature 2: Door flees to the starting zone
-          trollActions.push(() => {
-            if (player.x > 460 && !door.hasFled) {
-              door.hasFled = true;
-              door.targetX = 60;
-            }
-            door.x += (door.targetX - door.x) * 0.14;
+        } else if (feat === "run_door") {
+          ldTrollActions.push(() => {
+            if (ldPlayer.x > 460 && !ldDoor.hasFled) { ldDoor.hasFled = true; ldDoor.targetX = 60; }
+            ldDoor.x += (ldDoor.targetX - ldDoor.x) * 0.14;
           });
-        }
-        else if (feat === "jumping_door") {
-          // Feature 3: Door flies straight up into the sky
-          platforms.push({ x: 520, y: 150, w: 100, h: 20 });
-          trollActions.push(() => {
-            if (player.x > 490 && !door.hasFled) {
-              door.hasFled = true;
-              door.targetY = 114;
-            }
-            door.y += (door.targetY - door.y) * 0.12;
-          });
-        }
-        else if (feat === "ceiling_guillotine") {
-          // Feature 4: Giant ceiling block crushes the player midway
-          const guillotine = { x: 260 + Math.floor(rand() * 80), y: -120, w: 36, h: 240, dropped: false };
-          platforms.push(guillotine);
-          trollActions.push(() => {
-            if (player.x > guillotine.x - 45 && !guillotine.dropped) {
-              guillotine.y += 19;
-              if (guillotine.y >= 100) guillotine.dropped = true;
+        } else if (feat === "guillotine") {
+          const guil = { x: 260 + Math.floor(rand() * 80), y: -120, w: 36, h: 240, dropped: false };
+          ldPlatforms.push(guil);
+          ldTrollActions.push(() => {
+            if (ldPlayer.x > guil.x - 45 && !guil.dropped) {
+              guil.y += 19;
+              if (guil.y >= 100) guil.dropped = true;
             }
           });
-        }
-        else if (feat === "pop_up_spikes") {
-          // Feature 5: Invisible spikes pop up from the landing ledge
-          const popSpike = { x: 540, y: 340, w: 24, h: 0, maxH: 22 };
-          spikes.push(popSpike);
-          trollActions.push(() => {
-            if (player.x > 460 && popSpike.h < popSpike.maxH) {
-              popSpike.h += 5;
-              popSpike.y -= 5;
-            }
+        } else if (feat === "pop_spikes") {
+          const spk = { x: 540, y: 340, w: 24, h: 0, maxH: 22 };
+          ldSpikes.push(spk);
+          ldTrollActions.push(() => {
+            if (ldPlayer.x > 460 && spk.h < spk.maxH) { spk.h += 5; spk.y -= 5; }
           });
-        }
-        else if (feat === "drop_stalactite") {
-          // Feature 6: Falling ceiling spike
-          const dropSpike = { x: 200 + Math.floor(rand() * 180), y: 10, w: 24, h: 22, vy: 0, active: false };
-          spikes.push(dropSpike);
-          trollActions.push(() => {
-            if (player.x > dropSpike.x - 30 && !dropSpike.active) dropSpike.active = true;
-            if (dropSpike.active && dropSpike.y < 320) {
-              dropSpike.vy += 0.85;
-              dropSpike.y += dropSpike.vy;
-            }
+        } else if (feat === "ceiling_drop") {
+          const dSpk = { x: 200 + Math.floor(rand() * 180), y: 10, w: 24, h: 22, vy: 0, act: false };
+          ldSpikes.push(dSpk);
+          ldTrollActions.push(() => {
+            if (ldPlayer.x > dSpk.x - 30 && !dSpk.act) dSpk.act = true;
+            if (dSpk.act && dSpk.y < 320) { dSpk.vy += 0.85; dSpk.y += dSpk.vy; }
           });
-        }
-        else if (feat === "reverse_controls") {
-          // Feature 7: Control reversal zone in the middle of the screen
-          trollActions.push(() => {
-            if (player.x > 210 && player.x < 420) {
-              controlsInverted = true;
-            } else {
-              controlsInverted = false;
-            }
+        } else if (feat === "invert") {
+          ldTrollActions.push(() => {
+            ldControlsInverted = (ldPlayer.x > 210 && ldPlayer.x < 420);
           });
-        }
-        else if (feat === "moving_patrol_saw") {
-          // Feature 8: Oscillating hazard hovering over platforms
-          movingHazards.push({
-            x: 220,
-            y: 260,
-            radius: 12,
-            minX: 160,
-            maxX: 420,
-            vx: 3 + rand() * 2
-          });
-        }
-        else if (feat === "fake_stepping_stone") {
-          // Feature 9: Fake platform with no physical collision
-          fakePlatforms.push({ x: 270, y: 270, w: 75, h: 25 });
         }
       });
     }
 
-    // =========================================================================
-    // PHYSICS & COLLISION LOOP
-    // =========================================================================
-    function updateDevil() {
-      // Horizontal motion
-      if (inputState.left) {
-        player.vx = -player.speed;
-        player.facing = -1;
-      } else if (inputState.right) {
-        player.vx = player.speed;
-        player.facing = 1;
-      } else {
-        player.vx *= 0.65;
-      }
+    function updateLd() {
+      if (ldInput.left) { ldPlayer.vx = -3.8; ldPlayer.facing = -1; }
+      else if (ldInput.right) { ldPlayer.vx = 3.8; ldPlayer.facing = 1; }
+      else { ldPlayer.vx *= 0.65; }
 
-      // Gravity
-      player.vy += 0.55;
-      if (player.vy > 12) player.vy = 12;
+      ldPlayer.vy = Math.min(12, ldPlayer.vy + 0.55);
+      ldPlayer.x += ldPlayer.vx;
 
-      // X position & platform walls
-      player.x += player.vx;
-      platforms.forEach(p => {
-        if (
-          player.x < p.x + p.w &&
-          player.x + player.w > p.x &&
-          player.y < p.y + p.h &&
-          player.y + player.h > p.y
-        ) {
-          if (player.vx > 0) player.x = p.x - player.w;
-          else if (player.vx < 0) player.x = p.x + p.w;
+      ldPlatforms.forEach(p => {
+        if (ldPlayer.x < p.x + p.w && ldPlayer.x + ldPlayer.w > p.x && ldPlayer.y < p.y + p.h && ldPlayer.y + ldPlayer.h > p.y) {
+          if (ldPlayer.vx > 0) ldPlayer.x = p.x - ldPlayer.w;
+          else if (ldPlayer.vx < 0) ldPlayer.x = p.x + p.w;
         }
       });
 
-      // Y position & platform landings
-      player.y += player.vy;
-      player.grounded = false;
-      platforms.forEach(p => {
-        if (
-          player.x + 3 < p.x + p.w &&
-          player.x + player.w - 3 > p.x &&
-          player.y < p.y + p.h &&
-          player.y + player.h > p.y
-        ) {
-          if (player.vy > 0) {
-            player.y = p.y - player.h;
-            player.vy = 0;
-            player.grounded = true;
-          } else if (player.vy < 0) {
-            player.y = p.y + p.h;
-            player.vy = 0;
-          }
+      ldPlayer.y += ldPlayer.vy;
+      ldPlayer.grounded = false;
+
+      ldPlatforms.forEach(p => {
+        if (ldPlayer.x + 3 < p.x + p.w && ldPlayer.x + ldPlayer.w - 3 > p.x && ldPlayer.y < p.y + p.h && ldPlayer.y + ldPlayer.h > p.y) {
+          if (ldPlayer.vy > 0) { ldPlayer.y = p.y - ldPlayer.h; ldPlayer.vy = 0; ldPlayer.grounded = true; }
+          else if (ldPlayer.vy < 0) { ldPlayer.y = p.y + p.h; ldPlayer.vy = 0; }
         }
       });
 
-      // Execute dynamic level trolls
-      trollActions.forEach(action => action());
+      ldTrollActions.forEach(a => a());
 
-      // Update Moving Hazards
-      movingHazards.forEach(h => {
-        h.x += h.vx;
-        if (h.x <= h.minX || h.x >= h.maxX) h.vx *= -1;
-
-        // Circle vs Box collision
-        let nearestX = Math.max(player.x, Math.min(h.x, player.x + player.w));
-        let nearestY = Math.max(player.y, Math.min(h.y, player.y + player.h));
-        let dx = h.x - nearestX;
-        let dy = h.y - nearestY;
-        if ((dx * dx + dy * dy) < (h.radius * h.radius)) {
-          killPlayer();
-          return;
-        }
-      });
-
-      // Spike Hitboxes
-      for (let s of spikes) {
-        if (
-          player.x + player.w - 4 > s.x &&
-          player.x + 4 < s.x + s.w &&
-          player.y + player.h > s.y &&
-          player.y < s.y + s.h
-        ) {
-          killPlayer();
-          return;
+      for (let s of ldSpikes) {
+        if (ldPlayer.x + ldPlayer.w - 4 > s.x && ldPlayer.x + 4 < s.x + s.w && ldPlayer.y + ldPlayer.h > s.y && ldPlayer.y < s.y + s.h) {
+          killLd(); return;
         }
       }
 
-      // Void death
-      if (player.y > canvas.height + 40) {
-        killPlayer();
-        return;
-      }
+      if (ldPlayer.y > ldCanvas.height + 40) { killLd(); return; }
 
-      // Reach Door (Next Stage)
-      if (
-        player.x + player.w > door.x + 4 &&
-        player.x < door.x + door.w - 4 &&
-        player.y + player.h > door.y + 4 &&
-        player.y < door.y + door.h
-      ) {
-        if (currentLevel < TOTAL_LEVELS) {
-          currentLevel++;
-          buildLevel(currentLevel);
-        } else {
-          alert(`🏆 UNBELIEVABLE! You cleared all 200 levels with ${deathCount} total deaths!`);
-          currentLevel = 1;
-          deathCount = 0;
-          buildLevel(currentLevel);
-        }
+      if (ldPlayer.x + ldPlayer.w > ldDoor.x + 4 && ldPlayer.x < ldDoor.x + ldDoor.w - 4 && ldPlayer.y + ldPlayer.h > ldDoor.y && ldPlayer.y < ldDoor.y + ldDoor.h) {
+        if (ldLevel < 200) { ldLevel++; buildLdLevel(ldLevel); }
+        else { alert("🏆 Unbelievable! You cleared all 200 Level Devil stages!"); ldLevel = 1; buildLdLevel(1); }
       }
     }
 
-    function killPlayer() {
-      deathCount++;
-      buildLevel(currentLevel);
+    function killLd() {
+      ldDeaths++;
+      buildLdLevel(ldLevel);
     }
 
-    function renderDevil() {
-      // 1. Stage Pastel Background
-      ctx.fillStyle = currentTheme.bg;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    function renderLd() {
+      ldCtx.fillStyle = ldCurTheme.bg;
+      ldCtx.fillRect(0, 0, ldCanvas.width, ldCanvas.height);
 
-      // Inverted Controls Warning Overlay
-      if (controlsInverted) {
-        ctx.fillStyle = "rgba(235, 77, 75, 0.15)";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = "#eb4d4b";
-        ctx.font = "900 13px sans-serif";
-        ctx.fillText("⚠️ CURSED ZONE: CONTROLS INVERTED ⚠️", canvas.width / 2 - 120, 30);
+      if (ldControlsInverted) {
+        ldCtx.fillStyle = "rgba(235, 77, 75, 0.15)";
+        ldCtx.fillRect(0, 0, ldCanvas.width, ldCanvas.height);
       }
 
-      // 2. Door
-      ctx.fillStyle = "#ffffff";
-      ctx.beginPath();
-      ctx.roundRect(door.x, door.y, door.w, door.h, [14, 14, 0, 0]);
-      ctx.fill();
-      ctx.fillStyle = "#1e293b";
-      ctx.beginPath();
-      ctx.roundRect(door.x + 4, door.y + 4, door.w - 8, door.h - 4, [10, 10, 0, 0]);
-      ctx.fill();
+      // Door
+      ldCtx.fillStyle = "#ffffff";
+      ldCtx.beginPath(); ldCtx.roundRect(ldDoor.x, ldDoor.y, ldDoor.w, ldDoor.h, [14, 14, 0, 0]); ldCtx.fill();
+      ldCtx.fillStyle = "#1e293b";
+      ldCtx.beginPath(); ldCtx.roundRect(ldDoor.x + 4, ldDoor.y + 4, ldDoor.w - 8, ldDoor.h - 4, [10, 10, 0, 0]); ldCtx.fill();
 
-      // 3. Fake Platforms
-      fakePlatforms.forEach(fp => {
-        ctx.fillStyle = currentTheme.platform;
-        ctx.fillRect(fp.x, fp.y, fp.w, fp.h);
-      });
+      // Platforms
+      ldCtx.fillStyle = ldCurTheme.platform;
+      ldPlatforms.forEach(p => ldCtx.fillRect(p.x, p.y, p.w, p.h));
 
-      // 4. Real Solid Platforms
-      ctx.fillStyle = currentTheme.platform;
-      platforms.forEach(p => {
-        ctx.fillRect(p.x, p.y, p.w, p.h);
-      });
-
-      // 5. Spikes
-      ctx.fillStyle = currentTheme.spike;
-      spikes.forEach(s => {
+      // Spikes
+      ldCtx.fillStyle = ldCurTheme.spike;
+      ldSpikes.forEach(s => {
         if (s.h <= 0) return;
-        ctx.beginPath();
-        ctx.moveTo(s.x, s.y + s.h);
-        ctx.lineTo(s.x + s.w / 2, s.y);
-        ctx.lineTo(s.x + s.w, s.y + s.h);
-        ctx.closePath();
-        ctx.fill();
-      });
-
-      // 6. Moving Hazard Orbs
-      movingHazards.forEach(h => {
-        ctx.fillStyle = "#d00000";
-        ctx.beginPath();
-        ctx.arc(h.x, h.y, h.radius, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = "#ffffff";
-        ctx.beginPath();
-        ctx.arc(h.x, h.y, 4, 0, Math.PI * 2);
-        ctx.fill();
-      });
-
-      // 7. Player Character
-      ctx.fillStyle = "#111116";
-      ctx.fillRect(player.x, player.y + 4, player.w, player.h - 4);
-      ctx.fillRect(player.x + 2, player.y, player.w - 4, 6);
-
-      // Player Eyes
-      ctx.fillStyle = "#ffffff";
-      const eyeX = player.facing === 1 ? player.x + player.w - 6 : player.x + 3;
-      ctx.fillRect(eyeX, player.y + 5, 3, 4);
-    }
-
-    function startGameLoop() {
-      updateDevil();
-      renderDevil();
-      animationFrameId = requestAnimationFrame(startGameLoop);
-    }
-
-        // =========================================================================
-    // TIC-TAC-TOE ENGINE (AI Bot & 2 Players)
-    // =========================================================================
-    const tttModal = document.getElementById("tttModal");
-    const launchTttBtn = document.getElementById("launchTicTacToe");
-    const closeTttBtn = document.getElementById("closeTttModal");
-    const tttStatus = document.getElementById("tttStatus");
-    const tttResetBtn = document.getElementById("tttResetBtn");
-    const tttCells = document.querySelectorAll(".ttt-cell");
-    const btnModeBot = document.getElementById("btnModeBot");
-    const btnMode2P = document.getElementById("btnMode2P");
-
-    let tttBoardState = ["", "", "", "", "", "", "", "", ""];
-    let currentPlayer = "X";
-    let tttGameActive = true;
-    let isBotMode = true;
-
-    const winPatterns = [
-      [0, 1, 2], [3, 4, 5], [6, 7, 8],
-      [0, 3, 6], [1, 4, 7], [2, 5, 8],
-      [0, 4, 8], [2, 4, 6]
-    ];
-
-    launchTttBtn.addEventListener("click", () => {
-      tttModal.style.display = "flex";
-      resetTicTacToe();
-    });
-
-    closeTttBtn.addEventListener("click", () => {
-      tttModal.style.display = "none";
-    });
-
-    btnModeBot.addEventListener("click", () => {
-      isBotMode = true;
-      btnModeBot.style.background = "#00cec9";
-      btnModeBot.style.color = "#111";
-      btnMode2P.style.background = "#333342";
-      btnMode2P.style.color = "#fff";
-      resetTicTacToe();
-    });
-
-    btnMode2P.addEventListener("click", () => {
-      isBotMode = false;
-      btnMode2P.style.background = "#00cec9";
-      btnMode2P.style.color = "#111";
-      btnModeBot.style.background = "#333342";
-      btnModeBot.style.color = "#fff";
-      resetTicTacToe();
-    });
-
-    tttCells.forEach((cell) => {
-      cell.addEventListener("click", () => {
-        const idx = parseInt(cell.getAttribute("data-idx"));
-        if (tttBoardState[idx] !== "" || !tttGameActive) return;
-
-        makeMove(idx, currentPlayer);
-
-        if (checkTttResult()) return;
-
-        if (isBotMode) {
-          currentPlayer = "O";
-          tttStatus.textContent = "🤖 Bot Thinking...";
-          setTimeout(makeAiMove, 350);
-        } else {
-          currentPlayer = currentPlayer === "X" ? "O" : "X";
-          tttStatus.textContent = `Player ${currentPlayer}'s Turn`;
-        }
-      });
-    });
-
-    function makeMove(index, symbol) {
-      tttBoardState[index] = symbol;
-      const cell = tttCells[index];
-      cell.textContent = symbol;
-      cell.style.color = symbol === "X" ? "#00cec9" : "#ff7675";
-    }
-
-    function makeAiMove() {
-      if (!tttGameActive) return;
-
-      // 1. Check if AI can win
-      let move = findWinningSpot("O");
-      // 2. Block player from winning
-      if (move === null) move = findWinningSpot("X");
-      // 3. Take center spot
-      if (move === null && tttBoardState[4] === "") move = 4;
-      // 4. Random available spot
-      if (move === null) {
-        const emptySpots = tttBoardState.map((v, i) => (v === "" ? i : null)).filter(v => v !== null);
-        if (emptySpots.length > 0) {
-          move = emptySpots[Math.floor(Math.random() * emptySpots.length)];
-        }
-      }
-
-      if (move !== null) {
-        makeMove(move, "O");
-        if (!checkTttResult()) {
-          currentPlayer = "X";
-          tttStatus.textContent = "Your Turn (X)";
-        }
-      }
-    }
-
-    function findWinningSpot(symbol) {
-      for (let [a, b, c] of winPatterns) {
-        const vals = [tttBoardState[a], tttBoardState[b], tttBoardState[c]];
-        if (vals.filter(v => v === symbol).length === 2 && vals.includes("")) {
-          if (tttBoardState[a] === "") return a;
-          if (tttBoardState[b] === "") return b;
-          if (tttBoardState[c] === "") return c;
-        }
-      }
-      return null;
-    }
-
-    function checkTttResult() {
-      let roundWon = false;
-      let winningIndices = [];
-
-      for (let pattern of winPatterns) {
-        const [a, b, c] = pattern;
-        if (tttBoardState[a] && tttBoardState[a] === tttBoardState[b] && tttBoardState[a] === tttBoardState[c]) {
-          roundWon = true;
-          winningIndices = [a, b, c];
-          break;
-        }
-      }
-
-      if (roundWon) {
-        winningIndices.forEach((idx) => {
-          tttCells[idx].classList.add("ttt-win-cell");
-        });
-
-        if (isBotMode) {
-          tttStatus.textContent = currentPlayer === "X" ? "🎉 You Won!" : "🤖 Bot Won!";
-        } else {
-          tttStatus.textContent = `🎉 Player ${currentPlayer} Wins!`;
-        }
-        tttGameActive = false;
-        return true;
-      }
-
-      if (!tttBoardState.includes("")) {
-        tttStatus.textContent = "🤝 It's a Draw!";
-        tttGameActive = false;
-        return true;
-      }
-
-      return false;
-    }
-
-    function resetTicTacToe() {
-      tttBoardState = ["", "", "", "", "", "", "", "", ""];
-      currentPlayer = "X";
-      tttGameActive = true;
-      tttStatus.textContent = isBotMode ? "Your Turn (X)" : "Player X's Turn";
-      tttCells.forEach((cell) => {
-        cell.textContent = "";
-        cell.classList.remove("ttt-win-cell");
-      });
-    }
-
-    tttResetBtn.addEventListener("click", resetTicTacToe);
-        // =========================================================================
-    // FREE FIRE: MINI ROYALE ENGINE
-    // =========================================================================
-    const ffModal = document.getElementById("ffModal");
-    const launchFfBtn = document.getElementById("launchFreeFire");
-    const closeFfBtn = document.getElementById("closeFfModal");
-    const ffCanvas = document.getElementById("ffCanvas");
-    const ffCtx = ffCanvas.getContext("2d");
-    const ffStats = document.getElementById("ffStats");
-
-    let ffAnimationId = null;
-    let ffRunning = false;
-    let ffKills = 0;
-
-    const ffKeys = { left: false, right: false, up: false, down: false };
-
-    let ffPlayer = { x: 320, y: 220, r: 12, hp: 100, maxHp: 100, speed: 3.5, angle: 0 };
-    let ffBullets = [];
-    let ffEnemies = [];
-    let ffMedkits = [];
-    let ffZone = { x: 320, y: 220, r: 350, minR: 40, shrinkRate: 0.12 };
-
-    launchFfBtn.addEventListener("click", () => {
-      ffModal.style.display = "flex";
-      initFreeFire();
-      ffRunning = true;
-      ffLoop();
-    });
-
-    closeFfBtn.addEventListener("click", () => {
-      ffModal.style.display = "none";
-      ffRunning = false;
-      cancelAnimationFrame(ffAnimationId);
-    });
-
-    window.addEventListener("keydown", (e) => {
-      if (e.code === "KeyA" || e.code === "ArrowLeft") ffKeys.left = true;
-      if (e.code === "KeyD" || e.code === "ArrowRight") ffKeys.right = true;
-      if (e.code === "KeyW" || e.code === "ArrowUp") ffKeys.up = true;
-      if (e.code === "KeyS" || e.code === "ArrowDown") ffKeys.down = true;
-      if (e.code === "Space") shootPlayerBullet();
-    });
-
-    window.addEventListener("keyup", (e) => {
-      if (e.code === "KeyA" || e.code === "ArrowLeft") ffKeys.left = false;
-      if (e.code === "KeyD" || e.code === "ArrowRight") ffKeys.right = false;
-      if (e.code === "KeyW" || e.code === "ArrowUp") ffKeys.up = false;
-      if (e.code === "KeyS" || e.code === "ArrowDown") ffKeys.down = false;
-    });
-
-    ffCanvas.addEventListener("mousemove", (e) => {
-      const rect = ffCanvas.getBoundingClientRect();
-      const mx = (e.clientX - rect.left) * (ffCanvas.width / rect.width);
-      const my = (e.clientY - rect.top) * (ffCanvas.height / rect.height);
-      ffPlayer.angle = Math.atan2(my - ffPlayer.y, mx - ffPlayer.x);
-    });
-
-    ffCanvas.addEventListener("mousedown", () => {
-      shootPlayerBullet();
-    });
-
-    function bindFfBtn(id, key) {
-      const b = document.getElementById(id);
-      if (!b) return;
-      const s = (e) => { if (e.cancelable) e.preventDefault(); ffKeys[key] = true; };
-      const en = (e) => { if (e.cancelable) e.preventDefault(); ffKeys[key] = false; };
-      b.addEventListener("touchstart", s, { passive: false });
-      b.addEventListener("touchend", en, { passive: false });
-      b.addEventListener("touchcancel", en, { passive: false });
-      b.addEventListener("mousedown", s);
-      b.addEventListener("mouseup", en);
-      b.addEventListener("mouseleave", en);
-    }
-
-    bindFfBtn("ffLeft", "left");
-    bindFfBtn("ffRight", "right");
-    bindFfBtn("ffUp", "up");
-    bindFfBtn("ffDown", "down");
-
-    document.getElementById("ffShoot")?.addEventListener("click", () => {
-      shootPlayerBullet();
-    });
-
-    function shootPlayerBullet() {
-      if (!ffRunning || ffPlayer.hp <= 0) return;
-      ffBullets.push({
-        x: ffPlayer.x + Math.cos(ffPlayer.angle) * 16,
-        y: ffPlayer.y + Math.sin(ffPlayer.angle) * 16,
-        vx: Math.cos(ffPlayer.angle) * 8,
-        vy: Math.sin(ffPlayer.angle) * 8,
-        fromPlayer: true
-      });
-    }
-
-    function initFreeFire() {
-      ffKills = 0;
-      ffBullets = [];
-      ffPlayer = { x: 320, y: 220, r: 12, hp: 100, maxHp: 100, speed: 3.5, angle: 0 };
-      ffZone = { x: 320, y: 220, r: 350, minR: 50, shrinkRate: 0.15 };
-
-      ffEnemies = [];
-      for (let i = 0; i < 5; i++) {
-        ffEnemies.push({
-          x: Math.random() * (ffCanvas.width - 80) + 40,
-          y: Math.random() * (ffCanvas.height - 80) + 40,
-          r: 12,
-          hp: 60,
-          speed: 1.5,
-          angle: 0,
-          cooldown: Math.floor(Math.random() * 60)
-        });
-      }
-
-      ffMedkits = [
-        { x: 100, y: 120, r: 9 },
-        { x: 520, y: 320, r: 9 },
-        { x: 200, y: 360, r: 9 }
-      ];
-
-      updateFfStats();
-    }
-
-    function updateFfStats() {
-      const alive = ffEnemies.filter(e => e.hp > 0).length + (ffPlayer.hp > 0 ? 1 : 0);
-      ffStats.textContent = `Alive: ${alive} | Kills: ${ffKills} | HP: ${Math.max(0, Math.round(ffPlayer.hp))}`;
-    }
-
-    function updateFreeFire() {
-      if (ffPlayer.hp <= 0) return;
-
-      if (ffKeys.left) ffPlayer.x -= ffPlayer.speed;
-      if (ffKeys.right) ffPlayer.x += ffPlayer.speed;
-      if (ffKeys.up) ffPlayer.y -= ffPlayer.speed;
-      if (ffKeys.down) ffPlayer.y += ffPlayer.speed;
-
-      ffPlayer.x = Math.max(ffPlayer.r, Math.min(ffCanvas.width - ffPlayer.r, ffPlayer.x));
-      ffPlayer.y = Math.max(ffPlayer.r, Math.min(ffCanvas.height - ffPlayer.r, ffPlayer.y));
-
-      if (ffZone.r > ffZone.minR) ffZone.r -= ffZone.shrinkRate;
-
-      const distToCenter = Math.hypot(ffPlayer.x - ffZone.x, ffPlayer.y - ffZone.y);
-      if (distToCenter > ffZone.r) {
-        ffPlayer.hp -= 0.18;
-      }
-
-      ffMedkits = ffMedkits.filter(m => {
-        if (Math.hypot(ffPlayer.x - m.x, ffPlayer.y - m.y) < ffPlayer.r + m.r) {
-          ffPlayer.hp = Math.min(ffPlayer.maxHp, ffPlayer.hp + 40);
-          return false;
-        }
-        return true;
-      });
-
-      for (let i = ffBullets.length - 1; i >= 0; i--) {
-        const b = ffBullets[i];
-        b.x += b.vx;
-        b.y += b.vy;
-
-        if (b.fromPlayer) {
-          for (let enemy of ffEnemies) {
-            if (enemy.hp > 0 && Math.hypot(b.x - enemy.x, b.y - enemy.y) < enemy.r + 4) {
-              enemy.hp -= 35;
-              ffBullets.splice(i, 1);
-              if (enemy.hp <= 0) ffKills++;
-              break;
-            }
-          }
-        } else {
-          if (Math.hypot(b.x - ffPlayer.x, b.y - ffPlayer.y) < ffPlayer.r + 4) {
-            ffPlayer.hp -= 18;
-            ffBullets.splice(i, 1);
-          }
-        }
-
-        if (b.x < 0 || b.x > ffCanvas.width || b.y < 0 || b.y > ffCanvas.height) {
-          ffBullets.splice(i, 1);
-        }
-      }
-
-      ffEnemies.forEach(enemy => {
-        if (enemy.hp <= 0) return;
-
-        const toCenterX = ffZone.x - enemy.x;
-        const toCenterY = ffZone.y - enemy.y;
-        const dCenter = Math.hypot(toCenterX, toCenterY);
-        if (dCenter > ffZone.r - 20) {
-          enemy.x += (toCenterX / dCenter) * enemy.speed;
-          enemy.y += (toCenterY / dCenter) * enemy.speed;
-        }
-
-        enemy.angle = Math.atan2(ffPlayer.y - enemy.y, ffPlayer.x - enemy.x);
-
-        enemy.cooldown--;
-        if (enemy.cooldown <= 0 && Math.hypot(ffPlayer.x - enemy.x, ffPlayer.y - enemy.y) < 280) {
-          ffBullets.push({
-            x: enemy.x + Math.cos(enemy.angle) * 14,
-            y: enemy.y + Math.sin(enemy.angle) * 14,
-            vx: Math.cos(enemy.angle) * 5,
-            vy: Math.sin(enemy.angle) * 5,
-            fromPlayer: false
-          });
-          enemy.cooldown = 80 + Math.floor(Math.random() * 40);
-        }
-      });
-
-      updateFfStats();
-    }
-
-    function renderFreeFire() {
-      ffCtx.clearRect(0, 0, ffCanvas.width, ffCanvas.height);
-
-      // Safe / Danger zone
-      ffCtx.fillStyle = "rgba(9, 132, 227, 0.28)";
-      ffCtx.fillRect(0, 0, ffCanvas.width, ffCanvas.height);
-
-      ffCtx.save();
-      ffCtx.beginPath();
-      ffCtx.arc(ffZone.x, ffZone.y, ffZone.r, 0, Math.PI * 2);
-      ffCtx.clip();
-      ffCtx.fillStyle = "#2d3420";
-      ffCtx.fillRect(0, 0, ffCanvas.width, ffCanvas.height);
-      ffCtx.restore();
-
-      ffCtx.strokeStyle = "#00cec9";
-      ffCtx.lineWidth = 3;
-      ffCtx.beginPath();
-      ffCtx.arc(ffZone.x, ffZone.y, ffZone.r, 0, Math.PI * 2);
-      ffCtx.stroke();
-
-      // Medkits
-      ffMedkits.forEach(m => {
-        ffCtx.fillStyle = "#2ed573";
-        ffCtx.fillRect(m.x - 8, m.y - 8, 16, 16);
-        ffCtx.fillStyle = "#ffffff";
-        ffCtx.font = "bold 12px sans-serif";
-        ffCtx.fillText("+", m.x - 4, m.y + 4);
-      });
-
-      // Bullets
-      ffBullets.forEach(b => {
-        ffCtx.fillStyle = b.fromPlayer ? "#ffeaa7" : "#ff4757";
-        ffCtx.beginPath();
-        ffCtx.arc(b.x, b.y, 3.5, 0, Math.PI * 2);
-        ffCtx.fill();
-      });
-
-      // Bots
-      ffEnemies.forEach(e => {
-        if (e.hp <= 0) return;
-        ffCtx.fillStyle = "#eb4d4b";
-        ffCtx.beginPath();
-        ffCtx.arc(e.x, e.y, e.r, 0, Math.PI * 2);
-        ffCtx.fill();
-
-        ffCtx.strokeStyle = "#1e1e24";
-        ffCtx.lineWidth = 4;
-        ffCtx.beginPath();
-        ffCtx.moveTo(e.x, e.y);
-        ffCtx.lineTo(e.x + Math.cos(e.angle) * 18, e.y + Math.sin(e.angle) * 18);
-        ffCtx.stroke();
+        ldCtx.beginPath();
+        ldCtx.moveTo(s.x, s.y + s.h);
+        ldCtx.lineTo(s.x + s.w / 2, s.y);
+        ldCtx.lineTo(s.x + s.w, s.y + s.h);
+        ldCtx.fill();
       });
 
       // Player
-      if (ffPlayer.hp > 0) {
-        ffCtx.fillStyle = "#f1c40f";
-        ffCtx.beginPath();
-        ffCtx.arc(ffPlayer.x, ffPlayer.y, ffPlayer.r, 0, Math.PI * 2);
-        ffCtx.fill();
+      ldCtx.fillStyle = "#111116";
+      ldCtx.fillRect(ldPlayer.x, ldPlayer.y + 4, ldPlayer.w, ldPlayer.h - 4);
+      ldCtx.fillRect(ldPlayer.x + 2, ldPlayer.y, ldPlayer.w - 4, 6);
+      ldCtx.fillStyle = "#ffffff";
+      const eyeX = ldPlayer.facing === 1 ? ldPlayer.x + ldPlayer.w - 6 : ldPlayer.x + 3;
+      ldCtx.fillRect(eyeX, ldPlayer.y + 5, 3, 4);
+    }
 
-        ffCtx.strokeStyle = "#ffffff";
-        ffCtx.lineWidth = 4;
-        ffCtx.beginPath();
-        ffCtx.moveTo(ffPlayer.x, ffPlayer.y);
-        ffCtx.lineTo(ffPlayer.x + Math.cos(ffPlayer.angle) * 18, ffPlayer.y + Math.sin(ffPlayer.angle) * 18);
-        ffCtx.stroke();
-      }
-
-      // End game banners
-      const aliveEnemies = ffEnemies.filter(e => e.hp > 0).length;
-      if (aliveEnemies === 0 && ffPlayer.hp > 0) {
-        ffCtx.fillStyle = "rgba(0,0,0,0.65)";
-        ffCtx.fillRect(0, 0, ffCanvas.width, ffCanvas.height);
-        ffCtx.fillStyle = "#f1c40f";
-        ffCtx.font = "900 48px sans-serif";
-        ffCtx.textAlign = "center";
-        ffCtx.fillText("🏆 BOOYAH! 🏆", ffCanvas.width / 2, ffCanvas.height / 2 - 10);
-        ffCtx.fillStyle = "#ffffff";
-        ffCtx.font = "bold 18px sans-serif";
-        ffCtx.fillText(`Total Kills: ${ffKills}`, ffCanvas.width / 2, ffCanvas.height / 2 + 30);
-      } else if (ffPlayer.hp <= 0) {
-        ffCtx.fillStyle = "rgba(0,0,0,0.7)";
-        ffCtx.fillRect(0, 0, ffCanvas.width, ffCanvas.height);
-        ffCtx.fillStyle = "#ff4757";
-        ffCtx.font = "900 42px sans-serif";
-        ffCtx.textAlign = "center";
-        ffCtx.fillText("💀 ELIMINATED 💀", ffCanvas.width / 2, ffCanvas.height / 2);
+    function ldLoop() {
+      if (ldRunning) {
+        updateLd();
+        renderLd();
+        ldAnimId = requestAnimationFrame(ldLoop);
       }
     }
 
-    function ffLoop() {
-      if (ffRunning) {
-        updateFreeFire();
-        renderFreeFire();
-        ffAnimationId = requestAnimationFrame(ffLoop);
-      }
-          }
-        // =========================================================================
-    // TEMPLE RUN ENGINE (SOLO + 1v1 DUEL)
+    // =========================================================================
+    // 2. TEMPLE RUN 3D ENGINE (SOLO + 1v1 DUEL)
     // =========================================================================
     const trModal = document.getElementById("trModal");
-    const launchTrBtn = document.getElementById("launchTempleRun");
-    const closeTrBtn = document.getElementById("closeTrModal");
+    const openTr = document.getElementById("openTempleRun");
+    const closeTr = document.getElementById("closeTrBtn");
     const trCanvas = document.getElementById("trCanvas");
     const trCtx = trCanvas.getContext("2d");
     const trStats = document.getElementById("trStats");
-    const trRoomStatus = document.getElementById("trRoomStatus");
-    const trSoloBtn = document.getElementById("trSoloBtn");
-    const trCreateRoomBtn = document.getElementById("trCreateRoomBtn");
-    const trJoinRoomBtn = document.getElementById("trJoinRoomBtn");
-    const trJoinInput = document.getElementById("trJoinInput");
+    const trStatusText = document.getElementById("trStatusText");
 
-    let trAnimationId = null;
+    let trAnimId = null;
     let trRunning = false;
     let trScore = 0;
     let trCoins = 0;
     let trSpeed = 5;
-
-    // Room & Player Mode
     let trRoomId = null;
-    let trPlayerRole = "solo"; // "solo", "host", or "guest"
+    let trRole = "solo";
     let trRoomRef = null;
 
     const trLanes = [-110, 0, 110];
-    let trPlayer = {
-      lane: 1,
-      currentX: 0,
-      targetX: 0,
-      y: 0,
-      vy: 0,
-      isJumping: false,
-      isSliding: false,
-      slideTimer: 0
-    };
-
+    let trRunner = { lane: 1, curX: 0, tgtX: 0, y: 0, vy: 0, jumping: false, sliding: false, slideTime: 0 };
     let trObjects = [];
-    let trSpawnCounter = 0;
+    let trSpawnCount = 0;
 
-    launchTrBtn.addEventListener("click", () => {
+    openTr.addEventListener("click", () => {
       trModal.style.display = "flex";
-      startSoloMode();
+      startTrSolo();
     });
 
-    closeTrBtn.addEventListener("click", () => {
+    closeTr.addEventListener("click", () => {
       trModal.style.display = "none";
       trRunning = false;
-      cancelAnimationFrame(trAnimationId);
+      cancelAnimationFrame(trAnimId);
       if (trRoomRef) trRoomRef.off();
     });
 
-    // --- Mode Buttons ---
-    trSoloBtn.addEventListener("click", () => {
-      if (trRoomRef) trRoomRef.off();
-      startSoloMode();
-    });
+    document.getElementById("trSoloBtn").addEventListener("click", startTrSolo);
 
-    function startSoloMode() {
+    function startTrSolo() {
+      if (trRoomRef) trRoomRef.off();
       trRoomId = null;
-      trPlayerRole = "solo";
-      trRoomStatus.textContent = "Current Mode: Solo Run (Play to beat high score!)";
-      initTempleRun();
+      trRole = "solo";
+      trStatusText.textContent = "Mode: Solo Endless Run";
+      initTr();
       trRunning = true;
-      trGameLoop();
+      trLoop();
     }
 
-    // --- Invite Friend (Create Room) ---
-    trCreateRoomBtn.addEventListener("click", () => {
+    document.getElementById("trHostBtn").addEventListener("click", () => {
       if (typeof firebase === "undefined" || !firebase.apps.length) {
-        alert("Firebase is not connected!");
+        alert("Firebase is not configured! You can still play Solo mode.");
         return;
       }
       trRoomId = Math.floor(10000 + Math.random() * 90000).toString();
-      trPlayerRole = "host";
+      trRole = "host";
       trRoomRef = firebase.database().ref("temple_rooms/" + trRoomId);
-
-      trRoomRef.set({
-        hostScore: null,
-        guestScore: null,
-        status: "waiting"
-      });
-
-      trRoomStatus.textContent = `Room Code: ${trRoomId} (Ask friend to join!)`;
+      trRoomRef.set({ hostScore: null, guestScore: null, status: "waiting" });
+      trStatusText.textContent = `Room Code: ${trRoomId} (Share with friend!)`;
 
       trRoomRef.on("value", (snap) => {
         const val = snap.val();
         if (!val) return;
         if (val.status === "ready" && !trRunning) {
-          trRoomStatus.textContent = `Friend connected in Room ${trRoomId}! Running!`;
-          initTempleRun();
+          trStatusText.textContent = `Friend connected in Room ${trRoomId}! Running!`;
+          initTr();
           trRunning = true;
-          trGameLoop();
+          trLoop();
         }
-        checkDuelResult(val);
+        if (val.hostScore !== null && val.guestScore !== null) {
+          trDuelOver(val.hostScore, val.guestScore);
+        }
       });
     });
 
-    // --- Join Friend Room ---
-    trJoinRoomBtn.addEventListener("click", () => {
-      const code = trJoinInput.value.trim().toUpperCase();
-      if (code.length < 5) {
-        alert("Enter the 5-digit room code!");
-        return;
-      }
-      if (typeof firebase === "undefined" || !firebase.apps.length) return;
-
+    document.getElementById("trJoinBtn").addEventListener("click", () => {
+      const code = document.getElementById("trCodeInput").value.trim().toUpperCase();
+      if (code.length < 5 || typeof firebase === "undefined" || !firebase.apps.length) return;
       trRoomId = code;
-      trPlayerRole = "guest";
+      trRole = "guest";
       trRoomRef = firebase.database().ref("temple_rooms/" + trRoomId);
-
       trRoomRef.once("value", (snap) => {
-        if (!snap.exists()) {
-          alert("Room code does not exist!");
-          startSoloMode();
-          return;
-        }
-
+        if (!snap.exists()) { alert("Room not found!"); startTrSolo(); return; }
         trRoomRef.update({ status: "ready" });
-        trRoomStatus.textContent = `Joined Room: ${trRoomId}! Running!`;
-
+        trStatusText.textContent = `Joined Room: ${trRoomId}! Running!`;
         trRoomRef.on("value", (s) => {
-          checkDuelResult(s.val());
+          const val = s.val();
+          if (val && val.hostScore !== null && val.guestScore !== null) {
+            trDuelOver(val.guestScore, val.hostScore);
+          }
         });
-
-        initTempleRun();
+        initTr();
         trRunning = true;
-        trGameLoop();
+        trLoop();
       });
     });
 
-    function checkDuelResult(val) {
-      if (!val) return;
-      if (val.hostScore !== null && val.guestScore !== null) {
-        const myScore = trPlayerRole === "host" ? val.hostScore : val.guestScore;
-        const friendScore = trPlayerRole === "host" ? val.guestScore : val.hostScore;
-        renderDuelWinner(myScore, friendScore);
-      }
-    }
-
-    // --- Keyboard & Touch Controls ---
     window.addEventListener("keydown", (e) => {
       if (!trRunning) return;
-      if (e.code === "KeyA" || e.code === "ArrowLeft") shiftLane(-1);
-      if (e.code === "KeyD" || e.code === "ArrowRight") shiftLane(1);
-      if ((e.code === "KeyW" || e.code === "ArrowUp" || e.code === "Space") && !trPlayer.isJumping) jumpPlayer();
-      if ((e.code === "KeyS" || e.code === "ArrowDown") && !trPlayer.isSliding) slidePlayer();
+      if (e.code === "ArrowLeft" || e.code === "KeyA") shiftLane(-1);
+      if (e.code === "ArrowRight" || e.code === "KeyD") shiftLane(1);
+      if ((e.code === "ArrowUp" || e.code === "KeyW" || e.code === "Space") && !trRunner.jumping) {
+        trRunner.vy = -14; trRunner.jumping = true;
+      }
+      if (e.code === "ArrowDown" || e.code === "KeyS") {
+        trRunner.sliding = true; trRunner.slideTime = 35;
+      }
     });
 
-    function bindTrTouch(id, fn) {
-      const btn = document.getElementById(id);
-      if (!btn) return;
-      const fire = (e) => { if (e.cancelable) e.preventDefault(); fn(); };
-      btn.addEventListener("touchstart", fire, { passive: false });
-      btn.addEventListener("mousedown", fire);
+    function shiftLane(d) {
+      trRunner.lane = Math.max(0, Math.min(2, trRunner.lane + d));
+      trRunner.tgtX = trLanes[trRunner.lane];
     }
 
-    bindTrTouch("trLeft", () => shiftLane(-1));
-    bindTrTouch("trRight", () => shiftLane(1));
-    bindTrTouch("trJump", () => jumpPlayer());
-    bindTrTouch("trSlide", () => slidePlayer());
+    function bindTrTouchBtn(id, fn) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const act = (e) => { if (e.cancelable) e.preventDefault(); fn(); };
+      el.addEventListener("touchstart", act, { passive: false });
+      el.addEventListener("mousedown", act);
+    }
+    bindTrTouchBtn("trLeft", () => shiftLane(-1));
+    bindTrTouchBtn("trRight", () => shiftLane(1));
+    bindTrTouchBtn("trJump", () => { if (!trRunner.jumping) { trRunner.vy = -14; trRunner.jumping = true; } });
+    bindTrTouchBtn("trSlide", () => { trRunner.sliding = true; trRunner.slideTime = 35; });
 
-    function shiftLane(dir) {
-      trPlayer.lane = Math.max(0, Math.min(2, trPlayer.lane + dir));
-      trPlayer.targetX = trLanes[trPlayer.lane];
+    function initTr() {
+      trScore = 0; trCoins = 0; trSpeed = 5; trObjects = []; trSpawnCount = 0;
+      trRunner = { lane: 1, curX: 0, tgtX: 0, y: 0, vy: 0, jumping: false, sliding: false, slideTime: 0 };
     }
 
-    function jumpPlayer() {
-      if (trPlayer.isJumping || trPlayer.isSliding) return;
-      trPlayer.vy = -14;
-      trPlayer.isJumping = true;
-    }
-
-    function slidePlayer() {
-      if (trPlayer.isJumping) trPlayer.vy = 16;
-      trPlayer.isSliding = true;
-      trPlayer.slideTimer = 35;
-    }
-
-    function initTempleRun() {
-      trScore = 0;
-      trCoins = 0;
-      trSpeed = 5;
-      trObjects = [];
-      trSpawnCounter = 0;
-      trPlayer = { lane: 1, currentX: 0, targetX: 0, y: 0, vy: 0, isJumping: false, isSliding: false, slideTimer: 0 };
-      updateTrStats();
-    }
-
-    function updateTrStats() {
-      trStats.textContent = `Score: ${Math.floor(trScore)}m | Coins: ${trCoins}`;
-    }
-
-    function updateTempleRun() {
+    function updateTr() {
       trScore += trSpeed * 0.05;
       trSpeed = Math.min(13, trSpeed + 0.001);
+      trRunner.curX += (trRunner.tgtX - trRunner.curX) * 0.25;
 
-      trPlayer.currentX += (trPlayer.targetX - trPlayer.currentX) * 0.25;
-
-      if (trPlayer.isJumping) {
-        trPlayer.y += trPlayer.vy;
-        trPlayer.vy += 0.8;
-        if (trPlayer.y >= 0) {
-          trPlayer.y = 0;
-          trPlayer.vy = 0;
-          trPlayer.isJumping = false;
-        }
+      if (trRunner.jumping) {
+        trRunner.y += trRunner.vy;
+        trRunner.vy += 0.8;
+        if (trRunner.y >= 0) { trRunner.y = 0; trRunner.vy = 0; trRunner.jumping = false; }
       }
 
-      if (trPlayer.isSliding) {
-        trPlayer.slideTimer--;
-        if (trPlayer.slideTimer <= 0) trPlayer.isSliding = false;
+      if (trRunner.sliding) {
+        trRunner.slideTime--;
+        if (trRunner.slideTime <= 0) trRunner.sliding = false;
       }
 
-      trSpawnCounter++;
-      if (trSpawnCounter > 55 - Math.min(25, Math.floor(trSpeed * 2))) {
-        trSpawnCounter = 0;
+      trSpawnCount++;
+      if (trSpawnCount > 55 - Math.min(25, Math.floor(trSpeed * 2))) {
+        trSpawnCount = 0;
         const lane = Math.floor(Math.random() * 3);
         const r = Math.random();
-
-        if (r < 0.4) trObjects.push({ z: 600, lane: lane, type: "low_barrier" });
-        else if (r < 0.7) trObjects.push({ z: 600, lane: lane, type: "high_barrier" });
+        if (r < 0.4) trObjects.push({ z: 600, lane: lane, type: "low" });
+        else if (r < 0.7) trObjects.push({ z: 600, lane: lane, type: "high" });
         else trObjects.push({ z: 600, lane: lane, type: "coin" });
       }
 
       for (let i = trObjects.length - 1; i >= 0; i--) {
         const obj = trObjects[i];
         obj.z -= trSpeed * 2.2;
-
-        if (obj.z <= 50 && obj.z >= 10 && obj.lane === trPlayer.lane) {
+        if (obj.z <= 50 && obj.z >= 10 && obj.lane === trRunner.lane) {
           if (obj.type === "coin") {
-            trCoins += 1;
-            trObjects.splice(i, 1);
-            continue;
+            trCoins++; trObjects.splice(i, 1); continue;
           }
-          if (obj.type === "low_barrier" && trPlayer.y > -25) {
-            handleCrash();
-            return;
-          }
-          if (obj.type === "high_barrier" && !trPlayer.isSliding) {
-            handleCrash();
-            return;
-          }
+          if (obj.type === "low" && trRunner.y > -25) { crashTr(); return; }
+          if (obj.type === "high" && !trRunner.sliding) { crashTr(); return; }
         }
         if (obj.z <= 0) trObjects.splice(i, 1);
       }
-
-      updateTrStats();
+      trStats.textContent = `Distance: ${Math.floor(trScore)}m | Coins: ${trCoins}`;
     }
 
-    function renderTempleRun() {
+    function renderTr() {
       trCtx.clearRect(0, 0, trCanvas.width, trCanvas.height);
-
-      const horizonY = 140;
-      const bottomY = trCanvas.height;
-      const midX = trCanvas.width / 2;
+      const horY = 130, botY = trCanvas.height, midX = trCanvas.width / 2;
 
       // Sky
-      const skyGrad = trCtx.createLinearGradient(0, 0, 0, horizonY);
-      skyGrad.addColorStop(0, "#081c15");
-      skyGrad.addColorStop(1, "#1b4332");
-      trCtx.fillStyle = skyGrad;
-      trCtx.fillRect(0, 0, trCanvas.width, horizonY);
+      trCtx.fillStyle = "#122a1e";
+      trCtx.fillRect(0, 0, trCanvas.width, horY);
 
       // Path
-      trCtx.fillStyle = "#5c4033";
-      trCtx.beginPath();
-      trCtx.moveTo(midX - 45, horizonY);
-      trCtx.lineTo(midX + 45, horizonY);
-      trCtx.lineTo(midX + 220, bottomY);
-      trCtx.lineTo(midX - 220, bottomY);
-      trCtx.fill();
-
       trCtx.fillStyle = "#8a7356";
       trCtx.beginPath();
-      trCtx.moveTo(midX - 35, horizonY);
-      trCtx.lineTo(midX + 35, horizonY);
-      trCtx.lineTo(midX + 175, bottomY);
-      trCtx.lineTo(midX - 175, bottomY);
+      trCtx.moveTo(midX - 35, horY); trCtx.lineTo(midX + 35, horY);
+      trCtx.lineTo(midX + 175, botY); trCtx.lineTo(midX - 175, botY);
       trCtx.fill();
 
-      // Dividers
-      trCtx.strokeStyle = "rgba(0,0,0,0.3)";
-      trCtx.lineWidth = 2;
-      [-1, 1].forEach(side => {
-        trCtx.beginPath();
-        trCtx.moveTo(midX + side * 12, horizonY);
-        trCtx.lineTo(midX + side * 60, bottomY);
-        trCtx.stroke();
-      });
-
-      // Obstacles
-      const sortedObjs = [...trObjects].sort((a, b) => b.z - a.z);
-      sortedObjs.forEach(obj => {
-        const depth = 1 - (obj.z / 600);
-        if (depth < 0) return;
-
-        const screenY = horizonY + depth * (bottomY - horizonY);
-        const laneOffset = trLanes[obj.lane] * depth * 1.5;
-        const screenX = midX + laneOffset;
-        const scale = 0.2 + depth * 0.9;
+      // Objects
+      const sorted = [...trObjects].sort((a, b) => b.z - a.z);
+      sorted.forEach(obj => {
+        const d = 1 - (obj.z / 600);
+        if (d < 0) return;
+        const sy = horY + d * (botY - horY);
+        const sx = midX + trLanes[obj.lane] * d * 1.5;
+        const scale = 0.2 + d * 0.9;
 
         if (obj.type === "coin") {
           trCtx.fillStyle = "#f1c40f";
-          trCtx.beginPath();
-          trCtx.arc(screenX, screenY - 20 * scale, 10 * scale, 0, Math.PI * 2);
-          trCtx.fill();
-        } else if (obj.type === "low_barrier") {
-          trCtx.fillStyle = "#3e2723";
-          const logW = 60 * scale;
-          const logH = 20 * scale;
-          trCtx.fillRect(screenX - logW / 2, screenY - logH, logW, logH);
+          trCtx.beginPath(); trCtx.arc(sx, sy - 20 * scale, 10 * scale, 0, Math.PI * 2); trCtx.fill();
+        } else if (obj.type === "low") {
           trCtx.fillStyle = "#e74c3c";
-          trCtx.fillRect(screenX - logW / 2, screenY - logH, logW, 4 * scale);
-        } else if (obj.type === "high_barrier") {
+          const w = 60 * scale, h = 18 * scale;
+          trCtx.fillRect(sx - w / 2, sy - h, w, h);
+        } else if (obj.type === "high") {
           trCtx.fillStyle = "#2c3e50";
-          const beamW = 66 * scale;
-          const beamH = 14 * scale;
-          trCtx.fillRect(screenX - beamW / 2, screenY - (42 * scale), beamW, beamH);
-          trCtx.fillRect(screenX - beamW / 2, screenY - (42 * scale), 6 * scale, 42 * scale);
-          trCtx.fillRect(screenX + beamW / 2 - 6 * scale, screenY - (42 * scale), 6 * scale, 42 * scale);
+          const w = 66 * scale, h = 14 * scale;
+          trCtx.fillRect(sx - w / 2, sy - (40 * scale), w, h);
         }
       });
 
       // Runner
-      const pScreenX = midX + trPlayer.currentX;
-      const pScreenY = bottomY - 35 + trPlayer.y;
-
-      if (trPlayer.isSliding) {
-        trCtx.fillStyle = "#e67e22";
-        trCtx.fillRect(pScreenX - 18, pScreenY + 8, 36, 16);
+      const px = midX + trRunner.curX;
+      const py = botY - 35 + trRunner.y;
+      trCtx.fillStyle = "#e67e22";
+      if (trRunner.sliding) {
+        trCtx.fillRect(px - 18, py + 8, 36, 16);
       } else {
-        trCtx.fillStyle = "rgba(0,0,0,0.3)";
-        trCtx.beginPath();
-        trCtx.ellipse(pScreenX, bottomY - 28, 16, 7, 0, 0, Math.PI * 2);
-        trCtx.fill();
-
-        trCtx.fillStyle = "#e67e22";
-        trCtx.fillRect(pScreenX - 12, pScreenY - 32, 24, 26);
+        trCtx.fillRect(px - 12, py - 32, 24, 26);
         trCtx.fillStyle = "#f5cd79";
-        trCtx.beginPath();
-        trCtx.arc(pScreenX, pScreenY - 40, 10, 0, Math.PI * 2);
-        trCtx.fill();
-
-        trCtx.fillStyle = "#2c3e50";
-        trCtx.fillRect(pScreenX - 9, pScreenY - 6, 6, 12);
-        trCtx.fillRect(pScreenX + 3, pScreenY - 6, 6, 12);
+        trCtx.beginPath(); trCtx.arc(px, py - 40, 10, 0, Math.PI * 2); trCtx.fill();
       }
     }
 
-    function handleCrash() {
+    function crashTr() {
       trRunning = false;
-      cancelAnimationFrame(trAnimationId);
-      const finalScore = Math.floor(trScore);
-
-      if (trRoomId && trPlayerRole !== "solo") {
-        // Multi-player crash: upload score to Firebase
-        const updateData = {};
-        if (trPlayerRole === "host") updateData.hostScore = finalScore;
-        if (trPlayerRole === "guest") updateData.guestScore = finalScore;
-        trRoomRef.update(updateData);
-
-        trCtx.fillStyle = "rgba(0, 0, 0, 0.85)";
-        trCtx.fillRect(0, 0, trCanvas.width, trCanvas.height);
-        trCtx.fillStyle = "#e74c3c";
-        trCtx.font = "900 32px sans-serif";
-        trCtx.textAlign = "center";
-        trCtx.fillText("💥 YOU CRASHED! 💥", trCanvas.width / 2, trCanvas.height / 2 - 25);
-        trCtx.fillStyle = "#f1c40f";
-        trCtx.font = "bold 18px sans-serif";
-        trCtx.fillText(`Your Score: ${finalScore}m`, trCanvas.width / 2, trCanvas.height / 2 + 10);
-        trCtx.fillStyle = "#ffffff";
-        trCtx.font = "14px sans-serif";
-        trCtx.fillText("Waiting for opponent to crash...", trCanvas.width / 2, trCanvas.height / 2 + 40);
-      } else {
-        // Solo game over screen
-        trCtx.fillStyle = "rgba(0, 0, 0, 0.75)";
-        trCtx.fillRect(0, 0, trCanvas.width, trCanvas.height);
-        trCtx.fillStyle = "#e74c3c";
-        trCtx.font = "900 36px sans-serif";
-        trCtx.textAlign = "center";
-        trCtx.fillText("💥 PLAYER OUT! 💥", trCanvas.width / 2, trCanvas.height / 2 - 15);
-        trCtx.fillStyle = "#ffffff";
-        trCtx.font = "bold 16px sans-serif";
-        trCtx.fillText(`Distance: ${finalScore}m | Coins: ${trCoins}`, trCanvas.width / 2, trCanvas.height / 2 + 25);
-        trCtx.fillStyle = "#f1c40f";
-        trCtx.font = "14px sans-serif";
-        trCtx.fillText("Tap screen to restart", trCanvas.width / 2, trCanvas.height / 2 + 55);
-
-        trCanvas.addEventListener("click", () => {
-          initTempleRun();
-          trRunning = true;
-          trGameLoop();
-        }, { once: true });
-      }
-    }
-
-    function renderDuelWinner(myScore, opScore) {
-      trCtx.fillStyle = "rgba(0, 0, 0, 0.9)";
-      trCtx.fillRect(0, 0, trCanvas.width, trCanvas.height);
-      trCtx.textAlign = "center";
-
-      if (myScore > opScore) {
-        trCtx.fillStyle = "#00cec9";
-        trCtx.font = "900 38px sans-serif";
-        trCtx.fillText("🏆 YOU WON! 🏆", trCanvas.width / 2, trCanvas.height / 2 - 30);
-      } else if (myScore < opScore) {
-        trCtx.fillStyle = "#ff4757";
-        trCtx.font = "900 38px sans-serif";
-        trCtx.fillText("💀 YOU LOST! 💀", trCanvas.width / 2, trCanvas.height / 2 - 30);
-      } else {
-        trCtx.fillStyle = "#f1c40f";
-        trCtx.font = "900 38px sans-serif";
-        trCtx.fillText("🤝 IT'S A TIE! 🤝", trCanvas.width / 2, trCanvas.height / 2 - 30);
-      }
-
-      trCtx.fillStyle = "#ffffff";
-      trCtx.font = "bold 18px sans-serif";
-      trCtx.fillText(`Your Score: ${myScore}m`, trCanvas.width / 2, trCanvas.height / 2 + 15);
-      trCtx.fillText(`Friend Score: ${opScore}m`, trCanvas.width / 2, trCanvas.height / 2 + 45);
-
-      trCtx.fillStyle = "#a4b0be";
-      trCtx.font = "13px sans-serif";
-      trCtx.fillText("Tap 'Solo Play' or invite again to restart", trCanvas.width / 2, trCanvas.height / 2 + 80);
-    }
-
-    function trGameLoop() {
-      if (trRunning) {
-        updateTempleRun();
-        renderTempleRun();
-        trAnimationId = requestAnimationFrame(trGameLoop);
-      }
-    }
-    
-  </script>
-</body>
-</html>
+      can
