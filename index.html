@@ -954,4 +954,144 @@
 
     function crashTr() {
       trRunning = false;
-      can
+      cancelAnimationFrame(trAnimId);
+      const fin = Math.floor(trScore);
+
+      if (trRoomId && trRole !== "solo") {
+        const d = {};
+        if (trRole === "host") d.hostScore = fin;
+        if (trRole === "guest") d.guestScore = fin;
+        trRoomRef.update(d);
+
+        trCtx.fillStyle = "rgba(0,0,0,0.85)";
+        trCtx.fillRect(0, 0, trCanvas.width, trCanvas.height);
+        trCtx.fillStyle = "#e74c3c";
+        trCtx.font = "900 30px sans-serif";
+        trCtx.textAlign = "center";
+        trCtx.fillText("💀 CRASHED! 💀", trCanvas.width / 2, trCanvas.height / 2 - 10);
+        trCtx.fillStyle = "#fff";
+        trCtx.font = "16px sans-serif";
+        trCtx.fillText(`Score: ${fin}m | Waiting for opponent...`, trCanvas.width / 2, trCanvas.height / 2 + 25);
+      } else {
+        trCtx.fillStyle = "rgba(0,0,0,0.75)";
+        trCtx.fillRect(0, 0, trCanvas.width, trCanvas.height);
+        trCtx.fillStyle = "#e74c3c";
+        trCtx.font = "900 30px sans-serif";
+        trCtx.textAlign = "center";
+        trCtx.fillText("💥 GAME OVER 💥", trCanvas.width / 2, trCanvas.height / 2 - 10);
+        trCtx.fillStyle = "#f1c40f";
+        trCtx.font = "16px sans-serif";
+        trCtx.fillText(`Distance: ${fin}m | Click screen to restart`, trCanvas.width / 2, trCanvas.height / 2 + 25);
+        trCanvas.addEventListener("click", () => { initTr(); trRunning = true; trLoop(); }, { once: true });
+      }
+    }
+
+    function trDuelOver(my, op) {
+      trCtx.fillStyle = "rgba(0,0,0,0.9)";
+      trCtx.fillRect(0, 0, trCanvas.width, trCanvas.height);
+      trCtx.textAlign = "center";
+      trCtx.fillStyle = my > op ? "#00cec9" : (my < op ? "#ff4757" : "#f1c40f");
+      trCtx.font = "900 34px sans-serif";
+      trCtx.fillText(my > op ? "🏆 YOU WON! 🏆" : (my < op ? "💀 YOU LOST! 💀" : "🤝 TIE! 🤝"), trCanvas.width / 2, trCanvas.height / 2 - 20);
+      trCtx.fillStyle = "#fff";
+      trCtx.font = "bold 16px sans-serif";
+      trCtx.fillText(`You: ${my}m | Friend: ${op}m`, trCanvas.width / 2, trCanvas.height / 2 + 20);
+    }
+
+    function trLoop() {
+      if (trRunning) { updateTr(); renderTr(); trAnimId = requestAnimationFrame(trLoop); }
+    }
+
+    // =========================================================================
+    // 3. TIC-TAC-TOE ENGINE
+    // =========================================================================
+    const tttModal = document.getElementById("tttModal");
+    const openTtt = document.getElementById("openTicTacToe");
+    const closeTtt = document.getElementById("closeTttBtn");
+    const tttCells = document.querySelectorAll(".ttt-cell");
+    const tttStatus = document.getElementById("tttStatus");
+    const tttReset = document.getElementById("tttReset");
+    let tttBoardState = ["","","","","","","","",""];
+    let tttCurrentTurn = "X";
+    let tttGameActive = true;
+    let tttVsBot = true;
+
+    openTtt.addEventListener("click", () => tttModal.style.display = "flex");
+    closeTtt.addEventListener("click", () => tttModal.style.display = "none");
+    document.getElementById("tttModeBot").addEventListener("click", () => { tttVsBot = true; resetTtt(); });
+    document.getElementById("tttMode2P").addEventListener("click", () => { tttVsBot = false; resetTtt(); });
+
+    const winCombos = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+
+    tttCells.forEach(cell => {
+      cell.addEventListener("click", () => {
+        const i = cell.getAttribute("data-idx");
+        if (tttBoardState[i] !== "" || !tttGameActive) return;
+        makeTttMove(i, tttCurrentTurn);
+        if (tttGameActive && tttVsBot && tttCurrentTurn === "O") {
+          setTimeout(botTttMove, 300);
+        }
+      });
+    });
+
+    function makeTttMove(idx, p) {
+      tttBoardState[idx] = p;
+      tttCells[idx].textContent = p;
+      tttCells[idx].style.color = p === "X" ? "#ff4757" : "#00cec9";
+
+      if (checkTttWin(p)) {
+        tttStatus.textContent = `🎉 Player ${p} Wins!`;
+        tttGameActive = false;
+        return;
+      }
+      if (!tttBoardState.includes("")) {
+        tttStatus.textContent = "🤝 Draw Game!";
+        tttGameActive = false;
+        return;
+      }
+      tttCurrentTurn = tttCurrentTurn === "X" ? "O" : "X";
+      tttStatus.textContent = `Player ${tttCurrentTurn}'s Turn`;
+    }
+
+    function botTttMove() {
+      let empty = [];
+      tttBoardState.forEach((val, i) => { if (val === "") empty.push(i); });
+      if (empty.length && tttGameActive) {
+        let pick = empty[Math.floor(Math.random() * empty.length)];
+        makeTttMove(pick, "O");
+      }
+    }
+
+    function checkTttWin(p) {
+      return winCombos.some(c => c.every(i => tttBoardState[i] === p));
+    }
+
+    function resetTtt() {
+      tttBoardState = ["","","","","","","","",""];
+      tttCurrentTurn = "X";
+      tttGameActive = true;
+      tttStatus.textContent = "Your Turn (X)";
+      tttCells.forEach(c => c.textContent = "");
+    }
+    tttReset.addEventListener("click", resetTtt);
+
+    // =========================================================================
+    // 4. MINI ARCADE EXTRAS
+    // =========================================================================
+    function runSpeedMath() {
+      const a = Math.floor(Math.random() * 12) + 2;
+      const b = Math.floor(Math.random() * 12) + 2;
+      const ans = prompt(`⚡ MATH RUSH:\nWhat is ${a} × ${b}?`);
+      if (parseInt(ans) === (a * b)) alert("🔥 Correct! Lightning fast calculation!");
+      else if (ans !== null) alert(`❌ Oops! The answer was ${a * b}`);
+    }
+
+    function runReflexTest() {
+      const start = Date.now();
+      alert("🎯 REFLEX TEST:\nGet ready... Click OK as fast as you can right now!");
+      const diff = Date.now() - start;
+      alert(`⚡ Reaction time: ${diff}ms!`);
+    }
+  </script>
+</body>
+</html>
