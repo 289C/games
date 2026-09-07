@@ -3,428 +3,403 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Level Devil - fungames</title>
-
-  <!-- Emoji Favicon for Browser Tab -->
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👿</text></svg>">
-
-  <!-- Firebase App SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+  <title>FriendsGame</title>
+  
+  <!-- Firebase SDK (Compat mode v9+) -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
   <style>
-    :root {
-      --bg-gradient: linear-gradient(135deg, #70f3db 0%, #3fe1ca 45%, #66d9ea 100%);
-      --card-radius: 20px;
-      --card-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
-      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    }
-
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: var(--font-family);
-      -webkit-tap-highlight-color: transparent;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      user-select: none;
+      -webkit-user-select: none;
     }
 
     body {
-      background: var(--bg-gradient);
+      background-color: #0d0e15;
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       min-height: 100vh;
-      color: #333;
-      padding-bottom: 40px;
+      padding: 16px;
+      overflow-x: hidden;
+      position: relative;
     }
 
-    /* Top Navbar */
+    /* --- Animated Ambient Background Effects --- */
+    body::before, body::after {
+      content: "";
+      position: fixed;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      filter: blur(90px);
+      z-index: -1;
+      opacity: 0.45;
+      animation: floatGlow 10s ease-in-out infinite alternate;
+      pointer-events: none;
+    }
+
+    body::before {
+      background: radial-gradient(circle, #6c5ce7, #0984e3);
+      top: -60px;
+      left: -60px;
+    }
+
+    body::after {
+      background: radial-gradient(circle, #00cec9, #e84393);
+      bottom: -60px;
+      right: -60px;
+      animation-duration: 14s;
+      animation-direction: alternate-reverse;
+    }
+
+    @keyframes floatGlow {
+      0% {
+        transform: translate(0, 0) scale(1);
+      }
+      50% {
+        transform: translate(60px, 40px) scale(1.15);
+      }
+      100% {
+        transform: translate(-30px, 70px) scale(0.95);
+      }
+    }
+
+    /* Top Navigation Header */
     header {
-      background: rgba(255, 255, 255, 0.9);
-      backdrop-filter: blur(10px);
+      width: 100%;
+      max-width: 960px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 12px 24px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-      position: sticky;
-      top: 0;
-      z-index: 100;
+      padding: 12px 6px 20px;
     }
 
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
+    .site-title {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(90deg, #00cec9, #a29bfe);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
-    .brand-logo {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: #007bff;
-      color: white;
-      font-weight: 900;
-      font-size: 18px;
+    .author-tag a {
+      color: #dfe6e9;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      border: 1px solid rgba(255, 255, 255, 0.15);
       padding: 6px 14px;
+      border-radius: 20px;
+      background: rgba(24, 24, 31, 0.7);
+      backdrop-filter: blur(8px);
+      transition: 0.2s;
+    }
+
+    .author-tag a:hover {
+      border-color: #00cec9;
+      color: #00cec9;
+      box-shadow: 0 0 10px rgba(0, 206, 201, 0.4);
+    }
+
+    /* Bento Grid */
+    main {
+      width: 100%;
+      max-width: 960px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin-bottom: 30px;
+    }
+
+    .game-card {
+      background: rgba(24, 24, 31, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      padding: 24px;
+      position: relative;
+      cursor: pointer;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 180px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .game-card:hover {
+      border-color: rgba(255, 255, 255, 0.25);
+      transform: translateY(-2px);
+    }
+
+    .game-card:active {
+      transform: scale(0.98);
+    }
+
+    .card-large {
+      background: linear-gradient(135deg, rgba(45, 27, 84, 0.6) 0%, rgba(22, 22, 35, 0.8) 100%);
+      border-color: rgba(108, 92, 231, 0.4);
+    }
+
+    .card-wide {
+      background: linear-gradient(135deg, rgba(9, 132, 227, 0.3) 0%, rgba(22, 27, 43, 0.8) 100%);
+      border-color: rgba(9, 132, 227, 0.4);
+    }
+
+    .card-placeholder {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .badge {
+      align-self: flex-start;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
       border-radius: 12px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
 
-    .creator-badge {
-      display: flex;
-      align-items: center;
-      gap: 12px;
+    .badge-featured {
+      background: #6c5ce7;
+      color: #ffffff;
+      box-shadow: 0 0 10px rgba(108, 92, 231, 0.5);
     }
 
-    .insta-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
-      color: #fff;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 13px;
-      padding: 7px 14px;
-      border-radius: 25px;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .insta-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 10px rgba(220, 39, 67, 0.4);
-    }
-
-    /* Bento Grid */
-    main {
-      max-width: 1100px;
-      margin: 30px auto 0;
-      padding: 0 16px;
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-      grid-auto-rows: 140px;
-      grid-auto-flow: dense;
-      gap: 16px;
-    }
-
-    @media (min-width: 600px) {
-      main {
-        grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-        grid-auto-rows: 170px;
-        gap: 20px;
-      }
-    }
-
-    .game-card {
-      position: relative;
-      border-radius: var(--card-radius);
-      overflow: hidden;
-      cursor: pointer;
-      box-shadow: var(--card-shadow);
-      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-decoration: none;
-    }
-
-    .game-card:hover {
-      transform: scale(1.04);
-      box-shadow: 0 14px 24px rgba(0, 0, 0, 0.2);
-    }
-
-    .card-large {
-      grid-column: span 2;
-      grid-row: span 2;
-    }
-
-    .card-wide {
-      grid-column: span 2;
-      grid-row: span 1;
+    .badge-soon {
+      background: #2b2b36;
+      color: #747d8c;
     }
 
     .game-hero-emoji {
-      font-size: 72px;
-      line-height: 1;
-      filter: drop-shadow(0 6px 12px rgba(0,0,0,0.4));
-      user-select: none;
-      transition: transform 0.2s ease;
-      margin-bottom: 20px;
-    }
-
-    .game-card:hover .game-hero-emoji {
-      transform: scale(1.15) rotate(-4deg);
-    }
-
-    .card-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(0deg, rgba(0, 0, 0, 0.75) 0%, transparent 60%);
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      padding: 14px;
-      color: white;
+      font-size: 48px;
+      margin: 12px 0;
     }
 
     .game-title {
+      font-size: 20px;
       font-weight: 700;
-      font-size: 15px;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+      margin-bottom: 4px;
     }
 
-    .badge {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: rgba(0, 0, 0, 0.7);
-      color: #ffeb3b;
-      font-size: 10px;
-      font-weight: 800;
-      padding: 4px 8px;
-      border-radius: 8px;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      z-index: 2;
+    .game-desc {
+      font-size: 13px;
+      color: #a4b0be;
     }
 
-    .badge-featured {
-      background: #ff4757;
-      color: #fff;
-    }
-
-    /* Modal for Level Devil Game */
+    /* Modal Backdrop */
     .modal-backdrop {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.85);
+      background: rgba(0, 0, 0, 0.82);
       z-index: 1000;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
       padding: 12px;
+      backdrop-filter: blur(8px);
     }
 
     .modal-content {
-      background: #1e1e24;
-      border-radius: 16px;
+      background: #181822;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 20px;
       overflow: hidden;
       display: flex;
       flex-direction: column;
       align-items: center;
       width: 100%;
       max-width: 640px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
     }
-.ttt-cell {
-  background: #18181f;
-  border: 2px solid #333342;
-  border-radius: 12px;
-  font-size: 36px;
-  font-weight: 900;
-  color: #fff;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.15s ease, transform 0.1s ease;
-  user-select: none;
-}
-.ttt-cell:hover { background: #252530; }
-.ttt-cell:active { transform: scale(0.94); }
-    
+
     .modal-header {
       width: 100%;
       padding: 12px 18px;
-      background: #2b2b36;
+      background: #232330;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      color: #fff;
-    }
-
-    .modal-title-wrap {
-      display: flex;
-      align-items: center;
-      gap: 8px;
     }
 
     .close-btn {
       background: none;
       border: none;
-      color: #fff;
-      font-size: 26px;
+      color: #ffffff;
+      font-size: 24px;
       cursor: pointer;
       line-height: 1;
     }
 
+    /* Level Devil Canvas & Controls */
     #gameCanvas {
-      background: #22222b;
-      display: block;
+      background: #1f1f28;
       width: 100%;
       max-width: 640px;
-      height: auto;
       aspect-ratio: 4 / 3;
+      display: block;
     }
 
-    /* Mobile Controls */
     .mobile-controls-panel {
+      width: 100%;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      width: 100%;
-      background: #18181f;
-      padding: 14px 24px;
-      user-select: none;
-      -webkit-user-select: none;
+      padding: 14px 20px;
+      background: #181822;
     }
 
     .d-pad {
       display: flex;
-      gap: 16px;
+      gap: 12px;
     }
 
     .ctrl-btn {
       width: 58px;
       height: 58px;
+      border-radius: 16px;
+      background: #282836;
+      border: 2px solid #3d3d4e;
+      color: #ffffff;
       font-size: 22px;
-      border-radius: 50%;
-      border: none;
-      background: #333342;
-      color: #fff;
-      font-weight: bold;
-      touch-action: manipulation;
-      cursor: pointer;
       display: flex;
-      justify-content: center;
       align-items: center;
-      box-shadow: 0 4px 0 #1f1f28;
+      justify-content: center;
+      touch-action: manipulation;
     }
 
     .ctrl-btn:active {
-      transform: translateY(3px);
-      box-shadow: 0 1px 0 #1f1f28;
-      background: #444455;
+      background: #00cec9;
+      color: #111;
+      transform: scale(0.95);
     }
 
     .jump-btn {
-      background: #e74c3c;
-      box-shadow: 0 4px 0 #a82315;
-    }
-
-    .jump-btn:active {
-      background: #ff5252;
-      box-shadow: 0 1px 0 #a82315;
+      width: 72px;
+      height: 58px;
+      background: #6c5ce7;
+      border-color: #8272f7;
     }
 
     .game-controls-info {
-      padding: 8px;
-      color: #888;
       font-size: 11px;
+      color: #747d8c;
+      padding-bottom: 10px;
       text-align: center;
-      background: #18181f;
-      width: 100%;
+    }
+
+    /* Tic-Tac-Toe Elements */
+    .ttt-cell {
+      background: #1e1e28;
+      border: 2px solid #333346;
+      border-radius: 14px;
+      font-size: 36px;
+      font-weight: 900;
+      color: #ffffff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s, border-color 0.15s, transform 0.1s;
+    }
+
+    .ttt-cell:active {
+      transform: scale(0.94);
+    }
+
+    .ttt-win-cell {
+      animation: winGlow 1s ease-in-out infinite alternate !important;
+      border-color: #ffeaa7 !important;
+      background: #2d3436 !important;
+    }
+
+    @keyframes winGlow {
+      0% {
+        box-shadow: 0 0 6px #ffeaa7 inset;
+      }
+      100% {
+        box-shadow: 0 0 18px #fdcb6e inset, 0 0 10px #fdcb6e;
+      }
     }
   </style>
 </head>
 <body>
 
-  <!-- Header -->
+  <!-- Top Header -->
   <header>
-    <div class="brand">
-      <div class="brand-logo">
-        <span>👿</span>
-        <span>funGames</span>
-      </div>
-    </div>
-    <div class="creator-badge">
-      <a class="insta-btn" href="https://www.instagram.com/_satish_official_16?stkn=MTNzNXZ2cWpkdmRtNA==" target="_blank" rel="noopener noreferrer">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-        Created by Satish
-      </a>
+    <div class="site-title">🎮 FriendsGame</div>
+    <div class="author-tag">
+      <a href="https://instagram.com/_satish_official_16" target="_blank" rel="noopener">Created by Satish</a>
     </div>
   </header>
 
-  <!-- Grid -->
+  <!-- Main Game Hub -->
   <main>
-    <!-- Featured Playable Game Card -->
-    <div class="game-card card-large" id="launchLevelDevil" style="background: linear-gradient(135deg, #1b1b2f, #162447);">
+    <!-- Card: Level Devil -->
+    <div class="game-card card-large" id="launchLevelDevil">
       <span class="badge badge-featured">Playable • 50 Levels</span>
       <div class="game-hero-emoji">👿</div>
       <div class="card-overlay">
-        <div class="game-title" style="font-size: 19px;">👿 Level Devil</div>
-        <small style="opacity: 0.9;">Tap to play all 50 troll levels</small>
+        <div class="game-title">Level Devil</div>
+        <div class="game-desc">Escape dynamic troll traps and reach the exit.</div>
       </div>
     </div>
-    <!-- Tic-Tac-Toe Game Card -->
-<div class="game-card card-wide" id="launchTicTacToe" style="background: linear-gradient(135deg, #0984e3, #6c5ce7);">
-  <span class="badge badge-featured">Playable • 2 Player</span>
-  <div class="game-hero-emoji" style="font-size: 56px;">❌⭕</div>
-  <div class="card-overlay">
-    <div class="game-title" style="font-size: 18px;">Tic-Tac-Toe</div>
-    <small style="opacity: 0.9;">Play with friends</small>
-  </div>
-</div>
-    
 
-    <!-- Coming Soon Placeholders -->
-        <!-- Plane Simulator -->
-    <div class="game-card card-wide" style="background: linear-gradient(135deg, #f39c12, #d35400);">
-      <span class="badge">Coming Soon</span>
-      <div class="game-hero-emoji" style="font-size: 56px;">✈️</div>
-      <div class="card-overlay"><div class="game-title">Plane Simulator</div></div>
+    <!-- Card: Tic-Tac-Toe -->
+    <div class="game-card card-wide" id="launchTicTacToe">
+      <span class="badge badge-featured">Playable • Bot & 2P</span>
+      <div class="game-hero-emoji">❌⭕</div>
+      <div class="card-overlay">
+        <div class="game-title">Tic-Tac-Toe</div>
+        <div class="game-desc">Play vs smart AI Bot or friend (Pass & Play).</div>
+      </div>
     </div>
 
-    <!-- Math Rush -->
-    <div class="game-card" style="background: linear-gradient(135deg, #27ae60, #2ecc71);">
-      <span class="badge">Coming Soon</span>
-      <div class="game-hero-emoji" style="font-size: 48px;">🔢</div>
-      <div class="card-overlay"><div class="game-title">Math Rush</div></div>
+    <!-- Card: Plane Simulator Placeholder -->
+    <div class="game-card card-placeholder">
+      <span class="badge badge-soon">Coming Soon</span>
+      <div class="game-hero-emoji">✈️</div>
+      <div class="card-overlay">
+        <div class="game-title">Plane Simulator</div>
+        <div class="game-desc">Navigate skies with realistic controls.</div>
+      </div>
     </div>
 
-    <!-- Cryzen Ops -->
-    <div class="game-card" style="background: linear-gradient(135deg, #e74c3c, #c0392b);">
-      <span class="badge">Coming Soon</span>
-      <div class="game-hero-emoji" style="font-size: 48px;">🎯</div>
-      <div class="card-overlay"><div class="game-title">Cryzen Ops</div></div>
+    <!-- Card: Math Rush Placeholder -->
+    <div class="game-card card-placeholder">
+      <span class="badge badge-soon">Coming Soon</span>
+      <div class="game-hero-emoji">⚡</div>
+      <div class="card-overlay">
+        <div class="game-title">Math Rush</div>
+        <div class="game-desc">Speed math equations under timer pressure.</div>
+      </div>
     </div>
+  </main>
 
-    <!-- Scary Teacher Escape -->
-    <div class="game-card card-large" style="background: linear-gradient(135deg, #8e44ad, #3498db);">
-      <span class="badge">Coming Soon</span>
-      <div class="game-hero-emoji" style="font-size: 64px;">👩‍🏫</div>
-      <div class="card-overlay"><div class="game-title">Scary Teacher Escape</div></div>
-    </div>
-
-    <!-- Hotel Idle -->
-    <div class="game-card" style="background: linear-gradient(135deg, #34495e, #2c3e50);">
-      <span class="badge">Coming Soon</span>
-      <div class="game-hero-emoji" style="font-size: 48px;">🏨</div>
-      <div class="card-overlay"><div class="game-title">Hotel Idle</div></div>
-    </div>
-
-    <!-- Custom Craft -->
-    <div class="game-card card-wide" style="background: linear-gradient(135deg, #ff7675, #d63031);">
-      <span class="badge">Coming Soon</span>
-      <div class="game-hero-emoji" style="font-size: 56px;">🎨</div>
-      <div class="card-overlay"><div class="game-title">Custom Craft</div></div>
-    </div>
-
-
-  <!-- Modal Screen for Game -->
+  <!-- MODAL 1: Level Devil -->
   <div class="modal-backdrop" id="gameModal">
     <div class="modal-content">
       <div class="modal-header">
-        <div class="modal-title-wrap">
-          <span style="font-size: 20px;">👿</span>
-          <span id="levelDisplay" style="font-weight: bold;">Level 1 / 50</span>
+        <div style="font-weight: bold; display: flex; align-items: center; gap: 8px;">
+          <span>👿</span>
+          <span id="levelDisplay">Level 1 / 50</span>
         </div>
         <button class="close-btn" id="closeModal">&times;</button>
       </div>
 
       <canvas id="gameCanvas" width="640" height="480"></canvas>
 
-      <!-- On-Screen Controls for Mobile -->
+      <!-- Mobile D-Pad -->
       <div class="mobile-controls-panel">
         <div class="d-pad">
           <button class="ctrl-btn" id="btnLeft">◀</button>
@@ -432,25 +407,31 @@
         </div>
         <button class="ctrl-btn jump-btn" id="btnJump">▲</button>
       </div>
-
-      <div class="game-controls-info">
-        PC: <strong>A / D</strong> or <strong>Arrows</strong> to move, <strong>Space / W</strong> to jump.
-      </div>
+      <div class="game-controls-info">Desktop: A / D / Arrows = Move | Space / W / Up = Jump</div>
     </div>
   </div>
+
+  <!-- MODAL 2: Tic-Tac-Toe -->
   <div class="modal-backdrop" id="tttModal">
-    <div class="modal-content" style="max-width: 400px; padding-bottom: 20px;">
+    <div class="modal-content" style="max-width: 380px; padding-bottom: 20px;">
       <div class="modal-header">
-        <div class="modal-title-wrap">
-          <span style="font-size: 20px;">❌⭕</span>
-          <span style="font-weight: bold;">Tic-Tac-Toe</span>
+        <div style="font-weight: bold; display: flex; align-items: center; gap: 8px;">
+          <span>❌⭕</span>
+          <span>Tic-Tac-Toe</span>
         </div>
         <button class="close-btn" id="closeTttModal">&times;</button>
       </div>
 
-      <div id="tttStatus" style="color: #ffeb3b; font-size: 18px; font-weight: bold; margin: 16px 0 10px;">Player X's Turn</div>
+      <!-- Mode Selector -->
+      <div style="display: flex; gap: 8px; margin-top: 14px; justify-content: center;">
+        <button id="btnModeBot" style="padding: 6px 14px; border: none; border-radius: 12px; background: #00cec9; color: #111; font-weight: bold; font-size: 12px; cursor: pointer;">🤖 vs Bot</button>
+        <button id="btnMode2P" style="padding: 6px 14px; border: none; border-radius: 12px; background: #333342; color: #fff; font-weight: bold; font-size: 12px; cursor: pointer;">👥 2 Players</button>
+      </div>
 
-      <div id="tttBoard" style="display: grid; grid-template-columns: repeat(3, 85px); grid-template-rows: repeat(3, 85px); gap: 10px; background: #2b2b36; padding: 12px; border-radius: 16px;">
+      <div id="tttStatus" style="color: #ffeb3b; font-size: 16px; font-weight: bold; margin: 12px 0 8px;">Your Turn (X)</div>
+
+      <!-- 3x3 Grid Board -->
+      <div id="tttBoard" style="display: grid; grid-template-columns: repeat(3, 80px); grid-template-rows: repeat(3, 80px); gap: 10px; background: #232330; padding: 12px; border-radius: 16px;">
         <button class="ttt-cell" data-idx="0"></button>
         <button class="ttt-cell" data-idx="1"></button>
         <button class="ttt-cell" data-idx="2"></button>
@@ -462,12 +443,12 @@
         <button class="ttt-cell" data-idx="8"></button>
       </div>
 
-      <button id="tttResetBtn" style="margin-top: 16px; padding: 10px 24px; border: none; border-radius: 20px; background: #e74c3c; color: #fff; font-size: 14px; font-weight: bold; cursor: pointer;">Restart Game</button>
+      <button id="tttResetBtn" style="margin-top: 16px; padding: 10px 22px; border: none; border-radius: 20px; background: #e74c3c; color: #fff; font-size: 13px; font-weight: bold; cursor: pointer;">Restart Game</button>
     </div>
   </div>
-    
+
   <script>
-    // --- Firebase Configuration ---
+    // --- Firebase Initialization ---
     const firebaseConfig = {
       apiKey: "AIzaSyBzLchy5M2fLne4c7Ghw1KNN8wVrlZdd8M",
       authDomain: "friendsgame-872f5.firebaseapp.com",
@@ -479,17 +460,30 @@
       measurementId: "G-PW5H3G97QR"
     };
 
-    if (typeof firebase !== 'undefined' && firebase.initializeApp) {
+    if (typeof firebase !== "undefined" && firebase.initializeApp) {
       firebase.initializeApp(firebaseConfig);
     }
 
-    // --- Modal Management ---
+    // =========================================================================
+    // LEVEL DEVIL ENGINE
+    // =========================================================================
     const modal = document.getElementById("gameModal");
     const launchBtn = document.getElementById("launchLevelDevil");
     const closeBtn = document.getElementById("closeModal");
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+    const levelDisplay = document.getElementById("levelDisplay");
+
+    let currentLevel = 1;
+    const TOTAL_LEVELS = 50;
+    let animationFrameId = null;
+
+    const inputState = { left: false, right: false, jump: false };
 
     launchBtn.addEventListener("click", () => {
       modal.style.display = "flex";
+      currentLevel = 1;
+      initLevel(currentLevel);
       startGame();
     });
 
@@ -498,10 +492,6 @@
       stopGame();
     });
 
-    // --- Unified Input System (Keyboard + Mobile Touch) ---
-    const inputState = { left: false, right: false, jump: false };
-
-    // Keyboard (PC)
     window.addEventListener("keydown", (e) => {
       if (e.code === "ArrowLeft" || e.code === "KeyA") inputState.left = true;
       if (e.code === "ArrowRight" || e.code === "KeyD") inputState.right = true;
@@ -514,56 +504,25 @@
       if (e.code === "ArrowUp" || e.code === "KeyW" || e.code === "Space") inputState.jump = false;
     });
 
-    // Touch Buttons (Mobile)
-    function registerButton(elementId, actionKey) {
-      const btn = document.getElementById(elementId);
+    function bindTouch(btnId, actionKey) {
+      const btn = document.getElementById(btnId);
       if (!btn) return;
-
-      const onPress = (e) => {
-        if (e.cancelable) e.preventDefault();
-        inputState[actionKey] = true;
-      };
-
-      const onRelease = (e) => {
-        if (e.cancelable) e.preventDefault();
-        inputState[actionKey] = false;
-      };
-
-      btn.addEventListener("touchstart", onPress, { passive: false });
-      btn.addEventListener("touchend", onRelease, { passive: false });
-      btn.addEventListener("touchcancel", onRelease, { passive: false });
-      btn.addEventListener("mousedown", onPress);
-      btn.addEventListener("mouseup", onRelease);
-      btn.addEventListener("mouseleave", onRelease);
-      btn.addEventListener("contextmenu", (e) => e.preventDefault());
+      const start = (e) => { if (e.cancelable) e.preventDefault(); inputState[actionKey] = true; };
+      const end = (e) => { if (e.cancelable) e.preventDefault(); inputState[actionKey] = false; };
+      btn.addEventListener("touchstart", start, { passive: false });
+      btn.addEventListener("touchend", end, { passive: false });
+      btn.addEventListener("touchcancel", end, { passive: false });
+      btn.addEventListener("mousedown", start);
+      btn.addEventListener("mouseup", end);
+      btn.addEventListener("mouseleave", end);
     }
 
-    registerButton("btnLeft", "left");
-    registerButton("btnRight", "right");
-    registerButton("btnJump", "jump");
+    bindTouch("btnLeft", "left");
+    bindTouch("btnRight", "right");
+    bindTouch("btnJump", "jump");
 
-    // --- Game Engine ---
-    const canvas = document.getElementById("gameCanvas");
-    const ctx = canvas.getContext("2d");
-    const levelDisplay = document.getElementById("levelDisplay");
-
-    let currentLevel = 1;
-    const TOTAL_LEVELS = 50;
-    let animationFrameId;
-
-    const player = {
-      x: 50,
-      y: 350,
-      width: 24,
-      height: 24,
-      vx: 0,
-      vy: 0,
-      speed: 4,
-      jumpForce: -9.5,
-      isGrounded: false
-    };
-
-    let door = { x: 550, y: 355, width: 30, height: 45 };
+    let player = { x: 50, y: 380, w: 24, h: 24, vx: 0, vy: 0, grounded: false };
+    let door = { x: 550, y: 385, w: 32, h: 45 };
     let platforms = [];
     let spikes = [];
     let trollTriggered = false;
@@ -571,120 +530,104 @@
     function initLevel(lvl) {
       trollTriggered = false;
       levelDisplay.textContent = `Level ${lvl} / ${TOTAL_LEVELS}`;
-      player.x = 40;
-      player.y = 350;
+
+      player.x = 50;
+      player.y = 380;
       player.vx = 0;
       player.vy = 0;
-
-      // Base Platforms
-      platforms = [
-        { x: 0, y: 400, width: 640, height: 80 },
-        { x: 180, y: 320, width: 90, height: 20, dynamic: false },
-        { x: 330, y: 260, width: 100, height: 20, dynamic: false }
-      ];
-
       door.x = 550;
-      door.y = 355;
+      door.y = 385;
+
+      platforms = [
+        { x: 0, y: 430, w: 640, h: 50, dynamic: false },
+        { x: 180, y: 340, w: 90, h: 20, dynamic: false },
+        { x: 330, y: 270, w: 100, h: 20, dynamic: false }
+      ];
       spikes = [];
 
-      // Troll variations per level
-      if (lvl >= 2) {
-        spikes.push({ x: 280, y: 380, width: 30, height: 20, hidden: lvl > 15 });
-      }
-      if (lvl >= 5) {
-        platforms[1].dynamic = true;
-      }
-      if (lvl >= 10) {
-        platforms.push({ x: 440, y: 340, width: 70, height: 20, moves: true, speed: 1.8, dir: 1 });
-      }
-      if (lvl >= 20) {
-        spikes.push({ x: 450, y: 380, width: 40, height: 20, hidden: true });
-      }
-    }
-
-    function checkCollision(r1, r2) {
-      return (
-        r1.x < r2.x + r2.width &&
-        r1.x + r1.width > r2.x &&
-        r1.y < r2.y + r2.height &&
-        r1.y + r1.height > r2.y
-      );
+      if (lvl >= 2) spikes.push({ x: 275, y: 410, w: 30, h: 20, hidden: lvl > 8 });
+      if (lvl >= 5) platforms[1].dynamic = true;
+      if (lvl >= 10) platforms.push({ x: 440, y: 330, w: 70, h: 20, moves: true, speed: 2, dir: 1, dynamic: false });
+      if (lvl >= 20) spikes.push({ x: 450, y: 410, w: 40, h: 20, hidden: true });
     }
 
     function update() {
-      // Inverted controls troll on every 7th level
-      const invert = currentLevel % 7 === 0;
+      const invert = (currentLevel % 7 === 0);
       const moveLeft = invert ? inputState.right : inputState.left;
       const moveRight = invert ? inputState.left : inputState.right;
 
-      if (moveLeft) player.vx = -player.speed;
-      else if (moveRight) player.vx = player.speed;
+      if (moveLeft) player.vx = -4.5;
+      else if (moveRight) player.vx = 4.5;
       else player.vx = 0;
 
-      if (inputState.jump && player.isGrounded) {
-        player.vy = player.jumpForce;
-        player.isGrounded = false;
+      if (inputState.jump && player.grounded) {
+        player.vy = -9.8;
+        player.grounded = false;
       }
 
-      player.vy += 0.45; // Gravity
+      player.vy += 0.45;
       player.x += player.vx;
       player.y += player.vy;
 
-      // Troll: Moving door on level 3+
       if (currentLevel >= 3 && player.x > door.x - 120 && !trollTriggered) {
-        door.x += 50;
+        door.x += 45;
         trollTriggered = true;
       }
 
-      // Moving / falling platforms
-      platforms.forEach((plat) => {
-        if (plat.moves) {
-          plat.x += plat.speed * plat.dir;
-          if (plat.x > 500 || plat.x < 360) plat.dir *= -1;
+      for (let p of platforms) {
+        if (p.moves) {
+          p.x += p.speed * p.dir;
+          if (p.x > 500 || p.x < 350) p.dir *= -1;
         }
-        if (plat.dynamic && trollTriggered) {
-          plat.y += 3;
-        }
-      });
-
-      // Platform collisions
-      player.isGrounded = false;
-      platforms.forEach((p) => {
-        if (
-          player.x < p.x + p.width &&
-          player.x + player.width > p.x &&
-          player.y + player.height >= p.y &&
-          player.y + player.height <= p.y + 16 &&
-          player.vy >= 0
-        ) {
-          player.isGrounded = true;
-          player.vy = 0;
-          player.y = p.y - player.height;
-        }
-      });
-
-      // Spikes collision
-      spikes.forEach((spike) => {
-        if (spike.hidden && player.x > spike.x - 40) {
-          spike.hidden = false;
-        }
-        if (!spike.hidden && checkCollision(player, spike)) {
-          initLevel(currentLevel);
-        }
-      });
-
-      // Bottom death
-      if (player.y > 480) {
-        initLevel(currentLevel);
+        if (p.dynamic && trollTriggered) p.y += 3;
       }
 
-      // Door clear
-      if (checkCollision(player, door)) {
+      player.grounded = false;
+      for (let p of platforms) {
+        if (
+          player.x < p.x + p.w &&
+          player.x + player.w > p.x &&
+          player.y + player.h >= p.y &&
+          player.y + player.h <= p.y + 16 &&
+          player.vy >= 0
+        ) {
+          player.grounded = true;
+          player.vy = 0;
+          player.y = p.y - player.h;
+        }
+      }
+
+      for (let s of spikes) {
+        if (s.hidden && player.x > s.x - 50) s.hidden = false;
+        if (!s.hidden) {
+          if (
+            player.x < s.x + s.w &&
+            player.x + player.w > s.x &&
+            player.y < s.y + s.h &&
+            player.y + player.h > s.y
+          ) {
+            initLevel(currentLevel);
+            return;
+          }
+        }
+      }
+
+      if (player.y > 480) {
+        initLevel(currentLevel);
+        return;
+      }
+
+      if (
+        player.x < door.x + door.w &&
+        player.x + player.w > door.x &&
+        player.y < door.y + door.h &&
+        player.y + player.h > door.y
+      ) {
         if (currentLevel < TOTAL_LEVELS) {
           currentLevel++;
           initLevel(currentLevel);
         } else {
-          alert("🏆 Congratulations Satish! You cleared all 50 Troll Levels!");
+          alert("🎉 You cleared all 50 troll levels!");
           currentLevel = 1;
           initLevel(currentLevel);
         }
@@ -692,42 +635,40 @@
     }
 
     function render() {
-      ctx.fillStyle = "#22222b";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       // Door
       ctx.fillStyle = "#f1c40f";
-      ctx.fillRect(door.x, door.y, door.width, door.height);
+      ctx.fillRect(door.x, door.y, door.w, door.h);
       ctx.fillStyle = "#2c3e50";
-      ctx.fillRect(door.x + 4, door.y + 4, door.width - 8, door.height - 4);
+      ctx.fillRect(door.x + 4, door.y + 4, door.w - 8, door.h);
 
       // Platforms
       ctx.fillStyle = "#34495e";
-      platforms.forEach((p) => {
-        ctx.fillRect(p.x, p.y, p.width, p.height);
-      });
+      for (let p of platforms) {
+        ctx.fillRect(p.x, p.y, p.w, p.h);
+      }
 
       // Spikes
-      spikes.forEach((s) => {
+      ctx.fillStyle = "#e74c3c";
+      for (let s of spikes) {
         if (!s.hidden) {
-          ctx.fillStyle = "#e74c3c";
           ctx.beginPath();
-          ctx.moveTo(s.x, s.y + s.height);
-          ctx.lineTo(s.x + s.width / 2, s.y);
-          ctx.lineTo(s.x + s.width, s.y + s.height);
+          ctx.moveTo(s.x, s.y + s.h);
+          ctx.lineTo(s.x + s.w / 2, s.y);
+          ctx.lineTo(s.x + s.w, s.y + s.h);
           ctx.fill();
         }
-      });
+      }
 
       // Player
       ctx.fillStyle = "#ffffff";
-      ctx.fillRect(player.x, player.y, player.width, player.height);
+      ctx.fillRect(player.x, player.y, player.w, player.h);
 
-      // Player Eyes
-      ctx.fillStyle = "#111";
-      const eyeOffset = player.vx < 0 ? 3 : 11;
-      ctx.fillRect(player.x + eyeOffset, player.y + 6, 4, 6);
-      ctx.fillRect(player.x + eyeOffset + 6, player.y + 6, 4, 6);
+      const eyeX = player.x + (player.vx < 0 ? 4 : 14);
+      ctx.fillStyle = "#111111";
+      ctx.fillRect(eyeX, player.y + 5, 3, 5);
+      ctx.fillRect(eyeX + 4, player.y + 5, 3, 5);
     }
 
     function gameLoop() {
@@ -737,213 +678,178 @@
     }
 
     function startGame() {
-      initLevel(currentLevel);
-      cancelAnimationFrame(animationFrameId);
-      animationFrameId = requestAnimationFrame(gameLoop);
+      if (!animationFrameId) gameLoop();
     }
 
     function stopGame() {
+      if (animationFrameId) {
         cancelAnimationFrame(animationFrameId);
-      // --- Tic-Tac-Toe Logic ---
-const tttModal = document.getElementById("tttModal");
-const launchTttBtn = document.getElementById("launchTicTacToe");
-const closeTttBtn = document.getElementById("closeTttModal");
-const tttStatus = document.getElementById("tttStatus");
-const tttResetBtn = document.getElementById("tttResetBtn");
-const tttCells = document.querySelectorAll(".ttt-cell");
+        animationFrameId = null;
+      }
+    }
+        // =========================================================================
+    // TIC-TAC-TOE ENGINE (AI Bot & 2 Players)
+    // =========================================================================
+    const tttModal = document.getElementById("tttModal");
+    const launchTttBtn = document.getElementById("launchTicTacToe");
+    const closeTttBtn = document.getElementById("closeTttModal");
+    const tttStatus = document.getElementById("tttStatus");
+    const tttResetBtn = document.getElementById("tttResetBtn");
+    const tttCells = document.querySelectorAll(".ttt-cell");
+    const btnModeBot = document.getElementById("btnModeBot");
+    const btnMode2P = document.getElementById("btnMode2P");
 
-let tttBoardState = ["", "", "", "", "", "", "", "", ""];
-let currentPlayer = "X";
-let tttGameActive = true;
+    let tttBoardState = ["", "", "", "", "", "", "", "", ""];
+    let currentPlayer = "X";
+    let tttGameActive = true;
+    let isBotMode = true;
 
-const winPatterns = [
-  [0, 1, 2], [3, 4, 5], [6, 7, 8],
-  [0, 3, 6], [1, 4, 7], [2, 5, 8],
-  [0, 4, 8], [2, 4, 6]
-];
+    const winPatterns = [
+      [0, 1, 2], [3, 4, 5], [6, 7, 8],
+      [0, 3, 6], [1, 4, 7], [2, 5, 8],
+      [0, 4, 8], [2, 4, 6]
+    ];
 
-launchTttBtn.addEventListener("click", () => {
-  tttModal.style.display = "flex";
-  resetTicTacToe();
-});
+    launchTttBtn.addEventListener("click", () => {
+      tttModal.style.display = "flex";
+      resetTicTacToe();
+    });
 
-closeTttBtn.addEventListener("click", () => {
-  tttModal.style.display = "none";
-});
+    closeTttBtn.addEventListener("click", () => {
+      tttModal.style.display = "none";
+    });
 
-tttCells.forEach((cell) => {
-  cell.addEventListener("click", () => {
-    const idx = parseInt(cell.getAttribute("data-idx"));
-    if (tttBoardState[idx] !== "" || !tttGameActive) return;
+    btnModeBot.addEventListener("click", () => {
+      isBotMode = true;
+      btnModeBot.style.background = "#00cec9";
+      btnModeBot.style.color = "#111";
+      btnMode2P.style.background = "#333342";
+      btnMode2P.style.color = "#fff";
+      resetTicTacToe();
+    });
 
-    tttBoardState[idx] = currentPlayer;
-    cell.textContent = currentPlayer;
-    cell.style.color = currentPlayer === "X" ? "#00cec9" : "#ff7675";
+    btnMode2P.addEventListener("click", () => {
+      isBotMode = false;
+      btnMode2P.style.background = "#00cec9";
+      btnMode2P.style.color = "#111";
+      btnModeBot.style.background = "#333342";
+      btnModeBot.style.color = "#fff";
+      resetTicTacToe();
+    });
 
-    let roundWon = false;
-    for (let pattern of winPatterns) {
-      const [a, b, c] = pattern;
-      if (tttBoardState[a] && tttBoardState[a] === tttBoardState[b] && tttBoardState[a] === tttBoardState[c]) {
-        roundWon = true;
-        break;
+    tttCells.forEach((cell) => {
+      cell.addEventListener("click", () => {
+        const idx = parseInt(cell.getAttribute("data-idx"));
+        if (tttBoardState[idx] !== "" || !tttGameActive) return;
+
+        makeMove(idx, currentPlayer);
+
+        if (checkTttResult()) return;
+
+        if (isBotMode) {
+          currentPlayer = "O";
+          tttStatus.textContent = "🤖 Bot Thinking...";
+          setTimeout(makeAiMove, 350);
+        } else {
+          currentPlayer = currentPlayer === "X" ? "O" : "X";
+          tttStatus.textContent = `Player ${currentPlayer}'s Turn`;
+        }
+      });
+    });
+
+    function makeMove(index, symbol) {
+      tttBoardState[index] = symbol;
+      const cell = tttCells[index];
+      cell.textContent = symbol;
+      cell.style.color = symbol === "X" ? "#00cec9" : "#ff7675";
+    }
+
+    function makeAiMove() {
+      if (!tttGameActive) return;
+
+      // 1. Check if AI can win
+      let move = findWinningSpot("O");
+      // 2. Block player from winning
+      if (move === null) move = findWinningSpot("X");
+      // 3. Take center spot
+      if (move === null && tttBoardState[4] === "") move = 4;
+      // 4. Random available spot
+      if (move === null) {
+        const emptySpots = tttBoardState.map((v, i) => (v === "" ? i : null)).filter(v => v !== null);
+        if (emptySpots.length > 0) {
+          move = emptySpots[Math.floor(Math.random() * emptySpots.length)];
+        }
+      }
+
+      if (move !== null) {
+        makeMove(move, "O");
+        if (!checkTttResult()) {
+          currentPlayer = "X";
+          tttStatus.textContent = "Your Turn (X)";
+        }
       }
     }
 
-    if (roundWon) {
-      tttStatus.textContent = `🎉 Player ${currentPlayer} Wins!`;
-      tttGameActive = false;
-      return;
-    }
-
-    if (!tttBoardState.includes("")) {
-      tttStatus.textContent = "🤝 It's a Draw!";
-      tttGameActive = false;
-      return;
-    }
-
-    if (isBotMode && tttGameActive) {
-  currentPlayer = "O";
-  tttStatus.textContent = "🤖 Bot Thinking...";
-  setTimeout(makeAiMove, 350);
-} else {
-  currentPlayer = currentPlayer === "X" ? "O" : "X";
-  tttStatus.textContent = `Player ${currentPlayer}'s Turn`;
-}
-
-  });
-});
-
-  // Play the chosen move
-  if (move !== null) {
-    tttBoardState[move] = "O";
-    tttCells[move].textContent = "O";
-    tttCells[move].style.color = "#ff7675";
-
-    // Check if AI won
-    let roundWon = false;
-    for (let pattern of winPatterns) {
-      const [a, b, c] = pattern;
-      if (tttBoardState[a] && tttBoardState[a] === tttBoardState[b] && tttBoardState[a] === tttBoardState[c]) {
-        roundWon = true;
-        break;
+    function findWinningSpot(symbol) {
+      for (let [a, b, c] of winPatterns) {
+        const vals = [tttBoardState[a], tttBoardState[b], tttBoardState[c]];
+        if (vals.filter(v => v === symbol).length === 2 && vals.includes("")) {
+          if (tttBoardState[a] === "") return a;
+          if (tttBoardState[b] === "") return b;
+          if (tttBoardState[c] === "") return c;
+        }
       }
+      return null;
     }
 
-    if (roundWon) {
-      tttStatus.textContent = "🤖 AI Won!";
-      tttGameActive = false;
-      return;
-    }
+    function checkTttResult() {
+      let roundWon = false;
+      let winningIndices = [];
 
-    if (!tttBoardState.includes("")) {
-      tttStatus.textContent = "🤝 It's a Draw!";
-      tttGameActive = false;
-      return;
-    }
+      for (let pattern of winPatterns) {
+        const [a, b, c] = pattern;
+        if (tttBoardState[a] && tttBoardState[a] === tttBoardState[b] && tttBoardState[a] === tttBoardState[c]) {
+          roundWon = true;
+          winningIndices = [a, b, c];
+          break;
+        }
+      }
 
-    currentPlayer = "X";
-    tttStatus.textContent = "Player X's Turn";
-  }
-}
+      if (roundWon) {
+        winningIndices.forEach((idx) => {
+          tttCells[idx].classList.add("ttt-win-cell");
+        });
 
-function findBestSpot(symbol) {
-  for (let pattern of winPatterns) {
-    const [a, b, c] = pattern;
-    const values = [tttBoardState[a], tttBoardState[b], tttBoardState[c]];
-    if (values.filter(v => v === symbol).length === 2 && values.includes("")) {
-      if (tttBoardState[a] === "") return a;
-      if (tttBoardState[b] === "") return b;
-      if (tttBoardState[c] === "") return c;
-    }
-  }
-  return null;
-}
-// --- Mode Switch Buttons ---
-const modeWrap = document.createElement("div");
-modeWrap.style.cssText = "display: flex; gap: 8px; margin: 10px 0; justify-content: center;";
-modeWrap.innerHTML = `
-  <button id="btnModeBot" style="padding: 6px 12px; border: none; border-radius: 12px; background: #00cec9; color: #111; font-weight: bold; cursor: pointer;">🤖 vs Bot</button>
-  <button id="btnMode2P" style="padding: 6px 12px; border: none; border-radius: 12px; background: #333342; color: #fff; font-weight: bold; cursor: pointer;">👥 2 Players</button>
-`;
-tttStatus.parentNode.insertBefore(modeWrap, tttStatus);
-
-let isBotMode = true;
-
-document.getElementById("btnModeBot").addEventListener("click", () => {
-  isBotMode = true;
-  document.getElementById("btnModeBot").style.background = "#00cec9";
-  document.getElementById("btnModeBot").style.color = "#111";
-  document.getElementById("btnMode2P").style.background = "#333342";
-  document.getElementById("btnMode2P").style.color = "#fff";
-  resetTicTacToe();
-});
-
-document.getElementById("btnMode2P").addEventListener("click", () => {
-  isBotMode = false;
-  document.getElementById("btnMode2P").style.background = "#00cec9";
-  document.getElementById("btnMode2P").style.color = "#111";
-  document.getElementById("btnModeBot").style.background = "#333342";
-  document.getElementById("btnModeBot").style.color = "#fff";
-  resetTicTacToe();
-});
-
-// --- AI Move Logic ---
-function makeAiMove() {
-  if (!tttGameActive) return;
-
-  let move = findWinningSpot("O") ?? findWinningSpot("X");
-  if (move === null && tttBoardState[4] === "") move = 4;
-  if (move === null) {
-    const emptySpots = tttBoardState.map((v, i) => (v === "" ? i : null)).filter(v => v !== null);
-    if (emptySpots.length > 0) move = emptySpots[Math.floor(Math.random() * emptySpots.length)];
-  }
-
-  if (move !== null) {
-    tttBoardState[move] = "O";
-    tttCells[move].textContent = "O";
-    tttCells[move].style.color = "#ff7675";
-
-    for (let [a, b, c] of winPatterns) {
-      if (tttBoardState[a] && tttBoardState[a] === tttBoardState[b] && tttBoardState[a] === tttBoardState[c]) {
-        tttStatus.textContent = "🤖 Bot Won!";
+        if (isBotMode) {
+          tttStatus.textContent = currentPlayer === "X" ? "🎉 You Won!" : "🤖 Bot Won!";
+        } else {
+          tttStatus.textContent = `🎉 Player ${currentPlayer} Wins!`;
+        }
         tttGameActive = false;
-        return;
+        return true;
       }
+
+      if (!tttBoardState.includes("")) {
+        tttStatus.textContent = "🤝 It's a Draw!";
+        tttGameActive = false;
+        return true;
+      }
+
+      return false;
     }
 
-    if (!tttBoardState.includes("")) {
-      tttStatus.textContent = "🤝 It's a Draw!";
-      tttGameActive = false;
-      return;
+    function resetTicTacToe() {
+      tttBoardState = ["", "", "", "", "", "", "", "", ""];
+      currentPlayer = "X";
+      tttGameActive = true;
+      tttStatus.textContent = isBotMode ? "Your Turn (X)" : "Player X's Turn";
+      tttCells.forEach((cell) => {
+        cell.textContent = "";
+        cell.classList.remove("ttt-win-cell");
+      });
     }
 
-    currentPlayer = "X";
-    tttStatus.textContent = "Your Turn (X)";
-  }
-}
-
-function findWinningSpot(symbol) {
-  for (let [a, b, c] of winPatterns) {
-    const vals = [tttBoardState[a], tttBoardState[b], tttBoardState[c]];
-    if (vals.filter(v => v === symbol).length === 2 && vals.includes("")) {
-      if (tttBoardState[a] === "") return a;
-      if (tttBoardState[b] === "") return b;
-      if (tttBoardState[c] === "") return c;
-    }
-  }
-  return null;
-}
-      
-function resetTicTacToe() {
-  tttBoardState = ["", "", "", "", "", "", "", "", ""];
-  currentPlayer = "X";
-  tttGameActive = true;
-  tttStatus.textContent = "Player X's Turn";
-  tttCells.forEach((cell) => { cell.textContent = ""; });
-}
-
-tttResetBtn.addEventListener("click", resetTicTacToe);    
-  
-</script>
+    tttResetBtn.addEventListener("click", resetTicTacToe);
+  </script>
 </body>
 </html>
