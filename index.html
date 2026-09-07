@@ -673,362 +673,8 @@
     if (!firebase.apps.length) {
       firebase.initializeApp(firebaseConfig);
     }
-
-    // =========================================================================
-    // 1. LEVEL DEVIL 200-STAGE PROCEDURAL ENGINE
-    // =========================================================================
-    const ldModal = document.getElementById("ldModal");
-    const openLd = document.getElementById("openLevelDevil");
-    const closeLd = document.getElementById("closeLdBtn");
-    const ldCanvas = document.getElementById("ldCanvas");
-    const ldCtx = ldCanvas.getContext("2d");
-    const ldTitle = document.getElementById("ldTitle");
-
-    let ldLevel = 1;
-    let ldDeaths = 0;
-    let ldRunning = false;
-    let ldAnimId = null;
-
-    const ldInput = { left: false, right: false, jump: false };
-    let ldPlayer = { x: 50, y: 300, w: 18, h: 24, vx: 0, vy: 0, grounded: false, facing: 1 };
-    let ldDoor = { x: 570, y: 304, w: 26, h: 36, targetX: 570, targetY: 304, hasFled: false };
-    let ldPlatforms = [];
-    let ldFakePlatforms = [];
-    let ldSpikes = [];
-    let ldHazards = [];
-    let ldTrollActions = [];
-    let ldControlsInverted = false;
-
-    const ldThemes = [
-      { bg: "#f3c969", platform: "#1e3a5f", spike: "#d90429" },
-      { bg: "#cd8d7a", platform: "#4a1c40", spike: "#f43f5e" },
-      { bg: "#a8dadc", platform: "#1d3557", spike: "#e63946" },
-      { bg: "#95d5b2", platform: "#081c15", spike: "#d00000" },
-      { bg: "#f4a261", platform: "#264653", spike: "#b5179e" }
-    ];
-    let ldCurTheme = ldThemes[0];
-
-    openLd.addEventListener("click", () => {
-      ldModal.style.display = "flex";
-      ldLevel = 1;
-      ldDeaths = 0;
-      buildLdLevel(ldLevel);
-      ldRunning = true;
-      ldLoop();
-    });
-
-    closeLd.addEventListener("click", () => {
-      ldModal.style.display = "none";
-      ldRunning = false;
-      cancelAnimationFrame(ldAnimId);
-    });
-
-    window.addEventListener("keydown", (e) => {
-      let l = !ldControlsInverted ? (e.code === "ArrowLeft" || e.code === "KeyA") : (e.code === "ArrowRight" || e.code === "KeyD");
-      let r = !ldControlsInverted ? (e.code === "ArrowRight" || e.code === "KeyD") : (e.code === "ArrowLeft" || e.code === "KeyA");
-      if (l) ldInput.left = true;
-      if (r) ldInput.right = true;
-      if ((e.code === "ArrowUp" || e.code === "KeyW" || e.code === "Space") && ldPlayer.grounded) {
-        ldPlayer.vy = -10.4;
-        ldPlayer.grounded = false;
-      }
-    });
-
-    window.addEventListener("keyup", (e) => {
-      if (e.code === "ArrowLeft" || e.code === "KeyA") { if (!ldControlsInverted) ldInput.left = false; else ldInput.right = false; }
-      if (e.code === "ArrowRight" || e.code === "KeyD") { if (!ldControlsInverted) ldInput.right = false; else ldInput.left = false; }
-    });
-
-    function bindLdTouch(id, act) {
-      const el = document.getElementById(id);
-      if (!el) return;
-      const fn = (e) => {
-        if (e.cancelable) e.preventDefault();
-        if (act === "jump" && ldPlayer.grounded) { ldPlayer.vy = -10.4; ldPlayer.grounded = false; }
-        else {
-          let dir = act;
-          if (ldControlsInverted) dir = act === "left" ? "right" : "left";
-          ldInput[dir] = true;
-        }
-      };
-      el.addEventListener("touchstart", fn, { passive: false });
-      el.addEventListener("mousedown", fn);
-      const end = () => { ldInput.left = false; ldInput.right = false; };
-      el.addEventListener("touchend", end);
-      el.addEventListener("mouseup", end);
-    }
-    bindLdTouch("ldLeft", "left");
-    bindLdTouch("ldRight", "right");
-    bindLdTouch("ldJump", "jump");
-
-    function seededRandom(seed) {
-      const x = Math.sin(seed++) * 10000;
-      return x - Math.floor(x);
-    }
-
-    function buildLdLevel(lvl) {
-      ldTitle.textContent = `Level ${lvl} / 200 | Deaths: ${ldDeaths}`;
-      ldCurTheme = ldThemes[(lvl - 1) % ldThemes.length];
-      ldPlayer.x = 45; ldPlayer.y = 300; ldPlayer.vx = 0; ldPlayer.vy = 0;
-      ldControlsInverted = false;
-      ldPlatforms = []; ldFakePlatforms = []; ldSpikes = []; ldHazards = []; ldTrollActions = [];
-      ldDoor = { x: 570, y: 304, w: 26, h: 36, targetX: 570, targetY: 304, hasFled: false };
-
-      ldPlatforms.push({ x: 10, y: 340, w: 120, h: 50 });
-      ldPlatforms.push({ x: 530, y: 340, w: 100, h: 50 });
-
-      let seed = lvl * 2199;
-      let rand = () => { seed++; return seededRandom(seed); };
-
-      for (let i = 0; i < 3; i++) {
-        ldPlatforms.push({ x: 140 + i * 130, y: 320 - Math.floor(rand() * 40), w: 85, h: 35, drop: false });
-      }
-
-      for (let sx = 10; sx < 630; sx += 32) {
-        ldSpikes.push({ x: sx, y: 398, w: 22, h: 18 });
-      }
-
-      const activeCount = Math.min(5, Math.max(2, Math.floor(2 + (lvl / 50))));
-      const pool = ["drop_plat", "run_door", "guillotine", "pop_spikes", "ceiling_drop", "invert"];
-      let chosen = [];
-      let temp = [...pool];
-      for (let i = 0; i < activeCount; i++) {
-        let idx = Math.floor(rand() * temp.length);
-        chosen.push(temp[idx]);
-        temp.splice(idx, 1);
-      }
-
-      chosen.forEach(feat => {
-        if (feat === "drop_plat") {
-          const target = ldPlatforms[2];
-          ldTrollActions.push(() => {
-            if (ldPlayer.x > target.x - 10 && ldPlayer.x < target.x + target.w && ldPlayer.grounded) target.drop = true;
-            if (target.drop) target.y += 6.5;
-          });
-        } else if (feat === "run_door") {
-          ldTrollActions.push(() => {
-            if (ldPlayer.x > 460 && !ldDoor.hasFled) { ldDoor.hasFled = true; ldDoor.targetX = 60; }
-            ldDoor.x += (ldDoor.targetX - ldDoor.x) * 0.14;
-          });
-        } else if (feat === "guillotine") {
-          const guil = { x: 260 + Math.floor(rand() * 80), y: -120, w: 36, h: 240, dropped: false };
-          ldPlatforms.push(guil);
-          ldTrollActions.push(() => {
-            if (ldPlayer.x > guil.x - 45 && !guil.dropped) {
-              guil.y += 19;
-              if (guil.y >= 100) guil.dropped = true;
-            }
-          });
-        } else if (feat === "pop_spikes") {
-          const spk = { x: 540, y: 340, w: 24, h: 0, maxH: 22 };
-          ldSpikes.push(spk);
-          ldTrollActions.push(() => {
-            if (ldPlayer.x > 460 && spk.h < spk.maxH) { spk.h += 5; spk.y -= 5; }
-          });
-        } else if (feat === "ceiling_drop") {
-          const dSpk = { x: 200 + Math.floor(rand() * 180), y: 10, w: 24, h: 22, vy: 0, act: false };
-          ldSpikes.push(dSpk);
-          ldTrollActions.push(() => {
-            if (ldPlayer.x > dSpk.x - 30 && !dSpk.act) dSpk.act = true;
-            if (dSpk.act && dSpk.y < 320) { dSpk.vy += 0.85; dSpk.y += dSpk.vy; }
-          });
-        } else if (feat === "invert") {
-          ldTrollActions.push(() => {
-            ldControlsInverted = (ldPlayer.x > 210 && ldPlayer.x < 420);
-          });
-        }
-      });
-    }
-
-    function updateLd() {
-      if (ldInput.left) { ldPlayer.vx = -3.8; ldPlayer.facing = -1; }
-      else if (ldInput.right) { ldPlayer.vx = 3.8; ldPlayer.facing = 1; }
-      else { ldPlayer.vx *= 0.65; }
-
-      ldPlayer.vy = Math.min(12, ldPlayer.vy + 0.55);
-      ldPlayer.x += ldPlayer.vx;
-
-      ldPlatforms.forEach(p => {
-        if (ldPlayer.x < p.x + p.w && ldPlayer.x + ldPlayer.w > p.x && ldPlayer.y < p.y + p.h && ldPlayer.y + ldPlayer.h > p.y) {
-          if (ldPlayer.vx > 0) ldPlayer.x = p.x - ldPlayer.w;
-          else if (ldPlayer.vx < 0) ldPlayer.x = p.x + p.w;
-        }
-      });
-
-      ldPlayer.y += ldPlayer.vy;
-      ldPlayer.grounded = false;
-
-      ldPlatforms.forEach(p => {
-        if (ldPlayer.x + 3 < p.x + p.w && ldPlayer.x + ldPlayer.w - 3 > p.x && ldPlayer.y < p.y + p.h && ldPlayer.y + ldPlayer.h > p.y) {
-          if (ldPlayer.vy > 0) { ldPlayer.y = p.y - ldPlayer.h; ldPlayer.vy = 0; ldPlayer.grounded = true; }
-          else if (ldPlayer.vy < 0) { ldPlayer.y = p.y + p.h; ldPlayer.vy = 0; }
-        }
-      });
-      // Reset Player
-       ldPlayer.x = 25;
-       ldPlayer.y = H - 70;
-       ldPlayer.vx = 0;
-      ldPlayer.vy = 0;
-      ldPlayer.grounded = false;
-
-  if (ldTitle) {
-    ldTitle.textContent = `Level Devil: STAGE ${lvl}/200 ${ldControlsInverted ? "⚠ INVERTED CONTROLS" : "⚠ TRAPS ACTIVE"}`;
-  }
-}
-
-function ldDie() {
-  ldDeaths++;
-  ldShake = 8;
-  buildLdLevel(ldLevel);
-}
-
-function ldUpdate() {
-  if (!ldRunning) return;
-
-  // Handle controls (inverted if Challenge 1 active)
-  let moveLeft = ldControlsInverted ? ldInput.right : ldInput.left;
-  let moveRight = ldControlsInverted ? ldInput.left : ldInput.right;
-
-  if (moveLeft) ldPlayer.vx = -3.4;
-  else if (moveRight) ldPlayer.vx = 3.4;
-  else ldPlayer.vx *= 0.6;
-
-  // Jump
-  if (ldInput.jump && ldPlayer.grounded) {
-    ldPlayer.vy = -7.8;
-    ldPlayer.grounded = false;
-
-    // Spike Troll: spikes jump or charge on player jump
-    ldSpikes.forEach(s => {
-      if (s.jumpTrigger) s.vx = (ldPlayer.x < s.x ? -4.5 : 4.5);
-    });
-  }
-
-  // Gravity
-  ldPlayer.vy += 0.38;
-  ldPlayer.x += ldPlayer.vx;
-  ldPlayer.y += ldPlayer.vy;
-  ldPlayer.grounded = false;
-
-  const W = ldCanvas.width || 600;
-  const H = ldCanvas.height || 360;
-
-  // Check Platforms
-  ldPlatforms.forEach(plat => {
-    if (plat.type === "crumble" && plat.stepped > 14) return; // Disintegrated
-
-    if (
-      ldPlayer.x + ldPlayer.w > plat.x &&
-      ldPlayer.x < plat.x + plat.w &&
-      ldPlayer.y + ldPlayer.h >= plat.y &&
-      ldPlayer.y + ldPlayer.h <= plat.y + 12 &&
-      ldPlayer.vy >= 0
-    ) {
-      if (plat.type === "crumble") plat.stepped++;
-      ldPlayer.y = plat.y - ldPlayer.h;
-      ldPlayer.vy = 0;
-      ldPlayer.grounded = true;
-    }
-  });
-
-  // Check Fake Platforms (instant death trap on touch)
-  ldFakePlatforms.forEach(fake => {
-    if (
-      ldPlayer.x + ldPlayer.w > fake.x &&
-      ldPlayer.x < fake.x + fake.w &&
-      ldPlayer.y + ldPlayer.h >= fake.y &&
-      ldPlayer.y + ldPlayer.h <= fake.y + 12
-    ) {
-      fake.triggered = true;
-      ldDie();
-    }
-  });
-
-  // Check Spikes
-  ldSpikes.forEach(s => {
-    s.x += s.vx;
-    if (s.x < s.minX || s.x > s.maxX) s.vx *= -1;
-
-    if (
-      ldPlayer.x < s.x + s.w &&
-      ldPlayer.x + ldPlayer.w > s.x &&
-      ldPlayer.y < s.y + s.h &&
-      ldPlayer.y + ldPlayer.h > s.y
-    ) {
-      ldDie();
-    }
-  });
-
-  // Falling Ceilings Check
-  ldFallingCeilings.forEach(c => {
-    if (Math.abs(ldPlayer.x - c.x) < 35 && !c.fallen) c.vy = 6;
-    c.y += c.vy;
-
-    if (
-      ldPlayer.x < c.x + c.w &&
-      ldPlayer.x + ldPlayer.w > c.x &&
-      ldPlayer.y < c.y + c.h &&
-      ldPlayer.y + ldPlayer.h > c.y
-    ) {
-      ldDie();
-    }
-  });
-
-  // Fleeing Door Troll (Door teleports away on approach)
-  if (ldLevel >= 30) {
-    let dist = Math.hypot(ldPlayer.x - ldDoor.x, ldPlayer.y - ldDoor.y);
-    if (dist < 70 && !ldDoor.fleeing) {
-      ldDoor.fleeing = true;
-      ldDoor.x = (ldDoor.x > W / 2) ? 30 : W - 55;
-    }
-  }
-
-  // Reach Door Goal
-  if (
-    ldPlayer.x < ldDoor.x + ldDoor.w &&
-    ldPlayer.x + ldPlayer.w > ldDoor.x &&
-    ldPlayer.y < ldDoor.y + ldDoor.h &&
-    ldPlayer.y + ldPlayer.h > ldDoor.y
-  ) {
-    if (ldLevel < 200) {
-      ldLevel++;
-      buildLdLevel(ldLevel);
-    } else {
-      alert("IMPOSSIBLE! You conquered all 200 Level Devil stages!");
-      ldLevel = 1;
-      buildLdLevel(1);
-    }
-  }
-
-  // Fall off-screen
-  if (ldPlayer.y > H + 20) ldDie();
-}
-
-function ldDraw() {
-  const W = ldCanvas.width || 600;
-  const H = ldCanvas.height || 360;
-
-  ldCtx.save();
-  if (ldShake > 0) {
-    ldCtx.translate((Math.random() - 0.5) * ldShake, (Math.random() - 0.5) * ldShake);
-    ldShake *= 0.85;
-    if (ldShake < 0.5) ldShake = 0;
-  }
-
-  // Background
-  ldCtx.fillStyle = ldCurTheme.bg;
-  ldCtx.fillRect(0, 0, W, H);
-
-  // Platforms
-  ldPlatforms.forEach(plat => {
-    ldCtx.fillStyle = plat.type === "crumble" ? "#e67e22" : ldCurTheme.platform;
-    ldCtx.fillRect(plat.x, plat.y, plat.w, plat.h);
-  });
-
-  // Fake Platforms
-  ldFakePlatforms.forEach(fake => {
-// ============================================================================
-// 1. LEVEL DEVIL 200-STAGE PROCEDURAL ENGINE (FIXED & WIRED)
+    // ============================================================================
+// 1. LEVEL DEVIL 200-STAGE PROCEDURAL ENGINE
 // ============================================================================
 
 const ldModal = document.getElementById("ldModal");
@@ -1044,8 +690,8 @@ let ldRunning = false;
 let ldAnimId = null;
 
 const ldInput = { left: false, right: false, jump: false };
-let ldPlayer = { x: 40, y: 220, w: 20, h: 24, vx: 0, vy: 0, grounded: false };
-let ldDoor = { x: 300, y: 200, w: 24, h: 36, fleeing: false };
+let ldPlayer = { x: 30, y: 220, w: 18, h: 22, vx: 0, vy: 0, grounded: false };
+let ldDoor = { x: 290, y: 200, w: 22, h: 34, fleeing: false };
 
 let ldPlatforms = [];
 let ldSpikes = [];
@@ -1064,8 +710,8 @@ let ldCurTheme = ldThemes[0];
 
 function buildLdLevel(lvl) {
   if (!ldCanvas) return;
-  const W = ldCanvas.width || 360;
-  const H = ldCanvas.height || 280;
+  const W = ldCanvas.width || 340;
+  const H = ldCanvas.height || 260;
 
   ldPlatforms = [];
   ldSpikes = [];
@@ -1073,67 +719,67 @@ function buildLdLevel(lvl) {
   ldFallingCeilings = [];
   ldCurTheme = ldThemes[(lvl - 1) % ldThemes.length];
 
-  // Challenge 1: Inverted controls on specific levels
+  // Troll 1: Controls invert every 3rd level and above level 80
   ldControlsInverted = (lvl % 3 === 0 || lvl >= 80);
 
-  // Spawn floor platform (solid base)
-  ldPlatforms.push({ x: 10, y: H - 35, w: 80, h: 25, type: "solid" });
+  // Spawn floor
+  ldPlatforms.push({ x: 0, y: H - 35, w: 75, h: 35, type: "solid" });
 
-  // Procedural Obstacles & Gaps
-  const count = Math.min(3 + Math.floor(lvl / 25), 6);
-  const stepX = (W - 140) / count;
+  // Troll 2: Dynamic platform shrinking and collapsing
+  const platformCount = Math.min(3 + Math.floor(lvl / 25), 6);
+  const stepX = (W - 130) / platformCount;
 
-  for (let i = 1; i <= count; i++) {
-    const px = 70 + i * stepX;
-    const py = (H - 50) - Math.abs(Math.sin(i * 1.3 + lvl)) * 70;
-    const pw = Math.max(65 - Math.floor(lvl * 0.2), 34);
+  for (let i = 1; i <= platformCount; i++) {
+    const px = 60 + i * stepX;
+    const py = (H - 50) - Math.abs(Math.sin(i * 1.4 + lvl)) * 65;
+    const pw = Math.max(60 - Math.floor(lvl * 0.18), 32);
 
-    const isFake = (lvl >= 10 && i % 2 === 1);
-    const isCrumble = (lvl >= 25 && i % 3 === 0);
+    const isFake = (lvl >= 8 && i % 2 === 1);
+    const isCrumble = (lvl >= 20 && i % 3 === 0);
 
     if (isFake) {
-      ldFakePlatforms.push({ x: px, y: py, w: pw, h: 14, triggered: false });
+      ldFakePlatforms.push({ x: px, y: py, w: pw, h: 12, triggered: false });
     } else {
-      ldPlatforms.push({ x: px, y: py, w: pw, h: 14, type: isCrumble ? "crumble" : "solid", stepped: 0 });
+      ldPlatforms.push({ x: px, y: py, w: pw, h: 12, type: isCrumble ? "crumble" : "solid", stepped: 0 });
     }
 
-    // Challenge 2: Spikes and moving hazards
+    // Troll 3: Moving spikes and jump-seeking hazards
     const spikeSpeed = (1.2 + lvl * 0.02) * (i % 2 === 0 ? 1 : -1);
     ldSpikes.push({
       x: px + pw / 2 - 6,
-      y: py - 12,
+      y: py - 10,
       w: 12,
-      h: 12,
-      vx: lvl >= 15 ? spikeSpeed : 0,
+      h: 10,
+      vx: lvl >= 12 ? spikeSpeed : 0,
       minX: px,
       maxX: px + pw - 12,
-      jumpTrigger: (lvl >= 30 && i === 2)
+      jumpTrigger: (lvl >= 25 && i === 2)
     });
   }
 
-  // Falling ceiling traps (Lvl 40+)
-  if (lvl >= 40) {
+  // Troll 4: Falling ceiling blocks (Level 35+)
+  if (lvl >= 35) {
     for (let c = 0; c < 2; c++) {
       ldFallingCeilings.push({
-        x: 100 + c * 110,
+        x: 90 + c * 100,
         y: -30,
-        w: 36,
-        h: 20,
+        w: 32,
+        h: 18,
         vy: 0,
         fallen: false
       });
     }
   }
 
-  // Finish Goal Door
-  ldDoor.x = W - 50;
-  ldDoor.y = H - 71;
+  // Goal Door & Platform
+  ldDoor.x = W - 45;
+  ldDoor.y = H - 69;
   ldDoor.fleeing = false;
-  ldPlatforms.push({ x: W - 65, y: H - 35, w: 55, h: 25, type: "solid" });
+  ldPlatforms.push({ x: W - 60, y: H - 35, w: 60, h: 35, type: "solid" });
 
-  // Spawn Player on starting platform
-  ldPlayer.x = 25;
-  ldPlayer.y = H - 65;
+  // Reset player state
+  ldPlayer.x = 20;
+  ldPlayer.y = H - 60;
   ldPlayer.vx = 0;
   ldPlayer.vy = 0;
   ldPlayer.grounded = false;
@@ -1145,14 +791,14 @@ function buildLdLevel(lvl) {
 
 function ldDie() {
   ldDeaths++;
-  ldShake = 6;
+  ldShake = 7;
   buildLdLevel(ldLevel);
 }
 
 function ldUpdate() {
   if (!ldRunning || !ldCanvas) return;
-  const W = ldCanvas.width || 360;
-  const H = ldCanvas.height || 280;
+  const W = ldCanvas.width || 340;
+  const H = ldCanvas.height || 260;
 
   const moveLeft = ldControlsInverted ? ldInput.right : ldInput.left;
   const moveRight = ldControlsInverted ? ldInput.left : ldInput.right;
@@ -1169,20 +815,20 @@ function ldUpdate() {
     });
   }
 
-  ldPlayer.vy += 0.36; // Gravity
+  ldPlayer.vy += 0.36;
   ldPlayer.x += ldPlayer.vx;
   ldPlayer.y += ldPlayer.vy;
   ldPlayer.grounded = false;
 
-  // Platform collision
+  // Solid & Crumbling Platforms
   ldPlatforms.forEach(plat => {
-    if (plat.type === "crumble" && plat.stepped > 18) return;
+    if (plat.type === "crumble" && plat.stepped > 16) return;
 
     if (
       ldPlayer.x + ldPlayer.w > plat.x &&
       ldPlayer.x < plat.x + plat.w &&
       ldPlayer.y + ldPlayer.h >= plat.y &&
-      ldPlayer.y + ldPlayer.h <= plat.y + 12 &&
+      ldPlayer.y + ldPlayer.h <= plat.y + 10 &&
       ldPlayer.vy >= 0
     ) {
       if (plat.type === "crumble") plat.stepped++;
@@ -1192,20 +838,20 @@ function ldUpdate() {
     }
   });
 
-  // Fake platforms trigger
+  // Fake platform collision
   ldFakePlatforms.forEach(fake => {
     if (
       ldPlayer.x + ldPlayer.w > fake.x &&
       ldPlayer.x < fake.x + fake.w &&
       ldPlayer.y + ldPlayer.h >= fake.y &&
-      ldPlayer.y + ldPlayer.h <= fake.y + 12
+      ldPlayer.y + ldPlayer.h <= fake.y + 10
     ) {
       fake.triggered = true;
       ldDie();
     }
   });
 
-  // Spikes collision & movement
+  // Spikes collision
   ldSpikes.forEach(s => {
     s.x += s.vx;
     if (s.x < s.minX || s.x > s.maxX) s.vx *= -1;
@@ -1220,9 +866,9 @@ function ldUpdate() {
     }
   });
 
-  // Falling ceiling hazard
+  // Falling Ceilings
   ldFallingCeilings.forEach(c => {
-    if (Math.abs(ldPlayer.x - c.x) < 30 && !c.fallen) c.vy = 5;
+    if (Math.abs(ldPlayer.x - c.x) < 28 && !c.fallen) c.vy = 5;
     c.y += c.vy;
 
     if (
@@ -1235,16 +881,16 @@ function ldUpdate() {
     }
   });
 
-  // Fleeing Door Trap (Level 35+)
-  if (ldLevel >= 35) {
+  // Troll 5: Fleeing door (Level 30+)
+  if (ldLevel >= 30) {
     const dist = Math.hypot(ldPlayer.x - ldDoor.x, ldPlayer.y - ldDoor.y);
-    if (dist < 60 && !ldDoor.fleeing) {
+    if (dist < 55 && !ldDoor.fleeing) {
       ldDoor.fleeing = true;
-      ldDoor.x = (ldDoor.x > W / 2) ? 25 : W - 50;
+      ldDoor.x = (ldDoor.x > W / 2) ? 20 : W - 45;
     }
   }
 
-  // Reach Door Goal
+  // Reach door goal
   if (
     ldPlayer.x < ldDoor.x + ldDoor.w &&
     ldPlayer.x + ldPlayer.w > ldDoor.x &&
@@ -1255,20 +901,20 @@ function ldUpdate() {
       ldLevel++;
       buildLdLevel(ldLevel);
     } else {
-      alert("AMAZING! You conquered all 200 Level Devil stages!");
+      alert("CONGRATULATIONS! You cleared all 200 Level Devil stages!");
       ldLevel = 1;
       buildLdLevel(1);
     }
   }
 
-  // Fall pit death
-  if (ldPlayer.y > H + 40) ldDie();
+  // Pit death
+  if (ldPlayer.y > H + 30) ldDie();
 }
 
 function ldDraw() {
   if (!ldCtx || !ldCanvas) return;
-  const W = ldCanvas.width || 360;
-  const H = ldCanvas.height || 280;
+  const W = ldCanvas.width || 340;
+  const H = ldCanvas.height || 260;
 
   ldCtx.save();
   if (ldShake > 0) {
@@ -1277,23 +923,23 @@ function ldDraw() {
     if (ldShake < 0.5) ldShake = 0;
   }
 
-  // 1. Background
+  // Background
   ldCtx.fillStyle = ldCurTheme.bg;
   ldCtx.fillRect(0, 0, W, H);
 
-  // 2. Platforms
+  // Platforms
   ldPlatforms.forEach(plat => {
     ldCtx.fillStyle = plat.type === "crumble" ? "#d97706" : ldCurTheme.platform;
     ldCtx.fillRect(plat.x, plat.y, plat.w, plat.h);
   });
 
-  // 3. Fake Platforms
+  // Fake platforms
   ldFakePlatforms.forEach(fake => {
     ldCtx.fillStyle = fake.triggered ? "#dc2626" : ldCurTheme.platform;
     ldCtx.fillRect(fake.x, fake.y, fake.w, fake.h);
   });
 
-  // 4. Spikes
+  // Spikes
   ldCtx.fillStyle = ldCurTheme.spike;
   ldSpikes.forEach(s => {
     ldCtx.beginPath();
@@ -1303,19 +949,19 @@ function ldDraw() {
     ldCtx.fill();
   });
 
-  // 5. Falling Blocks
+  // Falling ceiling blocks
   ldCtx.fillStyle = "#8b5cf6";
   ldFallingCeilings.forEach(c => {
     ldCtx.fillRect(c.x, c.y, c.w, c.h);
   });
 
-  // 6. Door
+  // Door
   ldCtx.fillStyle = "#10b981";
   ldCtx.fillRect(ldDoor.x, ldDoor.y, ldDoor.w, ldDoor.h);
   ldCtx.fillStyle = "#047857";
-  ldCtx.fillRect(ldDoor.x + 4, ldDoor.y + 4, ldDoor.w - 8, ldDoor.h - 4);
+  ldCtx.fillRect(ldDoor.x + 3, ldDoor.y + 3, ldDoor.w - 6, ldDoor.h - 3);
 
-  // 7. Player
+  // Player
   ldCtx.fillStyle = ldCurTheme.player || "#111111";
   ldCtx.fillRect(ldPlayer.x, ldPlayer.y, ldPlayer.w, ldPlayer.h);
 
@@ -1329,13 +975,13 @@ function ldLoop() {
   ldAnimId = requestAnimationFrame(ldLoop);
 }
 
-// Modal open/close hooks
+// Modal open/close listeners
 if (openLd) {
   openLd.addEventListener("click", () => {
     if (ldModal) ldModal.style.display = "flex";
-    if (ldCanvas && (!ldCanvas.width || ldCanvas.width === 0)) {
-      ldCanvas.width = ldCanvas.parentElement ? ldCanvas.parentElement.clientWidth : 360;
-      ldCanvas.height = 280;
+    if (ldCanvas) {
+      ldCanvas.width = 340;
+      ldCanvas.height = 260;
     }
     ldLevel = 1;
     ldDeaths = 0;
@@ -1354,7 +1000,7 @@ if (closeLd) {
   });
 }
 
-// Keyboard input
+// Keyboard Listeners
 window.addEventListener("keydown", (e) => {
   if (e.code === "ArrowLeft" || e.code === "KeyA") ldInput.left = true;
   if (e.code === "ArrowRight" || e.code === "KeyD") ldInput.right = true;
@@ -1367,30 +1013,47 @@ window.addEventListener("keyup", (e) => {
   if (e.code === "ArrowUp" || e.code === "Space" || e.code === "KeyW") ldInput.jump = false;
 });
 
-// Touch controls for mobile on-screen buttons
-function bindTouch(selector, key) {
-  const btn = document.querySelector(selector);
-  if (!btn) return;
+// Mobile on-screen button binder
+function bindLdTouch(element, key) {
+  if (!element) return;
   const start = (e) => { e.preventDefault(); ldInput[key] = true; };
   const end = (e) => { e.preventDefault(); ldInput[key] = false; };
-  btn.addEventListener("touchstart", start, { passive: false });
-  btn.addEventListener("touchend", end, { passive: false });
-  btn.addEventListener("mousedown", start);
-  btn.addEventListener("mouseup", end);
+  element.addEventListener("touchstart", start, { passive: false });
+  element.addEventListener("touchend", end, { passive: false });
+  element.addEventListener("mousedown", start);
+  element.addEventListener("mouseup", end);
 }
 
-// Wire the on-screen buttons
-bindTouch("#ldModal [onclick*='left'], #ldModal .btn-left, #ldModal div:has(> svg:first-child)", "left");
-bindTouch("#ldModal [onclick*='right'], #ldModal .btn-right", "right");
-bindTouch("#ldModal [onclick*='jump'], #ldModal .btn-jump, #ldModal button, #ldModal .action-btn", "jump");
-
-// Auto-fallback: Wire by order of bottom control elements
-const modalButtons = document.querySelectorAll("#ldModal .controls > *, #ldModal [class*='control'] > *");
-if (modalButtons.length >= 3) {
-  bindTouch(modalButtons[0], "left");
-  bindTouch(modalButtons[1], "right");
-  bindTouch(modalButtons[2], "jump");
-}
+// Automatically bind the 3 buttons rendered in your modal
+setTimeout(() => {
+  const modalBtns = document.querySelectorAll("#ldModal div[style*='display: flex'] div, #ldModal button");
+  const filtered = Array.from(modalBtns).filter(b => b.textContent.includes("◀") || b.textContent.includes("▶") || b.textContent.includes("▲") || b.innerText.includes("JUMP"));
+  
+  if (filtered.length >= 3) {
+    bindLdTouch(filtered[0], "left");
+    bindLdTouch(filtered[1], "right");
+    bindLdTouch(filtered[2], "jump");
+  } else {
+    // Fallback: Bind by click coordinates on modal controls area
+    const controlsArea = document.querySelector("#ldModal div:has(> button), #ldModal div:has(> div)");
+    if (controlsArea) {
+      controlsArea.addEventListener("touchstart", (e) => {
+        const touch = e.touches[0];
+        const rect = controlsArea.getBoundingClientRect();
+        const relX = touch.clientX - rect.left;
+        if (relX < rect.width * 0.33) ldInput.left = true;
+        else if (relX < rect.width * 0.66) ldInput.right = true;
+        else ldInput.jump = true;
+      });
+      controlsArea.addEventListener("touchend", () => {
+        ldInput.left = false;
+        ldInput.right = false;
+        ldInput.jump = false;
+      });
+    }
+  }
+}, 300);
+      
 
     // =========================================================================
     // 2. TEMPLE RUN 3D ENGINE (SOLO + 1v1 DUEL)
