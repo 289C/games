@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Arcade Hub | Next-Gen Games</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #070712;
+      --card-bg: rgba(22, 20, 42, 0.7);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --accent-cyan: #00f0ff;
+      --accent-pink: #ff007b;
+      --accent-yellow: #ffcc00;
+      --accent-purple: #8b5cf6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: #ffffff;
+      font-family: 'Outfit', -apple-system, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-x: hidden;
+      position: relative;
+      padding-bottom: 50px;
+    }
+
+    /* Ambient Interactive Background Canvas */
+    #ambientCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* Glowing Ambient Blobs */
+    .glow-blob {
+      position: fixed;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0.28;
+      pointer-events: none;
+      z-index: -1;
+      animation: floatBlob 10s infinite alternate ease-in-out;
+    }
+    .blob-1 { top: -80px; left: -80px; background: var(--accent-pink); }
+    .blob-2 { bottom: 10%; right: -60px; background: var(--accent-cyan); animation-duration: 12s; }
+    .blob-3 { top: 40%; left: 30%; background: var(--accent-purple); animation-duration: 15s; }
+
+    @keyframes floatBlob {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(40px, 50px) scale(1.15); }
+    }
+
+    /* Top Instagram Animated Showcase */
+    .insta-wrapper {
+      width: 100%;
+      max-width: 480px;
+      padding: 16px 14px 4px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .insta-card {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 10px 16px;
+      border-radius: 20px;
+      background: rgba(26, 21, 46, 0.75);
+      backdrop-filter: blur(14px);
+      text-decoration: none;
+      color: #fff;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
+    }
+
+    .insta-card:active {
+      transform: scale(0.97);
+    }
+
+    /* Animated Border Light Beam */
+    .insta-card::before {
+      content: '';
+      position: absolute;
+      inset: -50%;
+      background: conic-gradient(from 0deg, transparent, #f92c85, #b830d9, #00f0ff, transparent 40%);
+      animation: rotateBorder 4s linear infinite;
+      z-index: 0;
+    }
+
+    .insta-card::after {
+      content: '';
+      position: absolute;
+      inset: 2px;
+      background: rgba(18, 15, 34, 0.94);
+      border-radius: 18px;
+      z-index: 1;
+    }
+
+    @keyframes rotateBorder {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .insta-content {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .insta-avatar-ring {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2px;
+      box-shadow: 0 0 14px rgba(220, 39, 67, 0.5);
+      animation: pulseAvatar 2.2s infinite;
+    }
+
+    @keyframes pulseAvatar {
+      0%, 100% { box-shadow: 0 0 10px rgba(220, 39, 67, 0.4); }
+      50% { box-shadow: 0 0 22px rgba(240, 148, 51, 0.8); }
+    }
+
+    .insta-icon-box {
+      background: #141124;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .insta-text-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .insta-handle {
+      font-weight: 800;
+      font-size: 15px;
+      letter-spacing: 0.3px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .verified-badge {
+      width: 14px;
+      height: 14px;
+      background: var(--accent-cyan);
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      color: #000;
+      font-weight: bold;
+    }
+
+    .insta-sub {
+      font-size: 11px;
+      color: #9ca3af;
+      font-weight: 500;
+    }
+
+    .insta-action-btn {
+      position: relative;
+      z-index: 2;
+      background: linear-gradient(135deg, #e1306c, #833ab4);
+      padding: 7px 14px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 800;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      box-shadow: 0 4px 14px rgba(225, 48, 108, 0.4);
+    }
+
+    /* Header Title */
+    .hub-header {
+      width: 100%;
+      max-width: 480px;
+      padding: 14px 18px 18px;
+      text-align: center;
+    }
+
+    .hub-header h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 28px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #ffffff 40%, var(--accent-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .hub-header p {
+      color: #71719a;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    /* Grid Layout for Games */
+    .game-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      width: 100%;
+      max-width: 480px;
+      padding: 0 16px;
+    }
+
+    /* Animated Game Cards */
+    .game-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 22px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      text-decoration: none;
+      color: #fff;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+      cursor: pointer;
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .game-card:active {
+      transform: scale(0.95);
+    }
+
+    .card-thumb-wrap {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      border-radius: 16px;
+      position: relative;
+      overflow: hidden;
+      background: #19162e;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-thumb-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+
+    .game-card:hover .card-thumb-wrap img {
+      transform: scale(1.06);
+    }
+
+    .card-tag {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      font-size: 9px;
+      font-weight: 900;
+      padding: 3px 8px;
+      border-radius: 8px;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      z-index: 2;
+    }
+
+    .tag-hot { background: #ff4757; color: #fff; }
+    .tag-speed { background: var(--accent-yellow); color: #111; }
+    .tag-brain { background: var(--accent-cyan); color: #08111c; }
+    .tag-rage { background: #8b5cf6; color: #fff; }
+
+    .card-info {
+      margin-top: 10px;
+      padding: 0 2px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: -0.2px;
+    }
+
+    .card-arrow {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      color: #cbd5e1;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Particle & Mesh System -->
+  <canvas id="ambientCanvas"></canvas>
+  <div class="glow-blob blob-1"></div>
+  <div class="glow-blob blob-2"></div>
+  <div class="glow-blob blob-3"></div>
+
+  <!-- Top Instagram Account Banner -->
+  <div class="insta-wrapper">
+    <a href="https://instagram.com/_satish_official_16" target="_blank" rel="noopener" class="insta-card">
+      <div class="insta-content">
+        <div class="insta-avatar-ring">
+          <div class="insta-icon-box">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+            </svg>
+          </div>
+        </div>
+        <div class="insta-text-info">
+          <div class="insta-handle">
+            @_satish_official_16
+            <span class="verified-badge">✓</span>
+          </div>
+          <div class="insta-sub">Follow on Instagram</div>
+        </div>
+      </div>
+      <div class="insta-action-btn">
+        <span>Follow</span>
+        <span style="font-size: 10px;">↗</span>
+      </div>
+    </a>
+  </div>
+
+  <!-- Main Arcade Header -->
+  <header class="hub-header">
+    <h1>Arcade Hub</h1>
+    <p>Select an arcade challenge to play</p>
+  </header>
+
+  <!-- Game Grid -->
+  <main class="game-grid">
+
+    <!-- 1. Arrow Puzzle -->
+    <a href="arrow-puzzle.html" class="game-card">
+      <div class="card-thumb-wrap">
+        <span class="card-tag tag-brain">BRAIN</span>
+        <img src="arrow-logo.jpg" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'80\' height=\'80\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2300f0ff\' stroke-width=\'2\'><path d=\'M7 17l9.2-9.2M17 17V7H7\'/></svg>'" alt="Arrow Puzzle">
+      </div>
+      <div class="card-info">
+        <div class="card-title">Arrow Puzzle</div>
+        <div class="card-arrow">↗</div>
+      </div>
+    </a>
+
+    <!-- 2. Level Devil 200 -->
+    <div class="game-card" id="openLevelDevil">
+      <div class="card-thumb-wrap">
+        <span class="card-tag tag-rage">200 LVL</span>
+        <div style="font-size: 54px;">😈</div>
+      </div>
+      <div class="card-info">
+        <div class="card-title">Level Devil</div>
+        <div class="card-arrow">▶</div>
+      </div>
+    </div>
+
+    <!-- 3. Math Rush -->
+    <div class="game-card" id="openMathRush">
+      <div class="card-thumb-wrap">
+        <span class="card-tag tag-speed">SPEED</span>
+        <img src="math-rush.jpg" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'80\' height=\'80\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%23ffcc00\' stroke-width=\'2\'><text x=\'4\' y=\'18\' font-size=\'16\' fill=\'%23ffcc00\'>1+2</text></svg>'" alt="Math Rush">
+      </div>
+      <div class="card-info">
+        <div class="card-title">Math Rush</div>
+        <div class="card-arrow">▶</div>
+      </div>
+    </div>
+
+    <!-- 4. Tap Reflex -->
+    <div class="game-card" id="openReflexGame">
+      <div class="card-thumb-wrap">
+        <span class="card-tag tag-hot">REFLEX</span>
+        <img src="tap-reflex.jpg" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'80\' height=\'80\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%23ff4757\' stroke-width=\'2\'><circle cx=\'12\' cy=\'12\' r=\'10\'/><polyline points=\'12 6 12 12 16 14\'/></svg>'" alt="Tap Reflex">
+      </div>
+      <div class="card-info">
+        <div class="card-title">Tap Reflex</div>
+        <div class="card-arrow">▶</div>
+      </div>
+    </div>
+
+    <!-- 5. Neon Snake -->
+    <a href="snake.html" class="game-card">
+      <div class="card-thumb-wrap">
+        <span class="card-tag tag-speed">CLASSIC</span>
+        <div style="font-size: 54px;">🐍</div>
+      </div>
+      <div class="card-info">
+        <div class="card-title">Neon Snake</div>
+        <div class="card-arrow">↗</div>
+      </div>
+    </a>
+
+    <!-- 6. Tic Tac Toe AI -->
+    <div class="game-card" id="openTttGame">
+      <div class="card-thumb-wrap">
+        <span class="card-tag tag-brain">VS BOT</span>
+        <div style="font-size: 54px;">❌⭕</div>
+      </div>
+      <div class="card-info">
+        <div class="card-title">Tic-Tac-Toe</div>
+        <div class="card-arrow">▶</div>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    // ========================================================================
+    // DYNAMIC BACKGROUND INTERACTIVE CANVAS PARTICLES
+    // ========================================================================
+    const canvas = document.getElementById("ambientCanvas");
+    const ctx = canvas.getContext("2d");
+
+    let w = canvas.width = window.innerWidth;
+    let h = canvas.height = window.innerHeight;
+
+    window.addEventListener("resize", () => {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+    });
+
+    const particles = Array.from({ length: 30 }, () => ({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      size: Math.random() * 2 + 1,
+      speedX: (Math.random() - 0.5) * 0.4,
+      speedY: (Math.random() - 0.5) * 0.4,
+      alpha: Math.random() * 0.5 + 0.2
+    }));
+
+    function renderParticles() {
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = "#ffffff";
+      particles.forEach(p => {
+        p.x += p.speedX;
+        p.y += p.speedY;
+
+        if (p.x < 0) p.x = w;
+        if (p.x > w) p.x = 0;
+        if (p.y < 0) p.y = h;
+        if (p.y > h) p.y = 0;
+
+        ctx.globalAlpha = p.alpha;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      requestAnimationFrame(renderParticles);
+    }
+    renderParticles();
+  </script>
+</body>
+</html>
+
