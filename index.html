@@ -560,6 +560,46 @@
       </div>
     </div>
   </div>
+  
+  <!-- ===================================================================== -->
+  <!-- MODAL: SPEED RACING CAR (AI BOT & 1v1 CODE DUEL)                     -->
+  <!-- ===================================================================== -->
+  <div class="modal-backdrop" id="carModal">
+    <div class="modal-content" style="max-width: 660px;">
+      <div class="modal-header">
+        <div style="font-weight: 800; display: flex; align-items: center; gap: 8px;">
+          <span>🏎️</span>
+          <span id="carScoreDisplay">Speed: 0 KM/H | Distance: 0m</span>
+        </div>
+        <button class="close-btn" id="closeCarBtn">&times;</button>
+      </div>
+
+      <!-- Mode Selector & Multiplayer Code Input -->
+      <div style="background: #141320; padding: 10px 16px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: center; border-bottom: 1px solid rgba(255,255,255,0.08);">
+        <button id="carModeBotBtn" style="background: #00cec9; color: #111; border: none; padding: 6px 12px; border-radius: 12px; font-weight: bold; font-size: 12px; cursor: pointer;">🏎️ vs AI Bot</button>
+        <button id="carCreateRoomBtn" style="background: #e67e22; color: #fff; border: none; padding: 6px 12px; border-radius: 12px; font-weight: bold; font-size: 12px; cursor: pointer;">➕ Invite Friend</button>
+        <input id="carRoomCodeInput" type="text" placeholder="5-digit code" maxlength="5" style="width: 105px; padding: 6px 8px; border-radius: 12px; border: 1px solid #3d3b54; background: #222035; color: #fff; text-align: center; text-transform: uppercase; font-weight: bold; font-size: 12px;" />
+        <button id="carJoinRoomBtn" style="background: #fdcb6e; color: #111; border: none; padding: 6px 12px; border-radius: 12px; font-weight: bold; font-size: 12px; cursor: pointer;">🔗 Join</button>
+        <div id="carRoomStatus" style="font-size: 12px; color: #f1c40f; font-weight: bold; width: 100%; text-align: center; margin-top: 4px;">Mode: Race vs AI Bot</div>
+      </div>
+
+      <canvas id="carCanvas" width="640" height="420" style="width: 100%; aspect-ratio: 16/10.5; background: #87ceeb; display: block;"></canvas>
+
+      <!-- Mobile Driving Controls -->
+      <div class="mobile-controls">
+        <div class="d-pad">
+          <button class="ctrl-btn" id="carSteerLeft">◀</button>
+          <button class="ctrl-btn" id="carSteerRight">▶</button>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <button class="ctrl-btn" id="carBrakeBtn" style="background: #d63031; font-size: 14px; font-weight: 900;">BRAKE</button>
+          <button class="ctrl-btn jump-btn" id="carGasBtn" style="background: #00b894; font-size: 15px; font-weight: 900;">NITRO</button>
+        </div>
+      </div>
+      <div class="instructions-hint">A/D or Arrows = Steer | W or Up = Accelerate / Nitro | S = Brake</div>
+    </div>
+  </div>
+  
 
   <!-- ===================================================================== -->
   <!-- GAME ENGINES & SCRIPTS                                                -->
