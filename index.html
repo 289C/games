@@ -1258,13 +1258,49 @@
     }
 
     function botTttMove() {
-      let empty = [];
-      tttBoardState.forEach((val, i) => { if (val === "") empty.push(i); });
-      if (empty.length && tttGameActive) {
-        let pick = empty[Math.floor(Math.random() * empty.length)];
-        makeTttMove(pick, "O");
-      }
+  if (!tttGameActive) return;
+
+  // 1. Gather all empty cell indexes
+  let empty = [];
+  tttBoardState.forEach((val, i) => {
+    if (val === "") empty.push(i);
+  });
+
+  if (empty.length === 0) return;
+
+  // 2. Can Bot ("O") win right now?
+  for (let idx of empty) {
+    tttBoardState[idx] = "O";
+    if (checkTttWin("O")) {
+      tttBoardState[idx] = "";
+      makeTttMove(idx, "O");
+      return;
     }
+    tttBoardState[idx] = "";
+  }
+
+  // 3. Can Player ("X") win next turn? Block them!
+  for (let idx of empty) {
+    tttBoardState[idx] = "X";
+    if (checkTttWin("X")) {
+      tttBoardState[idx] = "";
+      makeTttMove(idx, "O");
+      return;
+    }
+    tttBoardState[idx] = "";
+  }
+
+  // 4. Take center square if available
+  if (empty.includes(4)) {
+    makeTttMove(4, "O");
+    return;
+  }
+
+  // 5. Otherwise, pick a random available spot
+  let pick = empty[Math.floor(Math.random() * empty.length)];
+  makeTttMove(pick, "O");
+}
+
 
     function checkTttWin(p) {
       return winCombos.some(c => c.every(i => tttBoardState[i] === p));
