@@ -531,6 +531,7 @@
     }
 
     // --- Generate Specific Level Puzzle ---
+        // --- Solvable Labyrinth Reverse-Generator ---
     function loadLevel(lvl) {
       currentLevel = lvl;
       document.getElementById("levelsScreen").style.display = "none";
@@ -544,49 +545,86 @@
       lives = 3;
       updateHearts();
 
-      let seed = lvl * 1337;
+      let seed = lvl * 31337;
       const rnd = () => seededRandom(seed++);
 
-      // Scale arrow complexity with level
-      const arrowCount = Math.min(5 + Math.floor(lvl / 30), 22);
+      // Scale arrow count from 4 up to 18
+      const arrowCount = Math.min(4 + Math.floor(lvl / 15), 18);
       arrows = [];
-      const occupied = new Set();
-      const dirs = ["UP", "DOWN", "LEFT", "RIGHT"];
+
+      // Grid tracking (6 columns x 8 rows)
+      const grid = Array.from({ length: rows }, () => Array(cols).fill(null));
+      const dirs = [
+        { name: "UP", dx: 0, dy: -1 },
+        { name: "DOWN", dx: 0, dy: 1 },
+        { name: "LEFT", dx: -1, dy: 0 },
+        { name: "RIGHT", dx: 1, dy: 0 }
+      ];
 
       for (let i = 0; i < arrowCount; i++) {
-        for (let tries = 0; tries < 80; tries++) {
-          let gx = Math.floor(rnd() * cols);
-          let gy = Math.floor(rnd() * rows);
-          let key = `${gx},${gy}`;
+        // Pick an unblocked border edge to escape toward
+        let dir = dirs[Math.floor(rnd() * dirs.length)];
+        let startX, startY;
 
-          if (!occupied.has(key)) {
-            occupied.add(key);
-            let dir = dirs[Math.floor(rnd() * dirs.length)];
-            let pts = [{ x: offX + gx * stepX, y: offY + gy * stepY }];
+        if (dir.name === "RIGHT") { startX = cols - 1; startY = Math.floor(rnd() * rows); }
+        else if (dir.name === "LEFT") { startX = 0; startY = Math.floor(rnd() * rows); }
+        else if (dir.name === "DOWN") { startX = Math.floor(rnd() * cols); startY = rows - 1; }
+        else { startX = Math.floor(rnd() * cols); startY = 0; }
 
-            // Complex paths for higher tiers
-            let bends = (lvl >= 50 && rnd() > 0.3) ? (lvl >= 300 && rnd() > 0.5 ? 2 : 1) : 0;
-
-            for (let b = 0; b < bends; b++) {
-              let bDir = (dir === "UP" || dir === "DOWN") ? (rnd() > 0.5 ? "LEFT" : "RIGHT") : (rnd() > 0.5 ? "UP" : "DOWN");
-              let prev = pts[pts.length - 1];
-              let bx = prev.x + (bDir === "LEFT" ? -28 : bDir === "RIGHT" ? 28 : 0);
-              let by = prev.y + (bDir === "UP" ? -28 : bDir === "DOWN" ? 28 : 0);
-              pts.push({ x: bx, y: by });
+        // Find available starting dot
+        let cx = startX;
+        let cy = startY;
+        if (grid[cy][cx] !== null) {
+          let found = false;
+          for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < cols; c++) {
+              if (grid[r][c] === null) { cx = c; cy = r; found = true; break; }
             }
-
-            arrows.push({
-              points: pts,
-              dir: dir,
-              flying: false,
-              shake: 0,
-              cleared: false,
-              hinted: false
-            });
-            break;
+            if (found) break;
           }
+          if (!found) break;
         }
+
+        // Snake the arrow backwards across the grid (length 2 to 5 tiles)
+        const pathLength = Math.min(2 + Math.floor(lvl / 50) + Math.floor(rnd() * 3), 6);
+        let currentGridPath = [{ x: cx, y: cy }];
+        grid[cy][cx] = i;
+
+        for (let step = 1; step < pathLength; step++) {
+          const validMoves = dirs.map(d => ({ x: cx - d.dx, y: cy - d.dy }))
+            .filter(pos => pos.x >= 0 && pos.x < cols && pos.y >= 0 && pos.y < rows && grid[pos.y][pos.x] === null);
+
+          if (validMoves.length === 0) break;
+          const nextMove = validMoves[Math.floor(rnd() * validMoves.length)];
+          cx = nextMove.x;
+          cy = nextMove.y;
+          grid[cy][cx] = i;
+          currentGridPath.push({ x: cx, y: cy });
+        }
+
+        // Reverse path points so points[0] is tail and points[last] is arrowhead
+        currentGridPath.reverse();
+        const pixelPoints = currentGridPath.map(p => ({
+          x: offX + p.x * stepX,
+          y: offY + p.y * stepY
+        }));
+
+        arrows.push({
+          id: i,
+          points: pixelPoints,
+          dir: dir.name,
+          flying: false,
+          shake: 0,
+          cleared: false,
+          hinted: false
+        });
       }
+
+      updateRemainingArrows();
+      cancelAnimationFrame(animId);
+      gameLoop();
+    }
+
 
       updateRemainingArrows();
       cancelAnimationFrame(animId);
