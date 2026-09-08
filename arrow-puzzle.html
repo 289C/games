@@ -720,13 +720,17 @@
           }
         }
 
-        if (hit) {
-          arrow.scale = 1.35; // Swell animation
-          arrow.ripple = 1;   // Pulse wave
+                if (hit) {
+          arrow.scale = 1.35;
+          arrow.ripple = 1;
 
           if (isArrowUnblocked(arrow)) {
+            // Success Haptic: Quick crisp vibration pulse
+            if ("vibrate" in navigator) navigator.vibrate(25);
             arrow.flying = true;
           } else {
+            // Collision Haptic: Double buzz vibration pulse
+            if ("vibrate" in navigator) navigator.vibrate([40, 60, 40]);
             arrow.shake = 12;
             lives--;
             updateHearts();
@@ -737,8 +741,7 @@
           }
           break;
         }
-      }
-    }
+
 
     canvas.addEventListener("pointerdown", handleCanvasTap);
 
