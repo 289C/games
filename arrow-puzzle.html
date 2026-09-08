@@ -669,7 +669,11 @@
           }
         }
 
-        if (hit) {
+                if (hit) {
+          // Trigger the swell pulse and tap ripple
+          arrow.scale = 1.35; // Swells 35% larger
+          arrow.ripple = 1;   // Starts shockwave ripple
+          
           if (isArrowUnblocked(arrow)) {
             arrow.flying = true;
           } else {
@@ -683,6 +687,7 @@
           }
           break;
         }
+
       }
     }
 
