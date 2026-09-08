@@ -28,7 +28,7 @@
       touch-action: manipulation;
     }
 
-    /* Top Animated Instagram Header */
+    /* Top Instagram Header */
     .insta-bar-wrap {
       width: 100%;
       max-width: 420px;
@@ -450,10 +450,6 @@
   </div>
 
   <script>
-    // ========================================================================
-    // 1,000 PROCEDURAL LEVELS ARROW PUZZLE ENGINE
-    // ========================================================================
-
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
 
@@ -477,13 +473,13 @@
     const offX = 35;
     const offY = 45;
 
-    // --- Seeded Random Number Generator for 1,000 Unique Persistent Levels ---
+    // Seeded Random Function
     function seededRandom(seed) {
       const x = Math.sin(seed++) * 10000;
       return x - Math.floor(x);
     }
 
-    // --- Level Browser Generation ---
+    // Render Menu Grids
     function renderLevelGrid() {
       const grid = document.getElementById("levelsGrid");
       grid.innerHTML = "";
@@ -530,8 +526,7 @@
       renderLevelGrid();
     }
 
-    // --- Generate Specific Level Puzzle ---
-        // --- Solvable Labyrinth Reverse-Generator ---
+    // Reverse Solvable Labyrinth Puzzle Generator
     function loadLevel(lvl) {
       currentLevel = lvl;
       document.getElementById("levelsScreen").style.display = "none";
@@ -548,11 +543,9 @@
       let seed = lvl * 31337;
       const rnd = () => seededRandom(seed++);
 
-      // Scale arrow count from 4 up to 18
       const arrowCount = Math.min(4 + Math.floor(lvl / 15), 18);
       arrows = [];
 
-      // Grid tracking (6 columns x 8 rows)
       const grid = Array.from({ length: rows }, () => Array(cols).fill(null));
       const dirs = [
         { name: "UP", dx: 0, dy: -1 },
@@ -562,7 +555,6 @@
       ];
 
       for (let i = 0; i < arrowCount; i++) {
-        // Pick an unblocked border edge to escape toward
         let dir = dirs[Math.floor(rnd() * dirs.length)];
         let startX, startY;
 
@@ -571,7 +563,6 @@
         else if (dir.name === "DOWN") { startX = Math.floor(rnd() * cols); startY = rows - 1; }
         else { startX = Math.floor(rnd() * cols); startY = 0; }
 
-        // Find available starting dot
         let cx = startX;
         let cy = startY;
         if (grid[cy][cx] !== null) {
@@ -585,7 +576,6 @@
           if (!found) break;
         }
 
-        // Snake the arrow backwards across the grid (length 2 to 5 tiles)
         const pathLength = Math.min(2 + Math.floor(lvl / 50) + Math.floor(rnd() * 3), 6);
         let currentGridPath = [{ x: cx, y: cy }];
         grid[cy][cx] = i;
@@ -602,7 +592,6 @@
           currentGridPath.push({ x: cx, y: cy });
         }
 
-        // Reverse path points so points[0] is tail and points[last] is arrowhead
         currentGridPath.reverse();
         const pixelPoints = currentGridPath.map(p => ({
           x: offX + p.x * stepX,
@@ -625,12 +614,6 @@
       gameLoop();
     }
 
-
-      updateRemainingArrows();
-      cancelAnimationFrame(animId);
-      gameLoop();
-    }
-
     function updateHearts() {
       document.getElementById("heartsTxt").textContent = "❤️".repeat(Math.max(lives, 0));
     }
@@ -643,7 +626,6 @@
       }
     }
 
-    // Check collision along arrow exit trajectory
     function isArrowUnblocked(arrow) {
       const head = arrow.points[arrow.points.length - 1];
       for (let other of arrows) {
@@ -725,11 +707,11 @@
       }
     }
 
-    // --- Render Loop ---
+    // Canvas Rendering Loop
     function gameLoop() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Grid Pattern
+      // Dots Matrix
       ctx.fillStyle = "#e2e8f0";
       for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
@@ -739,7 +721,7 @@
         }
       }
 
-      // Arrows
+      // Render Arrows
       arrows.forEach(arrow => {
         if (arrow.cleared) return;
 
