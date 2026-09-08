@@ -759,10 +759,13 @@
       requestAnimationFrame(gameLoop);
     }
 
-    function nextLevelAction() {
-      document.getElementById('overlayModal').style.display = 'none';
-      initLevel(world >= 3 ? 1 : world + 1);
-    }
+     function nextLevelAction() {
+   document.getElementById('overlayModal').style.display = 'none';
+   world++;
+   initLevel(world);
+   playTone(950, 0.25);
+ }
+
 
     // Initialize Game
     initLevel(1);
