@@ -552,10 +552,10 @@
 
       player.x += player.vx;
 
-      // Gravity (adjusted for water / space worlds)
-      let gravity = world === 2 ? 0.22 : (world === 3 ? 0.28 : 0.42);
-      player.vy += gravity;
-      player.y += player.vy;
+            // Gravity (adjusted for active biome)
+      const biome = BIOMES[(world - 1) % BIOMES.length];
+      player.vy += biome.gravity;
+
 
       // Platform Collision
       player.grounded = false;
