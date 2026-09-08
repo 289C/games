@@ -669,21 +669,23 @@
       }
     }
 
-    // Trajectory Collision Verification
+        // Trajectory Collision Verification
     function isArrowUnblocked(arrow) {
       const head = arrow.points[arrow.points.length - 1];
       for (let other of arrows) {
         if (other === arrow || other.cleared || other.flying) continue;
 
         for (let p of other.points) {
-          if (arrow.dir === "RIGHT" && Math.abs(p.y - head.y) < 18 && p.x > head.x) return false;
-          if (arrow.dir === "LEFT"  && Math.abs(p.y - head.y) < 18 && p.x < head.x) return false;
-          if (arrow.dir === "DOWN"  && Math.abs(p.x - head.x) < 18 && p.y > head.y) return false;
-          if (arrow.dir === "UP"    && Math.abs(p.x - head.x) < 18 && p.y < head.y) return false;
+          // Check flight trajectory with a safe forward clearance offset (> 10px ahead of tip)
+          if (arrow.dir === "RIGHT" && Math.abs(p.y - head.y) < 18 && p.x > head.x + 10) return false;
+          if (arrow.dir === "LEFT"  && Math.abs(p.y - head.y) < 18 && p.x < head.x - 10) return false;
+          if (arrow.dir === "DOWN"  && Math.abs(p.x - head.x) < 18 && p.y > head.y + 10) return false;
+          if (arrow.dir === "UP"    && Math.abs(p.x - head.x) < 18 && p.y < head.y - 10) return false;
         }
       }
       return true;
     }
+
 
     function handleCanvasTap(e) {
       const rect = canvas.getBoundingClientRect();
