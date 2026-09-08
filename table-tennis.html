@@ -447,11 +447,13 @@
     let scoreP2 = 0;
     let isGameRunning = false;
 
-    // ITTF Rules State
+        // ITTF Rules State
     let currentServer = 1; // 1 = P1 (You), 2 = P2 (Rival)
+    let lastHitter = 1;    // Tracks who struck the ball last
     let bounceCountP1 = 0;
     let bounceCountP2 = 0;
     let isServingPhase = true;
+
 
     function init3D() {
       const container = document.getElementById('canvas3d');
