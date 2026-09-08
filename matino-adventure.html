@@ -554,9 +554,10 @@
 
       player.x += player.vx;
 
-            // Gravity (adjusted for active biome)
-      const biome = BIOMES[(world - 1) % BIOMES.length];
-      player.vy += biome.gravity;
+// Guaranteed gravity fallback
+const currentBiome = (typeof BIOMES !== 'undefined' && BIOMES[(world - 1) % BIOMES.length]) ? BIOMES[(world - 1) % BIOMES.length] : null;
+const gForce = currentBiome ? currentBiome.gravity : (world === 2 ? 0.35 : 0.45);
+player.vy += gForce;
 
 
       // Platform Collision
