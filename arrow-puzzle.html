@@ -570,7 +570,19 @@
 
           let hx = Math.floor(rnd() * cols);
           let hy = Math.floor(rnd() * rows);
+          
+          // Ensure arrow does not face directly into an existing arrow's head in the same row/col
+          let opposingConflict = arrows.some(a => {
+            let otherHead = a.points[a.points.length - 1];
+            if (dirObj.name === "DOWN" && a.dir === "UP" && hx * stepX + offX === otherHead.x && hy < otherHead.y / stepY) return true;
+            if (dirObj.name === "UP" && a.dir === "DOWN" && hx * stepX + offX === otherHead.x && hy > otherHead.y / stepY) return true;
+            if (dirObj.name === "RIGHT" && a.dir === "LEFT" && hy * stepY + offY === otherHead.y && hx < otherHead.x / stepX) return true;
+            if (dirObj.name === "LEFT" && a.dir === "RIGHT" && hy * stepY + offY === otherHead.y && hx > otherHead.x / stepX) return true;
+            return false;
+          });
 
+          if (opposingConflict) continue;
+          
           let candidateCells = [{ x: hx, y: hy }];
           let bx = hx - dirObj.dx;
           let by = hy - dirObj.dy;
