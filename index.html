@@ -650,40 +650,6 @@
   </div>
   
   <!-- ===================================================================== -->
-  <!-- MODAL: VIDEO PLAYER & PLAYLIST HUB                                    -->
-  <!-- ===================================================================== -->
-  <div class="modal-backdrop" id="videoModal">
-    <div class="modal-content" style="max-width: 680px;">
-      <div class="modal-header">
-        <div style="font-weight: 800; display: flex; align-items: center; gap: 8px;">
-          <span>📺</span>
-          <span id="currentVideoTitle">Select a Video to Play</span>
-        </div>
-        <button class="close-btn" id="closeVideoBtn">&times;</button>
-      </div>
-
-      <!-- Video Player Screen -->
-      <div style="width: 100%; background: #000; display: flex; justify-content: center; align-items: center;">
-        <video id="mainVideoPlayer" controls playsinline style="width: 100%; max-height: 380px; aspect-ratio: 16/9; background: #000; outline: none;"></video>
-      </div>
-
-      <!-- Quick Upload & Controls Action Bar -->
-      <div style="background: #141320; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08); flex-wrap: wrap; gap: 8px;">
-        <div style="font-size: 12px; font-weight: 700; color: #a0a0b2;">Playlist & Channels</div>
-        <label style="background: var(--accent-color); color: #fff; padding: 6px 14px; border-radius: 14px; font-size: 12px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
-          <span>📁 Play Local Video</span>
-          <input type="file" id="localVideoUpload" accept="video/*" style="display: none;" />
-        </label>
-      </div>
-
-      <!-- Video Selection Drawer -->
-      <div id="videoPlaylistContainer" style="display: flex; flex-direction: column; gap: 8px; padding: 14px; max-height: 220px; overflow-y: auto; background: #181726;">
-        <!-- Playlist items will be populated by script -->
-      </div>
-    </div>
-  </div>
-  
-  <!-- ===================================================================== -->
   <!-- GAME ENGINES & SCRIPTS                                                -->
   <!-- ===================================================================== -->
   <script>
