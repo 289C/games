@@ -492,13 +492,15 @@
     bindTouch('btnLeft', () => { keys.left = true; player.facing = -1; }, () => keys.left = false);
     bindTouch('btnRight', () => { keys.right = true; player.facing = 1; }, () => keys.right = false);
     bindTouch('btnJump', () => { 
-      if (player.grounded) {
-        player.vy = world === 2 ? -6.5 : (world === 3 ? -9 : -8);
-        player.grounded = false;
-        playTone(480, 0.15);
-        if ("vibrate" in navigator) navigator.vibrate(20);
-      }
-    }, () => {});
+     if (player.grounded) {
+       const biome = BIOMES[(world - 1) % BIOMES.length];
+       player.vy = biome.jumpPower;
+       player.grounded = false;
+       playTone(480, 0.15);
+       if ("vibrate" in navigator) navigator.vibrate(20);
+     }
+   }, () => {});
+
 
     bindTouch('btnBomb', () => {
       bombs.push({
