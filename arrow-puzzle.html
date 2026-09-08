@@ -737,7 +737,6 @@
           ctx.fill();
         }
       }
-
       // Render Arrows
       arrows.forEach(arrow => {
         if (arrow.cleared) return;
@@ -749,6 +748,28 @@
           arrow.shake--;
         }
 
+        // Animate swell back down to normal size smoothly
+        if (arrow.scale > 1) {
+          arrow.scale += (1 - arrow.scale) * 0.15;
+        }
+
+        const head = arrow.points[arrow.points.length - 1];
+
+        // Draw Expanding Ripple Wave on Tap
+        if (arrow.ripple > 0 && arrow.ripple < 30) {
+          ctx.beginPath();
+          ctx.arc(head.x, head.y, arrow.ripple * 2, 0, Math.PI * 2);
+          ctx.strokeStyle = `rgba(0, 132, 255, ${Math.max(0, 1 - arrow.ripple / 30)})`;
+          ctx.lineWidth = 2.5;
+          ctx.stroke();
+          arrow.ripple += 1.8;
+        }
+
+        // Apply Position + Swell Scaling around the arrow center
+        ctx.translate(head.x + offXAnim, head.y);
+        ctx.scale(arrow.scale, arrow.scale);
+        ctx.translate(-head.x, -head.y);
+
         if (arrow.flying) {
           const speed = 16;
           if (arrow.dir === "RIGHT") arrow.points.forEach(p => p.x += speed);
@@ -756,17 +777,16 @@
           if (arrow.dir === "DOWN") arrow.points.forEach(p => p.y += speed);
           if (arrow.dir === "UP") arrow.points.forEach(p => p.y -= speed);
 
-          const head = arrow.points[arrow.points.length - 1];
           if (head.x < -70 || head.x > canvas.width + 70 || head.y < -70 || head.y > canvas.height + 70) {
             arrow.cleared = true;
             updateRemainingArrows();
           }
         }
 
-        ctx.translate(offXAnim, 0);
+        // Vibrant color styling
         ctx.strokeStyle = arrow.flying ? "#0084ff" : (arrow.hinted ? "#00c853" : (arrow.shake > 0 ? "#ef4444" : "#1e293b"));
         ctx.fillStyle = ctx.strokeStyle;
-        ctx.lineWidth = 4.5;
+        ctx.lineWidth = (arrow.scale > 1.05) ? 5.5 : 4.5;
         ctx.lineCap = "round";
         ctx.lineJoin = "round";
 
@@ -776,7 +796,6 @@
           ctx.lineTo(arrow.points[i].x, arrow.points[i].y);
         }
 
-        const head = arrow.points[arrow.points.length - 1];
         let ex = head.x;
         let ey = head.y;
         if (arrow.dir === "RIGHT") ex += 22;
@@ -787,6 +806,7 @@
         ctx.lineTo(ex, ey);
         ctx.stroke();
 
+        // Arrow tip
         ctx.beginPath();
         if (arrow.dir === "RIGHT") {
           ctx.moveTo(ex + 7, ey); ctx.lineTo(ex - 6, ey - 6); ctx.lineTo(ex - 6, ey + 6);
@@ -801,7 +821,7 @@
 
         ctx.restore();
       });
-
+      
       animId = requestAnimationFrame(gameLoop);
     }
 
