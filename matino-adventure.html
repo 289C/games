@@ -699,7 +699,7 @@
       }
     }
 
-    function triggerDeath() {
+      function triggerDeath() {
       lives--;
       document.getElementById('livesDisplay').textContent = lives;
       playTone(150, 0.4, 'triangle');
@@ -707,16 +707,16 @@
 
       if (lives <= 0) {
         gameOver = true;
-        showModal("Game Over", "Your journey ended here.", "Play Again", () => {
+        showModal("Game Over", `You lost in Level ${currentLevel}. Try again!`, "Retry Level", () => {
           lives = 3;
-          coins = 0;
           gameOver = false;
-          initLevel(1);
+          initLevel(currentLevel);
         });
       } else {
         initLevel(currentLevel);
       }
     }
+
 
       function triggerVictory() {
       gameOver = true;
