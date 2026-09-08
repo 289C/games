@@ -741,7 +741,34 @@
     // ============================================================================
 // 1. LEVEL DEVIL 200-STAGE PROCEDURAL ENGINE
 // ============================================================================
+    // --- 4D Motion Tilt & Gyroscope Engine ---
+    const tiltTarget = document.getElementById("ldModal") || document.body;
 
+    // Touch / Mouse Move Parallax
+    window.addEventListener("pointermove", (e) => {
+      const cx = window.innerWidth / 2;
+      const cy = window.innerHeight / 2;
+      const rotY = ((e.clientX - cx) / cx) * 10;
+      const rotX = -((e.clientY - cy) / cy) * 10;
+
+      tiltTarget.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+    });
+
+    window.addEventListener("pointerleave", () => {
+      tiltTarget.style.transform = "rotateX(0deg) rotateY(0deg)";
+    });
+
+    // Mobile Device Gyroscope Support
+    if (window.DeviceOrientationEvent) {
+      window.addEventListener("deviceorientation", (e) => {
+        if (e.gamma !== null && e.beta !== null) {
+          const rotY = Math.min(Math.max(e.gamma, -20), 20) * 0.5;
+          const rotX = Math.min(Math.max(e.beta - 45, -20), 20) * 0.5;
+          tiltTarget.style.transform = `rotateX(${-rotX}deg) rotateY(${rotY}deg)`;
+        }
+      });
+    }
+    
 const ldModal = document.getElementById("ldModal");
 const openLd = document.getElementById("openLevelDevil");
 const closeLd = document.getElementById("closeLdBtn");
