@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>3D Table Tennis Arena</title>
+  
+  <!-- Three.js for 3D & PeerJS for Serverless 1v1 Room Codes -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+
+  <style>
+    :root {
+      --primary-glow: #00f2fe;
+      --accent-neon: #ff007f;
+      --gold: #ffd700;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+    }
+
+    body {
+      background: #060913;
+      color: #fff;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Animated Instagram Banner */
+    .ig-banner {
+      position: absolute;
+      top: 10px;
+      z-index: 20;
+      width: 90%;
+      max-width: 440px;
+      padding: 8px 16px;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 0 25px rgba(225, 48, 108, 0.35);
+      animation: pulseBanner 4s infinite alternate ease-in-out;
+    }
+
+    @keyframes pulseBanner {
+      0% { box-shadow: 0 0 15px rgba(225, 48, 108, 0.25); }
+      100% { box-shadow: 0 0 30px rgba(0, 242, 254, 0.45); }
+    }
+
+    .ig-profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .ig-badge {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 17px;
+      box-shadow: 0 0 10px rgba(230, 104, 60, 0.6);
+    }
+
+    .ig-text {
+      text-align: left;
+      line-height: 1.2;
+    }
+
+    .ig-handle {
+      font-size: 13px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      letter-spacing: 0.4px;
+    }
+
+    .verified-dot {
+      width: 14px;
+      height: 14px;
+      background: #0095f6;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+    }
+
+    .ig-sub {
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.65);
+    }
+
+    .ig-btn {
+      background: linear-gradient(135deg, #f58529, #dd2a7b, #8134af);
+      color: #fff;
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 6px 14px;
+      border-radius: 20px;
+      transition: transform 0.2s;
+      box-shadow: 0 4px 15px rgba(221, 42, 123, 0.4);
+    }
+
+    .ig-btn:active {
+      transform: scale(0.92);
+    }
+
+    /* Scoreboard HUD */
+    .scoreboard {
+      position: absolute;
+      top: 68px;
+      z-index: 15;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: rgba(10, 15, 30, 0.8);
+      padding: 8px 24px;
+      border-radius: 30px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+    }
+
+    .player-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .pill-indicator {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .player-indicator { background: #00f2fe; box-shadow: 0 0 8px #00f2fe; }
+    .rival-indicator { background: #ff4757; box-shadow: 0 0 8px #ff4757; }
+
+    .score-digits {
+      font-size: 26px;
+      font-weight: 900;
+      color: #fff;
+      min-width: 70px;
+      text-align: center;
+      letter-spacing: 4px;
+    }
+
+    /* 3D Canvas Viewport */
+    #canvas3d {
+      width: 100vw;
+      height: 100vh;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+    }
+
+    /* Overlays & Menus */
+    .screen-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 50;
+      background: radial-gradient(circle at center, rgba(12, 19, 43, 0.94), rgba(4, 7, 16, 0.98));
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .brand-logo-img {
+      width: 110px;
+      height: 110px;
+      object-fit: contain;
+      margin-bottom: 12px;
+      filter: drop-shadow(0 6px 20px rgba(255, 0, 100, 0.5));
+      animation: floatLogo 3s ease-in-out infinite;
+    }
+
+    @keyframes floatLogo {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-8px) rotate(2deg); }
+    }
+
+    .menu-title {
+      font-size: 26px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+      background: linear-gradient(135deg, #00f2fe, #4facfe, #ff0844);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .menu-tagline {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.6);
+      margin-bottom: 24px;
+    }
+
+    .menu-btn {
+      width: 250px;
+      padding: 13px 0;
+      margin: 8px 0;
+      border: none;
+      border-radius: 30px;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .menu-btn:active {
+      transform: scale(0.95);
+    }
+
+    .btn-ai {
+      background: linear-gradient(135deg, #00f2fe, #4facfe);
+      color: #031525;
+    }
+
+    .btn-friend {
+      background: linear-gradient(135deg, #ff0844, #ffb199);
+      color: #fff;
+    }
+
+    .room-box {
+      margin-top: 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 16px;
+      border-radius: 20px;
+      width: 280px;
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .room-input {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(0, 242, 254, 0.4);
+      border-radius: 12px;
+      padding: 10px;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 800;
+      text-align: center;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    .room-code-display {
+      font-size: 24px;
+      font-weight: 900;
+      color: var(--gold);
+      letter-spacing: 4px;
+      padding: 6px 0;
+    }
+
+    /* Touch Guidance Overlay */
+    .touch-hint {
+      position: absolute;
+      bottom: 25px;
+      z-index: 10;
+      font-size: 12px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.5);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Animated Instagram Top Banner -->
+  <div class="ig-banner">
+    <div class="ig-profile">
+      <div class="ig-badge">S</div>
+      <div class="ig-text">
+        <div class="ig-handle">@_satish_official_16 <span class="verified-dot">✓</span></div>
+        <div class="ig-sub">Developer on Instagram</div>
+      </div>
+    </div>
+    <a href="https://instagram.com/_satish_official_16" target="_blank" class="ig-btn">Follow ↗</a>
+  </div>
+
+  <!-- In-game 5-Point Scoreboard -->
+  <div class="scoreboard" id="scoreboard">
+    <div class="player-pill">
+      <span class="pill-indicator player-indicator"></span>
+      <span id="p1Name">YOU</span>
+    </div>
+    <div class="score-digits"><span id="p1Score">0</span> : <span id="p2Score">0</span></div>
+    <div class="player-pill">
+      <span class="pill-indicator rival-indicator"></span>
+      <span id="p2Name">BOT</span>
+    </div>
+  </div>
+
+  <div class="touch-hint">Drag screen to control paddle & hit ball</div>
+
+  <!-- 3D Viewport -->
+  <canvas id="canvas3d"></canvas>
+
+  <!-- Main Menu / Match Selection Overlay -->
+  <div class="screen-overlay" id="mainMenu">
+    <!-- Replace src with your uploaded table tennis logo file (e.g., 34170.jpg) -->
+    <img src="34170.jpg" alt="Table Tennis Logo" class="brand-logo-img" onerror="this.style.display='none'" />
+    <h1 class="menu-title">Ping Pong 3D</h1>
+    <p class="menu-tagline">First to 5 Points Wins the Championship!</p>
+
+    <button class="menu-btn btn-ai" onclick="startSinglePlayer()">Play vs AI Bot</button>
+    <button class="menu-btn btn-friend" onclick="showMultiplayerSection()">Play with Friend</button>
+
+    <div class="room-box" id="roomSection">
+      <div id="createSection">
+        <button class="menu-btn btn-friend" style="width:100%" onclick="hostMultiplayerRoom()">Create Room Code</button>
+        <div id="createdCodeWrap" style="display:none;">
+          <p style="font-size:12px; color:rgba(255,255,255,0.7); margin-top:6px;">Share this code with your friend:</p>
+          <div class="room-code-display" id="generatedCode">----</div>
+          <p style="font-size:11px; color:#38ef7d;">Waiting for friend to connect...</p>
+        </div>
+      </div>
+
+      <div style="font-size:12px; color:rgba(255,255,255,0.4); margin:4px 0;">— OR —</div>
+
+      <div id="joinSection">
+        <input type="text" id="joinCodeInput" class="room-input" placeholder="ENTER 4-DIGIT CODE" maxlength="6" />
+        <button class="menu-btn btn-ai" style="width:100%; margin-top:8px;" onclick="joinMultiplayerRoom()">Join Game</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Game Finished Modal -->
+  <div class="screen-overlay" id="gameOverModal" style="display:none;">
+    <h1 class="menu-title" id="winnerText">Victory!</h1>
+    <p class="menu-tagline" id="finalScoreText">Final Score: 5 - 3</p>
+    <button class="menu-btn btn-ai" onclick="resetGameMatch()">Play Again</button>
+    <button class="menu-btn btn-friend" onclick="backToMainMenu()">Main Menu</button>
+  </div>
+
+  <script>
+    // Audio Synthesizer
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playSfx(type) {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      const now = audioCtx.currentTime;
+      if (type === 'hit') {
+        osc.frequency.setValueAtTime(440, now);
+        osc.frequency.exponentialRampToValueAtTime(800, now + 0.08);
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.08);
+        osc.start(now);
+        osc.stop(now + 0.08);
+      } else if (type === 'bounce') {
+        osc.frequency.setValueAtTime(220, now);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.05);
+        osc.start(now);
+        osc.stop(now + 0.05);
+      } else if (type === 'score') {
+        osc.frequency.setValueAtTime(587, now);
+        osc.frequency.exponentialRampToValueAtTime(880, now + 0.25);
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.25);
+        osc.start(now);
+        osc.stop(now + 0.25);
+      }
+    }
+
+    // 3D Scene Variables
+    let scene, camera, renderer;
+    let table, net, ball, playerPaddle, rivalPaddle;
+    let particles;
+
+    const TABLE_WIDTH = 12;
+    const TABLE_LENGTH = 22;
+    const TABLE_HEIGHT = 0.6;
+    const NET_HEIGHT = 1.2;
+
+    // Ball Dynamics
+    let ballPos = new THREE.Vector3(0, 3, 4);
+    let ballVel = new THREE.Vector3(0, 0, -0.28);
+    let ballRadius = 0.22;
+    const GRAVITY = -0.011;
+
+    // Paddle Target Coordinates
+    let targetPlayerX = 0;
+    let targetPlayerY = 2;
+
+    // Match Engine
+    let gameMode = 'ai'; // 'ai' or 'pvp'
+    let isHost = true;
+    let peer = null;
+    let dataConn = null;
+
+    let scoreP1 = 0;
+    let scoreP2 = 0;
+    let isGameRunning = false;
+    let serveToPlayer = true;
+
+    function init3D() {
+      const container = document.getElementById('canvas3d');
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x060913);
+      scene.fog = new THREE.FogExp2(0x060913, 0.015);
+
+      camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+      camera.position.set(0, 7.5, 17.5);
+      camera.lookAt(0, 1.2, 0);
+
+      renderer = new THREE.WebGLRenderer({ canvas: container, antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.shadowMap.enabled = true;
+
+      // Lights
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.65);
+      scene.add(ambientLight);
+
+      const stadiumSpot = new THREE.SpotLight(0x00f2fe, 1.5);
+      stadiumSpot.position.set(0, 20, 0);
+      stadiumSpot.angle = Math.PI / 3;
+      stadiumSpot.penumbra = 0.5;
+      stadiumSpot.castShadow = true;
+      scene.add(stadiumSpot);
+
+      const rimLight = new THREE.DirectionalLight(0xff007f, 0.8);
+      rimLight.position.set(-15, 10, -10);
+      scene.add(rimLight);
+
+      // Stadium Floor
+      const floorGeo = new THREE.PlaneGeometry(80, 80);
+      const floorMat = new THREE.MeshStandardMaterial({ color: 0x090f1d, roughness: 0.8 });
+      const floor = new THREE.Mesh(floorGeo, floorMat);
+      floor.rotation.x = -Math.PI / 2;
+      floor.position.y = -3;
+      scene.add(floor);
+
+      // Table Top
+      const tableGeo = new THREE.BoxGeometry(TABLE_WIDTH, TABLE_HEIGHT, TABLE_LENGTH);
+      const tableMat = new THREE.MeshStandardMaterial({ color: 0x0055a5, roughness: 0.2, metalness: 0.1 });
+      table = new THREE.Mesh(tableGeo, tableMat);
+      table.position.set(0, 0, 0);
+      table.receiveShadow = true;
+      scene.add(table);
+
+      // White Border Lines
+      const lineMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+      const centerLineGeo = new THREE.BoxGeometry(0.08, TABLE_HEIGHT + 0.02, TABLE_LENGTH);
+      const centerLine = new THREE.Mesh(centerLineGeo, lineMat);
+      scene.add(centerLine);
+
+      // Net
+      const netGeo = new THREE.BoxGeometry(TABLE_WIDTH + 0.6, NET_HEIGHT, 0.12);
+      const netMat = new THREE.MeshStandardMaterial({ color: 0xffffff, transparent: true, opacity: 0.75 });
+      net = new THREE.Mesh(netGeo, netMat);
+      net.position.set(0, NET_HEIGHT / 2 + TABLE_HEIGHT / 2, 0);
+      scene.add(net);
+
+      // Ball
+      const ballGeo = new THREE.SphereGeometry(ballRadius, 32, 32);
+      const ballMat = new THREE.MeshStandardMaterial({ color: 0xffa500, roughness: 0.1, emissive: 0xff5500, emissiveIntensity: 0.3 });
+      ball = new THREE.Mesh(ballGeo, ballMat);
+      ball.castShadow = true;
+      scene.add(ball);
+
+      // Paddles
+      playerPaddle = createPaddleMesh(0x00d2ff);
+      scene.add(playerPaddle);
+      playerPaddle.position.set(0, 2, 10);
+
+      rivalPaddle = createPaddleMesh(0xff3366);
+      scene.add(rivalPaddle);
+      rivalPaddle.position.set(0, 2, -10);
+
+      // Input Event Listeners
+      window.addEventListener('resize', onWindowResize);
+      window.addEventListener('pointermove', onPointerMove);
+      window.addEventListener('touchmove', onTouchMove, { passive: false });
+
+      animate();
+    }
+
+    function createPaddleMesh(colorHex) {
+      const group = new THREE.Group();
+      // Rubber Face
+      const faceGeo = new THREE.CylinderGeometry(1.2, 1.2, 0.18, 32);
+      const faceMat = new THREE.MeshStandardMaterial({ color: colorHex, roughness: 0.4 });
+      const face = new THREE.Mesh(faceGeo, faceMat);
+      face.rotation.x = Math.PI / 2;
+      group.add(face);
+
+      // Handle
+      const handleGeo = new THREE.CylinderGeometry(0.22, 0.25, 1.2, 16);
+      const handleMat = new THREE.MeshStandardMaterial({ color: 0xd29b63 });
+      const handle = new THREE.Mesh(handleGeo, handleMat);
+      handle.position.y = -1.4;
+      group.add(handle);
+
+      return group;
+    }
+
+    function onPointerMove(e) {
+      if (!isGameRunning) return;
+      const normalizedX = (e.clientX / window.innerWidth) * 2 - 1;
+      const normalizedY = -(e.clientY / window.innerHeight) * 2 + 1;
+      targetPlayerX = normalizedX * (TABLE_WIDTH / 1.7);
+      targetPlayerY = Math.max(0.6, (normalizedY + 1) * 2.2);
+    }
+
+    function onTouchMove(e) {
+      if (!isGameRunning) return;
+      e.preventDefault();
+      const touch = e.touches[0];
+      const normalizedX = (touch.clientX / window.innerWidth) * 2 - 1;
+      const normalizedY = -(touch.clientY / window.innerHeight) * 2 + 1;
+      targetPlayerX = normalizedX * (TABLE_WIDTH / 1.7);
+      targetPlayerY = Math.max(0.6, (normalizedY + 1) * 2.2);
+    }
+
+    function onWindowResize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    // Physics & Game Loop
+    function updatePhysics() {
+      if (!isGameRunning) return;
+
+      // Smooth Player Paddle Motion
+      playerPaddle.position.x += (targetPlayerX - playerPaddle.position.x) * 0.25;
+      playerPaddle.position.y += (targetPlayerY - playerPaddle.position.y) * 0.25;
+
+      // Rival Paddle Movement (AI or Multiplayer Client)
+      if (gameMode === 'ai') {
+        const botSpeed = 0.12;
+        rivalPaddle.position.x += (ballPos.x - rivalPaddle.position.x) * botSpeed;
+        rivalPaddle.position.y += (Math.max(1, ballPos.y) - rivalPaddle.position.y) * botSpeed;
+      }
+
+      // Ball Movement
+      ballVel.y += GRAVITY;
+      ballPos.add(ballVel);
+
+      // Bounce off Table
+      const halfW = TABLE_WIDTH / 2;
+      const halfL = TABLE_LENGTH / 2;
+      const surfaceY = TABLE_HEIGHT / 2 + ballRadius;
+
+      if (ballPos.y <= surfaceY && Math.abs(ballPos.x) <= halfW && Math.abs(ballPos.z) <= halfL) {
+        ballPos.y = surfaceY;
+        ballVel.y = Math.abs(ballVel.y) * 0.88;
+        playSfx('bounce');
+        if (navigator.vibrate) navigator.vibrate(10);
+      }
+
+      // Player Paddle Collision (Z ~ 9 to 10.5)
+      if (ballPos.z >= 9 && ballPos.z <= 10.5 && ballVel.z > 0) {
+        const dist = Math.hypot(ballPos.x - playerPaddle.position.x, ballPos.y - playerPaddle.position.y);
+        if (dist < 1.4) {
+          ballVel.z = -Math.abs(ballVel.z) * 1.04 - 0.02; // Speed up rally
+          ballVel.x = (ballPos.x - playerPaddle.position.x) * 0.14;
+          ballVel.y = 0.22 + Math.random() * 0.04;
+          playSfx('hit');
+          if (navigator.vibrate) navigator.vibrate(25);
+
+          if (gameMode === 'pvp' && isHost && dataConn) {
+            dataConn.send({ type: 'paddleHit', pos: ballPos, vel: ballVel });
+          }
+        }
+      }
+
+      // Rival Paddle Collision (Z ~ -10.5 to -9)
+      if (ballPos.z <= -9 && ballPos.z >= -10.5 && ballVel.z < 0) {
+        const dist = Math.hypot(ballPos.x - rivalPaddle.position.x, ballPos.y - rivalPaddle.position.y);
+        if (dist < 1.4) {
+          ballVel.z = Math.abs(ballVel.z) * 1.04 + 0.02;
+          ballVel.x = (ballPos.x - rivalPaddle.position.x) * 0.14;
+          ballVel.y = 0.22 + Math.random() * 0.04;
+          playSfx('hit');
+        }
+      }
+
+      // Scoring Detection
+      if (ballPos.z > 14) {
+        // Player missed -> Rival scores
+        handleScore(2);
+      } else if (ballPos.z < -14) {
+        // Rival missed -> Player scores
+        handleScore(1);
+      } else if (ballPos.y < -3) {
+        // Fell below stage
+        if (ballPos.z > 0) handleScore(2);
+        else handleScore(1);
+      }
+
+      ball.position.copy(ballPos);
+
+      // Broadcast position if hosting multiplayer
+      if (gameMode === 'pvp' && isHost && dataConn) {
+        dataConn.send({
+                    type: 'sync',
+          ball: { x: ballPos.x, y: ballPos.y, z: ballPos.z },
+          rivalX: playerPaddle.position.x,
+          rivalY: playerPaddle.position.y,
+          s1: scoreP1,
+          s2: scoreP2
+        });
+      }
+    }
+
+    function handleScore(scorer) {
+      if (scorer === 1) scoreP1++;
+      else scoreP2++;
+
+      playSfx('score');
+      document.getElementById('p1Score').textContent = scoreP1;
+      document.getElementById('p2Score').textContent = scoreP2;
+
+      // Check 5-Point Win Condition
+      if (scoreP1 >= 5 || scoreP2 >= 5) {
+        isGameRunning = false;
+        const won = scoreP1 >= 5;
+        document.getElementById('winnerText').textContent = won ? "VICTORY!" : "DEFEAT!";
+        document.getElementById('finalScoreText').textContent = `Final Score: ${scoreP1} - ${scoreP2}`;
+        document.getElementById('gameOverModal').style.display = 'flex';
+        return;
+      }
+
+      // Reset Ball for Next Serve
+      serveToPlayer = (scorer === 2);
+      resetBallServe();
+    }
+
+    function resetBallServe() {
+      ballPos.set(0, 3, serveToPlayer ? 7 : -7);
+      ballVel.set(0, 0.05, serveToPlayer ? -0.26 : 0.26);
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      updatePhysics();
+      renderer.render(scene, camera);
+    }
+
+    // Match Start Handlers
+    function startSinglePlayer() {
+      gameMode = 'ai';
+      document.getElementById('p2Name').textContent = "BOT";
+      document.getElementById('mainMenu').style.display = 'none';
+      resetGameMatch();
+    }
+
+    function showMultiplayerSection() {
+      const box = document.getElementById('roomSection');
+      box.style.display = box.style.display === 'flex' ? 'none' : 'flex';
+    }
+
+    function hostMultiplayerRoom() {
+      const roomCode = Math.random().toString(36).substring(2, 6).toUpperCase();
+      peer = new Peer('tt-' + roomCode);
+
+      peer.on('open', (id) => {
+        document.getElementById('createdCodeWrap').style.display = 'block';
+        document.getElementById('generatedCode').textContent = roomCode;
+        isHost = true;
+      });
+
+      peer.on('connection', (conn) => {
+        dataConn = conn;
+        setupConnectionEvents();
+        document.getElementById('p2Name').textContent = "FRIEND";
+        document.getElementById('mainMenu').style.display = 'none';
+        gameMode = 'pvp';
+        resetGameMatch();
+      });
+    }
+
+    function joinMultiplayerRoom() {
+      const code = document.getElementById('joinCodeInput').value.trim().toUpperCase();
+      if (code.length < 4) return alert("Please enter a valid 4-digit code");
+
+      peer = new Peer();
+      peer.on('open', () => {
+        dataConn = peer.connect('tt-' + code);
+        isHost = false;
+        setupConnectionEvents();
+        document.getElementById('p2Name').textContent = "FRIEND";
+        document.getElementById('mainMenu').style.display = 'none';
+        gameMode = 'pvp';
+        resetGameMatch();
+      });
+    }
+
+    function setupConnectionEvents() {
+      dataConn.on('data', (data) => {
+        if (data.type === 'sync') {
+          if (!isHost) {
+            ballPos.set(-data.ball.x, data.ball.y, -data.ball.z);
+            rivalPaddle.position.set(-data.rivalX, data.rivalY, -10);
+            scoreP1 = data.s2;
+            scoreP2 = data.s1;
+            document.getElementById('p1Score').textContent = scoreP1;
+            document.getElementById('p2Score').textContent = scoreP2;
+          }
+        }
+      });
+    }
+
+    function resetGameMatch() {
+      scoreP1 = 0;
+      scoreP2 = 0;
+      document.getElementById('p1Score').textContent = "0";
+      document.getElementById('p2Score').textContent = "0";
+      document.getElementById('gameOverModal').style.display = 'none';
+      serveToPlayer = true;
+      resetBallServe();
+      isGameRunning = true;
+    }
+
+    function backToMainMenu() {
+      isGameRunning = false;
+      document.getElementById('gameOverModal').style.display = 'none';
+      document.getElementById('mainMenu').style.display = 'flex';
+    }
+
+    // Run Engine on load
+    window.onload = init3D;
+  </script>
+</body>
+</html>
+
+          
