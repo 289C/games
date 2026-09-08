@@ -354,7 +354,7 @@
       const bIndex = (lvl - 1) % BIOMES.length;
       const biome = BIOMES[bIndex];
 
-      document.getElementById('biomeDisplay').textContent = biome.name;
+      document.getElementById('biomeDisplay').textContent = `${biome.name} | Level ${lvl}`;
       document.getElementById('livesDisplay').textContent = lives;
       document.getElementById('coinsDisplay').textContent = coins;
 
