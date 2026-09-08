@@ -607,6 +607,18 @@
           cleared: false,
           hinted: false
         });
+                arrows.push({
+          id: i,
+          points: pixelPoints,
+          dir: dir.name,
+          flying: false,
+          shake: 0,
+          scale: 1,       // <-- SWELL ANIMATION
+          ripple: 0,      // <-- RIPPLE RING EFFECT
+          cleared: false,
+          hinted: false
+        });
+        
       }
 
       updateRemainingArrows();
