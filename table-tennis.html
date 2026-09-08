@@ -597,23 +597,23 @@
       }
     }
 
-    function resetBallServe() {
+        function resetBallServe() {
       isServingPhase = true;
       bounceCountP1 = 0;
       bounceCountP2 = 0;
+      lastHitter = currentServer;
 
       updateServerIndicator();
 
       if (currentServer === 1) {
-        // Player serves from near side towards rival
         ballPos.set(0, 2.6, 9.5);
         ballVel.set(0, 0.08, -0.27);
       } else {
-        // Rival serves from far side towards player
         ballPos.set(0, 2.6, -9.5);
         ballVel.set(0, 0.08, 0.27);
       }
     }
+
 
     // Physics Update Loop
     function updatePhysics() {
