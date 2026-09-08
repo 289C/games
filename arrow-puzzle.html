@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Tap Away Arrows - 1000 Levels</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;900&display=swap" rel="stylesheet">
   <style>
     * {
@@ -394,7 +394,7 @@
         </div>
         <div>
           <div class="insta-name">@_satish_official_16 <span class="insta-badge">✓</span></div>
-          <div class="insta-tag">Follow Developer on Instagram</div>
+          <div class="insta-tag">Developer on Instagram</div>
         </div>
       </div>
       <div class="insta-btn">Follow ↗</div>
@@ -531,7 +531,7 @@
       renderLevelGrid();
     }
 
-    // Solvable Labyrinth Reverse-Generator
+    // Solvable Reverse Generator
     function loadLevel(lvl) {
       currentLevel = lvl;
       document.getElementById("levelsScreen").style.display = "none";
@@ -545,96 +545,116 @@
       lives = 3;
       updateHearts();
 
-      let seed = lvl * 9301 + 49297;
+      let seed = lvl * 19937 + 104729;
       const rnd = () => {
         seed = (seed * 9301 + 49297) % 233280;
         return seed / 233280;
       };
 
-      // Scale arrows: Level 1 starts with 4 clear arrows, scaling up to 14
-      const arrowCount = Math.min(4 + Math.floor(lvl / 20), 14);
+      const targetCount = Math.min(4 + Math.floor(lvl / 20), 16);
       arrows = [];
 
-      const grid = Array.from({ length: rows }, () => Array(cols).fill(false));
-      const dirs = [
-        { name: "UP", dx: 0, dy: -1 },
-        { name: "DOWN", dx: 0, dy: 1 },
-        { name: "LEFT", dx: -1, dy: 0 },
-        { name: "RIGHT", dx: 1, dy: 0 }
+      let grid = Array.from({ length: rows }, () => Array(cols).fill(null));
+
+      const DIRS = [
+        { name: "RIGHT", dx: 1, dy: 0 },
+        { name: "LEFT",  dx: -1, dy: 0 },
+        { name: "DOWN",  dx: 0, dy: 1 },
+        { name: "UP",    dx: 0, dy: -1 }
       ];
 
-      // Build balanced paths
-      for (let i = 0; i < arrowCount; i++) {
-        let placed = false;
+      for (let i = 0; i < targetCount; i++) {
+        for (let tries = 0; tries < 100; tries++) {
+          const dirObj = DIRS[Math.floor(rnd() * DIRS.length)];
+          const len = 2 + (rnd() > 0.6 ? 1 : 0);
 
-        for (let attempt = 0; attempt < 60; attempt++) {
-          let dir = dirs[Math.floor(rnd() * dirs.length)];
-          let startX = Math.floor(rnd() * cols);
-          let startY = Math.floor(rnd() * rows);
+          let hx = Math.floor(rnd() * cols);
+          let hy = Math.floor(rnd() * rows);
 
-          if (grid[startY][startX]) continue;
+          let candidateCells = [{ x: hx, y: hy }];
+          let bx = hx - dirObj.dx;
+          let by = hy - dirObj.dy;
 
-          // Grow arrow segment path backwards
-          let path = [{ x: startX, y: startY }];
-          grid[startY][startX] = true;
+          if (bx < 0 || bx >= cols || by < 0 || by >= rows) continue;
+          candidateCells.push({ x: bx, y: by });
 
-          const len = 2 + Math.floor(rnd() * 2);
-          let cx = startX;
-          let cy = startY;
-
-          for (let step = 1; step < len; step++) {
-            let nextDir = dirs[Math.floor(rnd() * dirs.length)];
-            let nx = cx - nextDir.dx;
-            let ny = cy - nextDir.dy;
-
-            if (nx >= 0 && nx < cols && ny >= 0 && ny < rows && !grid[ny][nx]) {
-              grid[ny][nx] = true;
-              path.unshift({ x: nx, y: ny });
-              cx = nx;
-              cy = ny;
-            } else {
-              break;
+          if (len === 3) {
+            let turnDirs = (dirObj.dx !== 0) ? [{dx: 0, dy: 1}, {dx: 0, dy: -1}] : [{dx: 1, dy: 0}, {dx: -1, dy: 0}];
+            let tDir = turnDirs[Math.floor(rnd() * turnDirs.length)];
+            let tx = bx + tDir.dx;
+            let ty = by + tDir.dy;
+            if (tx >= 0 && tx < cols && ty >= 0 && ty < rows) {
+              candidateCells.push({ x: tx, y: ty });
             }
           }
 
-          if (path.length >= 2) {
-            const pixelPoints = path.map(p => ({
-              x: offX + p.x * stepX,
-              y: offY + p.y * stepY
-            }));
-
-            arrows.push({
-              id: i,
-              points: pixelPoints,
-              dir: dir.name,
-              flying: false,
-              shake: 0,
-              scale: 1,
-              ripple: 0,
-              cleared: false,
-              hinted: false
-            });
-            placed = true;
-            break;
-          } else {
-            grid[startY][startX] = false;
+          let valid = true;
+          for (let c of candidateCells) {
+            if (grid[c.y][c.x] !== null) {
+              valid = false;
+              break;
+            }
           }
+          if (!valid) continue;
+
+          candidateCells.forEach(c => grid[c.y][c.x] = i);
+
+          let orderedCells = [...candidateCells].reverse();
+          let pixelPoints = orderedCells.map(c => ({
+            x: offX + c.x * stepX,
+            y: offY + c.y * stepY
+          }));
+
+          arrows.push({
+            id: i,
+            points: pixelPoints,
+            dir: dirObj.name,
+            flying: false,
+            shake: 0,
+            scale: 1,
+            ripple: 0,
+            cleared: false,
+            hinted: false
+          });
+          break;
         }
       }
 
-      // Safety fallback: if no arrows generated, provide 4 clean default arrows
-      if (arrows.length === 0) {
-        arrows = [
-          { id: 0, points: [{x: offX, y: offY + stepY}, {x: offX + stepX, y: offY + stepY}], dir: "RIGHT", flying: false, shake: 0, scale: 1, ripple: 0, cleared: false, hinted: false },
-          { id: 1, points: [{x: offX + 3*stepX, y: offY}, {x: offX + 3*stepX, y: offY + stepY}], dir: "DOWN", flying: false, shake: 0, scale: 1, ripple: 0, cleared: false, hinted: false },
-          { id: 2, points: [{x: offX + 4*stepX, y: offY + 4*stepY}, {x: offX + 3*stepX, y: offY + 4*stepY}], dir: "LEFT", flying: false, shake: 0, scale: 1, ripple: 0, cleared: false, hinted: false },
-          { id: 3, points: [{x: offX + stepX, y: offY + 5*stepY}, {x: offX + stepX, y: offY + 4*stepY}], dir: "UP", flying: false, shake: 0, scale: 1, ripple: 0, cleared: false, hinted: false }
-        ];
-      }
-
+      ensureAtLeastOneFreeArrow();
       updateRemainingArrows();
       cancelAnimationFrame(animId);
       gameLoop();
+    }
+
+    // Failsafe: Guarantees at least 1 arrow can immediately escape
+    function ensureAtLeastOneFreeArrow() {
+      let unblocked = arrows.some(a => isArrowUnblocked(a));
+      if (!unblocked && arrows.length > 0) {
+        let a = arrows[arrows.length - 1];
+        let head = a.points[a.points.length - 1];
+        
+        let distRight = (canvas.width - head.x);
+        let distLeft = head.x;
+        let distDown = (canvas.height - head.y);
+        let distUp = head.y;
+
+        let minDist = Math.min(distRight, distLeft, distDown, distUp);
+        if (minDist === distRight) a.dir = "RIGHT";
+        else if (minDist === distLeft) a.dir = "LEFT";
+        else if (minDist === distDown) a.dir = "DOWN";
+        else a.dir = "UP";
+
+        arrows = arrows.filter(other => {
+          if (other === a) return true;
+          for (let p of other.points) {
+            if (a.dir === "RIGHT" && Math.abs(p.y - head.y) < 20 && p.x > head.x) return false;
+            if (a.dir === "LEFT"  && Math.abs(p.y - head.y) < 20 && p.x < head.x) return false;
+            if (a.dir === "DOWN"  && Math.abs(p.x - head.x) < 20 && p.y > head.y) return false;
+            if (a.dir === "UP"    && Math.abs(p.x - head.x) < 20 && p.y < head.y) return false;
+          }
+          return true;
+        });
+      }
     }
 
     function updateHearts() {
@@ -656,10 +676,10 @@
         if (other === arrow || other.cleared || other.flying) continue;
 
         for (let p of other.points) {
-          if (arrow.dir === "RIGHT" && Math.abs(p.y - head.y) < 15 && p.x > head.x) return false;
-          if (arrow.dir === "LEFT" && Math.abs(p.y - head.y) < 15 && p.x < head.x) return false;
-          if (arrow.dir === "DOWN" && Math.abs(p.x - head.x) < 15 && p.y > head.y) return false;
-          if (arrow.dir === "UP" && Math.abs(p.x - head.x) < 15 && p.y < head.y) return false;
+          if (arrow.dir === "RIGHT" && Math.abs(p.y - head.y) < 18 && p.x > head.x) return false;
+          if (arrow.dir === "LEFT"  && Math.abs(p.y - head.y) < 18 && p.x < head.x) return false;
+          if (arrow.dir === "DOWN"  && Math.abs(p.x - head.x) < 18 && p.y > head.y) return false;
+          if (arrow.dir === "UP"    && Math.abs(p.x - head.x) < 18 && p.y < head.y) return false;
         }
       }
       return true;
@@ -687,8 +707,8 @@
         }
 
         if (hit) {
-          arrow.scale = 1.35; // Swell animation pop
-          arrow.ripple = 1;   // Pulse ripple wave
+          arrow.scale = 1.35; // Swell animation
+          arrow.ripple = 1;   // Pulse wave
 
           if (isArrowUnblocked(arrow)) {
             arrow.flying = true;
@@ -710,7 +730,7 @@
 
     document.getElementById("hintBtn").onclick = () => {
       if (hints <= 0) return;
-      const free = arrows.find(a => !a.cleared && !a.flying && isArrowUnblocked(a));
+            const free = arrows.find(a => !a.cleared && !a.flying && isArrowUnblocked(a));
       if (free) {
         free.hinted = true;
         hints--;
@@ -722,7 +742,7 @@
 
     function handleVictory() {
       completedLevels.add(currentLevel);
-            if (currentLevel >= unlockedLevel && unlockedLevel < totalLevels) {
+      if (currentLevel >= unlockedLevel && unlockedLevel < totalLevels) {
         unlockedLevel = currentLevel + 1;
       }
       localStorage.setItem("arrowUnlockedLevel", unlockedLevel.toString());
@@ -764,14 +784,12 @@
           arrow.shake--;
         }
 
-        // Swell decay
         if (arrow.scale > 1) {
           arrow.scale += (1 - arrow.scale) * 0.15;
         }
 
         const head = arrow.points[arrow.points.length - 1];
 
-        // Draw Expanding Ripple Wave on Tap
         if (arrow.ripple > 0 && arrow.ripple < 25) {
           ctx.beginPath();
           ctx.arc(head.x, head.y, arrow.ripple * 2.2, 0, Math.PI * 2);
@@ -781,7 +799,6 @@
           arrow.ripple += 1.8;
         }
 
-        // Scale transform around arrow head
         ctx.translate(head.x + offXAnim, head.y);
         ctx.scale(arrow.scale, arrow.scale);
         ctx.translate(-head.x, -head.y);
@@ -799,7 +816,6 @@
           }
         }
 
-        // Arrow Styling
         ctx.strokeStyle = arrow.flying ? "#0084ff" : (arrow.hinted ? "#10b981" : (arrow.shake > 0 ? "#ef4444" : "#1e293b"));
         ctx.fillStyle = ctx.strokeStyle;
         ctx.lineWidth = 5;
@@ -822,7 +838,6 @@
         ctx.lineTo(ex, ey);
         ctx.stroke();
 
-        // Tip Arrowhead
         ctx.beginPath();
         if (arrow.dir === "RIGHT") {
           ctx.moveTo(ex + 8, ey); ctx.lineTo(ex - 7, ey - 7); ctx.lineTo(ex - 7, ey + 7);
