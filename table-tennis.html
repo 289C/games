@@ -710,14 +710,26 @@
         }
       }
 
-      // Out of bounds / Miss detection
-      if (ballPos.z > 14) {
-        handleScore(2);
-      } else if (ballPos.z < -14) {
-        handleScore(1);
-      } else if (ballPos.y < -3.5) {
-        if (ballPos.z > 0) handleScore(2);
-        else handleScore(1);
+            // Out of bounds & Miss Detection (Official ITTF Rules)
+      const isPastTableZ = Math.abs(ballPos.z) > 12.5;
+      const isOffSideX = Math.abs(ballPos.x) > (TABLE_WIDTH / 2 + 1.5);
+      const isBelowTableY = ballPos.y < 0.2;
+
+      if (isPastTableZ || isOffSideX || isBelowTableY) {
+        if (lastHitter === 1) {
+          if (bounceCountP2 >= 1) {
+            handleScore(1); // Ball landed on rival side and they missed it -> You score
+          } else {
+            handleScore(2); // Ball missed rival's side -> Fault on you, Rival scores
+          }
+        } else {
+          if (bounceCountP1 >= 1) {
+            handleScore(2); // Ball landed on your side and you missed it -> Rival scores
+          } else {
+            handleScore(1); // Ball missed your side -> Fault on rival, You score
+          }
+        }
+        return;
       }
 
       ball.position.copy(ballPos);
