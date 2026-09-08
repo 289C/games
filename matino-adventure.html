@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Super Matino Adventure</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 20%, #1e1b4b 0%, #030712 100%);
+      color: #fff;
+      font-family: 'Outfit', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow: hidden;
+      touch-action: none;
+    }
+
+    /* Animated Neon Instagram Banner */
+    .insta-bar-wrap {
+      width: 100%;
+      max-width: 480px;
+      padding: 8px 12px 4px;
+      z-index: 10;
+    }
+
+    .insta-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 8px 14px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(14px);
+      text-decoration: none;
+      color: #fff;
+      border: 1.5px solid rgba(255, 255, 255, 0.18);
+      box-shadow: 0 0 20px rgba(220, 39, 67, 0.35);
+      animation: neonPulse 3s infinite alternate;
+    }
+
+    @keyframes neonPulse {
+      0% { box-shadow: 0 0 12px rgba(220, 39, 67, 0.3); border-color: rgba(240, 148, 51, 0.4); }
+      50% { box-shadow: 0 0 24px rgba(188, 24, 136, 0.6); border-color: rgba(220, 39, 67, 0.8); }
+      100% { box-shadow: 0 0 16px rgba(0, 132, 255, 0.5); border-color: rgba(0, 132, 255, 0.6); }
+    }
+
+    .insta-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .insta-ring {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(45deg, #f09433, #dc2743, #bc1888);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .insta-ring svg {
+      width: 18px;
+      height: 18px;
+      stroke: #fff;
+    }
+
+    .insta-btn {
+      background: linear-gradient(135deg, #e1306c, #833ab4);
+      padding: 5px 12px;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 11px;
+    }
+
+    /* Game Logo Graphic */
+    .game-logo-box {
+      margin: 4px 0;
+      max-height: 80px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .game-logo-box img {
+      max-height: 75px;
+      object-fit: contain;
+      border-radius: 16px;
+      filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.6));
+      animation: logoFloat 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes logoFloat {
+      0% { transform: translateY(0px) rotate(0deg); }
+      100% { transform: translateY(-5px) rotate(1deg); }
+    }
+
+    /* HUD Bar */
+    .hud {
+      width: 95%;
+      max-width: 480px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 14px;
+      background: rgba(15, 23, 42, 0.7);
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      margin-bottom: 6px;
+      font-family: 'Fredoka One', cursive;
+      font-size: 15px;
+    }
+
+    /* Game Canvas */
+    #gameWrapper {
+      position: relative;
+      width: 95%;
+      max-width: 480px;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 3px solid #38bdf8;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7), 0 0 25px rgba(56, 189, 248, 0.3);
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: auto;
+      background: #38bdf8;
+    }
+
+    /* On-Screen Mobile Arcade Controls */
+    .touch-controls {
+      width: 95%;
+      max-width: 480px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 6px;
+      margin-top: 4px;
+    }
+
+    .d-pad {
+      display: flex;
+      gap: 12px;
+    }
+
+    .action-pad {
+      display: flex;
+      gap: 14px;
+    }
+
+    .ctrl-btn {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.15);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      color: #fff;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.4);
+      transition: transform 0.08s ease, background 0.08s ease;
+    }
+
+    .ctrl-btn:active {
+      transform: scale(0.9);
+      background: rgba(56, 189, 248, 0.5);
+    }
+
+    .jump-btn {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      border-color: #4ade80;
+    }
+
+    .bomb-btn {
+      background: linear-gradient(135deg, #f59e0b, #dc2626);
+      border-color: #fca5a5;
+    }
+
+    /* Victory / Game Over Overlay */
+    #overlayModal {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.88);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .modal-btn {
+      margin-top: 14px;
+      padding: 10px 24px;
+      background: linear-gradient(135deg, #f59e0b, #ef4444);
+      color: #fff;
+      font-family: 'Fredoka One';
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Instagram Header -->
+  <div class="insta-bar-wrap">
+    <a href="https://instagram.com/_satish_official_16" target="_blank" rel="noopener" class="insta-bar">
+      <div class="insta-left">
+        <div class="insta-ring">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+            <circle cx="12" cy="12" r="4"></circle>
+            <circle cx="18" cy="6" r="1"></circle>
+          </svg>
+        </div>
+        <div>
+          <div style="font-weight: 800; font-size: 13px;">@_satish_official_16 <span style="background: #0084ff; font-size: 8px; padding: 2px 4px; border-radius: 50%;">✓</span></div>
+          <div style="font-size: 10px; color: #94a3b8;">Developer on Instagram</div>
+        </div>
+      </div>
+      <div class="insta-btn">Follow ↗</div>
+    </a>
+  </div>
+
+  <!-- Custom Logo Display -->
+  <div class="game-logo-box">
+    <img src="34160.jpg" alt="Game Logo" onerror="this.src='https://via.placeholder.com/320x90/1e1b4b/38bdf8?text=SUPER+MATINO'">
+  </div>
+
+  <!-- Heads Up Display -->
+  <div class="hud">
+    <div style="color: #ef4444;">❤️ <span id="livesTxt">3</span></div>
+    <div style="color: #ffd700;">🪙 <span id="coinsTxt">0</span></div>
+    <div style="color: #38bdf8;">WORLD <span id="worldTxt">1-1</span></div>
+  </div>
+
+  <!-- Stage Canvas -->
+  <div id="gameWrapper">
+    <canvas id="c" width="480" height="270"></canvas>
+    <div id="overlayModal">
+      <h2 id="overlayTitle" style="font-family: 'Fredoka One'; font-size: 32px; color: #ffd700;">LEVEL CLEARED!</h2>
+      <p id="overlaySub" style="color: #cbd5e1; font-size: 14px; margin-top: 6px;">Next World Unlocked</p>
+      <button class="modal-btn" onclick="nextLevelAction()">CONTINUE ▶</button>
+    </div>
+  </div>
+
+  <!-- Mobile On-Screen Arcade Controls -->
+  <div class="touch-controls">
+    <div class="d-pad">
+      <div class="ctrl-btn" id="btnLeft">◀</div>
+      <div class="ctrl-btn" id="btnRight">▶</div>
+    </div>
+    <div class="action-pad">
+      <div class="ctrl-btn bomb-btn" id="btnBomb">💣</div>
+      <div class="ctrl-btn jump-btn" id="btnJump">⬆</div>
+    </div>
+  </div>
+
+  <script>
+    // --- Synthesizer Audio ---
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    let actx = null;
+
+    function playTone(freq, duration, type='sine') {
+      try {
+        if (!actx) actx = new AudioCtx();
+        const osc = actx.createOscillator();
+        const g = actx.createGain();
+        osc.connect(g);
+        g.connect(actx.destination);
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, actx.currentTime);
+        g.gain.setValueAtTime(0.3, actx.currentTime);
+        g.gain.linearRampToValueAtTime(0.01, actx.currentTime + duration);
+        osc.start();
+        osc.stop(actx.currentTime + duration);
+      } catch(e) {}
+    }
+
+    const canvas = document.getElementById('c');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width;
+    const H = canvas.height;
+
+    let world = 1;
+    let lives = 3;
+    let coins = 0;
+    let cameraX = 0;
+    let levelGoalX = 1400;
+
+    // Player State
+    const player = {
+      x: 60, y: 150, w: 22, h: 28,
+      vx: 0, vy: 0,
+      grounded: false,
+      facing: 1,
+      invulnerable: 0
+    };
+
+    // World Entities
+    let platforms = [];
+    let mysteryBlocks = [];
+    let collectibles = [];
+    let enemies = [];
+    let bombs = [];
+    let particles = [];
+
+    // Controller input
+    const keys = { left: false, right: false, jump: false };
+
+    // --- Load Levels & Themes ---
+    function initLevel(lvl) {
+      world = lvl;
+      document.getElementById('worldTxt').textContent = `${world}-1`;
+      player.x = 60;
+      player.y = 100;
+      player.vx = 0;
+      player.vy = 0;
+      cameraX = 0;
+      bombs = [];
+      particles = [];
+
+      platforms = [];
+      mysteryBlocks = [];
+      collectibles = [];
+      enemies = [];
+
+      // Theme settings
+      let groundColor = '#16a34a';
+      if (lvl === 2) { groundColor = '#0284c7'; canvas.style.background = '#0369a1'; } // Water
+      else if (lvl === 3) { groundColor = '#475569'; canvas.style.background = '#0f172a'; } // Space
+      else { canvas.style.background = '#38bdf8'; } // Valley
+
+      // Base Platforms
+      for (let x = 0; x < levelGoalX + 200; x += 320) {
+        platforms.push({ x: x, y: H - 35, w: 260, h: 35, color: groundColor });
+      }
+
+      // Mystery Blocks & Brick Platforms
+      for (let x = 200; x < levelGoalX; x += 180) {
+        mysteryBlocks.push({ x: x, y: 140, w: 24, h: 24, hit: false });
+        collectibles.push({ x: x + 60, y: 140, w: 14, h: 14, collected: false });
+        collectibles.push({ x: x + 85, y: 140, w: 14, h: 14, collected: false });
+        
+        // Enemies
+        enemies.push({ x: x + 120, y: H - 55, w: 20, h: 20, vx: -1, type: lvl === 2 ? 'fish' : 'mushroom' });
+      }
+    }
+
+    // --- Mobile Touch Controls Binding ---
+    function bindTouch(id, onDown, onUp) {
+      const el = document.getElementById(id);
+      el.addEventListener('touchstart', (e) => { e.preventDefault(); onDown(); });
+      el.addEventListener('touchend', (e) => { e.preventDefault(); onUp(); });
+      el.addEventListener('mousedown', onDown);
+      el.addEventListener('mouseup', onUp);
+    }
+
+    bindTouch('btnLeft', () => { keys.left = true; player.facing = -1; }, () => keys.left = false);
+    bindTouch('btnRight', () => { keys.right = true; player.facing = 1; }, () => keys.right = false);
+    bindTouch('btnJump', () => { 
+      if (player.grounded) {
+        player.vy = world === 2 ? -6.5 : (world === 3 ? -9 : -8);
+        player.grounded = false;
+        playTone(480, 0.15);
+        if ("vibrate" in navigator) navigator.vibrate(20);
+      }
+    }, () => {});
+
+    bindTouch('btnBomb', () => {
+      bombs.push({
+        x: player.x + (player.facing * 16),
+        y: player.y + 6,
+        vx: player.facing * 6,
+        vy: -3.5,
+        timer: 70
+      });
+      playTone(280, 0.12, 'sawtooth');
+    }, () => {});
+
+    // Keyboard support
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'ArrowLeft' || e.key === 'a') { keys.left = true; player.facing = -1; }
+      if (e.code === 'ArrowRight' || e.key === 'd') { keys.right = true; player.facing = 1; }
+      if ((e.code === 'Space' || e.code === 'ArrowUp') && player.grounded) {
+        player.vy = world === 2 ? -6.5 : -8;
+        player.grounded = false;
+        playTone(480, 0.15);
+      }
+      if (e.code === 'KeyB') {
+        bombs.push({ x: player.x + (player.facing * 16), y: player.y, vx: player.facing * 6, vy: -3, timer: 70 });
+      }
+    });
+
+    window.addEventListener('keyup', (e) => {
+      if (e.code === 'ArrowLeft' || e.key === 'a') keys.left = false;
+      if (e.code === 'ArrowRight' || e.key === 'd') keys.right = false;
+    });
+
+    // Particle Burst FX
+    function spawnSparks(x, y, color) {
+      for (let i = 0; i < 8; i++) {
+        particles.push({
+          x, y,
+          vx: (Math.random() - 0.5) * 5,
+          vy: (Math.random() - 0.5) * 5,
+          life: 20,
+          color
+        });
+      }
+    }
+
+    // --- Main Game Loop ---
+    function update() {
+      // Horizontal Move
+      if (keys.left) player.vx = -3.2;
+      else if (keys.right) player.vx = 3.2;
+      else player.vx *= 0.8;
+
+      player.x += player.vx;
+
+      // Gravity (adjusted for water / space worlds)
+      let gravity = world === 2 ? 0.22 : (world === 3 ? 0.28 : 0.42);
+      player.vy += gravity;
+      player.y += player.vy;
+
+      // Platform Collision
+      player.grounded = false;
+      for (let p of platforms) {
+        if (player.x + player.w > p.x && player.x < p.x + p.w &&
+            player.y + player.h >= p.y && player.y + player.h <= p.y + 12 && player.vy >= 0) {
+          player.y = p.y - player.h;
+          player.vy = 0;
+          player.grounded = true;
+        }
+      }
+
+      // Mystery Blocks Collision
+      for (let b of mysteryBlocks) {
+        if (player.x + player.w > b.x && player.x < b.x + b.w &&
+            player.y <= b.y + b.h && player.y >= b.y && player.vy < 0) {
+          player.y = b.y + b.h;
+          player.vy = 1;
+          if (!b.hit) {
+            b.hit = true;
+            coins += 5;
+            document.getElementById('coinsTxt').textContent = coins;
+            playTone(850, 0.2);
+            spawnSparks(b.x + 12, b.y, '#ffd700');
+            if ("vibrate" in navigator) navigator.vibrate(30);
+          }
+        }
+      }
+
+      // Coins Collection
+      collectibles.forEach(c => {
+        if (!c.collected && Math.hypot((player.x + 10) - c.x, (player.y + 14) - c.y) < 22) {
+          c.collected = true;
+          coins++;
+          document.getElementById('coinsTxt').textContent = coins;
+          playTone(900, 0.1);
+        }
+      });
+
+      // Enemy Logic & Stomp
+      enemies.forEach((en, idx) => {
+        en.x += en.vx;
+        if (en.x < 100 || en.x > levelGoalX + 100) en.vx *= -1;
+
+        // Player Stomp on Enemy Head
+        if (player.x + player.w > en.x && player.x < en.x + en.w &&
+            player.y + player.h >= en.y && player.y + player.h <= en.y + 12 && player.vy > 0) {
+          enemies.splice(idx, 1);
+          player.vy = -6;
+          spawnSparks(en.x, en.y, '#ef4444');
+          playTone(600, 0.15);
+          if ("vibrate" in navigator) navigator.vibrate([20, 30]);
+        } else if (Math.hypot(player.x - en.x, player.y - en.y) < 18 && player.invulnerable <= 0) {
+          // Hurt by monster
+          lives--;
+          player.invulnerable = 60;
+          document.getElementById('livesTxt').textContent = lives;
+          playTone(180, 0.3, 'sawtooth');
+          if ("vibrate" in navigator) navigator.vibrate([60, 50, 60]);
+          if (lives <= 0) {
+            initLevel(world);
+            lives = 3;
+            document.getElementById('livesTxt').textContent = lives;
+          }
+        }
+      });
+
+      // Bomb Physics & Blast
+      bombs.forEach((b, bIdx) => {
+        b.x += b.vx;
+        b.y += b.vy;
+        b.vy += 0.3;
+        b.timer--;
+
+        enemies.forEach((en, eIdx) => {
+          if (Math.hypot(b.x - en.x, b.y - en.y) < 24) {
+            enemies.splice(eIdx, 1);
+            bombs.splice(bIdx, 1);
+            spawnSparks(b.x, b.y, '#f59e0b');
+            playTone(120, 0.25, 'triangle');
+          }
+        });
+      });
+
+      // Pitfall Fall Check
+      if (player.y > H + 50) {
+        lives--;
+        document.getElementById('livesTxt').textContent = lives;
+        if (lives <= 0) { lives = 3; document.getElementById('livesTxt').textContent = lives; }
+        initLevel(world);
+      }
+
+      if (player.invulnerable > 0) player.invulnerable--;
+
+      // Smooth Camera tracking
+      cameraX += (player.x - cameraX - W / 3) * 0.1;
+      cameraX = Math.max(0, cameraX);
+
+      // Level Goal Flag Check
+      if (player.x >= levelGoalX) {
+        document.getElementById('overlayModal').style.display = 'flex';
+      }
+    }
+
+    // --- Render Loop ---
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+      ctx.save();
+      ctx.translate(-Math.floor(cameraX), 0);
+
+      // Platforms
+      for (let p of platforms) {
+        ctx.fillStyle = p.color;
+        ctx.fillRect(p.x, p.y, p.w, p.h);
+        ctx.fillStyle = '#78350f';
+        ctx.fillRect(p.x, p.y + 10, p.w, p.h - 10);
+      }
+
+      // Mystery Blocks
+      for (let b of mysteryBlocks) {
+        ctx.fillStyle = b.hit ? '#94a3b8' : '#eab308';
+        ctx.fillRect(b.x, b.y, b.w, b.h);
+        ctx.strokeStyle = '#78350f';
+        ctx.strokeRect(b.x, b.y, b.w, b.h);
+        ctx.fillStyle = '#fff';
+        ctx.font = '14px Fredoka One';
+        ctx.fillText(b.hit ? '' : '?', b.x + 8, b.y + 17);
+      }
+
+      // Coins
+      collectibles.forEach(c => {
+        if (!c.collected) {
+          ctx.fillStyle = '#ffd700';
+          ctx.beginPath();
+          ctx.arc(c.x, c.y, 6, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      });
+
+      // Enemies
+      enemies.forEach(en => {
+        ctx.fillStyle = en.type === 'fish' ? '#38bdf8' : '#dc2626';
+        ctx.beginPath();
+        ctx.arc(en.x + 10, en.y + 10, 10, 0, Math.PI * 2);
+        ctx.fill();
+        // Eyes
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(en.x + 4, en.y + 4, 4, 4);
+        ctx.fillRect(en.x + 12, en.y + 4, 4, 4);
+      });
+
+      // Bombs
+      bombs.forEach(b => {
+        ctx.fillStyle = '#111827';
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, 6, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // Sparks
+      particles.forEach((pt, i) => {
+        ctx.fillStyle = pt.color;
+        ctx.fillRect(pt.x, pt.y, 3, 3);
+        pt.x += pt.vx;
+        pt.y += pt.vy;
+        pt.life--;
+        if (pt.life <= 0) particles.splice(i, 1);
+      });
+
+      // Player Sprite (Matino with Red Hat)
+      if (player.invulnerable % 4 < 2) {
+        // Body
+        ctx.fillStyle = '#2563eb';
+        ctx.fillRect(player.x, player.y + 12, player.w, player.h - 12);
+        // Head
+        ctx.fillStyle = '#fed7aa';
+        ctx.fillRect(player.x + 3, player.y + 4, 16, 12);
+        // Red Cap
+        ctx.fillStyle = '#dc2626';
+        ctx.fillRect(player.x + 1, player.y, 20, 6);
+      }
+
+      // Goal Castle Flag
+      ctx.fillStyle = '#fbbf24';
+      ctx.fillRect(levelGoalX, H - 120, 10, 90);
+      ctx.fillStyle = '#ef4444';
+      ctx.beginPath();
+      ctx.moveTo(levelGoalX + 10, H - 120);
+      ctx.lineTo(levelGoalX + 35, H - 105);
+      ctx.lineTo(levelGoalX + 10, H - 90);
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    function gameLoop() {
+      update();
+      draw();
+      requestAnimationFrame(gameLoop);
+    }
+
+    function nextLevelAction() {
+      document.getElementById('overlayModal').style.display = 'none';
+      initLevel(world >= 3 ? 1 : world + 1);
+    }
+
+    // Initialize Game
+    initLevel(1);
+    requestAnimationFrame(gameLoop);
+  </script>
+</body>
+  </html>
+  
