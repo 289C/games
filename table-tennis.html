@@ -675,7 +675,8 @@
           bounceCountP1 = 0;
           bounceCountP2 = 0;
           isServingPhase = false;
-
+          lastHitter = 1;
+          
           ballVel.z = -Math.abs(ballVel.z) * 1.03 - 0.02;
           ballVel.x = (ballPos.x - playerPaddle.position.x) * 0.14;
           ballVel.y = 0.22 + Math.random() * 0.04;
