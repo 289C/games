@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Tap Away Arrows - 1000 Levels</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;900&display=swap" rel="stylesheet">
   <style>
     * {
@@ -218,6 +218,8 @@
     #gameScreen {
       display: none;
       padding: 4px 14px 14px;
+      flex-direction: column;
+      align-items: center;
       justify-content: space-between;
     }
 
@@ -274,6 +276,8 @@
       border-radius: 24px;
       box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
       border: 2px solid #e2e8f0;
+      touch-action: none;
+      max-width: 100%;
     }
 
     /* Bottom Action Controls */
@@ -282,12 +286,13 @@
       gap: 32px;
       align-items: center;
       justify-content: center;
-      margin-top: 10px;
+      margin-top: 8px;
+      margin-bottom: 8px;
     }
 
     .action-btn {
-      width: 58px;
-      height: 58px;
+      width: 54px;
+      height: 54px;
       border-radius: 50%;
       background: #ffffff;
       border: 2px solid #e2e8f0;
@@ -427,7 +432,7 @@
       <div class="hud-badge" id="diffBadge">Normal</div>
     </div>
 
-    <canvas id="gameCanvas" width="340" height="420"></canvas>
+    <canvas id="gameCanvas" width="340" height="390"></canvas>
 
     <div class="bottom-bar">
       <button class="action-btn" id="hintBtn">
@@ -467,15 +472,15 @@
     let animId = null;
 
     const cols = 6;
-    const rows = 8;
-    const stepX = 46;
-    const stepY = 46;
-    const offX = 35;
-    const offY = 45;
+    const rows = 7;
+    const stepX = 48;
+    const stepY = 48;
+    const offX = 50;
+    const offY = 50;
 
-    // Seeded Random Function
+    // Seeded Random Generator for 1,000 Unique Persistent Levels
     function seededRandom(seed) {
-      const x = Math.sin(seed++) * 10000;
+      let x = Math.sin(seed) * 10000;
       return x - Math.floor(x);
     }
 
@@ -526,7 +531,7 @@
       renderLevelGrid();
     }
 
-    // Reverse Solvable Labyrinth Puzzle Generator
+    // Solvable Labyrinth Reverse-Generator
     function loadLevel(lvl) {
       currentLevel = lvl;
       document.getElementById("levelsScreen").style.display = "none";
@@ -540,13 +545,17 @@
       lives = 3;
       updateHearts();
 
-      let seed = lvl * 31337;
-      const rnd = () => seededRandom(seed++);
+      let seed = lvl * 9301 + 49297;
+      const rnd = () => {
+        seed = (seed * 9301 + 49297) % 233280;
+        return seed / 233280;
+      };
 
-      const arrowCount = Math.min(4 + Math.floor(lvl / 15), 18);
+      // Scale arrows: Level 1 starts with 4 clear arrows, scaling up to 14
+      const arrowCount = Math.min(4 + Math.floor(lvl / 20), 14);
       arrows = [];
 
-      const grid = Array.from({ length: rows }, () => Array(cols).fill(null));
+      const grid = Array.from({ length: rows }, () => Array(cols).fill(false));
       const dirs = [
         { name: "UP", dx: 0, dy: -1 },
         { name: "DOWN", dx: 0, dy: 1 },
@@ -554,71 +563,73 @@
         { name: "RIGHT", dx: 1, dy: 0 }
       ];
 
+      // Build balanced paths
       for (let i = 0; i < arrowCount; i++) {
-        let dir = dirs[Math.floor(rnd() * dirs.length)];
-        let startX, startY;
+        let placed = false;
 
-        if (dir.name === "RIGHT") { startX = cols - 1; startY = Math.floor(rnd() * rows); }
-        else if (dir.name === "LEFT") { startX = 0; startY = Math.floor(rnd() * rows); }
-        else if (dir.name === "DOWN") { startX = Math.floor(rnd() * cols); startY = rows - 1; }
-        else { startX = Math.floor(rnd() * cols); startY = 0; }
+        for (let attempt = 0; attempt < 60; attempt++) {
+          let dir = dirs[Math.floor(rnd() * dirs.length)];
+          let startX = Math.floor(rnd() * cols);
+          let startY = Math.floor(rnd() * rows);
 
-        let cx = startX;
-        let cy = startY;
-        if (grid[cy][cx] !== null) {
-          let found = false;
-          for (let r = 0; r < rows; r++) {
-            for (let c = 0; c < cols; c++) {
-              if (grid[r][c] === null) { cx = c; cy = r; found = true; break; }
+          if (grid[startY][startX]) continue;
+
+          // Grow arrow segment path backwards
+          let path = [{ x: startX, y: startY }];
+          grid[startY][startX] = true;
+
+          const len = 2 + Math.floor(rnd() * 2);
+          let cx = startX;
+          let cy = startY;
+
+          for (let step = 1; step < len; step++) {
+            let nextDir = dirs[Math.floor(rnd() * dirs.length)];
+            let nx = cx - nextDir.dx;
+            let ny = cy - nextDir.dy;
+
+            if (nx >= 0 && nx < cols && ny >= 0 && ny < rows && !grid[ny][nx]) {
+              grid[ny][nx] = true;
+              path.unshift({ x: nx, y: ny });
+              cx = nx;
+              cy = ny;
+            } else {
+              break;
             }
-            if (found) break;
           }
-          if (!found) break;
+
+          if (path.length >= 2) {
+            const pixelPoints = path.map(p => ({
+              x: offX + p.x * stepX,
+              y: offY + p.y * stepY
+            }));
+
+            arrows.push({
+              id: i,
+              points: pixelPoints,
+              dir: dir.name,
+              flying: false,
+              shake: 0,
+              scale: 1,
+              ripple: 0,
+              cleared: false,
+              hinted: false
+            });
+            placed = true;
+            break;
+          } else {
+            grid[startY][startX] = false;
+          }
         }
+      }
 
-        const pathLength = Math.min(2 + Math.floor(lvl / 50) + Math.floor(rnd() * 3), 6);
-        let currentGridPath = [{ x: cx, y: cy }];
-        grid[cy][cx] = i;
-
-        for (let step = 1; step < pathLength; step++) {
-          const validMoves = dirs.map(d => ({ x: cx - d.dx, y: cy - d.dy }))
-            .filter(pos => pos.x >= 0 && pos.x < cols && pos.y >= 0 && pos.y < rows && grid[pos.y][pos.x] === null);
-
-          if (validMoves.length === 0) break;
-          const nextMove = validMoves[Math.floor(rnd() * validMoves.length)];
-          cx = nextMove.x;
-          cy = nextMove.y;
-          grid[cy][cx] = i;
-          currentGridPath.push({ x: cx, y: cy });
-        }
-
-        currentGridPath.reverse();
-        const pixelPoints = currentGridPath.map(p => ({
-          x: offX + p.x * stepX,
-          y: offY + p.y * stepY
-        }));
-
-        arrows.push({
-          id: i,
-          points: pixelPoints,
-          dir: dir.name,
-          flying: false,
-          shake: 0,
-          cleared: false,
-          hinted: false
-        });
-                arrows.push({
-          id: i,
-          points: pixelPoints,
-          dir: dir.name,
-          flying: false,
-          shake: 0,
-          scale: 1,       // <-- SWELL ANIMATION
-          ripple: 0,      // <-- RIPPLE RING EFFECT
-          cleared: false,
-          hinted: false
-        });
-        
+      // Safety fallback: if no arrows generated, provide 4 clean default arrows
+      if (arrows.length === 0) {
+        arrows = [
+          { id: 0, points: [{x: offX, y: offY + stepY}, {x: offX + stepX, y: offY + stepY}], dir: "RIGHT", flying: false, shake: 0, scale: 1, ripple: 0, cleared: false, hinted: false },
+          { id: 1, points: [{x: offX + 3*stepX, y: offY}, {x: offX + 3*stepX, y: offY + stepY}], dir: "DOWN", flying: false, shake: 0, scale: 1, ripple: 0, cleared: false, hinted: false },
+          { id: 2, points: [{x: offX + 4*stepX, y: offY + 4*stepY}, {x: offX + 3*stepX, y: offY + 4*stepY}], dir: "LEFT", flying: false, shake: 0, scale: 1, ripple: 0, cleared: false, hinted: false },
+          { id: 3, points: [{x: offX + stepX, y: offY + 5*stepY}, {x: offX + stepX, y: offY + 4*stepY}], dir: "UP", flying: false, shake: 0, scale: 1, ripple: 0, cleared: false, hinted: false }
+        ];
       }
 
       updateRemainingArrows();
@@ -638,16 +649,17 @@
       }
     }
 
+    // Trajectory Collision Verification
     function isArrowUnblocked(arrow) {
       const head = arrow.points[arrow.points.length - 1];
       for (let other of arrows) {
         if (other === arrow || other.cleared || other.flying) continue;
 
         for (let p of other.points) {
-          if (arrow.dir === "RIGHT" && p.y === head.y && p.x > head.x) return false;
-          if (arrow.dir === "LEFT" && p.y === head.y && p.x < head.x) return false;
-          if (arrow.dir === "DOWN" && p.x === head.x && p.y > head.y) return false;
-          if (arrow.dir === "UP" && p.x === head.x && p.y < head.y) return false;
+          if (arrow.dir === "RIGHT" && Math.abs(p.y - head.y) < 15 && p.x > head.x) return false;
+          if (arrow.dir === "LEFT" && Math.abs(p.y - head.y) < 15 && p.x < head.x) return false;
+          if (arrow.dir === "DOWN" && Math.abs(p.x - head.x) < 15 && p.y > head.y) return false;
+          if (arrow.dir === "UP" && Math.abs(p.x - head.x) < 15 && p.y < head.y) return false;
         }
       }
       return true;
@@ -655,39 +667,42 @@
 
     function handleCanvasTap(e) {
       const rect = canvas.getBoundingClientRect();
-      const clickX = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
-      const clickY = (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top;
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+      const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+
+      const clickX = (clientX - rect.left) * scaleX;
+      const clickY = (clientY - rect.top) * scaleY;
 
       for (let arrow of arrows) {
         if (arrow.cleared || arrow.flying) continue;
 
         let hit = false;
         for (let p of arrow.points) {
-          if (Math.hypot(p.x - clickX, p.y - clickY) < 26) {
+          if (Math.hypot(p.x - clickX, p.y - clickY) < 28) {
             hit = true;
             break;
           }
         }
 
-                if (hit) {
-          // Trigger the swell pulse and tap ripple
-          arrow.scale = 1.35; // Swells 35% larger
-          arrow.ripple = 1;   // Starts shockwave ripple
-          
+        if (hit) {
+          arrow.scale = 1.35; // Swell animation pop
+          arrow.ripple = 1;   // Pulse ripple wave
+
           if (isArrowUnblocked(arrow)) {
             arrow.flying = true;
           } else {
-            arrow.shake = 10;
+            arrow.shake = 12;
             lives--;
             updateHearts();
             if (lives <= 0) {
-              alert("Out of lives! Level resets.");
+              alert("Out of lives! Level restarts.");
               loadLevel(currentLevel);
             }
           }
           break;
         }
-
       }
     }
 
@@ -707,7 +722,7 @@
 
     function handleVictory() {
       completedLevels.add(currentLevel);
-      if (currentLevel >= unlockedLevel && unlockedLevel < totalLevels) {
+            if (currentLevel >= unlockedLevel && unlockedLevel < totalLevels) {
         unlockedLevel = currentLevel + 1;
       }
       localStorage.setItem("arrowUnlockedLevel", unlockedLevel.toString());
@@ -724,19 +739,20 @@
       }
     }
 
-    // Canvas Rendering Loop
+    // 60FPS Game Loop
     function gameLoop() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       // Dots Matrix
-      ctx.fillStyle = "#e2e8f0";
+      ctx.fillStyle = "#cbd5e1";
       for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
           ctx.beginPath();
-          ctx.arc(offX + c * stepX, offY + r * stepY, 2.5, 0, Math.PI * 2);
+          ctx.arc(offX + c * stepX, offY + r * stepY, 2.8, 0, Math.PI * 2);
           ctx.fill();
         }
       }
+
       // Render Arrows
       arrows.forEach(arrow => {
         if (arrow.cleared) return;
@@ -744,11 +760,11 @@
         ctx.save();
         let offXAnim = 0;
         if (arrow.shake > 0) {
-          offXAnim = Math.sin(arrow.shake * 2) * 5;
+          offXAnim = Math.sin(arrow.shake * 2.5) * 6;
           arrow.shake--;
         }
 
-        // Animate swell back down to normal size smoothly
+        // Swell decay
         if (arrow.scale > 1) {
           arrow.scale += (1 - arrow.scale) * 0.15;
         }
@@ -756,37 +772,37 @@
         const head = arrow.points[arrow.points.length - 1];
 
         // Draw Expanding Ripple Wave on Tap
-        if (arrow.ripple > 0 && arrow.ripple < 30) {
+        if (arrow.ripple > 0 && arrow.ripple < 25) {
           ctx.beginPath();
-          ctx.arc(head.x, head.y, arrow.ripple * 2, 0, Math.PI * 2);
-          ctx.strokeStyle = `rgba(0, 132, 255, ${Math.max(0, 1 - arrow.ripple / 30)})`;
+          ctx.arc(head.x, head.y, arrow.ripple * 2.2, 0, Math.PI * 2);
+          ctx.strokeStyle = `rgba(0, 132, 255, ${Math.max(0, 1 - arrow.ripple / 25)})`;
           ctx.lineWidth = 2.5;
           ctx.stroke();
           arrow.ripple += 1.8;
         }
 
-        // Apply Position + Swell Scaling around the arrow center
+        // Scale transform around arrow head
         ctx.translate(head.x + offXAnim, head.y);
         ctx.scale(arrow.scale, arrow.scale);
         ctx.translate(-head.x, -head.y);
 
         if (arrow.flying) {
-          const speed = 16;
+          const speed = 18;
           if (arrow.dir === "RIGHT") arrow.points.forEach(p => p.x += speed);
           if (arrow.dir === "LEFT") arrow.points.forEach(p => p.x -= speed);
           if (arrow.dir === "DOWN") arrow.points.forEach(p => p.y += speed);
           if (arrow.dir === "UP") arrow.points.forEach(p => p.y -= speed);
 
-          if (head.x < -70 || head.x > canvas.width + 70 || head.y < -70 || head.y > canvas.height + 70) {
+          if (head.x < -80 || head.x > canvas.width + 80 || head.y < -80 || head.y > canvas.height + 80) {
             arrow.cleared = true;
             updateRemainingArrows();
           }
         }
 
-        // Vibrant color styling
-        ctx.strokeStyle = arrow.flying ? "#0084ff" : (arrow.hinted ? "#00c853" : (arrow.shake > 0 ? "#ef4444" : "#1e293b"));
+        // Arrow Styling
+        ctx.strokeStyle = arrow.flying ? "#0084ff" : (arrow.hinted ? "#10b981" : (arrow.shake > 0 ? "#ef4444" : "#1e293b"));
         ctx.fillStyle = ctx.strokeStyle;
-        ctx.lineWidth = (arrow.scale > 1.05) ? 5.5 : 4.5;
+        ctx.lineWidth = 5;
         ctx.lineCap = "round";
         ctx.lineJoin = "round";
 
@@ -798,30 +814,30 @@
 
         let ex = head.x;
         let ey = head.y;
-        if (arrow.dir === "RIGHT") ex += 22;
-        if (arrow.dir === "LEFT") ex -= 22;
-        if (arrow.dir === "DOWN") ey += 22;
-        if (arrow.dir === "UP") ey -= 22;
+        if (arrow.dir === "RIGHT") ex += 16;
+        if (arrow.dir === "LEFT") ex -= 16;
+        if (arrow.dir === "DOWN") ey += 16;
+        if (arrow.dir === "UP") ey -= 16;
 
         ctx.lineTo(ex, ey);
         ctx.stroke();
 
-        // Arrow tip
+        // Tip Arrowhead
         ctx.beginPath();
         if (arrow.dir === "RIGHT") {
-          ctx.moveTo(ex + 7, ey); ctx.lineTo(ex - 6, ey - 6); ctx.lineTo(ex - 6, ey + 6);
+          ctx.moveTo(ex + 8, ey); ctx.lineTo(ex - 7, ey - 7); ctx.lineTo(ex - 7, ey + 7);
         } else if (arrow.dir === "LEFT") {
-          ctx.moveTo(ex - 7, ey); ctx.lineTo(ex + 6, ey - 6); ctx.lineTo(ex + 6, ey + 6);
+          ctx.moveTo(ex - 8, ey); ctx.lineTo(ex + 7, ey - 7); ctx.lineTo(ex + 7, ey + 7);
         } else if (arrow.dir === "UP") {
-          ctx.moveTo(ex, ey - 7); ctx.lineTo(ex - 6, ey + 6); ctx.lineTo(ex + 6, ey + 6);
+          ctx.moveTo(ex, ey - 8); ctx.lineTo(ex - 7, ey + 7); ctx.lineTo(ex + 7, ey + 7);
         } else if (arrow.dir === "DOWN") {
-          ctx.moveTo(ex, ey + 7); ctx.lineTo(ex - 6, ey - 6); ctx.lineTo(ex + 6, ey - 6);
+          ctx.moveTo(ex, ey + 8); ctx.lineTo(ex - 7, ey - 7); ctx.lineTo(ex + 7, ey - 7);
         }
         ctx.fill();
 
         ctx.restore();
       });
-      
+
       animId = requestAnimationFrame(gameLoop);
     }
 
