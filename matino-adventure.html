@@ -718,10 +718,10 @@
       }
     }
 
-    function triggerVictory() {
+      function triggerVictory() {
       gameOver = true;
       playTone(750, 0.3);
-      showModal(`Level ${currentLevel} Clear!`, `Awesome job! Ready for Level ${currentLevel + 1}?`, "Next Level", () => {
+      showModal("Clear!", "Track finished! Step into the next zone.", "Next Stage", () => {
         gameOver = false;
         if (currentLevel < TOTAL_LEVELS) {
           initLevel(currentLevel + 1);
@@ -735,6 +735,7 @@
         }
       });
     }
+
 
     let activeModalCb = null;
     function showModal(title, desc, btnText, callback) {
