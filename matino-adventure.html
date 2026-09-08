@@ -4,526 +4,520 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Super Matino Adventure</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
   <style>
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
       user-select: none;
-      -webkit-tap-highlight-color: transparent;
+      -webkit-user-select: none;
+      touch-action: manipulation;
     }
 
     body {
-      background: radial-gradient(circle at 50% 20%, #1e1b4b 0%, #030712 100%);
+      background: radial-gradient(circle at top, #161936, #080915 90%);
       color: #fff;
-      font-family: 'Outfit', sans-serif;
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      overflow: hidden;
-      touch-action: none;
+      justify-content: flex-start;
+      overflow-x: hidden;
+      padding-bottom: 20px;
     }
 
-    /* Animated Neon Instagram Banner */
-    .insta-bar-wrap {
-      width: 100%;
-      max-width: 480px;
-      padding: 8px 12px 4px;
-      z-index: 10;
-    }
-
-    .insta-bar {
+    /* Instagram Top Header */
+    .ig-banner {
+      width: 92%;
+      max-width: 440px;
+      margin: 12px auto 8px;
+      padding: 8px 14px;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 40px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      width: 100%;
-      padding: 8px 14px;
-      border-radius: 18px;
-      background: rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(14px);
-      text-decoration: none;
-      color: #fff;
-      border: 1.5px solid rgba(255, 255, 255, 0.18);
-      box-shadow: 0 0 20px rgba(220, 39, 67, 0.35);
-      animation: neonPulse 3s infinite alternate;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
     }
-
-    @keyframes neonPulse {
-      0% { box-shadow: 0 0 12px rgba(220, 39, 67, 0.3); border-color: rgba(240, 148, 51, 0.4); }
-      50% { box-shadow: 0 0 24px rgba(188, 24, 136, 0.6); border-color: rgba(220, 39, 67, 0.8); }
-      100% { box-shadow: 0 0 16px rgba(0, 132, 255, 0.5); border-color: rgba(0, 132, 255, 0.6); }
-    }
-
-    .insta-left {
+    .ig-profile {
       display: flex;
       align-items: center;
       gap: 10px;
     }
-
-    .insta-ring {
+    .ig-badge {
       width: 34px;
       height: 34px;
       border-radius: 50%;
-      background: linear-gradient(45deg, #f09433, #dc2743, #bc1888);
+      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
       display: flex;
       align-items: center;
       justify-content: center;
+      font-weight: bold;
+      font-size: 16px;
     }
-
-    .insta-ring svg {
-      width: 18px;
-      height: 18px;
-      stroke: #fff;
+    .ig-text {
+      text-align: left;
+      line-height: 1.2;
     }
-
-    .insta-btn {
-      background: linear-gradient(135deg, #e1306c, #833ab4);
-      padding: 5px 12px;
-      border-radius: 12px;
-      font-weight: 800;
-      font-size: 11px;
-    }
-
-    /* Game Logo Graphic */
-    .game-logo-box {
-      margin: 4px 0;
-      max-height: 80px;
+    .ig-handle {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
       display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .verified-dot {
+      width: 13px;
+      height: 13px;
+      background: #0095f6;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
       justify-content: center;
+      font-size: 9px;
+    }
+    .ig-sub {
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.6);
+    }
+    .ig-btn {
+      background: #e1306c;
+      color: #fff;
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 20px;
+      transition: transform 0.2s;
+    }
+    .ig-btn:active {
+      transform: scale(0.92);
     }
 
-    .game-logo-box img {
-      max-height: 75px;
-      object-fit: contain;
-      border-radius: 16px;
-      filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.6));
-      animation: logoFloat 3s ease-in-out infinite alternate;
-    }
-
-    @keyframes logoFloat {
-      0% { transform: translateY(0px) rotate(0deg); }
-      100% { transform: translateY(-5px) rotate(1deg); }
+    /* Game Logo Box */
+    .brand-logo {
+      width: 140px;
+      height: 48px;
+      background: linear-gradient(135deg, #4facfe, #00f2fe);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 18px;
+      color: #0b1021;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3);
+      margin-bottom: 6px;
     }
 
     /* HUD Bar */
     .hud {
-      width: 95%;
-      max-width: 480px;
+      width: 92%;
+      max-width: 440px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 6px 14px;
-      background: rgba(15, 23, 42, 0.7);
-      border-radius: 14px;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      margin-bottom: 6px;
-      font-family: 'Fredoka One', cursive;
-      font-size: 15px;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 800;
+      color: #38ef7d;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+    }
+    .hud-stat {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #fff;
     }
 
-    /* Game Canvas */
-    #gameWrapper {
-      position: relative;
-      width: 95%;
-      max-width: 480px;
+    /* Canvas Frame */
+    .canvas-container {
+      width: 92%;
+      max-width: 440px;
+      aspect-ratio: 16 / 9;
+      background: #000;
       border-radius: 20px;
       overflow: hidden;
-      border: 3px solid #38bdf8;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7), 0 0 25px rgba(56, 189, 248, 0.3);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.7), 0 0 0 2px rgba(255, 255, 255, 0.15);
+      position: relative;
     }
-
     canvas {
-      display: block;
       width: 100%;
-      height: auto;
-      background: #38bdf8;
+      height: 100%;
+      display: block;
     }
 
-    /* On-Screen Mobile Arcade Controls */
-    .touch-controls {
-      width: 95%;
-      max-width: 480px;
+    /* Controls Surface */
+    .controls-panel {
+      width: 92%;
+      max-width: 440px;
+      margin-top: 14px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 10px 6px;
-      margin-top: 4px;
+      padding: 0 10px;
     }
-
-    .d-pad {
-      display: flex;
-      gap: 12px;
-    }
-
-    .action-pad {
+    .d-pad, .action-pad {
       display: flex;
       gap: 14px;
     }
-
     .ctrl-btn {
-      width: 58px;
-      height: 58px;
+      width: 60px;
+      height: 60px;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.15);
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 26px;
-      color: #fff;
-      box-shadow: 0 6px 14px rgba(0,0,0,0.4);
-      transition: transform 0.08s ease, background 0.08s ease;
+      font-size: 22px;
+      cursor: pointer;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+      transition: transform 0.08s ease, background 0.1s;
     }
-
     .ctrl-btn:active {
-      transform: scale(0.9);
-      background: rgba(56, 189, 248, 0.5);
+      transform: scale(0.88);
+    }
+    .btn-dir {
+      background: #2b2e4a;
+      color: #fff;
+    }
+    .btn-bomb {
+      background: radial-gradient(circle, #ff6b6b, #c92a2a);
+      color: #fff;
+    }
+    .btn-jump {
+      background: radial-gradient(circle, #20c997, #099268);
+      color: #fff;
     }
 
-    .jump-btn {
-      background: linear-gradient(135deg, #22c55e, #16a34a);
-      border-color: #4ade80;
-    }
-
-    .bomb-btn {
-      background: linear-gradient(135deg, #f59e0b, #dc2626);
-      border-color: #fca5a5;
-    }
-
-    /* Victory / Game Over Overlay */
-    #overlayModal {
+    /* Modal Screens */
+    .modal {
       position: absolute;
       inset: 0;
-      background: rgba(15, 23, 42, 0.88);
+      background: rgba(10, 12, 28, 0.85);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       display: none;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      z-index: 100;
       text-align: center;
       padding: 20px;
+      z-index: 100;
     }
-
-    .modal-btn {
-      margin-top: 14px;
-      padding: 10px 24px;
-      background: linear-gradient(135deg, #f59e0b, #ef4444);
-      color: #fff;
-      font-family: 'Fredoka One';
+    .modal h2 {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+    .modal p {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 16px;
+    }
+    .action-btn {
+      background: linear-gradient(135deg, #11998e, #38ef7d);
       border: none;
-      border-radius: 12px;
-      font-size: 16px;
+      padding: 10px 24px;
+      border-radius: 25px;
+      color: #0d2818;
+      font-weight: 800;
+      font-size: 14px;
       cursor: pointer;
     }
   </style>
 </head>
 <body>
 
-  <!-- Instagram Header -->
-  <div class="insta-bar-wrap">
-    <a href="https://instagram.com/_satish_official_16" target="_blank" rel="noopener" class="insta-bar">
-      <div class="insta-left">
-        <div class="insta-ring">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-            <circle cx="12" cy="12" r="4"></circle>
-            <circle cx="18" cy="6" r="1"></circle>
-          </svg>
-        </div>
-        <div>
-          <div style="font-weight: 800; font-size: 13px;">@_satish_official_16 <span style="background: #0084ff; font-size: 8px; padding: 2px 4px; border-radius: 50%;">✓</span></div>
-          <div style="font-size: 10px; color: #94a3b8;">Developer on Instagram</div>
-        </div>
+  <!-- Instagram Header Bar -->
+  <div class="ig-banner">
+    <div class="ig-profile">
+      <div class="ig-badge">M</div>
+      <div class="ig-text">
+        <div class="ig-handle">@_satish_official_16 <span class="verified-dot">✓</span></div>
+        <div class="ig-sub">Developer on Instagram</div>
       </div>
-      <div class="insta-btn">Follow ↗</div>
-    </a>
+    </div>
+    <a href="https://instagram.com/_satish_official_16" target="_blank" class="ig-btn">Follow ↗</a>
   </div>
 
-  <!-- Custom Logo Display -->
-  <div class="game-logo-box">
-    <img src="34160.jpg" alt="Game Logo" onerror="this.src='https://via.placeholder.com/320x90/1e1b4b/38bdf8?text=SUPER+MATINO'">
-  </div>
+  <div class="brand-logo">Just Run</div>
 
-  <!-- Heads Up Display -->
+  <!-- Realtime HUD -->
   <div class="hud">
-    <div style="color: #ef4444;">❤️ <span id="livesTxt">3</span></div>
-    <div style="color: #ffd700;">🪙 <span id="coinsTxt">0</span></div>
-    <div style="color: #38bdf8;">WORLD <span id="worldTxt">1-1</span></div>
+    <div class="hud-stat">❤️ <span id="livesDisplay">3</span></div>
+    <div class="hud-stat">🪙 <span id="coinsDisplay">0</span></div>
+    <div id="biomeDisplay">Verdant Valley</div>
   </div>
 
-  <!-- Stage Canvas -->
-  <div id="gameWrapper">
-    <canvas id="c" width="480" height="270"></canvas>
-    <div id="overlayModal">
-      <h2 id="overlayTitle" style="font-family: 'Fredoka One'; font-size: 32px; color: #ffd700;">LEVEL CLEARED!</h2>
-      <p id="overlaySub" style="color: #cbd5e1; font-size: 14px; margin-top: 6px;">Next World Unlocked</p>
-      <button class="modal-btn" onclick="nextLevelAction()">CONTINUE ▶</button>
+  <!-- Game Canvas -->
+  <div class="canvas-container">
+    <canvas id="gameCanvas" width="480" height="270"></canvas>
+    
+    <div id="overlayModal" class="modal">
+      <h2 id="modalTitle">Victory!</h2>
+      <p id="modalDesc">Biome conquered. Gear up for the next challenge.</p>
+      <button class="action-btn" id="modalBtn" onclick="modalAction()">Continue</button>
     </div>
   </div>
 
-  <!-- Mobile On-Screen Arcade Controls -->
-  <div class="touch-controls">
+  <!-- Dual Touch Controller -->
+  <div class="controls-panel">
     <div class="d-pad">
-      <div class="ctrl-btn" id="btnLeft">◀</div>
-      <div class="ctrl-btn" id="btnRight">▶</div>
+      <div class="ctrl-btn btn-dir" id="btnLeft">◀</div>
+      <div class="ctrl-btn btn-dir" id="btnRight">▶</div>
     </div>
     <div class="action-pad">
-      <div class="ctrl-btn bomb-btn" id="btnBomb">💣</div>
-      <div class="ctrl-btn jump-btn" id="btnJump">⬆</div>
+      <div class="ctrl-btn btn-bomb" id="btnBomb">💣</div>
+      <div class="ctrl-btn btn-jump" id="btnJump">⬆</div>
     </div>
   </div>
 
   <script>
-    // --- Synthesizer Audio ---
-    const AudioCtx = window.AudioContext || window.webkitAudioContext;
-    let actx = null;
-
-    function playTone(freq, duration, type='sine') {
+    // Sound Generator (Web Audio API)
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playTone(freq, duration = 0.1, type = 'sine') {
       try {
-        if (!actx) actx = new AudioCtx();
-        const osc = actx.createOscillator();
-        const g = actx.createGain();
-        osc.connect(g);
-        g.connect(actx.destination);
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
         osc.type = type;
-        osc.frequency.setValueAtTime(freq, actx.currentTime);
-        g.gain.setValueAtTime(0.3, actx.currentTime);
-        g.gain.linearRampToValueAtTime(0.01, actx.currentTime + duration);
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
         osc.start();
-        osc.stop(actx.currentTime + duration);
-      } catch(e) {}
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {}
     }
 
-    const canvas = document.getElementById('c');
+    // Biome Definitions
+    const BIOMES = [
+      { name: "Verdant Valley", type: "ground", sky: "#5c94fc", ground: "#885522", top: "#44b822", gravity: 0.45, jumpPower: -8.5, enemySpeed: 1.1, enemyType: "crawler" },
+      { name: "Deep Atlantis", type: "water", sky: "#004b91", ground: "#7a5c37", top: "#00c3ff", gravity: 0.24, jumpPower: -6.4, enemySpeed: 0.9, enemyType: "diver" },
+      { name: "Cavern Underpass", type: "underground", sky: "#130f1c", ground: "#2b2533", top: "#453b52", gravity: 0.44, jumpPower: -8.4, enemySpeed: 1.3, enemyType: "crawler" },
+      { name: "Stratosphere Skylands", type: "air", sky: "#88ccff", ground: "#e2e8f0", top: "#ffffff", gravity: 0.38, jumpPower: -9.2, enemySpeed: 1.4, enemyType: "flier" },
+      { name: "Infernal Volcano", type: "ground", sky: "#3b1111", ground: "#290c0c", top: "#e03e1b", gravity: 0.46, jumpPower: -8.6, enemySpeed: 1.6, enemyType: "crawler" },
+      { name: "Cyber Matrix", type: "air", sky: "#050512", ground: "#0f172a", top: "#00f0ff", gravity: 0.40, jumpPower: -8.8, enemySpeed: 1.8, enemyType: "flier" }
+    ];
+
+    const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
     const W = canvas.width;
     const H = canvas.height;
 
-    let world = 1;
+    // Game Variables
+    let currentLevel = 1;
+    const TOTAL_LEVELS = 1000;
     let lives = 3;
     let coins = 0;
     let cameraX = 0;
-    let levelGoalX = 1400;
+    let gameOver = false;
+
+    // Input States
+    const keys = { left: false, right: false };
 
     // Player State
     const player = {
-      x: 60, y: 150, w: 22, h: 28,
-      vx: 0, vy: 0,
-      grounded: false,
+      x: 40,
+      y: 180,
+      w: 16,
+      h: 22,
+      vx: 0,
+      vy: 0,
       facing: 1,
-      invulnerable: 0
+      grounded: false,
+      powered: false
     };
 
-    // World Entities
     let platforms = [];
+    let movingPlatforms = [];
     let mysteryBlocks = [];
-    let collectibles = [];
+    let coinsList = [];
+    let hazards = [];
+    let jumpPads = [];
     let enemies = [];
     let bombs = [];
     let particles = [];
+    let flagPole = { x: 1200, y: 0, w: 10, h: 220 };
 
-    // Controller input
-    const keys = { left: false, right: false, jump: false };
-
-        // --- Multi-World Biome Engine (Worlds 1 to 6+) ---
-    const BIOMES = [
-      {
-        name: "Emerald Valley",
-        sky: "linear-gradient(to bottom, #38bdf8, #bae6fd)",
-        ground: "#16a34a",
-        sub: "#78350f",
-        gravity: 0.42,
-        jumpPower: -8.2,
-        enemySpeed: 1.0,
-        enemyType: "mushroom",
-        hasSpikes: false
-      },
-      {
-        name: "Deep Atlantis",
-        sky: "linear-gradient(to bottom, #0284c7, #082f49)",
-        ground: "#0369a1",
-        sub: "#0c4a6e",
-        gravity: 0.22,      // Floatier water physics
-        jumpPower: -6.0,
-        enemySpeed: 0.8,
-        enemyType: "fish",
-        hasSpikes: true
-      },
-      {
-        name: "Volcano Inferno",
-        sky: "linear-gradient(to bottom, #7f1d1d, #1c0505)",
-        ground: "#b91c1c",
-        sub: "#450a0a",
-        gravity: 0.45,
-        jumpPower: -8.5,
-        enemySpeed: 1.3,
-        enemyType: "fireball",
-        hasSpikes: true
-      },
-      {
-        name: "Cosmic Galaxy",
-        sky: "radial-gradient(ellipse at 50% 30%, #312e81 0%, #030712 100%)",
-        ground: "#6366f1",
-        sub: "#1e1b4b",
-        gravity: 0.26,      // Low lunar gravity
-        jumpPower: -9.5,
-        enemySpeed: 1.1,
-        enemyType: "alien",
-        hasSpikes: true
-      },
-      {
-        name: "Neon Cyber City",
-        sky: "linear-gradient(to bottom, #4c1d95, #09090b)",
-        ground: "#a855f7",
-        sub: "#3b0764",
-        gravity: 0.44,
-        jumpPower: -8.4,
-        enemySpeed: 1.5,
-        enemyType: "drone",
-        hasSpikes: true
-      },
-      {
-        name: "Boss Citadel",
-        sky: "linear-gradient(to bottom, #18181b, #000000)",
-        ground: "#e11d48",
-        sub: "#4c0519",
-        gravity: 0.46,
-        jumpPower: -8.6,
-        enemySpeed: 1.7,
-        enemyType: "boss_golem",
-        hasSpikes: true
-      }
-    ];
-
+    // Procedural Level Engine (1000 Unique Configurations)
     function initLevel(lvl) {
-      world = lvl;
-      const biome = BIOMES[(lvl - 1) % BIOMES.length];
-      
-      // Update UI Header
-      document.getElementById('worldTxt').textContent = `${world}-1: ${biome.name}`;
-      canvas.style.background = biome.sky;
+      currentLevel = lvl;
+      const bIndex = (lvl - 1) % BIOMES.length;
+      const biome = BIOMES[bIndex];
 
-      // Level length scales with progression
-      levelGoalX = 1200 + (lvl * 250);
+      document.getElementById('biomeDisplay').textContent = biome.name;
+      document.getElementById('livesDisplay').textContent = lives;
+      document.getElementById('coinsDisplay').textContent = coins;
 
-      // Reset Player
-      player.x = 60;
-      player.y = 80;
+      player.x = 40;
+      player.y = 100;
       player.vx = 0;
       player.vy = 0;
       cameraX = 0;
+
+      platforms = [];
+      movingPlatforms = [];
+      mysteryBlocks = [];
+      coinsList = [];
+      hazards = [];
+      jumpPads = [];
+      enemies = [];
       bombs = [];
       particles = [];
-      platforms = [];
-      mysteryBlocks = [];
-      collectibles = [];
-      enemies = [];
 
-      // Generate Terrain with Gaps & Pitfalls
       let curX = 0;
-      while (curX < levelGoalX + 300) {
-        const platformWidth = Math.max(160, 340 - (lvl * 15) + (Math.random() * 80));
-        platforms.push({
-          x: curX,
-          y: H - 35,
-          w: platformWidth,
-          h: 35,
-          color: biome.ground,
-          subColor: biome.sub
-        });
+      const trackLength = 14 + Math.min(30, Math.floor(lvl * 0.4)); // Expands progressively
 
-        // Floating Sky Islands (Ladders / high ground)
-        if (Math.random() > 0.35) {
-          platforms.push({
-            x: curX + 60,
-            y: H - 85 - (Math.random() * 35),
-            w: 90,
-            h: 18,
-            color: biome.ground,
-            subColor: biome.sub
+      for (let i = 0; i < trackLength; i++) {
+        let platWidth = Math.max(90, 190 - (lvl * 0.35) + (Math.sin(i + lvl) * 40));
+        let platY = H - 35;
+
+        // Altitude changes based on track types
+        if (biome.type === "air") {
+          platY = H - 40 - ((i % 4) * 32);
+          platWidth = Math.max(70, platWidth * 0.7);
+        } else if (biome.type === "underground") {
+          platY = H - 30 - ((i % 3) * 24);
+        }
+
+        platforms.push({ x: curX, y: platY, w: platWidth, h: H - platY + 100 });
+
+        // Add Floating / Moving Platforms in higher stages
+        if (lvl > 2 && i % 3 === 0) {
+          const moveRange = lvl > 5 ? 40 : 0;
+          movingPlatforms.push({
+            originX: curX + 20,
+            x: curX + 20,
+            y: platY - 60,
+            w: 48,
+            h: 12,
+            range: moveRange,
+            speed: 0.8 + (lvl * 0.02),
+            dir: 1
           });
         }
 
-        // Mystery '?' Blocks & Coins
-        if (Math.random() > 0.25) {
-          mysteryBlocks.push({ x: curX + 110, y: 130, w: 24, h: 24, hit: false });
+        // Mystery Item Boxes
+        if (i % 2 === 1) {
+          mysteryBlocks.push({
+            x: curX + (platWidth / 2) - 10,
+            y: platY - 55,
+            w: 18,
+            h: 18,
+            hit: false,
+            content: (i % 4 === 1 && lvl > 3) ? "power" : "coin"
+          });
         }
 
-        // Collectible Coins Arc
-        for (let c = 0; c < 3; c++) {
-          collectibles.push({ x: curX + 50 + (c * 24), y: 120, w: 14, h: 14, collected: false });
+        // Jump Launch Pads (Introduced after level 4)
+        if (lvl > 4 && i % 5 === 2) {
+          jumpPads.push({
+            x: curX + 15,
+            y: platY - 6,
+            w: 20,
+            h: 6
+          });
         }
 
-        // Enemies on Platforms
-        if (curX > 150) {
+        // Hazards (Spikes) in Underground/Infernal tracks
+        if ((biome.type === "underground" || lvl > 6) && i % 4 === 2) {
+          hazards.push({
+            x: curX + platWidth - 30,
+            y: platY - 10,
+            w: 18,
+            h: 10
+          });
+        }
+
+        // Scattered Coins
+        coinsList.push({
+          x: curX + (platWidth * 0.3),
+          y: platY - 30,
+          w: 10,
+          h: 10,
+          collected: false
+        });
+
+        // Enemies
+        if (i > 0 && Math.random() < Math.min(0.85, 0.4 + (lvl * 0.03))) {
           enemies.push({
-            x: curX + platformWidth / 2,
-            y: H - 58,
-            w: 22,
-            h: 22,
+            x: curX + platWidth - 25,
+            y: platY - 20,
+            w: 18,
+            h: 18,
             vx: -biome.enemySpeed,
             minX: curX,
-            maxX: curX + platformWidth - 22,
+            maxX: curX + platWidth - 18,
+            alive: true,
             type: biome.enemyType
           });
         }
 
-        // Create Pitfall Gaps (Higher levels have wider jump gaps)
-        const gapSize = Math.min(80, 45 + (lvl * 4));
-        curX += platformWidth + gapSize;
+        // Pitfall Gap Scaling
+        const gap = Math.min(100, (biome.type === "air" ? 55 : 35) + Math.floor(lvl * 0.5));
+        curX += platWidth + gap;
       }
+
+      // End Goal Flag
+      flagPole.x = curX + 40;
+      flagPole.y = H - 180;
+      platforms.push({ x: curX - 20, y: H - 35, w: 140, h: 100 });
     }
 
-
-    // --- Mobile Touch Controls Binding ---
+    // Touch Binding Utility
     function bindTouch(id, onDown, onUp) {
       const el = document.getElementById(id);
-      el.addEventListener('touchstart', (e) => { e.preventDefault(); onDown(); });
-      el.addEventListener('touchend', (e) => { e.preventDefault(); onUp(); });
-      el.addEventListener('mousedown', onDown);
-      el.addEventListener('mouseup', onUp);
+      el.addEventListener('touchstart', (e) => { e.preventDefault(); onDown(); }, { passive: false });
+      el.addEventListener('touchend', (e) => { e.preventDefault(); onUp(); }, { passive: false });
+      el.addEventListener('mousedown', (e) => { e.preventDefault(); onDown(); });
+      el.addEventListener('mouseup', (e) => { e.preventDefault(); onUp(); });
     }
 
-    bindTouch('btnLeft', () => { keys.left = true; player.facing = -1; }, () => keys.left = false);
-    bindTouch('btnRight', () => { keys.right = true; player.facing = 1; }, () => keys.right = false);
-    bindTouch('btnJump', () => { 
-     if (player.grounded) {
-       const biome = BIOMES[(world - 1) % BIOMES.length];
-       player.vy = biome.jumpPower;
-       player.grounded = false;
-       playTone(480, 0.15);
-       if ("vibrate" in navigator) navigator.vibrate(20);
-     }
-   }, () => {});
+    bindTouch('btnLeft', () => { keys.left = true; player.facing = -1; }, () => { keys.left = false; });
+    bindTouch('btnRight', () => { keys.right = true; player.facing = 1; }, () => { keys.right = false; });
 
+    bindTouch('btnJump', () => {
+      if (player.grounded) {
+        const biome = BIOMES[(currentLevel - 1) % BIOMES.length];
+        player.vy = biome.jumpPower;
+        player.grounded = false;
+        playTone(520, 0.15);
+        if ("vibrate" in navigator) navigator.vibrate(20);
+      }
+    }, () => {});
 
     bindTouch('btnBomb', () => {
       bombs.push({
-        x: player.x + (player.facing * 16),
-        y: player.y + 6,
-        vx: player.facing * 6,
-        vy: -3.5,
-        timer: 70
+        x: player.x + (player.facing * 14),
+        y: player.y + 4,
+        vx: player.facing * 5.5,
+        vy: -3,
+        timer: 60
       });
-      playTone(280, 0.12, 'sawtooth');
+      playTone(320, 0.12, 'sawtooth');
     }, () => {});
 
-    // Keyboard support
+    // Keyboard Fallback
     window.addEventListener('keydown', (e) => {
       if (e.code === 'ArrowLeft' || e.key === 'a') { keys.left = true; player.facing = -1; }
       if (e.code === 'ArrowRight' || e.key === 'd') { keys.right = true; player.facing = 1; }
       if ((e.code === 'Space' || e.code === 'ArrowUp') && player.grounded) {
-        player.vy = world === 2 ? -6.5 : -8;
+        const biome = BIOMES[(currentLevel - 1) % BIOMES.length];
+        player.vy = biome.jumpPower;
         player.grounded = false;
-        playTone(480, 0.15);
+        playTone(520, 0.15);
       }
       if (e.code === 'KeyB') {
-        bombs.push({ x: player.x + (player.facing * 16), y: player.y, vx: player.facing * 6, vy: -3, timer: 70 });
+        bombs.push({ x: player.x + (player.facing * 14), y: player.y + 4, vx: player.facing * 5.5, vy: -3, timer: 60 });
       }
     });
 
@@ -532,35 +526,36 @@
       if (e.code === 'ArrowRight' || e.key === 'd') keys.right = false;
     });
 
-    // Particle Burst FX
     function spawnSparks(x, y, color) {
       for (let i = 0; i < 8; i++) {
         particles.push({
           x, y,
-          vx: (Math.random() - 0.5) * 5,
-          vy: (Math.random() - 0.5) * 5,
-          life: 20,
+          vx: (Math.random() - 0.5) * 4,
+          vy: (Math.random() - 0.5) * 4,
+          life: 18,
           color
         });
       }
     }
 
-    // --- Main Game Loop ---
+    // Main Game Cycle
     function update() {
-      // Horizontal Move
+      if (gameOver) return;
+
+      const biome = BIOMES[(currentLevel - 1) % BIOMES.length];
+
+      // Horizontal Motion
       if (keys.left) player.vx = -3.2;
       else if (keys.right) player.vx = 3.2;
-      else player.vx *= 0.8;
+      else player.vx *= 0.78;
 
       player.x += player.vx;
 
-// Guaranteed gravity fallback
-const currentBiome = (typeof BIOMES !== 'undefined' && BIOMES[(world - 1) % BIOMES.length]) ? BIOMES[(world - 1) % BIOMES.length] : null;
-const gForce = currentBiome ? currentBiome.gravity : (world === 2 ? 0.35 : 0.45);
-player.vy += gForce;
+      // Gravity Application
+      player.vy += biome.gravity;
+      player.y += player.vy;
 
-
-      // Platform Collision
+      // Platform Collisions (Static)
       player.grounded = false;
       for (let p of platforms) {
         if (player.x + player.w > p.x && player.x < p.x + p.w &&
@@ -571,207 +566,314 @@ player.vy += gForce;
         }
       }
 
+      // Moving Platforms
+      for (let mp of movingPlatforms) {
+        if (mp.range > 0) {
+          mp.x += mp.speed * mp.dir;
+          if (mp.x > mp.originX + mp.range || mp.x < mp.originX - mp.range) mp.dir *= -1;
+        }
+        if (player.x + player.w > mp.x && player.x < mp.x + mp.w &&
+            player.y + player.h >= mp.y && player.y + player.h <= mp.y + 10 && player.vy >= 0) {
+          player.y = mp.y - player.h;
+          player.vy = 0;
+          player.grounded = true;
+          player.x += mp.speed * mp.dir; // Ride the platform
+        }
+      }
+
+      // Jump Pads Interaction
+      for (let pad of jumpPads) {
+        if (player.x + player.w > pad.x && player.x < pad.x + pad.w &&
+            player.y + player.h >= pad.y && player.y + player.h <= pad.y + 8) {
+          player.vy = -10.5; // Super spring bounce
+          playTone(700, 0.2);
+          if ("vibrate" in navigator) navigator.vibrate(30);
+        }
+      }
+
+      // Hazards Interaction
+      for (let hz of hazards) {
+        if (player.x + player.w > hz.x && player.x < hz.x + hz.w &&
+            player.y + player.h > hz.y + 2 && player.y < hz.y + hz.h) {
+          triggerDeath();
+          return;
+        }
+      }
+
       // Mystery Blocks Collision
       for (let b of mysteryBlocks) {
         if (player.x + player.w > b.x && player.x < b.x + b.w &&
             player.y <= b.y + b.h && player.y >= b.y && player.vy < 0) {
-          player.y = b.y + b.h;
           player.vy = 1;
           if (!b.hit) {
             b.hit = true;
             coins += 5;
-            document.getElementById('coinsTxt').textContent = coins;
-            playTone(850, 0.2);
-            spawnSparks(b.x + 12, b.y, '#ffd700');
-            if ("vibrate" in navigator) navigator.vibrate(30);
+            document.getElementById('coinsDisplay').textContent = coins;
+            playTone(880, 0.2);
+            spawnSparks(b.x + 9, b.y, "#ffd700");
           }
         }
       }
 
       // Coins Collection
-      collectibles.forEach(c => {
-        if (!c.collected && Math.hypot((player.x + 10) - c.x, (player.y + 14) - c.y) < 22) {
+      for (let c of coinsList) {
+        if (!c.collected && player.x + player.w > c.x && player.x < c.x + c.w &&
+            player.y + player.h > c.y && player.y < c.y + c.h) {
           c.collected = true;
-          coins++;
-          document.getElementById('coinsTxt').textContent = coins;
-          playTone(900, 0.1);
+          coins += 1;
+          document.getElementById('coinsDisplay').textContent = coins;
+          playTone(900, 0.08);
         }
-      });
+      }
 
-      // Enemy Logic & Stomp
-      enemies.forEach((en, idx) => {
-        en.x += en.vx;
-        if (en.x < 100 || en.x > levelGoalX + 100) en.vx *= -1;
+      // Enemy Logic
+      for (let e of enemies) {
+        if (!e.alive) continue;
+        e.x += e.vx;
+        if (e.x <= e.minX || e.x >= e.maxX) e.vx *= -1;
 
-        // Player Stomp on Enemy Head
-        if (player.x + player.w > en.x && player.x < en.x + en.w &&
-            player.y + player.h >= en.y && player.y + player.h <= en.y + 12 && player.vy > 0) {
-          enemies.splice(idx, 1);
-          player.vy = -6;
-          spawnSparks(en.x, en.y, '#ef4444');
-          playTone(600, 0.15);
-          if ("vibrate" in navigator) navigator.vibrate([20, 30]);
-        } else if (Math.hypot(player.x - en.x, player.y - en.y) < 18 && player.invulnerable <= 0) {
-          // Hurt by monster
-          lives--;
-          player.invulnerable = 60;
-          document.getElementById('livesTxt').textContent = lives;
-          playTone(180, 0.3, 'sawtooth');
-          if ("vibrate" in navigator) navigator.vibrate([60, 50, 60]);
-          if (lives <= 0) {
-            initLevel(world);
-            lives = 3;
-            document.getElementById('livesTxt').textContent = lives;
+        // Player stomp or touch
+        if (player.x + player.w > e.x && player.x < e.x + e.w &&
+            player.y + player.h >= e.y && player.y < e.y + e.h) {
+          if (player.vy > 0 && player.y + player.h <= e.y + 10) {
+            e.alive = false;
+            player.vy = -5.5;
+            playTone(600, 0.1);
+            spawnSparks(e.x + 9, e.y + 9, "#ff4757");
+          } else {
+            triggerDeath();
+            return;
           }
         }
-      });
+      }
 
-      // Bomb Physics & Blast
-      bombs.forEach((b, bIdx) => {
+      // Bombs Handling
+      for (let i = bombs.length - 1; i >= 0; i--) {
+        const b = bombs[i];
         b.x += b.vx;
         b.y += b.vy;
         b.vy += 0.3;
         b.timer--;
 
-        enemies.forEach((en, eIdx) => {
-          if (Math.hypot(b.x - en.x, b.y - en.y) < 24) {
-            enemies.splice(eIdx, 1);
-            bombs.splice(bIdx, 1);
-            spawnSparks(b.x, b.y, '#f59e0b');
-            playTone(120, 0.25, 'triangle');
+        // Explode on enemies
+        for (let e of enemies) {
+          if (e.alive && b.x > e.x && b.x < e.x + e.w && b.y > e.y && b.y < e.y + e.h) {
+            e.alive = false;
+            b.timer = 0;
+            spawnSparks(e.x + 9, e.y + 9, "#ff6b6b");
+            playTone(180, 0.25, 'sawtooth');
           }
-        });
-      });
+        }
 
-      // Pitfall Fall Check
-      if (player.y > H + 50) {
-        lives--;
-        document.getElementById('livesTxt').textContent = lives;
-        if (lives <= 0) { lives = 3; document.getElementById('livesTxt').textContent = lives; }
-        initLevel(world);
+        if (b.timer <= 0) {
+          spawnSparks(b.x, b.y, "#ffa502");
+          bombs.splice(i, 1);
+        }
       }
 
-      if (player.invulnerable > 0) player.invulnerable--;
+      // Particles Update
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.life--;
+        if (p.life <= 0) particles.splice(i, 1);
+      }
 
-      // Smooth Camera tracking
-      cameraX += (player.x - cameraX - W / 3) * 0.1;
-      cameraX = Math.max(0, cameraX);
+      // Camera Follow
+      if (player.x - cameraX > W * 0.45) {
+        cameraX = player.x - W * 0.45;
+      } else if (player.x - cameraX < W * 0.2 && cameraX > 0) {
+        cameraX = Math.max(0, player.x - W * 0.2);
+      }
 
-      // Level Goal Flag Check
-      if (player.x >= levelGoalX) {
-        document.getElementById('overlayModal').style.display = 'flex';
+      // Pitfall Fall Check
+      if (player.y > H + 40) {
+        triggerDeath();
+        return;
+      }
+
+      // Level Complete Check
+      if (player.x >= flagPole.x) {
+        triggerVictory();
       }
     }
 
-    // --- Render Loop ---
+    function triggerDeath() {
+      lives--;
+      document.getElementById('livesDisplay').textContent = lives;
+      playTone(150, 0.4, 'triangle');
+      if ("vibrate" in navigator) navigator.vibrate([80, 40, 80]);
+
+      if (lives <= 0) {
+        gameOver = true;
+        showModal("Game Over", "Your journey ended here.", "Play Again", () => {
+          lives = 3;
+          coins = 0;
+          gameOver = false;
+          initLevel(1);
+        });
+      } else {
+        initLevel(currentLevel);
+      }
+    }
+
+    function triggerVictory() {
+      gameOver = true;
+      playTone(750, 0.3);
+      showModal("Clear!", "Track finished! Step into the next zone.", "Next Stage", () => {
+        gameOver = false;
+        if (currentLevel < TOTAL_LEVELS) {
+          initLevel(currentLevel + 1);
+        } else {
+          showModal("Legendary!", "You completed all 1,000 stages!", "Restart", () => {
+            lives = 3;
+            coins = 0;
+            gameOver = false;
+            initLevel(1);
+          });
+        }
+      });
+    }
+
+    let activeModalCb = null;
+    function showModal(title, desc, btnText, callback) {
+      document.getElementById('modalTitle').textContent = title;
+      document.getElementById('modalDesc').textContent = desc;
+      document.getElementById('modalBtn').textContent = btnText;
+      document.getElementById('overlayModal').style.display = 'flex';
+      activeModalCb = callback;
+    }
+
+    function modalAction() {
+      document.getElementById('overlayModal').style.display = 'none';
+      if (activeModalCb) activeModalCb();
+    }
+
+    // Render Canvas
     function draw() {
-      ctx.clearRect(0, 0, W, H);
+      const biome = BIOMES[(currentLevel - 1) % BIOMES.length];
+
+      // Sky Background
+      ctx.fillStyle = biome.sky;
+      ctx.fillRect(0, 0, W, H);
+
       ctx.save();
       ctx.translate(-Math.floor(cameraX), 0);
 
-      // Platforms
+      // Render Static Platforms
       for (let p of platforms) {
-        ctx.fillStyle = p.color;
+        ctx.fillStyle = biome.ground;
         ctx.fillRect(p.x, p.y, p.w, p.h);
-        ctx.fillStyle = '#78350f';
-        ctx.fillRect(p.x, p.y + 10, p.w, p.h - 10);
+        ctx.fillStyle = biome.top;
+        ctx.fillRect(p.x, p.y, p.w, 6);
+      }
+
+      // Render Moving Platforms
+      for (let mp of movingPlatforms) {
+        ctx.fillStyle = "#ced4da";
+        ctx.fillRect(mp.x, mp.y, mp.w, mp.h);
+        ctx.fillStyle = "#748ffc";
+        ctx.fillRect(mp.x, mp.y, mp.w, 3);
+      }
+
+      // Jump Spring Pads
+      for (let jp of jumpPads) {
+        ctx.fillStyle = "#ff922b";
+        ctx.fillRect(jp.x, jp.y, jp.w, jp.h);
+      }
+
+      // Hazard Spikes
+      for (let hz of hazards) {
+        ctx.fillStyle = "#fa5252";
+        ctx.beginPath();
+        ctx.moveTo(hz.x, hz.y + hz.h);
+        ctx.lineTo(hz.x + hz.w / 2, hz.y);
+        ctx.lineTo(hz.x + hz.w, hz.y + hz.h);
+        ctx.fill();
       }
 
       // Mystery Blocks
       for (let b of mysteryBlocks) {
-        ctx.fillStyle = b.hit ? '#94a3b8' : '#eab308';
+        ctx.fillStyle = b.hit ? "#868e96" : "#fcc419";
         ctx.fillRect(b.x, b.y, b.w, b.h);
-        ctx.strokeStyle = '#78350f';
-        ctx.strokeRect(b.x, b.y, b.w, b.h);
-        ctx.fillStyle = '#fff';
-        ctx.font = '14px Fredoka One';
-        ctx.fillText(b.hit ? '' : '?', b.x + 8, b.y + 17);
+        if (!b.hit) {
+          ctx.fillStyle = "#5c3d00";
+          ctx.font = "bold 11px sans-serif";
+          ctx.fillText("?", b.x + 5, b.y + 13);
+        }
       }
 
       // Coins
-      collectibles.forEach(c => {
+      for (let c of coinsList) {
         if (!c.collected) {
-          ctx.fillStyle = '#ffd700';
+          ctx.fillStyle = "#ffd43b";
           ctx.beginPath();
-          ctx.arc(c.x, c.y, 6, 0, Math.PI * 2);
+          ctx.arc(c.x + 5, c.y + 5, 5, 0, Math.PI * 2);
           ctx.fill();
         }
-      });
-
-      // Enemies
-      enemies.forEach(en => {
-        ctx.fillStyle = en.type === 'fish' ? '#38bdf8' : '#dc2626';
-        ctx.beginPath();
-        ctx.arc(en.x + 10, en.y + 10, 10, 0, Math.PI * 2);
-        ctx.fill();
-        // Eyes
-        ctx.fillStyle = '#fff';
-        ctx.fillRect(en.x + 4, en.y + 4, 4, 4);
-        ctx.fillRect(en.x + 12, en.y + 4, 4, 4);
-      });
-
-      // Bombs
-      bombs.forEach(b => {
-        ctx.fillStyle = '#111827';
-        ctx.beginPath();
-        ctx.arc(b.x, b.y, 6, 0, Math.PI * 2);
-        ctx.fill();
-      });
-
-      // Sparks
-      particles.forEach((pt, i) => {
-        ctx.fillStyle = pt.color;
-        ctx.fillRect(pt.x, pt.y, 3, 3);
-        pt.x += pt.vx;
-        pt.y += pt.vy;
-        pt.life--;
-        if (pt.life <= 0) particles.splice(i, 1);
-      });
-
-      // Player Sprite (Matino with Red Hat)
-      if (player.invulnerable % 4 < 2) {
-        // Body
-        ctx.fillStyle = '#2563eb';
-        ctx.fillRect(player.x, player.y + 12, player.w, player.h - 12);
-        // Head
-        ctx.fillStyle = '#fed7aa';
-        ctx.fillRect(player.x + 3, player.y + 4, 16, 12);
-        // Red Cap
-        ctx.fillStyle = '#dc2626';
-        ctx.fillRect(player.x + 1, player.y, 20, 6);
       }
 
-      // Goal Castle Flag
-      ctx.fillStyle = '#fbbf24';
-      ctx.fillRect(levelGoalX, H - 120, 10, 90);
-      ctx.fillStyle = '#ef4444';
+      // Enemies
+      for (let e of enemies) {
+        if (e.alive) {
+          ctx.fillStyle = e.type === "flier" ? "#e599f7" : "#4dabf7";
+          ctx.beginPath();
+          ctx.arc(e.x + 9, e.y + 9, 9, 0, Math.PI * 2);
+          ctx.fill();
+          // Eye
+          ctx.fillStyle = "#000";
+          ctx.fillRect(e.x + (e.vx > 0 ? 11 : 4), e.y + 6, 3, 3);
+        }
+      }
+
+      // Bombs
+      for (let b of bombs) {
+        ctx.fillStyle = "#212529";
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, 5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Goal Flag
+      ctx.fillStyle = "#fff";
+      ctx.fillRect(flagPole.x, flagPole.y, 4, flagPole.h);
+      ctx.fillStyle = "#40c057";
       ctx.beginPath();
-      ctx.moveTo(levelGoalX + 10, H - 120);
-      ctx.lineTo(levelGoalX + 35, H - 105);
-      ctx.lineTo(levelGoalX + 10, H - 90);
+      ctx.moveTo(flagPole.x + 4, flagPole.y + 10);
+      ctx.lineTo(flagPole.x + 30, flagPole.y + 24);
+      ctx.lineTo(flagPole.x + 4, flagPole.y + 38);
       ctx.fill();
+
+      // Sparks / Particles
+      for (let p of particles) {
+        ctx.fillStyle = p.color;
+        ctx.fillRect(p.x, p.y, 2.5, 2.5);
+      }
+
+      // Draw Matino Character
+      ctx.fillStyle = "#ff6b6b"; // Cap
+      ctx.fillRect(player.x + 2, player.y, player.w - 4, 6);
+      ctx.fillStyle = "#ffe066"; // Face
+      ctx.fillRect(player.x + 3, player.y + 6, player.w - 6, 7);
+      ctx.fillStyle = "#339af0"; // Body Overalls
+      ctx.fillRect(player.x + 1, player.y + 13, player.w - 2, 9);
 
       ctx.restore();
     }
 
+    // Engine Loop
     function gameLoop() {
       update();
       draw();
       requestAnimationFrame(gameLoop);
     }
 
-     function nextLevelAction() {
-   document.getElementById('overlayModal').style.display = 'none';
-   world++;
-   initLevel(world);
-   playTone(950, 0.25);
- }
-
-
     // Initialize Game
     initLevel(1);
     requestAnimationFrame(gameLoop);
   </script>
 </body>
-  </html>
-  
+</html>
+;
+        
