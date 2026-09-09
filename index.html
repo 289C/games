@@ -125,7 +125,57 @@ body {
   }
 }
     
+/* =========================================
+   3D RAISED METALLIC & NEON FRAMES FOR LOGOS
+   ========================================= */
 
+/* The 3D Frame Pedestal Container */
+.game-tile, .game-card {
+  perspective: 600px;
+}
+
+/* 3D Border, Bevel & Shadow Wrapper on Logo */
+.game-tile img, .game-card img, 
+.tile-icon, .game-icon, 
+.game-thumb, .game-tile > div:first-child {
+  position: relative;
+  display: block;
+  border-radius: 22px !important;
+  
+  /* 3D Double Bevel: Outer cyan neon ring + inset depth highlight */
+  border: 2px solid rgba(0, 242, 254, 0.55) !important;
+  outline: 2px solid rgba(255, 255, 255, 0.12);
+  outline-offset: -5px;
+
+  /* Multi-layered 3D extruded drop shadow + cyber neon back-glow */
+  box-shadow: 
+    0 1px 0 rgba(255, 255, 255, 0.35) inset,      /* Top edge rim light */
+    0 -3px 0 rgba(0, 0, 0, 0.6) inset,             /* Bottom bevel groove */
+    0 12px 20px -4px rgba(0, 0, 0, 0.75),          /* Deep floor drop-shadow */
+    0 0 18px rgba(0, 242, 254, 0.35),              /* Cyan aura glow */
+    0 0 35px rgba(255, 0, 127, 0.15) !important;   /* Subtle magenta contrast glow */
+
+  transform: translateZ(12px);
+  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), 
+              box-shadow 0.28s ease, 
+              border-color 0.28s ease !important;
+}
+
+/* Hover & Active: Pops out further in 3D space */
+.game-tile:hover img, .game-tile:active img,
+.game-card:hover img, .game-card:active img,
+.game-tile:hover .tile-icon, .game-tile:active .tile-icon {
+  transform: translateY(-8px) translateZ(24px) scale(1.06) rotateX(4deg) !important;
+  border-color: #00f2fe !important;
+  outline: 2px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 
+    0 2px 0 rgba(255, 255, 255, 0.6) inset,
+    0 -4px 0 rgba(0, 0, 0, 0.8) inset,
+    0 22px 30px -6px rgba(0, 0, 0, 0.85),
+    0 0 30px rgba(0, 242, 254, 0.7),
+    0 0 45px rgba(255, 0, 127, 0.35) !important;
+}
+    
     * {
       box-sizing: border-box;
       margin: 0;
