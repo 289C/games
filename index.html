@@ -267,6 +267,77 @@
       cursor: pointer;
       margin-top: 12px;
     }
+        /* ============================================== */
+    /* REFLEX & MATH RUSH PRO EFFECTS                 */
+    /* ============================================== */
+    .reflex-ring {
+      position: relative;
+      width: 100%;
+      height: 180px;
+      border-radius: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 18px;
+      cursor: pointer;
+      box-shadow: 0 0 25px rgba(0,0,0,0.5);
+      transition: background 0.15s, transform 0.08s;
+      overflow: hidden;
+    }
+
+    .reflex-ring:active {
+      transform: scale(0.97);
+    }
+
+    .reflex-pulse {
+      animation: pulseGlow 1.2s infinite alternate;
+    }
+
+    @keyframes pulseGlow {
+      0% { box-shadow: 0 0 15px rgba(46, 204, 113, 0.4); }
+      100% { box-shadow: 0 0 35px rgba(46, 204, 113, 0.9); }
+    }
+
+    /* Math Rush Timer Bar & Shake */
+    .timer-container {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 10px 0;
+    }
+
+    .timer-bar {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, #00f2fe, #ff007f);
+      transition: width 0.05s linear;
+    }
+
+    .shake-anim {
+      animation: shake 0.3s cubic-bezier(.36,.07,.19,.97) both;
+    }
+
+    @keyframes shake {
+      10%, 90% { transform: translate3d(-2px, 0, 0); }
+      20%, 80% { transform: translate3d(3px, 0, 0); }
+      30%, 50%, 70% { transform: translate3d(-5px, 0, 0); }
+      40%, 60% { transform: translate3d(5px, 0, 0); }
+    }
+
+    .combo-badge {
+      font-size: 11px;
+      font-weight: 900;
+      color: #ffd700;
+      background: rgba(255, 215, 0, 0.15);
+      padding: 3px 8px;
+      border-radius: 12px;
+      border: 1px solid #ffd700;
+      }
+    
   </style>
 </head>
 <body>
