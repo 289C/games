@@ -58,6 +58,72 @@ body {
   box-shadow: 0 15px 35px rgba(0, 242, 254, 0.3), inset 0 0 20px rgba(0, 242, 254, 0.2) !important;
   border-color: rgba(0, 242, 254, 0.6) !important;
 }
+    /* =======================================
+   3D FLOATING LOGOS & TILES WITH SHADOWS
+   ======================================= */
+
+/* Floating animation on each game card */
+.game-tile, .game-card, .game-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+  animation: floatCard 4s ease-in-out infinite alternate;
+}
+
+/* Alternate floating rhythm across columns */
+.game-tile:nth-child(2n), .game-card:nth-child(2n) {
+  animation-duration: 4.8s;
+  animation-delay: -1.2s;
+}
+
+.game-tile:nth-child(3n), .game-card:nth-child(3n) {
+  animation-duration: 5.4s;
+  animation-delay: -2.5s;
+}
+
+/* 3D Floating Game Icons / Logos */
+.game-tile img, .game-card img, .game-icon, .tile-icon {
+  border-radius: 22px !important;
+  box-shadow: 0 12px 24px -6px rgba(0, 0, 0, 0.7), 
+              0 0 16px rgba(0, 242, 254, 0.28) !important;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s ease !important;
+  animation: floatLogo 3.6s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+/* Hover & Tap 3D Pop Effect */
+.game-tile:hover img, .game-tile:active img,
+.game-card:hover img, .game-card:active img {
+  transform: translateY(-8px) scale(1.08) !important;
+  box-shadow: 0 20px 32px -8px rgba(0, 0, 0, 0.8), 
+              0 0 28px rgba(0, 242, 254, 0.65), 
+              0 0 14px rgba(255, 0, 127, 0.4) !important;
+}
+
+/* Card Float Keyframe */
+@keyframes floatCard {
+  0% {
+    transform: translateY(0px);
+  }
+  100% {
+    transform: translateY(-6px);
+  }
+}
+
+/* Logo Bobbing & Subtle 3D Tilt */
+@keyframes floatLogo {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-5px) rotate(0.6deg);
+  }
+  100% {
+    transform: translateY(-9px) rotate(-0.6deg);
+  }
+}
     
 
     * {
