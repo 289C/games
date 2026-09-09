@@ -437,29 +437,56 @@
     </div>
   </div>
 
-  <!-- Reflex Test Modal -->
+  <!-- ============================================== -->
+  <!-- 1. ESPORTS REFLEX BENCHMARK MODAL             -->
+  <!-- ============================================== -->
   <div class="modal-overlay" id="reflexModal">
-    <div class="modal-box">
+    <div class="modal-box" id="reflexBox">
       <span class="close-btn" onclick="closeModal('reflexModal')">✕</span>
-      <h3 style="margin-bottom:12px;">⚡ Reaction Speed Test</h3>
-      <div id="reflexPad" style="width:100%; height:140px; background:#222a3d; border-radius:18px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:16px; cursor:pointer;" onclick="handleReflexTap()">
-        TAP TO START
+      <div style="display:flex; justify-content:space-between; width:100%; align-items:center; margin-bottom:10px;">
+        <h3 style="font-size:16px; color:var(--cyan);">⚡ Reflex Benchmark</h3>
+        <span class="combo-badge" id="trialCounter">TRIAL: 1 / 5</span>
       </div>
-      <div id="reflexResult" style="margin-top:14px; font-weight:800; font-size:14px; color:var(--cyan);"></div>
+
+      <div class="reflex-ring" id="reflexPad" onclick="handleReflexTap()">
+        <span id="reflexText">TAP TO BEGIN</span>
+        <span id="reflexSub" style="font-size:10px; opacity:0.7; margin-top:4px;">Test your reaction in milliseconds</span>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; width:100%; margin-top:14px; font-size:12px; font-weight:800;">
+        <span id="reflexRank" style="color:var(--gold);">RANK: UNRANKED</span>
+        <span id="reflexAvg" style="color:#fff;">AVG: -- ms</span>
+      </div>
     </div>
   </div>
 
-  <!-- Math Rush Modal -->
+  <!-- ============================================== -->
+  <!-- 2. INTERNATIONAL MATH OLYMPIAD BLITZ MODAL     -->
+  <!-- ============================================== -->
   <div class="modal-overlay" id="mathModal">
-    <div class="modal-box">
+    <div class="modal-box" id="mathBox">
       <span class="close-btn" onclick="closeModal('mathModal')">✕</span>
-      <h3>🧠 Math Speed Challenge</h3>
-      <div id="mathQuestion" style="font-size:26px; font-weight:900; margin:20px 0; color:var(--gold);">5 + 3 = ?</div>
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%;">
-        <button class="modal-btn" id="mOpt0" onclick="answerMath(0)"></button>
-        <button class="modal-btn" id="mOpt1" onclick="answerMath(1)"></button>
+      <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
+        <h3 style="font-size:16px; color:var(--gold);">🧠 Math Blitz League</h3>
+        <span class="combo-badge" id="mathCombo">COMBO: 1x</span>
       </div>
-      <div id="mathScore" style="margin-top:12px; font-weight:800;">Score: 0</div>
+
+      <!-- Decaying Timer Progress Bar -->
+      <div class="timer-container">
+        <div class="timer-bar" id="mathTimerBar"></div>
+      </div>
+
+      <div id="mathQuestion" style="font-size:32px; font-weight:900; margin:16px 0; color:#fff; letter-spacing:1px;">--</div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%;">
+        <button class="modal-btn" id="mOpt0" style="background:#1b2438; color:#fff; border:1px solid rgba(255,255,255,0.15);" onclick="answerMath(0)"></button>
+        <button class="modal-btn" id="mOpt1" style="background:#1b2438; color:#fff; border:1px solid rgba(255,255,255,0.15);" onclick="answerMath(1)"></button>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; width:100%; margin-top:14px; font-size:12px; font-weight:800;">
+        <span style="color:var(--cyan);" id="mathScore">SCORE: 0</span>
+        <span style="color:var(--pink);" id="mathHigh">BEST: 0</span>
+      </div>
     </div>
   </div>
 
