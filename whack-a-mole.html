@@ -1,742 +1,575 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Whack-A-Mole Arcade</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Whack-A-Mole Pro - Arcade Championship</title>
+
   <style>
+    :root {
+      --bg: #07090e;
+      --card-bg: rgba(18, 24, 38, 0.92);
+      --border: rgba(255, 255, 255, 0.14);
+      --cyan: #00f2fe;
+      --pink: #ff007f;
+      --gold: #ffd700;
+      --red: #ff3838;
+      --green: #2ecc71;
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
       user-select: none;
-      -webkit-tap-highlight-color: transparent;
+      -webkit-user-select: none;
+      touch-action: manipulation;
     }
 
     body {
-      background: radial-gradient(circle at 50% 15%, #1e1136 0%, #080611 100%);
+      background: radial-gradient(circle at 50% 10%, #151c30 0%, #06080d 100%);
       color: #fff;
-      font-family: 'Outfit', sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
+      padding: 12px 10px 30px;
       overflow-x: hidden;
-      touch-action: manipulation;
     }
 
-    /* Top Instagram Banner */
-    .insta-bar-wrap {
-      width: 100%;
+    /* Pinned Instagram Header */
+    .ig-header {
+      width: 95%;
       max-width: 440px;
-      padding: 10px 14px 4px;
-      display: flex;
-      justify-content: center;
-      z-index: 10;
-    }
-
-    .insta-bar {
-      position: relative;
+      margin-bottom: 10px;
+      padding: 8px 16px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      backdrop-filter: blur(14px);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      width: 100%;
-      padding: 8px 14px;
-      border-radius: 18px;
-      background: rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(14px);
-      text-decoration: none;
-      color: #fff;
-      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
-      border: 1.5px solid rgba(255, 255, 255, 0.15);
-      transition: transform 0.15s ease;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+      z-index: 10;
     }
 
-    .insta-bar:active {
-      transform: scale(0.97);
-    }
-
-    .insta-left {
+    .ig-profile {
       display: flex;
       align-items: center;
       gap: 10px;
     }
 
-    .insta-icon-ring {
+    .dp-frame {
       width: 36px;
       height: 36px;
       border-radius: 50%;
       background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      padding: 2px;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 0 12px rgba(220, 39, 67, 0.6);
+      overflow: hidden;
     }
 
-    .insta-icon-ring svg {
-      width: 20px;
-      height: 20px;
-      stroke: #fff;
+    .dp-img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
     }
 
-    .insta-name {
+    .ig-name {
+      font-size: 13px;
       font-weight: 800;
-      font-size: 14px;
       display: flex;
       align-items: center;
       gap: 4px;
     }
 
-    .insta-badge {
-      width: 14px;
-      height: 14px;
-      background: #0084ff;
-      border-radius: 50%;
+    .verified {
+      background: #0095f6;
       color: #fff;
-      font-size: 9px;
-      display: flex;
+      font-size: 8px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
     }
 
-    .insta-tag {
-      font-size: 11px;
-      color: #94a3b8;
-    }
-
-    .insta-btn {
-      background: linear-gradient(135deg, #e1306c, #833ab4);
+    .follow-btn {
+      background: linear-gradient(135deg, #f58529, #dd2a7b, #8134af);
       color: #fff;
-      padding: 6px 12px;
-      border-radius: 10px;
-      font-size: 12px;
+      text-decoration: none;
+      font-size: 11px;
       font-weight: 800;
+      padding: 6px 14px;
+      border-radius: 20px;
+      box-shadow: 0 2px 10px rgba(221, 42, 123, 0.4);
     }
 
-    /* Floating Arcade Logo */
-    .game-logo-wrap {
-      width: 100%;
-      max-width: 360px;
-      display: flex;
-      justify-content: center;
-      padding: 6px 16px 2px;
-      perspective: 800px;
-    }
-
-    .game-logo {
-      width: 82%;
-      max-height: 110px;
-      object-fit: contain;
-      filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 15px rgba(245, 158, 11, 0.4));
-      animation: floatLogo 3.5s ease-in-out infinite;
-    }
-
-    @keyframes floatLogo {
-      0%, 100% { transform: translateY(0px) rotate(0deg); }
-      50% { transform: translateY(-6px) rotate(-1deg); }
-    }
-
-    /* Carnival Marquee Lights Ring */
-    .lights-row {
-      display: flex;
-      gap: 12px;
-      margin: 4px 0 10px;
-    }
-
-    .bulb {
-      width: 11px;
-      height: 11px;
-      border-radius: 50%;
-      background: #fff;
-      box-shadow: 0 0 10px #fff;
-      animation: bulbBlink 1.2s infinite alternate;
-    }
-
-    .bulb:nth-child(2n) { animation-delay: 0.3s; background: #ff007f; box-shadow: 0 0 12px #ff007f; }
-    .bulb:nth-child(3n) { animation-delay: 0.6s; background: #00f0ff; box-shadow: 0 0 12px #00f0ff; }
-    .bulb:nth-child(4n) { animation-delay: 0.9s; background: #ffd700; box-shadow: 0 0 12px #ffd700; }
-
-    @keyframes bulbBlink {
-      0% { opacity: 0.3; transform: scale(0.8); }
-      100% { opacity: 1; transform: scale(1.15); }
-    }
-
-    /* HUD Bar */
-    .arcade-hud {
+    /* Score & Timer HUD */
+    .hud-box {
+      width: 95%;
+      max-width: 440px;
       display: flex;
       justify-content: space-between;
-      width: 90%;
-      max-width: 380px;
-      background: rgba(255, 255, 255, 0.07);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 16px;
-      padding: 10px 18px;
-      margin-bottom: 12px;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
-    }
-
-    .hud-box {
-      display: flex;
-      flex-direction: column;
       align-items: center;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 10px 16px;
+      margin-bottom: 8px;
     }
 
-    .hud-label {
+    .hud-stat {
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+    }
+
+    .combo-pill {
+      background: rgba(255, 215, 0, 0.15);
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      padding: 2px 8px;
+      border-radius: 10px;
       font-size: 11px;
-      font-weight: 700;
-      color: #94a3b8;
-      letter-spacing: 1px;
-      text-transform: uppercase;
+      font-weight: 900;
     }
 
-    .hud-val {
-      font-family: 'Fredoka One', cursive;
-      font-size: 24px;
-      color: #ffd700;
-      text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    /* Timer Countdown Bar */
+    .timer-container {
+      width: 95%;
+      max-width: 440px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 12px;
     }
 
-    /* Mole Field Stage */
-    .stage-container {
-      width: 92%;
-      max-width: 390px;
-      background: radial-gradient(ellipse at 50% 40%, #166534 0%, #052e16 85%);
-      border-radius: 28px;
-      border: 3px solid #22c55e;
-      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.7), inset 0 0 35px rgba(0, 255, 128, 0.2);
-      padding: 18px 12px;
+    .timer-bar {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--cyan), var(--pink));
+      transition: width 0.1s linear;
+    }
+
+    /* 3x3 Grid Board */
+    .mole-arena {
+      position: relative;
+      width: min(94vw, 400px);
+      height: min(94vw, 400px);
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 14px 10px;
-      position: relative;
-      cursor: crosshair;
+      gap: 12px;
+      padding: 14px;
+      background: rgba(14, 18, 28, 0.9);
+      border: 2px solid var(--border);
+      border-radius: 24px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 25px rgba(0, 242, 254, 0.15);
     }
 
-    /* Mole Hole */
+    /* Hole Structure */
     .hole {
       position: relative;
-      aspect-ratio: 1 / 1.1;
+      background: radial-gradient(circle at 50% 30%, #151b29 0%, #080a10 75%);
+      border: 2px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
       overflow: hidden;
       display: flex;
       align-items: flex-end;
       justify-content: center;
+      cursor: pointer;
+      box-shadow: inset 0 8px 16px rgba(0, 0, 0, 0.9);
     }
 
-    .dirt-base {
+    .hole::after {
+      content: '';
       position: absolute;
-      bottom: 2px;
-      width: 90%;
-      height: 28px;
-      background: #3f1e09;
-      border-radius: 50%;
-      border: 3px solid #78350f;
-      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.8), inset 0 3px 8px #1a0b02;
-      z-index: 2;
+      bottom: 0;
+      width: 100%;
+      height: 22px;
+      background: #1a2233;
+      border-top: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 0 0 18px 18px;
+      z-index: 4;
     }
 
     /* Mole Character */
     .mole {
       position: absolute;
-      bottom: -110px;
-      width: 78%;
-      height: 82%;
-      background: #b45309;
-      border-radius: 50% 50% 30% 30%;
-      border: 3.5px solid #451a03;
-      box-shadow: inset -6px -6px 0 rgba(0, 0, 0, 0.25), inset 6px 6px 0 rgba(255, 255, 255, 0.2);
-      transition: bottom 0.18s cubic-bezier(0.18, 0.89, 0.32, 1.28);
-      z-index: 1;
+      bottom: -100%;
+      width: 72%;
+      height: 80%;
+      border-radius: 30px 30px 10px 10px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
-      padding-top: 14px;
+      padding-top: 8px;
+      transition: bottom 0.18s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      z-index: 2;
     }
 
     .mole.up {
       bottom: 12px;
     }
 
-    .mole.whacked {
-      transform: scaleY(0.5) scaleX(1.2);
-      filter: brightness(1.3);
-      transition: transform 0.08s ease;
+    /* Mole Types */
+    .mole-normal {
+      background: linear-gradient(180deg, #8d5b4c 0%, #5d3a30 100%);
+      border: 2px solid #a76d5b;
     }
 
-    /* Golden Mole Variant */
-    .mole.golden {
-      background: linear-gradient(135deg, #ffd700, #f59e0b);
-      border-color: #b45309;
-      box-shadow: 0 0 25px rgba(255, 215, 0, 0.8);
+    .mole-gold {
+      background: linear-gradient(180deg, #ffd700 0%, #e67e22 100%);
+      border: 2px solid #fff;
+      box-shadow: 0 0 16px rgba(255, 215, 0, 0.8);
     }
 
-    /* Bomb Variant */
-    .mole.bomb {
-      background: #111827;
-      border-color: #ef4444;
-      box-shadow: 0 0 20px rgba(239, 68, 68, 0.7);
+    .mole-bomb {
+      background: linear-gradient(180deg, #2d3436 0%, #111 100%);
+      border: 2px solid var(--red);
+      box-shadow: 0 0 14px rgba(255, 56, 56, 0.7);
     }
 
-    /* Mole Face Features */
-    .eyes {
+    .mole-boss {
+      background: linear-gradient(180deg, #4a69bd 0%, #1e3799 100%);
+      border: 2px solid #6a89cc;
+    }
+
+    /* Face Elements */
+    .mole-face {
       display: flex;
-      gap: 14px;
-      margin-bottom: 4px;
+      gap: 12px;
+      margin-top: 4px;
     }
 
-    .eye {
-      width: 7px;
-      height: 9px;
-      background: #000;
-      border-radius: 50%;
-      position: relative;
-    }
-
-    .eye::after {
-      content: '';
-      position: absolute;
-      top: 1px;
-      left: 1px;
-      width: 2.5px;
-      height: 2.5px;
-      background: #fff;
+    .mole-eye {
+      width: 6px;
+      height: 10px;
+      background: #111;
       border-radius: 50%;
     }
 
-    .snout {
-      width: 26px;
-      height: 18px;
-      background: #fcd34d;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 1.5px solid #78350f;
-    }
-
-    .nose {
-      width: 10px;
-      height: 6px;
-      background: #451a03;
+    .mole-nose {
+      width: 12px;
+      height: 8px;
+      background: #ff7675;
       border-radius: 6px;
+      margin-top: 4px;
     }
 
-    /* Whack Splash Popup */
-    .score-pop {
+    /* Floating Score Animations */
+    .score-popup {
       position: absolute;
-      color: #ffd700;
-      font-family: 'Fredoka One', cursive;
-      font-size: 22px;
+      font-weight: 900;
+      font-size: 16px;
       pointer-events: none;
-      animation: floatUp 0.6s ease-out forwards;
-      z-index: 100;
-      text-shadow: 0 2px 8px #000;
+      animation: floatUp 0.6s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+      z-index: 30;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.8);
     }
 
     @keyframes floatUp {
-      0% { transform: translateY(0) scale(0.6); opacity: 1; }
-      100% { transform: translateY(-50px) scale(1.3); opacity: 0; }
+      0% { transform: translate(-50%, 0) scale(0.6); opacity: 1; }
+      100% { transform: translate(-50%, -45px) scale(1.1); opacity: 0; }
     }
 
-    /* Action Mallet Follower */
-    .mallet {
-      position: fixed;
-      width: 50px;
-      height: 50px;
-      pointer-events: none;
-      z-index: 9999;
-      transform: translate(-50%, -50%) rotate(-25deg);
-      transition: transform 0.05s ease;
-      font-size: 38px;
-      display: none;
+    /* Screen Shake & Reset Button */
+    .shake-anim {
+      animation: screenShake 0.3s cubic-bezier(.36,.07,.19,.97) both;
     }
 
-    .mallet.swing {
-      transform: translate(-50%, -50%) rotate(25deg) scale(0.85);
+    @keyframes screenShake {
+      10%, 90% { transform: translate3d(-3px, 0, 0); }
+      20%, 80% { transform: translate3d(4px, 0, 0); }
+      30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
+      40%, 60% { transform: translate3d(6px, 0, 0); }
     }
 
-    /* Controls Bottom */
-    .game-actions {
-      display: flex;
-      gap: 16px;
+    .btn-start {
       margin-top: 14px;
-    }
-
-    .btn-action {
-      background: linear-gradient(135deg, #f59e0b, #d97706);
-      color: #fff;
-      font-family: 'Fredoka One', cursive;
-      font-size: 18px;
-      padding: 10px 24px;
-      border-radius: 14px;
+      width: min(94vw, 400px);
+      padding: 12px;
+      border-radius: 16px;
       border: none;
+      font-size: 14px;
+      font-weight: 900;
       cursor: pointer;
-      box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
-      transition: transform 0.1s ease;
-    }
-
-    .btn-action:active {
-      transform: scale(0.93);
-    }
-
-    /* Game Over Modal */
-    #endModal {
-      position: fixed;
-      inset: 0;
-      background: rgba(10, 6, 24, 0.92);
-      backdrop-filter: blur(10px);
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-      padding: 20px;
-    }
-
-    .modal-card {
-      background: linear-gradient(145deg, #1e1b4b, #0f172a);
-      border: 2px solid #a855f7;
-      border-radius: 24px;
-      padding: 26px;
-      width: 90%;
-      max-width: 320px;
-      text-align: center;
-      box-shadow: 0 0 40px rgba(168, 85, 247, 0.4);
-    }
-
-    .modal-title {
-      font-family: 'Fredoka One', cursive;
-      font-size: 28px;
-      color: #ffd700;
-      margin-bottom: 8px;
+      background: linear-gradient(135deg, var(--cyan), #0072ff);
+      color: #040814;
+      box-shadow: 0 4px 18px rgba(0, 242, 254, 0.3);
     }
   </style>
 </head>
 <body>
 
-  <!-- Top Instagram Navigation -->
-  <div class="insta-bar-wrap">
-    <a href="https://instagram.com/_satish_official_16" target="_blank" rel="noopener" class="insta-bar">
-      <div class="insta-left">
-        <div class="insta-icon-ring">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-          </svg>
-        </div>
-        <div>
-          <div class="insta-name">@_satish_official_16 <span class="insta-badge">✓</span></div>
-          <div class="insta-tag">Developer on Instagram</div>
-        </div>
+  <!-- Top Instagram Header -->
+  <header class="ig-header">
+    <div class="ig-profile">
+      <div class="dp-frame">
+        <img src="Insta.jpg" alt="DP" class="dp-img" onerror="this.onerror=null; this.src='insta.jpg';" />
       </div>
-      <div class="insta-btn">Follow ↗</div>
-    </a>
-  </div>
-
-  <!-- Whack A Mole Custom Logo Graphic -->
-  <div class="game-logo-wrap">
-    <img src="34146.png" alt="Whack A Mole Logo" class="game-logo" onerror="this.src='https://via.placeholder.com/350x120/1e1136/ffd700?text=WHACK+A+MOLE'">
-  </div>
-
-  <!-- Arcade Marquee Bulb Lights -->
-  <div class="lights-row">
-    <div class="bulb"></div>
-    <div class="bulb"></div>
-    <div class="bulb"></div>
-    <div class="bulb"></div>
-    <div class="bulb"></div>
-    <div class="bulb"></div>
-    <div class="bulb"></div>
-    <div class="bulb"></div>
-  </div>
-
-  <!-- Heads Up Stats -->
-  <div class="arcade-hud">
-    <div class="hud-box">
-      <div class="hud-label">SCORE</div>
-      <div class="hud-val" id="scoreVal">0</div>
+      <div>
+        <div class="ig-name">@_satish_official_16 <span class="verified">✓</span></div>
+        <div style="font-size:9px; color:rgba(255,255,255,0.6);">Whack-A-Mole Championship</div>
+      </div>
     </div>
-    <div class="hud-box">
-      <div class="hud-label">TIME</div>
-      <div class="hud-val" id="timeVal" style="color: #38bdf8;">30s</div>
-    </div>
-    <div class="hud-box">
-      <div class="hud-label">COMBO</div>
-      <div class="hud-val" id="comboVal" style="color: #ec4899;">x0</div>
-    </div>
+    <a href="https://instagram.com/_satish_official_16" target="_blank" class="follow-btn">Follow ↗</a>
+  </header>
+
+  <!-- HUD Stats -->
+  <div class="hud-box">
+    <div class="hud-stat" style="color:var(--cyan);" id="scoreDisplay">SCORE: 0</div>
+    <div class="combo-pill" id="comboDisplay">1x COMBO</div>
+    <div class="hud-stat" style="color:var(--pink);" id="timeDisplay">TIME: 45s</div>
   </div>
 
-  <!-- 3x3 Mole Holes Grid -->
-  <div class="stage-container" id="stage">
-    <!-- 9 Arcade Holes -->
-    <div class="hole" data-idx="0"><div class="mole"></div><div class="dirt-base"></div></div>
-    <div class="hole" data-idx="1"><div class="mole"></div><div class="dirt-base"></div></div>
-    <div class="hole" data-idx="2"><div class="mole"></div><div class="dirt-base"></div></div>
-    <div class="hole" data-idx="3"><div class="mole"></div><div class="dirt-base"></div></div>
-    <div class="hole" data-idx="4"><div class="mole"></div><div class="dirt-base"></div></div>
-    <div class="hole" data-idx="5"><div class="mole"></div><div class="dirt-base"></div></div>
-    <div class="hole" data-idx="6"><div class="mole"></div><div class="dirt-base"></div></div>
-    <div class="hole" data-idx="7"><div class="mole"></div><div class="dirt-base"></div></div>
-    <div class="hole" data-idx="8"><div class="mole"></div><div class="dirt-base"></div></div>
+  <!-- Decaying Timer Progress Bar -->
+  <div class="timer-container">
+    <div class="timer-bar" id="timerBar"></div>
   </div>
 
-  <!-- Bottom Start / Controls -->
-  <div class="game-actions">
-    <button class="btn-action" id="startBtn" onclick="startGame()">START GAME 🔨</button>
+  <!-- 3x3 Arena -->
+  <div class="mole-arena" id="arena">
+    <div class="hole" id="hole0"><div class="mole mole-normal" onclick="whack(0)"></div></div>
+    <div class="hole" id="hole1"><div class="mole mole-normal" onclick="whack(1)"></div></div>
+    <div class="hole" id="hole2"><div class="mole mole-normal" onclick="whack(2)"></div></div>
+    <div class="hole" id="hole3"><div class="mole mole-normal" onclick="whack(3)"></div></div>
+    <div class="hole" id="hole4"><div class="mole mole-normal" onclick="whack(4)"></div></div>
+    <div class="hole" id="hole5"><div class="mole mole-normal" onclick="whack(5)"></div></div>
+    <div class="hole" id="hole6"><div class="mole mole-normal" onclick="whack(6)"></div></div>
+    <div class="hole" id="hole7"><div class="mole mole-normal" onclick="whack(7)"></div></div>
+    <div class="hole" id="hole8"><div class="mole mole-normal" onclick="whack(8)"></div></div>
   </div>
 
-  <!-- Custom Hammer Pointer -->
-  <div class="mallet" id="mallet">🔨</div>
-
-  <!-- Game Over Screen -->
-  <div id="endModal">
-    <div class="modal-card">
-      <div class="modal-title">GAME OVER!</div>
-      <div style="font-size: 14px; color: #94a3b8; margin-bottom: 14px;">Carnival Whack Champion</div>
-      <div style="font-size: 40px; font-family: 'Fredoka One'; color: #ffd700; margin-bottom: 6px;" id="finalScore">0</div>
-      <div style="font-size: 13px; color: #cbd5e1; margin-bottom: 20px;">HIGH SCORE: <span id="highScore" style="color: #38bdf8; font-weight: 800;">0</span></div>
-      <button class="btn-action" onclick="startGame()" style="width: 100%;">PLAY AGAIN 🔄</button>
-    </div>
-  </div>
+  <!-- Start / Reset Button -->
+  <button class="btn-start" id="startBtn" onclick="startGame()">Start Championship 🔨</button>
 
   <script>
-    // --- Web Audio Sound Synthesizer (No MP3 files needed) ---
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
-    let audioCtx = null;
-
-    function playSound(type) {
-      try {
-        if (!audioCtx) audioCtx = new AudioContext();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-
-        const now = audioCtx.currentTime;
-        if (type === 'hit') {
-          osc.type = 'triangle';
-          osc.frequency.setValueAtTime(320, now);
-          osc.frequency.exponentialRampToValueAtTime(120, now + 0.12);
-          gain.gain.setValueAtTime(0.4, now);
-          gain.gain.linearRampToValueAtTime(0.01, now + 0.12);
-          osc.start(now);
-          osc.stop(now + 0.12);
-        } else if (type === 'gold') {
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(580, now);
-          osc.frequency.exponentialRampToValueAtTime(1100, now + 0.2);
-          gain.gain.setValueAtTime(0.3, now);
-          gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
-          osc.start(now);
-          osc.stop(now + 0.2);
-        } else if (type === 'bomb') {
-          osc.type = 'sawtooth';
-          osc.frequency.setValueAtTime(140, now);
-          osc.frequency.linearRampToValueAtTime(40, now + 0.25);
-          gain.gain.setValueAtTime(0.5, now);
-          gain.gain.linearRampToValueAtTime(0.01, now + 0.25);
-          osc.start(now);
-          osc.stop(now + 0.25);
-        }
-      } catch (e) {}
+    // ==========================================
+    // AUDIO SYNTHESIZER
+    // ==========================================
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playTone(freq, type = 'sine', duration = 0.08, gainVal = 0.2) {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const osc = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+      g.gain.setValueAtTime(gainVal, audioCtx.currentTime);
+      g.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+      osc.connect(g);
+      g.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + duration);
     }
 
-    // --- Game Variables ---
-    const holes = document.querySelectorAll('.hole');
-    const scoreVal = document.getElementById('scoreVal');
-    const timeVal = document.getElementById('timeVal');
-    const comboVal = document.getElementById('comboVal');
-    const mallet = document.getElementById('mallet');
-    const endModal = document.getElementById('endModal');
-    const stage = document.getElementById('stage');
+    const Sound = {
+      hit: () => playTone(360, 'triangle', 0.1, 0.3),
+      gold: () => { playTone(880, 'sine', 0.06); setTimeout(() => playTone(1320, 'sine', 0.1), 60); },
+      bomb: () => playTone(90, 'sawtooth', 0.3, 0.45),
+      bossHit: () => playTone(240, 'square', 0.08)
+    };
 
+    // ==========================================
+    // GAME STATE & MOLE TYPES
+    // ==========================================
     let score = 0;
-    let timeLeft = 30;
-    let combo = 0;
-    let lastHole = null;
-    let isPlaying = false;
-    let moleTimer = null;
-    let countdownTimer = null;
-    let bestScore = parseInt(localStorage.getItem('whackBestScore') || '0');
+    let combo = 1;
+    let timeLeft = 45;
+    let gameRunning = false;
+    let timerInterval = null;
+    let spawnTimeout = null;
 
-    // Build Mole Visuals (eyes, snout)
-    document.querySelectorAll('.mole').forEach(mole => {
-      mole.innerHTML = `
-        <div class="eyes">
-          <div class="eye"></div>
-          <div class="eye"></div>
-        </div>
-        <div class="snout">
-          <div class="nose"></div>
-        </div>
-      `;
-    });
+    // Types: 'normal', 'gold', 'bomb', 'boss'
+    const moleStates = Array(9).fill(null).map(() => ({
+      active: false,
+      type: 'normal',
+      hp: 1
+    }));
 
-    function randomHole() {
-      const idx = Math.floor(Math.random() * holes.length);
-      const hole = holes[idx];
-      if (hole === lastHole) return randomHole();
-      lastHole = hole;
-      return hole;
-    }
-
-    function popMole() {
-      if (!isPlaying) return;
-
-      const hole = randomHole();
-      const mole = hole.querySelector('.mole');
-
-      // Random Special Types: 15% Gold Mole, 10% Bomb Mole, 75% Regular
-      const rand = Math.random();
-      mole.classList.remove('golden', 'bomb', 'whacked');
-
-      if (rand < 0.15) {
-        mole.classList.add('golden');
-      } else if (rand < 0.25) {
-        mole.classList.add('bomb');
+    function initHoleFaces() {
+      for (let i = 0; i < 9; i++) {
+        const m = document.querySelector(`#hole${i} .mole`);
+        m.innerHTML = `
+          <div class="mole-face">
+            <div class="mole-eye"></div>
+            <div class="mole-eye"></div>
+          </div>
+          <div class="mole-nose"></div>
+        `;
       }
-
-      mole.classList.add('up');
-      const stayDuration = Math.max(550, 1100 - (30 - timeLeft) * 20);
-
-      const hideTimeout = setTimeout(() => {
-        mole.classList.remove('up');
-        if (isPlaying) popMole();
-      }, stayDuration);
-
-      mole.dataset.timeoutId = hideTimeout;
     }
+    initHoleFaces();
 
-    function whack(e) {
-      if (!isPlaying) return;
-      const mole = this;
-
-      if (!mole.classList.contains('up') || mole.classList.contains('whacked')) return;
-
-      clearTimeout(mole.dataset.timeoutId);
-      mole.classList.add('whacked');
-
-      // Haptic Vibration Feedback
-      if ("vibrate" in navigator) navigator.vibrate(30);
-
-      // Score logic
-      let points = 10;
-      if (mole.classList.contains('golden')) {
-        combo += 2;
-        points = 30;
-        playSound('gold');
-        createScorePop(e, `+${points} GOLD!`, '#ffd700');
-      } else if (mole.classList.contains('bomb')) {
-        combo = 0;
-        points = -20;
-        playSound('bomb');
-        if ("vibrate" in navigator) navigator.vibrate([60, 60, 60]);
-        createScorePop(e, `-20 BOMB!`, '#ef4444');
-      } else {
-        combo++;
-        playSound('hit');
-        if (combo > 2) points += (combo * 2);
-        createScorePop(e, `+${points}`, '#fff');
-      }
-
-      score = Math.max(0, score + points);
-      scoreVal.textContent = score;
-      comboVal.textContent = `x${combo}`;
-
-      setTimeout(() => {
-        mole.classList.remove('up', 'whacked', 'golden', 'bomb');
-        if (isPlaying) popMole();
-      }, 250);
-    }
-
-    function createScorePop(e, text, color) {
-      const rect = stage.getBoundingClientRect();
-      const pop = document.createElement('div');
-      pop.className = 'score-pop';
-      pop.textContent = text;
-      pop.style.color = color;
-
-      const clickX = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
-      const clickY = (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top;
-
-      pop.style.left = `${clickX}px`;
-      pop.style.top = `${clickY}px`;
-      stage.appendChild(pop);
-
-      setTimeout(() => pop.remove(), 600);
-    }
-
-    // Attach Click / Tap Listeners
-    document.querySelectorAll('.mole').forEach(mole => {
-      mole.addEventListener('pointerdown', whack);
-    });
-
-    // Mallet Hover / Tap Animation
-    window.addEventListener('pointermove', (e) => {
-      mallet.style.display = 'block';
-      mallet.style.left = `${e.clientX}px`;
-      mallet.style.top = `${e.clientY}px`;
-    });
-
-    window.addEventListener('pointerdown', () => {
-      mallet.classList.add('swing');
-      setTimeout(() => mallet.classList.remove('swing'), 100);
-    });
-
-    // Start Game Function
     function startGame() {
-      endModal.style.display = 'none';
       score = 0;
-      timeLeft = 30;
-      combo = 0;
-      isPlaying = true;
+      combo = 1;
+      timeLeft = 45;
+      gameRunning = true;
+      document.getElementById('scoreDisplay').textContent = 'SCORE: 0';
+      document.getElementById('comboDisplay').textContent = '1x COMBO';
+      document.getElementById('startBtn').textContent = 'Restart Match 🔁';
 
-      scoreVal.textContent = "0";
-      timeVal.textContent = "30s";
-      comboVal.textContent = "x0";
-      document.getElementById('startBtn').style.display = 'none';
-      popMole();
-      popMole(); // 2 concurrent moles
+      clearInterval(timerInterval);
+      clearTimeout(spawnTimeout);
 
-      countdownTimer = setInterval(() => {
+      // Countdown loop
+      timerInterval = setInterval(() => {
         timeLeft--;
-        timeVal.textContent = `${timeLeft}s`;
-
-        if (timeLeft <= 5) {
-          timeVal.style.color = '#ef4444';
-        } else {
-          timeVal.style.color = '#38bdf8';
-        }
+        document.getElementById('timeDisplay').textContent = `TIME: ${timeLeft}s`;
+        document.getElementById('timerBar').style.width = (timeLeft / 45 * 100) + '%';
 
         if (timeLeft <= 0) {
           endGame();
         }
       }, 1000);
+
+      spawnLoop();
     }
 
     function endGame() {
-      isPlaying = false;
-      clearInterval(countdownTimer);
-      clearTimeout(moleTimer);
+      gameRunning = false;
+      clearInterval(timerInterval);
+      clearTimeout(spawnTimeout);
+      document.querySelectorAll('.mole').forEach(m => m.classList.remove('up'));
+      Sound.bomb();
+      alert(`🏆 GAME OVER!\nFinal Championship Score: ${score}\nBest Combo: ${combo}x`);
+      document.getElementById('startBtn').textContent = 'Play Again 🔨';
+    }
 
-      document.querySelectorAll('.mole').forEach(m => m.classList.remove('up', 'whacked'));
+    function spawnLoop() {
+      if (!gameRunning) return;
 
-      if (score > bestScore) {
-        bestScore = score;
-        localStorage.setItem('whackBestScore', bestScore.toString());
+      // Accelerate speed as time elapses (1100ms down to 450ms)
+      const speedFactor = Math.max(450, 1100 - (45 - timeLeft) * 15);
+
+      // Pick empty hole
+      const availableHoles = [];
+      moleStates.forEach((state, idx) => {
+        if (!state.active) availableHoles.push(idx);
+      });
+
+      if (availableHoles.length > 0) {
+        const holeIdx = availableHoles[Math.floor(Math.random() * availableHoles.length)];
+        popMole(holeIdx, speedFactor);
       }
 
-      document.getElementById('finalScore').textContent = score;
-      document.getElementById('highScore').textContent = bestScore;
-      endModal.style.display = 'flex';
+      spawnTimeout = setTimeout(spawnLoop, Math.random() * 300 + speedFactor * 0.7);
+    }
+
+    function popMole(holeIdx, peepDuration) {
+      const state = moleStates[holeIdx];
+      const moleEl = document.querySelector(`#hole${holeIdx} .mole`);
+
+      // Determine archetype by odds
+      const rand = Math.random();
+      if (rand < 0.15) {
+        state.type = 'gold';
+        state.hp = 1;
+        moleEl.className = 'mole mole-gold';
+      } else if (rand < 0.35) {
+        state.type = 'bomb';
+        state.hp = 1;
+        moleEl.className = 'mole mole-bomb';
+      } else if (rand < 0.50) {
+        state.type = 'boss';
+        state.hp = 2; // Needs 2 hits
+        moleEl.className = 'mole mole-boss';
+      } else {
+        state.type = 'normal';
+        state.hp = 1;
+        moleEl.className = 'mole mole-normal';
+      }
+
+      state.active = true;
+      moleEl.classList.add('up');
+
+      // Golden mole stays for less time
+      const actualDuration = state.type === 'gold' ? peepDuration * 0.65 : peepDuration;
+
+      setTimeout(() => {
+        if (state.active) {
+          moleEl.classList.remove('up');
+          state.active = false;
+        }
+      }, actualDuration);
+    }
+
+    function whack(holeIdx) {
+      if (!gameRunning) return;
+      const state = moleStates[holeIdx];
+      if (!state.active) return;
+
+      const moleEl = document.querySelector(`#hole${holeIdx} .mole`);
+      const holeRect = document.getElementById(`hole${holeIdx}`).getBoundingClientRect();
+
+      state.hp--;
+
+      // If boss mole needs another hit
+      if (state.hp > 0) {
+        Sound.bossHit();
+        showScorePopup(holeRect, 'SHIELD HIT!', '#6a89cc');
+        return;
+      }
+
+      state.active = false;
+      moleEl.classList.remove('up');
+
+      if (state.type === 'bomb') {
+        // Bomb hit penalty
+        Sound.bomb();
+        combo = 1;
+        score = Math.max(0, score - 250);
+        showScorePopup(holeRect, '-250 💥', '#ff3838');
+        triggerArenaShake();
+      } else {
+        // Valid targets
+        let points = 100;
+        if (state.type === 'gold') {
+          points = 300;
+          Sound.gold();
+          showScorePopup(holeRect, `+${points * combo} GOLD! 🌟`, '#ffd700');
+        } else if (state.type === 'boss') {
+          points = 250;
+          Sound.hit();
+          showScorePopup(holeRect, `+${points * combo} SMASHED! 🛡️`, '#00f2fe');
+        } else {
+          Sound.hit();
+          showScorePopup(holeRect, `+${points * combo}`, '#2ecc71');
+        }
+
+        score += points * combo;
+        combo = Math.min(5, combo + 1);
+      }
+
+      document.getElementById('scoreDisplay').textContent = `SCORE: ${score}`;
+      document.getElementById('comboDisplay').textContent = `${combo}x COMBO`;
+    }
+
+    function showScorePopup(rect, text, color) {
+      const pop = document.createElement('div');
+      pop.className = 'score-popup';
+      pop.textContent = text;
+      pop.style.color = color;
+      pop.style.left = `${rect.left + rect.width / 2}px`;
+      pop.style.top = `${rect.top + 20}px`;
+      document.body.appendChild(pop);
+      setTimeout(() => pop.remove(), 600);
+    }
+
+    function triggerArenaShake() {
+      const arena = document.getElementById('arena');
+      arena.classList.add('shake-anim');
+      setTimeout(() => arena.classList.remove('shake-anim'), 320);
     }
   </script>
 </body>
 </html>
-
- 
