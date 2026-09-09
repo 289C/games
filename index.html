@@ -632,26 +632,49 @@
   <!-- MODALS FOR INLINE ENGINES                      -->
   <!-- ============================================== -->
   
-  <!-- Modal 1: Tic-Tac-Toe -->
+    <!-- Modal 1: Tic-Tac-Toe (AI + P2P Room Codes) -->
   <div class="modal-layer" id="tttModal">
-    <div class="modal-box">
+    <div class="modal-box" style="max-width:380px;">
       <button class="close-btn" onclick="closeModal('tttModal')">✕</button>
-      <h3 style="font-size:18px; margin-bottom:4px;">Tic-Tac-Toe</h3>
-      <p id="tttStatus" style="font-size:12px; color:var(--neon-cyan);">Your Turn (X)</p>
+      <h3 style="font-size:20px; font-weight:900; letter-spacing:0.5px; margin-bottom:4px;">TIC-TAC-TOE</h3>
       
-      <div class="ttt-grid">
-        <div class="ttt-cell" onclick="makeTttMove(0, this)"></div>
-        <div class="ttt-cell" onclick="makeTttMove(1, this)"></div>
-        <div class="ttt-cell" onclick="makeTttMove(2, this)"></div>
-        <div class="ttt-cell" onclick="makeTttMove(3, this)"></div>
-        <div class="ttt-cell" onclick="makeTttMove(4, this)"></div>
-        <div class="ttt-cell" onclick="makeTttMove(5, this)"></div>
-        <div class="ttt-cell" onclick="makeTttMove(6, this)"></div>
-        <div class="ttt-cell" onclick="makeTttMove(7, this)"></div>
-        <div class="ttt-cell" onclick="makeTttMove(8, this)"></div>
+      <!-- Mode Selection Tabs -->
+      <div style="display:flex; gap:8px; margin:8px 0 12px 0;">
+        <button id="tttAiModeBtn" onclick="switchTttMode('ai')" style="padding:6px 14px; border-radius:16px; border:1px solid #00f2fe; background:#00f2fe; color:#040711; font-size:11px; font-weight:800; cursor:pointer;">VS SMART BOT</button>
+        <button id="tttPvpModeBtn" onclick="switchTttMode('pvp')" style="padding:6px 14px; border-radius:16px; border:1px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.08); color:#fff; font-size:11px; font-weight:800; cursor:pointer;">PLAY WITH FRIEND</button>
       </div>
 
-      <button onclick="resetTtt()" style="padding:10px 24px; background:linear-gradient(135deg, #00f2fe, #7928ca); border:none; border-radius:20px; color:#fff; font-weight:800; cursor:pointer;">Restart Game</button>
+      <!-- P2P Room Code UI -->
+      <div id="tttPvpPanel" style="display:none; width:100%; flex-direction:column; align-items:center; gap:8px; margin-bottom:10px; background:rgba(255,255,255,0.04); padding:10px; border-radius:16px; border:1px solid rgba(255,255,255,0.1);">
+        <div style="display:flex; gap:6px; width:100%;">
+          <button onclick="hostTttRoom()" style="flex:1; padding:8px; border-radius:10px; background:#ff007f; border:none; color:#fff; font-size:11px; font-weight:800; cursor:pointer;">CREATE ROOM</button>
+          <div style="display:flex; flex:1; gap:4px;">
+            <input type="text" id="tttJoinInput" placeholder="4-CODE" maxlength="4" style="width:65px; text-align:center; background:#000; border:1px solid #00f2fe; color:#fff; font-weight:900; border-radius:8px; text-transform:uppercase; font-size:12px;" />
+            <button onclick="joinTttRoom()" style="flex:1; padding:8px; border-radius:8px; background:#00f2fe; border:none; color:#040711; font-size:11px; font-weight:900; cursor:pointer;">JOIN</button>
+          </div>
+        </div>
+        <div id="tttCodeDisplay" style="display:none; font-size:12px; color:var(--neon-gold); font-weight:800;">
+          ROOM CODE: <span id="tttRoomCodeText" style="letter-spacing:2px; font-size:15px; color:#fff; background:#111; padding:2px 8px; border-radius:6px; border:1px solid var(--neon-gold);">----</span>
+        </div>
+      </div>
+
+      <!-- Status Indicator -->
+      <p id="tttStatus" style="font-size:13px; font-weight:800; color:var(--neon-cyan); letter-spacing:0.5px;">YOUR TURN (X)</p>
+      
+      <!-- 3x3 Grid -->
+      <div class="ttt-grid" id="tttGrid">
+        <div class="ttt-cell" onclick="handleTttClick(0)"></div>
+        <div class="ttt-cell" onclick="handleTttClick(1)"></div>
+        <div class="ttt-cell" onclick="handleTttClick(2)"></div>
+        <div class="ttt-cell" onclick="handleTttClick(3)"></div>
+        <div class="ttt-cell" onclick="handleTttClick(4)"></div>
+        <div class="ttt-cell" onclick="handleTttClick(5)"></div>
+        <div class="ttt-cell" onclick="handleTttClick(6)"></div>
+        <div class="ttt-cell" onclick="handleTttClick(7)"></div>
+        <div class="ttt-cell" onclick="handleTttClick(8)"></div>
+      </div>
+
+      <button onclick="resetTtt()" style="padding:10px 24px; background:linear-gradient(135deg, #00f2fe, #7928ca); border:none; border-radius:20px; color:#fff; font-weight:900; font-size:12px; cursor:pointer; letter-spacing:0.5px;">RESTART GAME</button>
     </div>
   </div>
 
