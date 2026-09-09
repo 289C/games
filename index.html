@@ -8,6 +8,7 @@
   <!-- Firebase SDKs for 1v1 Multiplayer -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
   <style>
     :root {
@@ -19,6 +20,45 @@
       --text-main: #ffffff;
       --text-dim: #a0a0b2;
     }
+    /* 3D Background Canvas */
+#canvas3d-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Ensure body and content sit on top of 3D universe */
+body {
+  background: #040711 !important;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.main-content, .grid, .games-container, .game-tile {
+  position: relative;
+  z-index: 2;
+}
+
+/* Modern 3D Glassmorphism for your game tiles */
+.game-tile {
+  background: rgba(12, 19, 43, 0.75) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  border: 1px solid rgba(0, 242, 254, 0.25) !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(0, 242, 254, 0.08) !important;
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s ease !important;
+}
+
+.game-tile:hover, .game-tile:active {
+  transform: translateY(-6px) scale(1.03) !important;
+  box-shadow: 0 15px 35px rgba(0, 242, 254, 0.3), inset 0 0 20px rgba(0, 242, 254, 0.2) !important;
+  border-color: rgba(0, 242, 254, 0.6) !important;
+}
+    
 
     * {
       box-sizing: border-box;
