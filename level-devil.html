@@ -713,17 +713,34 @@
       setTimeout(() => { loadLevel(currentLevel); }, 450);
     }
 
+        let isLevelTransitioning = false;
+
     function triggerVictory() {
+      // Guard lock: prevents multi-triggering in a single frame
+      if (isLevelTransitioning) return;
+      isLevelTransitioning = true;
+
       playBeep(784, 'sine', 0.15);
       setTimeout(() => playBeep(1046, 'sine', 0.25), 120);
-      spawnParticles(flagGroup.position.x, flagGroup.position.y + 1, 0xffd700, 36, 0.25);
-      currentLevel++;
+
+      if (flagGroup) {
+        spawnParticles(flagGroup.position.x, flagGroup.position.y + 1, 0xffd700, 36, 0.25);
+      }
+
+      // Step forward by strictly 1 level
+      currentLevel += 1;
+
       if (currentLevel > 100) {
         alert("👑 INCREDIBLE! YOU HAVE CONQUERED ALL 100 LEVELS OF LEVEL DEVIL 3D!");
         currentLevel = 1;
       }
-      setTimeout(() => loadLevel(currentLevel), 350);
+
+      setTimeout(() => {
+        loadLevel(currentLevel);
+        isLevelTransitioning = false; // Unlock for next level
+      }, 400);
     }
+
 
     function updatePhysics() {
       if (pState.dead) return;
