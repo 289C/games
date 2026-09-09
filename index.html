@@ -876,69 +876,232 @@
       });
     });
 
-    // ------------------------------------------------
-    // 3. TIC-TAC-TOE GAME ENGINE
-    // ------------------------------------------------
+        // =======================================================
+    // 3. ENHANCED TIC-TAC-TOE (SMART AI + P2P ROOM CODES)
+    // =======================================================
     let tttBoard = ["", "", "", "", "", "", "", "", ""];
-    let tttTurn = "X";
+    let tttCurrentTurn = "X";
     let tttActive = true;
-    const winCombos = [
-      [0,1,2],[3,4,5],[6,7,8],
-      [0,3,6],[1,4,7],[2,5,8],
-      [0,4,8],[2,4,6]
+    let tttGameMode = "ai"; // 'ai' or 'pvp'
+    let myTttSymbol = "X";
+    let tttPeer = null;
+    let tttConn = null;
+
+    const tttWinCombos = [
+      [0,1,2], [3,4,5], [6,7,8], // Rows
+      [0,3,6], [1,4,7], [2,5,8], // Columns
+      [0,4,8], [2,4,6]          // Diagonals
     ];
 
     function openTicTacToe() {
       document.getElementById('tttModal').style.display = 'flex';
+      switchTttMode('ai');
+    }
+
+    function switchTttMode(mode) {
+      tttGameMode = mode;
+      const aiBtn = document.getElementById('tttAiModeBtn');
+      const pvpBtn = document.getElementById('tttPvpModeBtn');
+      const pvpPanel = document.getElementById('tttPvpPanel');
+
+      if (mode === 'ai') {
+        aiBtn.style.background = "#00f2fe";
+        aiBtn.style.color = "#040711";
+        pvBtn = pvpBtn.style.background = "rgba(255,255,255,0.08)";
+        pvpBtn.style.color = "#fff";
+        pvpPanel.style.display = 'none';
+        myTttSymbol = "X";
+      } else {
+        pvpBtn.style.background = "#ff007f";
+        pvpBtn.style.color = "#fff";
+        aiBtn.style.background = "rgba(255,255,255,0.08)";
+        aiBtn.style.color = "#fff";
+        pvpPanel.style.display = 'flex';
+      }
       resetTtt();
     }
 
-    function makeTttMove(idx, el) {
+    // P2P Room Code Networking
+    function hostTttRoom() {
+      const code = Math.random().toString(36).substring(2, 6).toUpperCase();
+      tttPeer = new Peer('ttt-' + code);
+
+      tttPeer.on('open', () => {
+        document.getElementById('tttCodeDisplay').style.display = 'block';
+        document.getElementById('tttRoomCodeText').textContent = code;
+        document.getElementById('tttStatus').textContent = "WAITING FOR FRIEND TO JOIN...";
+        myTttSymbol = "X"; // Host is always X
+      });
+
+      tttPeer.on('connection', (conn) => {
+        tttConn = conn;
+        setupTttConnectionEvents();
+        document.getElementById('tttStatus').textContent = "FRIEND CONNECTED! YOUR TURN (X)";
+        resetTtt();
+      });
+    }
+
+    function joinTttRoom() {
+      const code = document.getElementById('tttJoinInput').value.trim().toUpperCase();
+      if (code.length < 4) return alert("Please enter a 4-letter room code!");
+
+      tttPeer = new Peer();
+      tttPeer.on('open', () => {
+        tttConn = tttPeer.connect('ttt-' + code);
+        myTttSymbol = "O"; // Guest is always O
+        setupTttConnectionEvents();
+      });
+    }
+
+    function setupTttConnectionEvents() {
+      tttConn.on('open', () => {
+        document.getElementById('tttStatus').textContent = `CONNECTED! ${myTttSymbol === 'X' ? 'YOUR TURN (X)' : "HOST'S TURN (X)"}`;
+        resetTtt();
+      });
+
+      tttConn.on('data', (data) => {
+        if (data.type === 'move') {
+          applyMove(data.index, data.symbol);
+        } else if (data.type === 'reset') {
+          clearBoardOnly();
+        }
+      });
+    }
+
+    // Move Handling & ITTF-Style Visuals
+    function handleTttClick(idx) {
       if (!tttActive || tttBoard[idx] !== "") return;
-      tttBoard[idx] = tttTurn;
-      el.textContent = tttTurn;
-      el.style.color = tttTurn === "X" ? "#00f2fe" : "#ff007f";
 
-      if (checkTttWin(tttTurn)) {
-        document.getElementById('tttStatus').textContent = `🎉 Player ${tttTurn} Wins!`;
-        tttActive = false;
-        return;
-      }
-      if (!tttBoard.includes("")) {
-        document.getElementById('tttStatus').textContent = "🤝 Draw Game!";
-        tttActive = false;
+      // In multiplayer, players can only move on their turn
+      if (tttGameMode === 'pvp') {
+        if (!tttConn || !tttConn.open) return alert("Create or join a room first!");
+        if (tttCurrentTurn !== myTttSymbol) return;
+        
+        applyMove(idx, myTttSymbol);
+        tttConn.send({ type: 'move', index: idx, symbol: myTttSymbol });
         return;
       }
 
-      tttTurn = tttTurn === "X" ? "O" : "X";
-      document.getElementById('tttStatus').textContent = `Player ${tttTurn}'s Turn`;
+      // Single-player mode vs AI
+      applyMove(idx, "X");
 
-      if (tttTurn === "O" && tttActive) {
-        setTimeout(botTttMove, 250);
+      if (tttActive && tttCurrentTurn === "O") {
+        document.getElementById('tttStatus').textContent = "BOT IS THINKING...";
+        setTimeout(smartBotMove, 280);
       }
     }
 
-    function botTttMove() {
-      if (!tttActive) return;
-      const emptyIndices = tttBoard.map((v, i) => v === "" ? i : null).filter(v => v !== null);
-      if (emptyIndices.length === 0) return;
-
-      const chosen = emptyIndices.includes(4) ? 4 : emptyIndices[Math.floor(Math.random() * emptyIndices.length)];
+    function applyMove(idx, symbol) {
+      tttBoard[idx] = symbol;
       const cells = document.querySelectorAll('.ttt-cell');
-      makeTttMove(chosen, cells[chosen]);
+      cells[idx].textContent = symbol;
+      cells[idx].style.color = symbol === "X" ? "#00f2fe" : "#ff007f";
+      cells[idx].style.textShadow = symbol === "X" ? "0 0 16px #00f2fe" : "0 0 16px #ff007f";
+
+      const winCombo = checkWin(symbol);
+      if (winCombo) {
+        tttActive = false;
+        winCombo.forEach(i => {
+          cells[i].style.background = symbol === "X" ? "rgba(0, 242, 254, 0.25)" : "rgba(255, 0, 127, 0.25)";
+          cells[i].style.borderColor = symbol === "X" ? "#00f2fe" : "#ff007f";
+        });
+        document.getElementById('tttStatus').textContent = `🎉 PLAYER ${symbol} WINS!`;
+        return;
+      }
+
+      if (!tttBoard.includes("")) {
+        tttActive = false;
+        document.getElementById('tttStatus').textContent = "🤝 DRAW GAME!";
+        return;
+      }
+
+      tttCurrentTurn = tttCurrentTurn === "X" ? "O" : "X";
+      if (tttGameMode === 'pvp') {
+        document.getElementById('tttStatus').textContent = tttCurrentTurn === myTttSymbol ? `YOUR TURN (${myTttSymbol})` : `WAITING FOR OPPONENT (${tttCurrentTurn})...`;
+      } else {
+        document.getElementById('tttStatus').textContent = `YOUR TURN (${tttCurrentTurn})`;
+      }
     }
 
-    function checkTttWin(p) {
-      return winCombos.some(combo => combo.every(i => tttBoard[i] === p));
+    // Smart Bot AI (Win -> Block -> Center -> Corners -> Random)
+    function smartBotMove() {
+      if (!tttActive) return;
+
+      // 1. Check if Bot ("O") can win this turn
+      for (let i = 0; i < 9; i++) {
+        if (tttBoard[i] === "") {
+          tttBoard[i] = "O";
+          if (checkWin("O")) {
+            tttBoard[i] = "";
+            applyMove(i, "O");
+            return;
+          }
+          tttBoard[i] = "";
+        }
+      }
+
+      // 2. Block Player ("X") from winning
+      for (let i = 0; i < 9; i++) {
+        if (tttBoard[i] === "") {
+          tttBoard[i] = "X";
+          if (checkWin("X")) {
+            tttBoard[i] = "";
+            applyMove(i, "O");
+            return;
+          }
+          tttBoard[i] = "";
+        }
+      }
+
+      // 3. Take Center square if open
+      if (tttBoard[4] === "") {
+        applyMove(4, "O");
+        return;
+      }
+
+      // 4. Take available Corners
+      const corners = [0, 2, 6, 8].filter(i => tttBoard[i] === "");
+      if (corners.length > 0) {
+        applyMove(corners[Math.floor(Math.random() * corners.length)], "O");
+        return;
+      }
+
+      // 5. Take remaining sides
+      const empty = tttBoard.map((v, i) => v === "" ? i : null).filter(v => v !== null);
+      if (empty.length > 0) {
+        applyMove(empty[Math.floor(Math.random() * empty.length)], "O");
+      }
+    }
+
+    function checkWin(sym) {
+      for (let combo of tttWinCombos) {
+        if (combo.every(idx => tttBoard[idx] === sym)) {
+          return combo;
+        }
+      }
+      return null;
+    }
+
+    function clearBoardOnly() {
+      tttBoard = ["", "", "", "", "", "", "", "", ""];
+      tttCurrentTurn = "X";
+      tttActive = true;
+      document.querySelectorAll('.ttt-cell').forEach(c => {
+        c.textContent = "";
+        c.style.background = "#16203a";
+        c.style.borderColor = "rgba(255, 255, 255, 0.12)";
+        c.style.textShadow = "none";
+      });
+      document.getElementById('tttStatus').textContent = tttGameMode === 'pvp' && myTttSymbol === 'O' ? "HOST'S TURN (X)" : "YOUR TURN (X)";
     }
 
     function resetTtt() {
-      tttBoard = ["", "", "", "", "", "", "", "", ""];
-      tttTurn = "X";
-      tttActive = true;
-      document.getElementById('tttStatus').textContent = "Your Turn (X)";
-      document.querySelectorAll('.ttt-cell').forEach(c => c.textContent = "");
+      clearBoardOnly();
+      if (tttGameMode === 'pvp' && tttConn && tttConn.open) {
+        tttConn.send({ type: 'reset' });
+      }
     }
+
 
     // ------------------------------------------------
     // 4. SPEED MATH ARCADE ENGINE
