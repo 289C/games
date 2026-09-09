@@ -573,87 +573,241 @@
     }
 
     // --- 2. REFLEX TEST MINI-GAME ---
-    let reflexState = 'idle';
+        // ==============================================
+    // WEB AUDIO SYNTHESIZER FOR SOUND EFFECTS
+    // ==============================================
+    const SoundFX = {
+      ctx: null,
+      init() {
+        if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+        if (this.ctx.state === 'suspended') this.ctx.resume();
+      },
+      play(freq, type = 'sine', duration = 0.08, gainVal = 0.2) {
+        this.init();
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+        g.gain.setValueAtTime(gainVal, this.ctx.currentTime);
+        g.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + duration);
+        osc.connect(g);
+        g.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + duration);
+      },
+      success() {
+        this.play(523.25, 'sine', 0.06);
+        setTimeout(() => this.play(659.25, 'sine', 0.1), 60);
+      },
+      error() {
+        this.play(130, 'sawtooth', 0.25, 0.35);
+      },
+      beep() {
+        this.play(880, 'sine', 0.05, 0.15);
+      }
+    };
+
+    // ==============================================
+    // 1. ESPORTS REFLEX ENGINE (5-ROUND BENCHMARK)
+    // ==============================================
+    let reflexState = 'idle'; // 'idle' | 'waiting' | 'ready'
     let reflexStartTime = 0;
     let reflexTimeout = null;
+    let reflexTrials = [];
+    const MAX_TRIALS = 5;
 
     function openReflexModal() {
       document.getElementById('reflexModal').style.display = 'flex';
-      const pad = document.getElementById('reflexPad');
-      pad.style.background = '#222a3d';
-      pad.textContent = 'TAP TO START';
-      document.getElementById('reflexResult').textContent = '';
+      reflexTrials = [];
       reflexState = 'idle';
+      updateReflexUI('#1e2738', 'TAP TO START', 'Trial 1 of 5');
+      document.getElementById('trialCounter').textContent = `TRIAL: 1 / ${MAX_TRIALS}`;
+      document.getElementById('reflexAvg').textContent = 'AVG: -- ms';
+      document.getElementById('reflexRank').textContent = 'RANK: UNRANKED';
+    }
+
+    function updateReflexUI(color, mainText, subText, isPulse = false) {
+      const pad = document.getElementById('reflexPad');
+      pad.style.background = color;
+      document.getElementById('reflexText').textContent = mainText;
+      document.getElementById('reflexSub').textContent = subText;
+      if (isPulse) pad.classList.add('reflex-pulse');
+      else pad.classList.remove('reflex-pulse');
     }
 
     function handleReflexTap() {
-      const pad = document.getElementById('reflexPad');
       if (reflexState === 'idle') {
         reflexState = 'waiting';
-        pad.style.background = '#d35400';
-        pad.textContent = 'WAIT FOR GREEN...';
+        updateReflexUI('#c0392b', 'WAIT FOR GREEN...', 'Do not tap yet!', false);
+        SoundFX.beep();
+
         reflexTimeout = setTimeout(() => {
           reflexState = 'ready';
-          pad.style.background = '#2ecc71';
-          pad.textContent = 'TAP NOW!';
           reflexStartTime = performance.now();
-        }, 1200 + Math.random() * 2500);
+          updateReflexUI('#2ecc71', 'TAP NOW!!', 'Tap as fast as you can!', true);
+          SoundFX.play(900, 'square', 0.08);
+        }, 1500 + Math.random() * 2500);
+
       } else if (reflexState === 'waiting') {
         clearTimeout(reflexTimeout);
         reflexState = 'idle';
-        pad.style.background = '#c0392b';
-        pad.textContent = 'TOO EARLY! TAP AGAIN';
+        SoundFX.error();
+        updateReflexUI('#e74c3c', 'FALSE START! ⚠️', 'Tapped too early. Tap to retry this round.', false);
+
       } else if (reflexState === 'ready') {
         const ms = Math.floor(performance.now() - reflexStartTime);
-        reflexState = 'idle';
-        pad.style.background = '#222a3d';
-        pad.textContent = 'TAP TO TRY AGAIN';
-        document.getElementById('reflexResult').textContent = `Reaction: ${ms} ms!`;
+        reflexTrials.push(ms);
+        SoundFX.success();
+
+        if (reflexTrials.length < MAX_TRIALS) {
+          reflexState = 'idle';
+          const avg = Math.floor(reflexTrials.reduce((a, b) => a + b, 0) / reflexTrials.length);
+          document.getElementById('reflexAvg').textContent = `AVG: ${avg} ms`;
+          document.getElementById('trialCounter').textContent = `TRIAL: ${reflexTrials.length + 1} / ${MAX_TRIALS}`;
+          updateReflexUI('#0984e3', `${ms} MS! ⚡`, 'Tap to proceed to next round.', false);
+        } else {
+          reflexState = 'idle';
+          const finalAvg = Math.floor(reflexTrials.reduce((a, b) => a + b, 0) / MAX_TRIALS);
+          document.getElementById('reflexAvg').textContent = `FINAL AVG: ${finalAvg} ms`;
+          document.getElementById('trialCounter').textContent = `COMPLETE ✅`;
+
+          let rank = 'SLUGGISH 🐢';
+          let rankColor = '#e74c3c';
+          if (finalAvg < 180) { rank = 'ESPORTS PRO ⚡'; rankColor = '#00f2fe'; }
+          else if (finalAvg < 220) { rank = 'MASTER CLASS 🥇'; rankColor = '#ffd700'; }
+          else if (finalAvg < 280) { rank = 'ABOVE AVERAGE 🥈'; rankColor = '#2ecc71'; }
+          else if (finalAvg < 350) { rank = 'CASUAL RUNNER 🥉'; rankColor = '#3498db'; }
+
+          const rankEl = document.getElementById('reflexRank');
+          rankEl.textContent = `RANK: ${rank}`;
+          rankEl.style.color = rankColor;
+
+          updateReflexUI('#6c5ce7', `${finalAvg} MS BENCHMARK`, 'Tap to start a new 5-round test.', false);
+          reflexTrials = [];
+        }
       }
     }
 
-    // --- 3. MATH RUSH MINI-GAME ---
+    // ==============================================
+    // 2. MATH OLYMPIAD BLITZ (RAPID FORMULA LEAGUE)
+    // ==============================================
     let mathScore = 0;
-    let currentCorrect = 0;
+    let mathHighScore = 0;
+    let mathCombo = 1;
+    let mathCorrectAnswer = 0;
+    let mathTimerInterval = null;
+    let mathTimeRemaining = 100;
+    let mathDecayRate = 0.8;
 
     function openMathModal() {
       document.getElementById('mathModal').style.display = 'flex';
       mathScore = 0;
-      nextMath();
+      mathCombo = 1;
+      mathDecayRate = 0.8;
+      document.getElementById('mathScore').textContent = 'SCORE: 0';
+      document.getElementById('mathCombo').textContent = 'COMBO: 1x';
+      nextMathProblem();
+      startMathTimer();
     }
 
-    function nextMath() {
-      const a = Math.floor(Math.random() * 12) + 1;
-      const b = Math.floor(Math.random() * 12) + 1;
-      const isAdd = Math.random() > 0.5;
-      const ans = isAdd ? a + b : a * b;
-      currentCorrect = ans;
+    function startMathTimer() {
+      clearInterval(mathTimerInterval);
+      mathTimeRemaining = 100;
+      const bar = document.getElementById('mathTimerBar');
 
-      document.getElementById('mathQuestion').textContent = `${a} ${isAdd ? '+' : '×'} ${b} = ?`;
-      document.getElementById('mathScore').textContent = `Score: ${mathScore}`;
+      mathTimerInterval = setInterval(() => {
+        mathTimeRemaining -= mathDecayRate;
+        bar.style.width = Math.max(0, mathTimeRemaining) + '%';
 
-      const fakeAns = ans + (Math.random() > 0.5 ? 2 : -2);
-      const isFirst = Math.random() > 0.5;
+        if (mathTimeRemaining <= 0) {
+          clearInterval(mathTimerInterval);
+          SoundFX.error();
+          triggerBoxShake('mathBox');
+          alert(`TIME UP! ⏰\nFinal Score: ${mathScore}\nHighest Combo: ${mathCombo}x`);
+          closeModal('mathModal');
+        }
+      }, 50);
+    }
 
-      const opt0 = document.getElementById('mOpt0');
-      const opt1 = document.getElementById('mOpt1');
+    function nextMathProblem() {
+      const level = Math.floor(mathScore / 30);
+      let num1, num2, op, answer;
 
-      opt0.textContent = isFirst ? ans : fakeAns;
-      opt1.textContent = isFirst ? fakeAns : ans;
-      opt0.dataset.val = isFirst ? ans : fakeAns;
-      opt1.dataset.val = isFirst ? fakeAns : ans;
+      if (level === 0) {
+        num1 = Math.floor(Math.random() * 12) + 2;
+        num2 = Math.floor(Math.random() * 12) + 2;
+        op = '+';
+        answer = num1 + num2;
+      } else if (level === 1) {
+        num1 = Math.floor(Math.random() * 25) + 5;
+        num2 = Math.floor(Math.random() * num1);
+        op = '-';
+        answer = num1 - num2;
+      } else if (level === 2) {
+        num1 = Math.floor(Math.random() * 9) + 2;
+        num2 = Math.floor(Math.random() * 9) + 2;
+        op = '×';
+        answer = num1 * num2;
+      } else {
+        const ops = ['+', '-', '×'];
+        op = ops[Math.floor(Math.random() * ops.length)];
+        num1 = Math.floor(Math.random() * 15) + 2;
+        num2 = Math.floor(Math.random() * 12) + 2;
+        if (op === '+') answer = num1 + num2;
+        if (op === '-') answer = num1 - num2;
+        if (op === '×') answer = num1 * num2;
+      }
+
+      mathCorrectAnswer = answer;
+      document.getElementById('mathQuestion').textContent = `${num1} ${op} ${num2} = ?`;
+
+      const offset = (Math.floor(Math.random() * 3) + 1) * (Math.random() > 0.5 ? 1 : -1);
+      const decoy = answer + offset;
+
+      const isFirstSlot = Math.random() > 0.5;
+      const b0 = document.getElementById('mOpt0');
+      const b1 = document.getElementById('mOpt1');
+
+      b0.textContent = isFirstSlot ? answer : decoy;
+      b0.dataset.val = isFirstSlot ? answer : decoy;
+
+      b1.textContent = isFirstSlot ? decoy : answer;
+      b1.dataset.val = isFirstSlot ? decoy : answer;
+
+      mathTimeRemaining = 100;
     }
 
     function answerMath(optIndex) {
       const btn = document.getElementById('mOpt' + optIndex);
-      if (parseInt(btn.dataset.val) === currentCorrect) {
-        mathScore += 10;
-        nextMath();
+      const selected = parseInt(btn.dataset.val, 10);
+
+      if (selected === mathCorrectAnswer) {
+        SoundFX.success();
+        mathScore += 10 * mathCombo;
+        if (mathScore > mathHighScore) {
+          mathHighScore = mathScore;
+          document.getElementById('mathHigh').textContent = `BEST: ${mathHighScore}`;
+        }
+        mathCombo = Math.min(5, mathCombo + 1);
+        mathDecayRate += 0.05;
+        document.getElementById('mathScore').textContent = `SCORE: ${mathScore}`;
+        document.getElementById('mathCombo').textContent = `COMBO: ${mathCombo}x`;
+        nextMathProblem();
       } else {
-        alert("Incorrect! Game Over.");
-        closeModal('mathModal');
+        SoundFX.error();
+        triggerBoxShake('mathBox');
+        mathCombo = 1;
+        document.getElementById('mathCombo').textContent = `COMBO: 1x`;
+        mathTimeRemaining = Math.max(10, mathTimeRemaining - 25);
       }
     }
+
+    function triggerBoxShake(boxId) {
+      const el = document.getElementById(boxId);
+      el.classList.add('shake-anim');
+      setTimeout(() => el.classList.remove('shake-anim'), 350);
+    }
+
   </script>
 </body>
 </html>
