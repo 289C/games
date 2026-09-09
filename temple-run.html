@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Temple Run 3D - Ancient Temple Escape</title>
+
+  <!-- Three.js 3D Engine -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <style>
+    :root {
+      --gold: #ffd700;
+      --fire-orange: #ff5722;
+      --ancient-stone: #1a1e24;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+    }
+
+    body {
+      background: #05080e;
+      color: #fff;
+      font-family: system-ui, -apple-system, sans-serif;
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Animated Instagram Banner */
+    .ig-banner {
+      position: absolute;
+      top: 12px;
+      z-index: 30;
+      width: 90%;
+      max-width: 420px;
+      padding: 8px 16px;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      border-radius: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.25);
+      animation: pulseBanner 4s infinite alternate ease-in-out;
+    }
+
+    @keyframes pulseBanner {
+      0% { box-shadow: 0 0 15px rgba(255, 87, 34, 0.3); }
+      100% { box-shadow: 0 0 25px rgba(255, 215, 0, 0.45); }
+    }
+
+    .ig-profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .ig-badge {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 16px;
+    }
+
+    .ig-text {
+      text-align: left;
+      line-height: 1.2;
+    }
+
+    .ig-handle {
+      font-size: 13px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .verified-dot {
+      width: 13px;
+      height: 13px;
+      background: #0095f6;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 8px;
+    }
+
+    .ig-sub {
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.65);
+    }
+
+    .ig-btn {
+      background: linear-gradient(135deg, #f58529, #dd2a7b, #8134af);
+      color: #fff;
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 6px 14px;
+      border-radius: 20px;
+    }
+
+    /* Temple Run HUD */
+    .hud {
+      position: absolute;
+      top: 68px;
+      width: 90%;
+      max-width: 440px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 20;
+    }
+
+    .hud-box {
+      background: rgba(10, 15, 25, 0.8);
+      border: 1px solid rgba(255, 215, 0, 0.35);
+      border-radius: 16px;
+      padding: 6px 14px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .score-title {
+      font-size: 10px;
+      color: var(--gold);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .score-value {
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: 1px;
+    }
+
+    #canvas3d {
+      position: absolute;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
+    }
+
+    /* Overlays */
+    .overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 40;
+      background: radial-gradient(circle at center, rgba(16, 24, 40, 0.94), rgba(4, 7, 14, 0.98));
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      text-align: center;
+    }
+
+    .game-title {
+      font-size: 34px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      background: linear-gradient(135deg, #ffd700, #ff5722);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+
+    .game-sub {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 24px;
+      max-width: 320px;
+      line-height: 1.5;
+    }
+
+    .action-btn {
+      width: 240px;
+      padding: 14px 0;
+      border-radius: 30px;
+      border: none;
+      font-size: 15px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      background: linear-gradient(135deg, #ffd700, #ff5722);
+      color: #0d121c;
+      box-shadow: 0 6px 25px rgba(255, 87, 34, 0.45);
+      transition: transform 0.15s;
+    }
+
+    .action-btn:active {
+      transform: scale(0.95);
+    }
+
+    .controls-hint {
+      position: absolute;
+      bottom: 24px;
+      z-index: 20;
+      font-size: 11px;
+      font-weight: 800;
+      color: rgba(255, 255, 255, 0.55);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Instagram Header -->
+  <div class="ig-banner">
+    <div class="ig-profile">
+      <div class="ig-badge">S</div>
+      <div class="ig-text">
+        <div class="ig-handle">@_satish_official_16 <span class="verified-dot">✓</span></div>
+        <div class="ig-sub">Developer on Instagram</div>
+      </div>
+    </div>
+    <a href="https://instagram.com/_satish_official_16" target="_blank" class="ig-btn">Follow ↗</a>
+  </div>
+
+  <!-- HUD Displays -->
+  <div class="hud">
+    <div class="hud-box">
+      <span style="font-size:18px;">🪙</span>
+      <div>
+        <div class="score-title">Coins</div>
+        <div class="score-value" id="coinScore">0</div>
+      </div>
+    </div>
+
+    <div class="hud-box">
+      <span style="font-size:18px;">🏃</span>
+      <div>
+        <div class="score-title">Meters</div>
+        <div class="score-value" id="distScore">0m</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="controls-hint">Swipe / Arrows: Left • Right • Jump • Slide</div>
+
+  <!-- 3D Canvas -->
+  <canvas id="canvas3d"></canvas>
+
+  <!-- Start Overlay -->
+  <div class="overlay" id="startScreen">
+    <h1 class="game-title">TEMPLE RUN 3D</h1>
+    <p class="game-sub">Escape the ancient temple beast. Dodge wooden spikes, slide under fiery archways, and grab golden relics!</p>
+    <button class="action-btn" onclick="startGame()">Start Run 🏃</button>
+  </div>
+
+  <!-- Game Over Overlay -->
+  <div class="overlay" id="gameOverScreen" style="display:none;">
+    <h1 class="game-title" style="background:linear-gradient(135deg,#ff3838,#ff5722); -webkit-background-clip:text;">DEMON CAUGHT YOU!</h1>
+    <p class="game-sub" id="finalStatsText">You ran 0 meters and collected 0 coins.</p>
+    <button class="action-btn" onclick="startGame()">Run Again 🔁</button>
+  </div>
+
+  <script>
+    // Audio Synthesizer
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playSfx(type) {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      const now = audioCtx.currentTime;
+
+      if (type === 'coin') {
+        osc.frequency.setValueAtTime(987, now);
+        osc.frequency.exponentialRampToValueAtTime(1318, now + 0.12);
+        gain.gain.setValueAtTime(0.25, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.12);
+        osc.start(now); osc.stop(now + 0.12);
+      } else if (type === 'jump') {
+        osc.frequency.setValueAtTime(260, now);
+        osc.frequency.exponentialRampToValueAtTime(520, now + 0.18);
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.18);
+        osc.start(now); osc.stop(now + 0.18);
+      } else if (type === 'slide') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(180, now);
+        osc.frequency.linearRampToValueAtTime(80, now + 0.25);
+        gain.gain.setValueAtTime(0.35, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.25);
+        osc.start(now); osc.stop(now + 0.25);
+      } else if (type === 'crash') {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(120, now);
+        osc.frequency.exponentialRampToValueAtTime(40, now + 0.4);
+        gain.gain.setValueAtTime(0.5, now);
+        gain.gain.linearRampToValueAtTime(0.01, now + 0.4);
+        osc.start(now); osc.stop(now + 0.4);
+      }
+    }
+
+    // 3D Scene Variables
+    let scene, camera, renderer;
+    let player, beast;
+    const LANES = [-2.6, 0, 2.6];
+    let currentLane = 1; // 0 = Left, 1 = Center, 2 = Right
+    let targetX = 0;
+
+    // Movement & Physics
+    let isRunning = false;
+    let speed = 0.55;
+    let distanceTraveled = 0;
+    let coinsCollected = 0;
+
+    let isJumping = false;
+    let isSliding = false;
+    let jumpVelocity = 0;
+    const GRAVITY = -0.016;
+
+    // Track Segments & Objects
+    const trackSegments = [];
+    const coins = [];
+    const obstacles = [];
+    const TRACK_PIECE_LENGTH = 30;
+
+    function init3D() {
+      const canvas = document.getElementById('canvas3d');
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x060c18);
+      scene.fog = new THREE.FogExp2(0x060c18, 0.022);
+
+      camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 1000);
+      camera.position.set(0, 4.2, 7.5);
+      camera.lookAt(0, 1.5, -6);
+
+      renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+      // Ancient Temple Lighting
+      const ambient = new THREE.AmbientLight(0xffffff, 0.65);
+      scene.add(ambient);
+
+      const torchLight = new THREE.PointLight(0xff7700, 2.5, 35);
+      torchLight.position.set(0, 6, 2);
+      scene.add(torchLight);
+
+      const moonLight = new THREE.DirectionalLight(0x4477ff, 0.75);
+      moonLight.position.set(10, 20, 10);
+      scene.add(moonLight);
+
+      // Create Player (Runner Mesh Group)
+      player = new THREE.Group();
+      const bodyMat = new THREE.MeshStandardMaterial({ color: 0x2288ff, roughness: 0.3 });
+      const skinMat = new THREE.MeshStandardMaterial({ color: 0xffccaa });
+      
+      const torso = new THREE.Mesh(new THREE.BoxGeometry(0.8, 1.1, 0.4), bodyMat);
+      torso.position.y = 1.3;
+      const head = new THREE.Mesh(new THREE.SphereGeometry(0.3, 16, 16), skinMat);
+      head.position.y = 2.1;
+      
+      player.add(torso);
+      player.add(head);
+      scene.add(player);
+
+      // Create Pursuing Temple Beast
+      beast = new THREE.Group();
+      const beastMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.8 });
+      const eyeMat = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+      
+      const beastBody = new THREE.Mesh(new THREE.BoxGeometry(1.6, 1.8, 1.2), beastMat);
+      beastBody.position.y = 1.4;
+      const leftEye = new THREE.Mesh(new THREE.SphereGeometry(0.12, 8, 8), eyeMat);
+      leftEye.position.set(-0.35, 1.8, -0.6);
+      const rightEye = leftEye.clone();
+      rightEye.position.x = 0.35;
+
+      beast.add(beastBody);
+      beast.add(leftEye);
+      beast.add(rightEye);
+      beast.position.set(0, 0, 4.2);
+      scene.add(beast);
+
+      // Initialize Modular Running Track
+      for (let i = 0; i < 7; i++) {
+        spawnTrackSegment(-i * TRACK_PIECE_LENGTH);
+      }
+
+      setupControls();
+      window.addEventListener('resize', onWindowResize);
+      animate();
+    }
+
+    function spawnTrackSegment(zPos) {
+      const group = new THREE.Group();
+
+      // Stone Bridge
+      const roadGeo = new THREE.BoxGeometry(8.5, 0.6, TRACK_PIECE_LENGTH);
+      const roadMat = new THREE.MeshStandardMaterial({ color: 0x18202d, roughness: 0.7 });
+      const road = new THREE.Mesh(roadGeo, roadMat);
+      road.position.set(0, -0.3, 0);
+      group.add(road);
+
+      // Left & Right Stone Curbs / Rails
+      const curbGeo = new THREE.BoxGeometry(0.6, 0.8, TRACK_PIECE_LENGTH);
+      const curbMat = new THREE.MeshStandardMaterial({ color: 0x334455, roughness: 0.5 });
+      const leftCurb = new THREE.Mesh(curbGeo, curbMat);
+      leftCurb.position.set(-4.25, 0.2, 0);
+      const rightCurb = leftCurb.clone();
+      rightCurb.position.x = 4.25;
+      group.add(leftCurb);
+      group.add(rightCurb);
+
+      group.position.z = zPos;
+      scene.add(group);
+      trackSegments.push(group);
+
+      // Only spawn obstacles beyond the starting safe zone
+      if (zPos < -30) {
+        spawnObstacleAndCoins(zPos);
+      }
+    }
+
+    function spawnObstacleAndCoins(zCenter) {
+      const lane = Math.floor(Math.random() * 3);
+      const obstacleType = Math.random();
+
+      if (obstacleType < 0.45) {
+        // High Arch / Fire Beam -> Player must SLIDE
+        const archGeo = new THREE.BoxGeometry(8, 1.2, 0.6);
+        const archMat = new THREE.MeshStandardMaterial({ color: 0xff3b30, emissive: 0x881100, roughness: 0.3 });
+        const arch = new THREE.Mesh(archGeo, archMat);
+        arch.position.set(0, 2.0, zCenter + (Math.random() * 10 - 5));
+        arch.userData = { type: 'slide' };
+        scene.add(arch);
+        obstacles.push(arch);
+      } else {
+        // Tree Log / Stone Hurdle -> Player must JUMP
+        const hurdleGeo = new THREE.BoxGeometry(2.4, 0.8, 0.6);
+        const hurdleMat = new THREE.MeshStandardMaterial({ color: 0x5c3a21 });
+        const hurdle = new THREE.Mesh(hurdleGeo, hurdleMat);
+        hurdle.position.set(LANES[lane], 0.4, zCenter + (Math.random() * 10 - 5));
+        hurdle.userData = { type: 'jump', lane: lane };
+        scene.add(hurdle);
+        obstacles.push(hurdle);
+      }
+
+      // Spawn Golden Coins along lanes
+      const coinLane = (lane + 1) % 3;
+      for (let i = 0; i < 4; i++) {
+        const coinGeo = new THREE.CylinderGeometry(0.3, 0.3, 0.08, 16);
+        const coinMat = new THREE.MeshStandardMaterial({ color: 0xffd700, metalness: 0.8, roughness: 0.2, emissive: 0xffaa00, emissiveIntensity: 0.3 });
+        const coin = new THREE.Mesh(coinGeo, coinMat);
+        coin.rotation.x = Math.PI / 2;
+        coin.position.set(LANES[coinLane], 1.2, zCenter - 6 + (i * 2.8));
+        scene.add(coin);
+        coins.push(coin);
+      }
+    }
+
+    // Controls: Swipe and Keyboard Handling
+    let touchStartX = 0, touchStartY = 0;
+    function setupControls() {
+      window.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+        touchStartY = e.changedTouches[0].screenY;
+      }, { passive: true });
+
+      window.addEventListener('touchend', (e) => {
+        const diffX = e.changedTouches[0].screenX - touchStartX;
+        const diffY = e.changedTouches[0].screenY - touchStartY;
+
+        if (Math.abs(diffX) > Math.abs(diffY)) {
+          if (diffX > 35) moveLane(1);      // Swipe Right
+          else if (diffX < -35) moveLane(-1); // Swipe Left
+        } else {
+          if (diffY < -35) triggerJump();     // Swipe Up
+          else if (diffY > 35) triggerSlide(); // Swipe Down
+        }
+      }, { passive: true });
+
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft' || e.key === 'a') moveLane(-1);
+        if (e.key === 'ArrowRight' || e.key === 'd') moveLane(1);
+        if (e.key === 'ArrowUp' || e.key === 'w' || e.key === ' ') triggerJump();
+        if (e.key === 'ArrowDown' || e.key === 's') triggerSlide();
+      });
+    }
+
+    function moveLane(dir) {
+      if (!isRunning) return;
+      currentLane = Math.max(0, Math.min(2, currentLane + dir));
+      targetX = LANES[currentLane];
+    }
+
+    function triggerJump() {
+      if (!isRunning || isJumping || isSliding) return;
+      isJumping = true;
+      jumpVelocity = 0.28;
+      playSfx('jump');
+    }
+
+    function triggerSlide() {
+      if (!isRunning || isSliding) return;
+      isSliding = true;
+      playSfx('slide');
+      player.scale.set(1, 0.45, 1);
+      setTimeout(() => {
+        player.scale.set(1, 1, 1);
+        isSliding = false;
+      }, 700);
+    }
+
+    function updatePhysics() {
+      if (!isRunning) return;
+
+      distanceTraveled += speed * 0.4;
+      speed = Math.min(0.95, speed + 0.0001); // Gradual Temple Run acceleration
+      document.getElementById('distScore').textContent = Math.floor(distanceTraveled) + 'm';
+
+      // Smooth Lane Switching
+      player.position.x += (targetX - player.position.x) * 0.22;
+
+      // Jump Trajectory
+      if (isJumping) {
+        player.position.y += jumpVelocity;
+        jumpVelocity += GRAVITY;
+        if (player.position.y <= 0) {
+          player.position.y = 0;
+          isJumping = false;
+        }
+      }
+
+      // Track Streaming Forward
+      trackSegments.forEach(seg => {
+        seg.position.z += speed;
+        if (seg.position.z > 20) {
+          const furthestZ = Math.min(...trackSegments.map(s => s.position.z));
+          seg.position.z = furthestZ - TRACK_PIECE_LENGTH;
+          spawnObstacleAndCoins(seg.position.z);
+        }
+      });
+
+      // Move & Spin Coins
+      for (let i = coins.length - 1; i >= 0; i--) {
+        const c = coins[i];
+        c.position.z += speed;
+        c.rotation.z += 0.05;
+
+        // Collision Check with Player
+        if (Math.abs(c.position.z - player.position.z) < 1.1 && Math.abs(c.position.x - player.position.x) < 0.9 && player.position.y < 2.0) {
+          scene.remove(c);
+          coins.splice(i, 1);
+          coinsCollected++;
+          document.getElementById('coinScore').textContent = coinsCollected;
+          playSfx('coin');
+          continue;
+        }
+
+        if (c.position.z > 12) {
+          scene.remove(c);
+          coins.splice(i, 1);
+        }
+      }
+
+      // Obstacle Detection & Collision Check
+      for (let i = obstacles.length - 1; i >= 0; i--) {
+        const obs = obstacles[i];
+        obs.position.z += speed;
+
+        if (Math.abs(obs.position.z - player.position.z) < 0.9) {
+          if (obs.userData.type === 'jump' && Math.abs(obs.position.x - player.position.x) < 0.9) {
+            if (player.position.y < 0.7) {
+              gameOver();
+              return;
+            }
+          } else if (obs.userData.type === 'slide') {
+            if (!isSliding) {
+              gameOver();
+              return;
+            }
+          }
+        }
+
+        if (obs.position.z > 12) {
+          scene.remove(obs);
+          obstacles.splice(i, 1);
+        }
+      }
+
+      // Demon Beast Breathing / Bobbing Animation
+      const time = performance.now() * 0.006;
+      beast.position.x = player.position.x * 0.75;
+      beast.position.y = Math.sin(time) * 0.15;
+    }
+
+    function startGame() {
+      // Clean up previous runs
+      obstacles.forEach(o => scene.remove(o));
+      coins.forEach(c => scene.remove(c));
+      obstacles.length = 0;
+      coins.length = 0;
+
+      currentLane = 1;
+      targetX = 0;
+      player.position.set(0, 0, 0);
+      player.scale.set(1, 1, 1);
+      isJumping = false;
+      isSliding = false;
+
+      distanceTraveled = 0;
+      coinsCollected = 0;
+      speed = 0.55;
+
+      document.getElementById('coinScore').textContent = '0';
+      document.getElementById('distScore').textContent = '0m';
+      document.getElementById('startScreen').style.display = 'none';
+      document.getElementById('gameOverScreen').style.display = 'none';
+
+      isRunning = true;
+    }
+
+    function gameOver() {
+      isRunning = false;
+      playSfx('crash');
+      if (navigator.vibrate) navigator.vibrate(200);
+
+      document.getElementById('finalStatsText').textContent = 
+        `You ran ${Math.floor(distanceTraveled)} meters and collected ${coinsCollected} golden coins!`;
+            document.getElementById('gameOverScreen').style.display = 'flex';
+    }
+
+    function onWindowResize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      updatePhysics();
+      renderer.render(scene, camera);
+    }
+
+    window.onload = init3D;
+  </script>
+</body>
+</html>
