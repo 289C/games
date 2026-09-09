@@ -11,12 +11,13 @@
   <style>
     :root {
       --bg: #07090e;
-      --card-bg: rgba(18, 24, 38, 0.9);
+      --card-bg: rgba(18, 24, 38, 0.92);
       --border: rgba(255, 255, 255, 0.14);
       --cyan: #00f2fe;
       --pink: #ff007f;
       --gold: #ffd700;
       --red: #ff3838;
+      --green: #2ecc71;
     }
 
     * {
@@ -54,6 +55,7 @@
       align-items: center;
       justify-content: space-between;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+      z-index: 10;
     }
 
     .ig-profile {
@@ -109,6 +111,7 @@
       font-weight: 800;
       padding: 6px 14px;
       border-radius: 20px;
+      box-shadow: 0 2px 10px rgba(221, 42, 123, 0.4);
     }
 
     /* Game HUD */
@@ -131,7 +134,7 @@
       letter-spacing: 0.5px;
     }
 
-    /* Strict 16:9 YouTube Widescreen Container */
+    /* 16:9 Screen Container */
     .screen-16-9 {
       position: relative;
       width: min(95vw, 440px);
@@ -139,8 +142,8 @@
       border: 2px solid rgba(255, 255, 255, 0.16);
       border-radius: 18px;
       overflow: hidden;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9), 0 0 20px rgba(0, 242, 254, 0.1);
-      background: #090a0f;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9), 0 0 25px rgba(0, 242, 254, 0.15);
+      background: #06070a;
     }
 
     #canvas3d {
@@ -149,10 +152,10 @@
       display: block;
     }
 
-    /* Troll Alert Message */
+    /* Troll Message Banner */
     #trollMsg {
       position: absolute;
-      top: 15px;
+      top: 14px;
       left: 50%;
       transform: translateX(-50%) scale(0);
       background: rgba(255, 56, 56, 0.95);
@@ -163,12 +166,12 @@
       border-radius: 20px;
       z-index: 20;
       letter-spacing: 0.5px;
-      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       box-shadow: 0 0 15px rgba(255, 56, 56, 0.8);
       white-space: nowrap;
     }
 
-    /* On-Screen Mobile Controls */
+    /* Mobile Controls */
     .controls-panel {
       width: 95%;
       max-width: 440px;
@@ -185,10 +188,10 @@
     }
 
     .ctrl-btn {
-      width: 62px;
-      height: 62px;
-      border-radius: 18px;
-      background: rgba(22, 28, 44, 0.9);
+      width: 64px;
+      height: 64px;
+      border-radius: 20px;
+      background: rgba(22, 28, 44, 0.92);
       border: 1px solid rgba(255, 255, 255, 0.2);
       color: #fff;
       font-size: 24px;
@@ -198,6 +201,8 @@
       justify-content: center;
       cursor: pointer;
       box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(8px);
+      transition: transform 0.08s ease, background 0.08s ease;
     }
 
     .ctrl-btn:active {
@@ -206,9 +211,10 @@
     }
 
     .btn-jump {
-      width: 82px;
-      background: linear-gradient(135deg, rgba(255, 56, 56, 0.8), #c0392b);
+      width: 86px;
+      background: linear-gradient(135deg, rgba(255, 56, 56, 0.85), #c0392b);
       border-color: rgba(255, 56, 56, 0.5);
+      box-shadow: 0 6px 20px rgba(255, 56, 56, 0.4);
     }
 
     .btn-jump:active {
@@ -232,19 +238,19 @@
     <a href="https://instagram.com/_satish_official_16" target="_blank" class="follow-btn">Follow ↗</a>
   </header>
 
-  <!-- Stage & Death Status Bar -->
+  <!-- Level & Death Stats Bar -->
   <div class="hud-box">
     <div class="hud-stat" style="color:var(--gold);" id="levelText">STAGE: LEVEL 1/100</div>
     <div class="hud-stat" style="color:var(--red);" id="deathText">DEATHS: 0</div>
   </div>
 
-  <!-- 16:9 Screen Box -->
+  <!-- 16:9 Screen Game Display -->
   <div class="screen-16-9" id="gameFrame">
     <div id="trollMsg">😈 VOID EXPANDED!</div>
     <canvas id="canvas3d"></canvas>
   </div>
 
-  <!-- Responsive Controls -->
+  <!-- On-Screen Controls -->
   <div class="controls-panel">
     <div class="ctrl-group">
       <div class="ctrl-btn" id="btnLeft">◀</div>
@@ -256,7 +262,9 @@
   </div>
 
   <script>
-    // Audio Synthesizer
+    // ==========================================
+    // AUDIO SYNTHESIZER
+    // ==========================================
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     function playBeep(freq, type = 'sine', duration = 0.08, gainVal = 0.2) {
       if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -272,28 +280,39 @@
       osc.stop(audioCtx.currentTime + duration);
     }
 
-    // 3D Engine Setup
+    // ==========================================
+    // 3D SCENE & ENGINE ARCHITECTURE
+    // ==========================================
     let scene, camera, renderer;
-    let playerMesh;
+    let playerGroup, playerBody, playerEye, playerLight;
     let flagGroup = null;
     let currentLevel = 1;
     let deaths = 0;
-    const gravity = -0.016;
+
+    // Physics Engine Constants
+    const GRAVITY = -0.0165;
+    const HORIZONTAL_ACCEL = 0.035;
+    const MAX_SPEED = 0.16;
+    const FRICTION = 0.78;
+    const JUMP_POWER = 0.355;
 
     const platforms = [];
     const spikes = [];
     const traps = [];
+    const particles = [];
 
+    // Smooth Physics State
     const pState = {
-      x: -8.5,
+      x: -8.0,
       y: 1.0,
-      z: 0,
       vx: 0,
       vy: 0,
-      speed: 0.13,
-      jumpForce: 0.32,
       isGrounded: false,
-      dead: false
+      coyoteTimer: 0,
+      jumpBuffer: 0,
+      dead: false,
+      scaleX: 1,
+      scaleY: 1
     };
 
     const keys = { left: false, right: false, jump: false };
@@ -303,39 +322,56 @@
       const canvas = document.getElementById('canvas3d');
 
       scene = new THREE.Scene();
-      scene.background = new THREE.Color(0x090a0f);
+      scene.background = new THREE.Color(0x06070a);
+      scene.fog = new THREE.FogExp2(0x06070a, 0.025);
 
-      camera = new THREE.PerspectiveCamera(50, 16 / 9, 0.1, 100);
-      camera.position.set(0, 3.2, 19);
-      camera.lookAt(0, 0, 0);
+      camera = new THREE.PerspectiveCamera(48, 16 / 9, 0.1, 100);
+      camera.position.set(0, 2.8, 18);
+      camera.lookAt(0, 0.4, 0);
 
-      renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+      renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       renderer.setSize(frame.clientWidth, frame.clientHeight);
+      renderer.shadowMap.enabled = true;
 
-      const ambient = new THREE.AmbientLight(0xffffff, 0.8);
-      scene.add(ambient);
+      // Dynamic Stage Lighting
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.55);
+      scene.add(ambientLight);
 
-      const dirLight = new THREE.DirectionalLight(0xffffff, 0.7);
-      dirLight.position.set(10, 20, 15);
-      scene.add(dirLight);
+      const mainLight = new THREE.DirectionalLight(0xa5b1c2, 0.85);
+      mainLight.position.set(5, 15, 12);
+      scene.add(mainLight);
 
-      // Player Block Mesh
-      playerMesh = new THREE.Group();
-      const body = new THREE.Mesh(
-        new THREE.BoxGeometry(0.85, 0.85, 0.85),
-        new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2 })
-      );
-      playerMesh.add(body);
+      // Backlit Neon Rim
+      const rimLight = new THREE.PointLight(0x00f2fe, 0.8, 30);
+      rimLight.position.set(0, 8, -6);
+      scene.add(rimLight);
 
-      const eye = new THREE.Mesh(
-        new THREE.BoxGeometry(0.14, 0.22, 0.08),
-        new THREE.MeshBasicMaterial({ color: 0x111111 })
-      );
-      eye.position.set(0.18, 0.14, 0.44);
-      playerMesh.add(eye);
+      // Player Entity Setup
+      playerGroup = new THREE.Group();
+      
+      const bodyGeo = new THREE.BoxGeometry(0.85, 0.85, 0.85);
+      const bodyMat = new THREE.MeshStandardMaterial({
+        color: 0xffffff,
+        roughness: 0.15,
+        metalness: 0.1
+      });
+      playerBody = new THREE.Mesh(bodyGeo, bodyMat);
+      playerGroup.add(playerBody);
 
-      scene.add(playerMesh);
+      // Cute Dynamic Eye
+      const eyeGeo = new THREE.BoxGeometry(0.12, 0.22, 0.08);
+      const eyeMat = new THREE.MeshBasicMaterial({ color: 0x111111 });
+      playerEye = new THREE.Mesh(eyeGeo, eyeMat);
+      playerEye.position.set(0.2, 0.12, 0.44);
+      playerGroup.add(playerEye);
+
+      // Player Aura PointLight
+      playerLight = new THREE.PointLight(0x00f2fe, 1.2, 5);
+      playerLight.position.set(0, 0, 0.6);
+      playerGroup.add(playerLight);
+
+      scene.add(playerGroup);
 
       bindControls();
       loadLevel(1);
@@ -343,12 +379,28 @@
       animate();
     }
 
-    function createPlatform(x, y, w, h, color = 0x242836) {
+    // ==========================================
+    // PROCEDURAL BUILDER TOOLS
+    // ==========================================
+    function createPlatform(x, y, w, h, color = 0x1e2738, glowBorder = true) {
       const geo = new THREE.BoxGeometry(w, h, 2.2);
-      const mat = new THREE.MeshStandardMaterial({ color, roughness: 0.6 });
+      const mat = new THREE.MeshStandardMaterial({
+        color,
+        roughness: 0.5,
+        metalness: 0.2
+      });
       const mesh = new THREE.Mesh(geo, mat);
       mesh.position.set(x, y, 0);
-      mesh.userData = { w, h, falling: false };
+      mesh.userData = { w, h, initialX: x, initialY: y, falling: false };
+
+      if (glowBorder) {
+        const borderGeo = new THREE.BoxGeometry(w, 0.08, 2.22);
+        const borderMat = new THREE.MeshBasicMaterial({ color: 0x00f2fe, transparent: true, opacity: 0.6 });
+        const border = new THREE.Mesh(borderGeo, borderMat);
+        border.position.y = h / 2 + 0.02;
+        mesh.add(border);
+      }
+
       scene.add(mesh);
       platforms.push(mesh);
       return mesh;
@@ -356,12 +408,17 @@
 
     function createSpike(x, y, scale = 1, pointingUp = true) {
       const geo = new THREE.ConeGeometry(0.32 * scale, 0.75 * scale, 4);
-      const mat = new THREE.MeshStandardMaterial({ color: 0xff3838, roughness: 0.3 });
+      const mat = new THREE.MeshStandardMaterial({
+        color: 0xff3838,
+        emissive: 0x7f0000,
+        emissiveIntensity: 0.4,
+        roughness: 0.2
+      });
       const mesh = new THREE.Mesh(geo, mat);
       mesh.rotation.y = Math.PI / 4;
       if (!pointingUp) mesh.rotation.z = Math.PI;
       mesh.position.set(x, y, 0);
-      mesh.userData = { scale, active: false };
+      mesh.userData = { scale, active: false, initialY: y };
       scene.add(mesh);
       spikes.push(mesh);
       return mesh;
@@ -369,19 +426,23 @@
 
     function createFlag(x, y) {
       const group = new THREE.Group();
-      const pole = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.06, 0.06, 2.4, 8),
-        new THREE.MeshStandardMaterial({ color: 0xdddddd })
-      );
+
+      const poleGeo = new THREE.CylinderGeometry(0.06, 0.06, 2.4, 8);
+      const poleMat = new THREE.MeshStandardMaterial({ color: 0xe0e0e0 });
+      const pole = new THREE.Mesh(poleGeo, poleMat);
       pole.position.y = 1.2;
       group.add(pole);
 
-      const cloth = new THREE.Mesh(
-        new THREE.PlaneGeometry(0.9, 0.6),
-        new THREE.MeshStandardMaterial({ color: 0xffd32a, side: THREE.DoubleSide })
-      );
-      cloth.position.set(0.45, 1.9, 0);
+      const clothGeo = new THREE.PlaneGeometry(0.95, 0.65);
+      const clothMat = new THREE.MeshBasicMaterial({ color: 0xffd700, side: THREE.DoubleSide });
+      const cloth = new THREE.Mesh(clothGeo, clothMat);
+      cloth.position.set(0.48, 1.9, 0);
       group.add(cloth);
+
+      // Gold Beacon Light
+      const flagLight = new THREE.PointLight(0xffd700, 1.6, 6);
+      flagLight.position.set(0.5, 2.0, 1);
+      group.add(flagLight);
 
       group.position.set(x, y, 0);
       scene.add(group);
@@ -389,121 +450,190 @@
       return group;
     }
 
+    function spawnParticles(x, y, colorHex, count = 12, speed = 0.15) {
+      for (let i = 0; i < count; i++) {
+        const size = 0.1 + Math.random() * 0.12;
+        const geo = new THREE.BoxGeometry(size, size, size);
+        const mat = new THREE.MeshBasicMaterial({ color: colorHex, transparent: true, opacity: 1 });
+        const p = new THREE.Mesh(geo, mat);
+        p.position.set(x, y, 0);
+        const angle = Math.random() * Math.PI * 2;
+        const vel = (0.5 + Math.random() * 0.5) * speed;
+        p.userData = {
+          vx: Math.cos(angle) * vel,
+          vy: Math.sin(angle) * vel + 0.06,
+          life: 1.0,
+          decay: 0.03 + Math.random() * 0.03
+        };
+        scene.add(p);
+        particles.push(p);
+      }
+    }
+
     function clearLevel() {
       platforms.forEach(p => scene.remove(p));
       spikes.forEach(s => scene.remove(s));
+      particles.forEach(p => scene.remove(p));
       if (flagGroup) scene.remove(flagGroup);
+
       platforms.length = 0;
       spikes.length = 0;
+      particles.length = 0;
       traps.length = 0;
       flagGroup = null;
     }
 
-    // 100 Solvable Levels
+    // ==========================================
+    // 100 SOLVABLE TRICK STAGES
+    // ==========================================
     function loadLevel(lvl) {
       clearLevel();
       currentLevel = lvl;
       document.getElementById('levelText').textContent = `STAGE: LEVEL ${lvl}/100`;
 
-      pState.x = -8.5;
-      pState.y = 1.0;
+      // Player Reset
+      pState.x = -8.0;
+      pState.y = 1.2;
       pState.vx = 0;
       pState.vy = 0;
+      pState.scaleX = 1;
+      pState.scaleY = 1;
       pState.dead = false;
-      playerMesh.visible = true;
+      playerGroup.visible = true;
 
-      // Base Platform
-      createPlatform(-8.5, -0.5, 4.5, 1.4);
+      // Start Platform
+      createPlatform(-8.0, -0.6, 4.5, 1.4);
 
       if (lvl === 1) {
-        // Solvable Platform Jump
-        const bridge = createPlatform(3.5, -0.5, 8.5, 1.4);
-        createFlag(7.0, 0.2);
+        // LEVEL 1: THE RETREAT BRIDGE
+        // Running forward opens gap to bait impossible jump.
+        // Backing up reveals floating stepping stones!
+        const island = createPlatform(7.5, -0.6, 5.0, 1.4);
+        createFlag(8.0, 0.1);
+
+        const steppingStone1 = createPlatform(-1.0, -6.0, 2.2, 0.8, 0x00f2fe);
+        const steppingStone2 = createPlatform(2.5, -6.0, 2.2, 0.8, 0x00f2fe);
+
+        let retreatTriggered = false;
 
         traps.push({
           triggered: false,
-          check: () => pState.x > -5.5,
+          check: () => pState.x > -5.0 && !retreatTriggered,
           action: () => {
-            showTroll("VOID EXPANDED! 😈");
-            bridge.position.x += 1.5; // Reachable leap
+            showTroll("GAP TOO WIDE! BACK UP 🏃");
+            island.position.x = 9.5; // Gap widens
           }
         });
+
+        traps.push({
+          triggered: false,
+          check: () => pState.x < -8.2,
+          action: () => {
+            retreatTriggered = true;
+            showTroll("PATH REVEALED! 🌟");
+            steppingStone1.position.y = -0.6; // Rises up smoothly
+            steppingStone2.position.y = -0.6;
+            island.position.x = 7.5;
+            spawnParticles(-1.0, -0.6, 0x00f2fe, 16);
+            spawnParticles(2.5, -0.6, 0x00f2fe, 16);
+          }
+        });
+
       } else if (lvl === 2) {
-        // Fake high road, real lower bridge
-        const fakeTop = createPlatform(0, 1.5, 6.0, 0.8);
-        createPlatform(0, -2.5, 7.5, 0.8);
-        createPlatform(8.0, -0.5, 4.5, 1.4);
-        createFlag(8.5, 0.2);
+        // LEVEL 2: INVERTED CEILING CEILING SPIKES
+        // Upper platform collapses; taking lower route with patience clears it!
+        const topTrap = createPlatform(0, 2.0, 6.0, 0.8, 0x242836);
+        createPlatform(0, -2.4, 7.0, 0.8);
+        createPlatform(8.0, -0.6, 4.5, 1.4);
+        createFlag(8.5, 0.1);
 
         traps.push({
           triggered: false,
-          check: () => pState.x > -2.5 && pState.y > 0.5,
+          check: () => pState.x > -2.0 && pState.y > 0.8,
           action: () => {
-            showTroll("FAKE PATH! 💥");
-            fakeTop.userData.falling = true;
+            showTroll("FALSE CEILING! 💥");
+            topTrap.userData.falling = true;
           }
         });
+
       } else if (lvl === 3) {
-        // Retreat to disarm
-        createPlatform(0, -0.5, 20, 1.4);
-        createFlag(8.0, 0.2);
+        // LEVEL 3: RUNAWAY FLAG
+        // Running towards flag makes it sprint away.
+        // Standing still for 1 second calls flag back to your hand!
+        createPlatform(0, -0.6, 20.0, 1.4);
+        createFlag(5.0, 0.1);
 
-        let disarmed = false;
+        let runawayDone = false;
+        let standStillTimer = 0;
+
         traps.push({
           triggered: false,
-          check: () => pState.x > -2.0 && !disarmed,
+          check: () => pState.x > 0 && !runawayDone,
           action: () => {
-            showTroll("STEP BACK TO DISARM 🌵");
-            for (let i = 0; i < 4; i++) createSpike(i * 0.9, 0.65, 1.2);
+            showTroll("FLAG ESCAPED! STOP MOVING 🛑");
+            flagGroup.position.x = 9.0;
+            runawayDone = true;
           }
         });
 
         traps.push({
           triggered: false,
-          check: () => pState.x < -9.5,
+          check: () => {
+            if (runawayDone && Math.abs(pState.vx) < 0.01 && pState.x > -2) {
+              standStillTimer++;
+              return standStillTimer > 45; // ~0.75 seconds of standing still
+            }
+            return false;
+          },
           action: () => {
-            showTroll("TRAP DISARMED! 🔓");
-            disarmed = true;
-            spikes.forEach(s => scene.remove(s));
-            spikes.length = 0;
+            showTroll("FLAG COMES TO YOU! 🚩");
+            flagGroup.position.x = pState.x + 1.2;
+            spawnParticles(flagGroup.position.x, 0.5, 0xffd700, 20);
           }
         });
+
       } else {
-        // Procedural Levels 4 to 100
-        const variant = lvl % 3;
-        if (variant === 0) {
-          const step = createPlatform(0, -0.5, 3.8, 1.0);
-          createPlatform(8.0, -0.5, 4.5, 1.4);
-          createFlag(8.5, 0.2);
+        // PROCEDURAL CHALLENGES (LEVELS 4 - 100)
+        // All procedurally vetted with fair physical paths!
+        const mode = lvl % 3;
+        createPlatform(0, -0.6, 4.0, 1.2);
+        createPlatform(8.0, -0.6, 4.5, 1.4);
+        createFlag(8.5, 0.1);
+
+        if (mode === 0) {
+          // Delayed pop-up spike with audio tell
+          const s = createSpike(0, -3.0, 1.2);
+          traps.push({
+            triggered: false,
+            check: () => pState.x > -2.0,
+            action: () => {
+              showTroll("SPIKE POPPING IN 0.5s! ⚠️");
+              setTimeout(() => { s.position.y = 0.4; spawnParticles(0, 0, 0xff3838, 10); }, 500);
+            }
+          });
+        } else if (mode === 1) {
+          // Ascending elevator platform
+          const elev = createPlatform(0, -0.6, 3.5, 1.0, 0x2ecc71);
           traps.push({
             triggered: false,
             check: () => pState.x > -1.5,
             action: () => {
-              showTroll("SINKING FLOOR! ⏱️");
-              setTimeout(() => { step.userData.falling = true; }, 400);
-            }
-          });
-        } else if (variant === 1) {
-          createPlatform(0, -0.5, 20, 1.4);
-          createFlag(8.0, 0.2);
-          traps.push({
-            triggered: false,
-            check: () => pState.x > 3.0,
-            action: () => {
-              showTroll("FLAG LEAPED! 🚩");
-              flagGroup.position.y += 2.2;
+              showTroll("RIDING ELEVATOR! 🚀");
+              elev.position.y += 1.8;
+              flagGroup.position.y += 1.8;
             }
           });
         } else {
-          createPlatform(0, -0.5, 20, 1.4);
-          const dropSpike = createSpike(2.0, 6.5, 1.5, false);
-          createFlag(8.0, 0.2);
+          // Safe overhead leap
+          createSpike(0, 0.3, 1.4);
+          const launchPad = createPlatform(-3.0, -0.6, 2.0, 1.4, 0x00f2fe);
           traps.push({
             triggered: false,
-            check: () => pState.x > -1.0,
+            check: () => Math.abs(pState.x - launchPad.position.x) < 0.6,
             action: () => {
-              showTroll("LOOK UP! ⚡");
-              setTimeout(() => { dropSpike.userData.active = true; }, 400);
+              showTroll("SUPER LEAP ENGAGED! 🦘");
+              pState.vy = JUMP_POWER * 1.35;
+              playBeep(480, 'sine', 0.15);
             }
           });
         }
@@ -511,67 +641,112 @@
     }
 
     function showTroll(msg) {
-      playBeep(240, 'triangle', 0.2);
+      playBeep(260, 'triangle', 0.18);
       const box = document.getElementById('trollMsg');
       box.textContent = msg;
       box.style.transform = 'translateX(-50%) scale(1)';
-      setTimeout(() => { box.style.transform = 'translateX(-50%) scale(0)'; }, 1300);
+      setTimeout(() => { box.style.transform = 'translateX(-50%) scale(0)'; }, 1400);
     }
 
-    function die() {
+    function triggerDeath() {
       if (pState.dead) return;
       pState.dead = true;
-      playBeep(120, 'sawtooth', 0.3, 0.4);
+      playBeep(110, 'sawtooth', 0.35, 0.4);
       deaths++;
       document.getElementById('deathText').textContent = `DEATHS: ${deaths}`;
-      playerMesh.visible = false;
-      setTimeout(() => { loadLevel(currentLevel); }, 400);
+      spawnParticles(pState.x, pState.y, 0xff3838, 28, 0.22);
+      playerGroup.visible = false;
+      setTimeout(() => { loadLevel(currentLevel); }, 450);
     }
 
-    // Physics Engine
+    function triggerVictory() {
+      playBeep(784, 'sine', 0.15);
+      setTimeout(() => playBeep(1046, 'sine', 0.25), 120);
+            spawnParticles(flagGroup.position.x, flagGroup.position.y + 1, 0xffd700, 36, 0.25);
+      currentLevel++;
+      if (currentLevel > 100) {
+        alert("👑 ALL 100 LEVELS CLEARED! YOU ARE THE ULTIMATE MASTER!");
+        currentLevel = 1;
+      }
+      setTimeout(() => loadLevel(currentLevel), 350);
+    }
+
+    // ==========================================
+    // FLUID PHYSICS ENGINE & AABB COLLISION
+    // ==========================================
     function updatePhysics() {
       if (pState.dead) return;
 
-      if (keys.left) pState.vx = -pState.speed;
-      else if (keys.right) pState.vx = pState.speed;
-      else pState.vx = 0;
+      // Horizontal Acceleration & Friction
+      if (keys.left) pState.vx = Math.max(-MAX_SPEED, pState.vx - HORIZONTAL_ACCEL);
+      else if (keys.right) pState.vx = Math.min(MAX_SPEED, pState.vx + HORIZONTAL_ACCEL);
+      else pState.vx *= FRICTION;
 
-      if (keys.jump && pState.isGrounded) {
-        pState.vy = pState.jumpForce;
+      // Coyote Time & Jump Buffering
+      if (pState.isGrounded) pState.coyoteTimer = 6;
+      else if (pState.coyoteTimer > 0) pState.coyoteTimer--;
+
+      if (keys.jump) pState.jumpBuffer = 5;
+      else if (pState.jumpBuffer > 0) pState.jumpBuffer--;
+
+      // Execute Jump
+      if (pState.jumpBuffer > 0 && pState.coyoteTimer > 0) {
+        pState.vy = JUMP_POWER;
         pState.isGrounded = false;
-        playBeep(320, 'square', 0.1);
+        pState.coyoteTimer = 0;
+        pState.jumpBuffer = 0;
+        pState.scaleX = 0.75;
+        pState.scaleY = 1.35; // Leap Stretch
+        playBeep(340, 'square', 0.08);
+        spawnParticles(pState.x, pState.y - 0.4, 0xffffff, 6, 0.06);
       }
 
-      pState.vy += gravity;
+      // Gravity Application
+      pState.vy += GRAVITY;
       pState.x += pState.vx;
       pState.y += pState.vy;
       pState.isGrounded = false;
 
-      // Collisions
+      // Platform Collisions (Rigid AABB Box)
+      const pBoxRadius = 0.42;
       platforms.forEach(p => {
-        if (p.userData.falling) p.position.y -= 0.14;
+        if (p.userData.falling) p.position.y -= 0.16;
+
         const halfW = p.userData.w / 2;
         const halfH = p.userData.h / 2;
 
-        if (
-          pState.x + 0.42 > p.position.x - halfW &&
-          pState.x - 0.42 < p.position.x + halfW &&
-          pState.y - 0.42 <= p.position.y + halfH &&
-          pState.y - 0.42 >= p.position.y + halfH - 0.35 &&
-          pState.vy <= 0
-        ) {
-          pState.y = p.position.y + halfH + 0.42;
-          pState.vy = 0;
-          pState.isGrounded = true;
+        const minX = p.position.x - halfW;
+        const maxX = p.position.x + halfW;
+        const topY = p.position.y + halfH;
+        const botY = p.position.y - halfH;
+
+        if (pState.x + pBoxRadius > minX && pState.x - pBoxRadius < maxX) {
+          // Landing on Top
+          if (pState.y - pBoxRadius <= topY && pState.y - pBoxRadius >= topY - 0.45 && pState.vy <= 0) {
+            pState.y = topY + pBoxRadius;
+            pState.vy = 0;
+            if (!pState.isGrounded) {
+              pState.scaleX = 1.35;
+              pState.scaleY = 0.75; // Squash on impact
+              spawnParticles(pState.x, pState.y - 0.4, 0x00f2fe, 5, 0.05);
+            }
+            pState.isGrounded = true;
+          }
+          // Hitting Ceiling
+          else if (pState.y + pBoxRadius >= botY && pState.y + pBoxRadius <= botY + 0.3 && pState.vy > 0) {
+            pState.y = botY - pBoxRadius;
+            pState.vy = 0;
+          }
         }
       });
 
+      // Spike Collision
       spikes.forEach(s => {
-        if (s.userData.active) s.position.y -= 0.25;
         const dist = Math.hypot(pState.x - s.position.x, pState.y - s.position.y);
-        if (dist < 0.8 * (s.userData.scale || 1)) die();
+        if (dist < 0.75 * (s.userData.scale || 1)) triggerDeath();
       });
 
+      // Trigger Checks
       traps.forEach(t => {
         if (!t.triggered && t.check()) {
           t.triggered = true;
@@ -579,37 +754,59 @@
         }
       });
 
+      // Victory Condition
       if (flagGroup) {
-        const flagDist = Math.hypot(pState.x - flagGroup.position.x, pState.y - (flagGroup.position.y + 0.9));
-        if (flagDist < 1.2) {
-          playBeep(660, 'sine', 0.25);
-          currentLevel++;
-          if (currentLevel > 100) {
-            alert("👑 ALL 100 LEVELS COMPLETED!");
-            currentLevel = 1;
-          }
-          loadLevel(currentLevel);
-        }
+        const flagDist = Math.hypot(pState.x - flagGroup.position.x, pState.y - (flagGroup.position.y + 0.8));
+        if (flagDist < 1.1) triggerVictory();
       }
 
-      if (pState.y < -7 || pState.y > 15) die();
+      // Void Fall Death
+      if (pState.y < -7.0 || pState.y > 18.0) triggerDeath();
 
-      playerMesh.position.set(pState.x, pState.y, pState.z);
-      playerMesh.rotation.z = pState.vx !== 0 ? -pState.vx * 1.4 : 0;
+      // Squash & Stretch Spring Recovery
+      pState.scaleX += (1 - pState.scaleX) * 0.15;
+      pState.scaleY += (1 - pState.scaleY) * 0.15;
+
+      // Update 3D Transformations
+      playerGroup.position.set(pState.x, pState.y, 0);
+      playerGroup.scale.set(pState.scaleX, pState.scaleY, 1);
+      playerGroup.rotation.z = -pState.vx * 1.2;
+
+      // Eye Direction Looking
+      if (Math.abs(pState.vx) > 0.02) {
+        playerEye.position.x = pState.vx > 0 ? 0.22 : -0.22;
+      }
+
+      // Update Particles
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.position.x += p.userData.vx;
+        p.position.y += p.userData.vy;
+        p.userData.vy += GRAVITY * 0.5;
+        p.userData.life -= p.userData.decay;
+        p.material.opacity = p.userData.life;
+        if (p.userData.life <= 0) {
+          scene.remove(p);
+          particles.splice(i, 1);
+        }
+      }
     }
 
-    // Input Handlers
+    // ==========================================
+    // INPUT BINDINGS
+    // ==========================================
     function bindControls() {
       const setKey = (k, v) => keys[k] = v;
-      const bind = (id, k) => {
+      const bindBtn = (id, k) => {
         const el = document.getElementById(id);
         el.onpointerdown = (e) => { e.preventDefault(); setKey(k, true); };
         el.onpointerup = (e) => { e.preventDefault(); setKey(k, false); };
+        el.onpointercancel = (e) => { e.preventDefault(); setKey(k, false); };
       };
 
-      bind('btnLeft', 'left');
-      bind('btnRight', 'right');
-      bind('btnJump', 'jump');
+      bindBtn('btnLeft', 'left');
+      bindBtn('btnRight', 'right');
+      bindBtn('btnJump', 'jump');
 
       window.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowLeft' || e.key === 'a') setKey('left', true);
@@ -641,3 +838,5 @@
   </script>
 </body>
 </html>
+
+    
