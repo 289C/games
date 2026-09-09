@@ -3,204 +3,69 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Arcade Hub - 100+ Web Games</title>
-  
+  <title>Arcade Hub • 100+ Web Games</title>
+
   <!-- Firebase SDKs for 1v1 Multiplayer -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+  
+  <!-- Three.js 3D Graphics Engine -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
   <style>
     :root {
-      --bg-dark: #12111d;
-      --card-bg: #1c1a2e;
-      --card-border: rgba(255, 255, 255, 0.08);
-      --accent-color: #6c5ce7;
-      --accent-hover: #a29bfe;
+      --bg-dark: #03050c;
+      --card-bg: rgba(10, 16, 38, 0.82);
+      --neon-cyan: #00f2fe;
+      --neon-pink: #ff007f;
+      --neon-purple: #7928ca;
+      --neon-gold: #ffd700;
       --text-main: #ffffff;
-      --text-dim: #a0a0b2;
+      --text-dim: #94a3b8;
     }
-    /* 3D Background Canvas */
-#canvas3d-bg {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 0;
-  pointer-events: none;
-}
 
-/* Ensure body and content sit on top of 3D universe */
-body {
-  background: #040711 !important;
-  position: relative;
-  overflow-x: hidden;
-}
-
-.main-content, .grid, .games-container, .game-tile {
-  position: relative;
-  z-index: 2;
-}
-
-/* Modern 3D Glassmorphism for your game tiles */
-.game-tile {
-  background: rgba(12, 19, 43, 0.75) !important;
-  backdrop-filter: blur(14px) !important;
-  -webkit-backdrop-filter: blur(14px) !important;
-  border: 1px solid rgba(0, 242, 254, 0.25) !important;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(0, 242, 254, 0.08) !important;
-  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s ease !important;
-}
-
-.game-tile:hover, .game-tile:active {
-  transform: translateY(-6px) scale(1.03) !important;
-  box-shadow: 0 15px 35px rgba(0, 242, 254, 0.3), inset 0 0 20px rgba(0, 242, 254, 0.2) !important;
-  border-color: rgba(0, 242, 254, 0.6) !important;
-}
-    /* =======================================
-   3D FLOATING LOGOS & TILES WITH SHADOWS
-   ======================================= */
-
-/* Floating animation on each game card */
-.game-tile, .game-card, .game-item {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
-  animation: floatCard 4s ease-in-out infinite alternate;
-}
-
-/* Alternate floating rhythm across columns */
-.game-tile:nth-child(2n), .game-card:nth-child(2n) {
-  animation-duration: 4.8s;
-  animation-delay: -1.2s;
-}
-
-.game-tile:nth-child(3n), .game-card:nth-child(3n) {
-  animation-duration: 5.4s;
-  animation-delay: -2.5s;
-}
-
-/* 3D Floating Game Icons / Logos */
-.game-tile img, .game-card img, .game-icon, .tile-icon {
-  border-radius: 22px !important;
-  box-shadow: 0 12px 24px -6px rgba(0, 0, 0, 0.7), 
-              0 0 16px rgba(0, 242, 254, 0.28) !important;
-  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s ease !important;
-  animation: floatLogo 3.6s ease-in-out infinite alternate;
-  will-change: transform;
-}
-
-/* Hover & Tap 3D Pop Effect */
-.game-tile:hover img, .game-tile:active img,
-.game-card:hover img, .game-card:active img {
-  transform: translateY(-8px) scale(1.08) !important;
-  box-shadow: 0 20px 32px -8px rgba(0, 0, 0, 0.8), 
-              0 0 28px rgba(0, 242, 254, 0.65), 
-              0 0 14px rgba(255, 0, 127, 0.4) !important;
-}
-
-/* Card Float Keyframe */
-@keyframes floatCard {
-  0% {
-    transform: translateY(0px);
-  }
-  100% {
-    transform: translateY(-6px);
-  }
-}
-
-/* Logo Bobbing & Subtle 3D Tilt */
-@keyframes floatLogo {
-  0% {
-    transform: translateY(0px) rotate(0deg);
-  }
-  50% {
-    transform: translateY(-5px) rotate(0.6deg);
-  }
-  100% {
-    transform: translateY(-9px) rotate(-0.6deg);
-  }
-}
-    
-/* =========================================
-   3D RAISED METALLIC & NEON FRAMES FOR LOGOS
-   ========================================= */
-
-/* The 3D Frame Pedestal Container */
-.game-tile, .game-card {
-  perspective: 600px;
-}
-
-/* 3D Border, Bevel & Shadow Wrapper on Logo */
-.game-tile img, .game-card img, 
-.tile-icon, .game-icon, 
-.game-thumb, .game-tile > div:first-child {
-  position: relative;
-  display: block;
-  border-radius: 22px !important;
-  
-  /* 3D Double Bevel: Outer cyan neon ring + inset depth highlight */
-  border: 2px solid rgba(0, 242, 254, 0.55) !important;
-  outline: 2px solid rgba(255, 255, 255, 0.12);
-  outline-offset: -5px;
-
-  /* Multi-layered 3D extruded drop shadow + cyber neon back-glow */
-  box-shadow: 
-    0 1px 0 rgba(255, 255, 255, 0.35) inset,      /* Top edge rim light */
-    0 -3px 0 rgba(0, 0, 0, 0.6) inset,             /* Bottom bevel groove */
-    0 12px 20px -4px rgba(0, 0, 0, 0.75),          /* Deep floor drop-shadow */
-    0 0 18px rgba(0, 242, 254, 0.35),              /* Cyan aura glow */
-    0 0 35px rgba(255, 0, 127, 0.15) !important;   /* Subtle magenta contrast glow */
-
-  transform: translateZ(12px);
-  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), 
-              box-shadow 0.28s ease, 
-              border-color 0.28s ease !important;
-}
-
-/* Hover & Active: Pops out further in 3D space */
-.game-tile:hover img, .game-tile:active img,
-.game-card:hover img, .game-card:active img,
-.game-tile:hover .tile-icon, .game-tile:active .tile-icon {
-  transform: translateY(-8px) translateZ(24px) scale(1.06) rotateX(4deg) !important;
-  border-color: #00f2fe !important;
-  outline: 2px solid rgba(255, 255, 255, 0.4);
-  box-shadow: 
-    0 2px 0 rgba(255, 255, 255, 0.6) inset,
-    0 -4px 0 rgba(0, 0, 0, 0.8) inset,
-    0 22px 30px -6px rgba(0, 0, 0, 0.85),
-    0 0 30px rgba(0, 242, 254, 0.7),
-    0 0 45px rgba(255, 0, 127, 0.35) !important;
-}
-    
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
       user-select: none;
       -webkit-tap-highlight-color: transparent;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 
     body {
-      background-color: var(--bg-dark);
+      background: var(--bg-dark) !important;
       color: var(--text-main);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding-bottom: 50px;
+      padding-bottom: 70px;
       overflow-x: hidden;
+      position: relative;
     }
 
-    /* Top Navigation */
+    /* 3D Canvas Background */
+    #canvas3d-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    header, .category-bar, .main-content, .grid, .game-tile, .modal-layer {
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Top Navigation Header */
     header {
       width: 100%;
       max-width: 1200px;
-      padding: 20px 24px;
+      padding: 16px 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -209,1999 +74,1055 @@ body {
     .brand {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       font-size: 20px;
-      font-weight: 800;
-      letter-spacing: -0.5px;
+      font-weight: 900;
+      letter-spacing: 0.8px;
+      background: linear-gradient(135deg, #fff, #00f2fe, #ff007f);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 12px rgba(0, 242, 254, 0.45));
     }
 
     .brand-badge {
-      background: linear-gradient(135deg, #fd79a8, #e84393);
+      font-size: 11px;
+      background: linear-gradient(135deg, #ff007f, #7928ca);
+      color: #fff;
       padding: 4px 10px;
       border-radius: 20px;
-      font-size: 11px;
-      font-weight: bold;
-      text-transform: uppercase;
+      font-weight: 800;
+      -webkit-text-fill-color: #fff;
+      box-shadow: 0 0 14px rgba(255, 0, 127, 0.5);
     }
 
-    /* Category Filter Bar */
-    .filter-bar {
+    /* Verified Instagram Banner */
+    .ig-banner {
+      padding: 6px 16px;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 50px;
       display: flex;
+      align-items: center;
       gap: 10px;
-      overflow-x: auto;
-      max-width: 1200px;
-      width: 100%;
-      padding: 0 24px 16px 24px;
-      scrollbar-width: none;
-    }
-    .filter-bar::-webkit-scrollbar { display: none; }
-
-    .filter-pill {
-      background: #201e36;
-      border: 1px solid var(--card-border);
-      padding: 8px 18px;
-      border-radius: 20px;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-dim);
-      white-space: nowrap;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    .filter-pill.active, .filter-pill:hover {
-      background: var(--accent-color);
+      box-shadow: 0 0 25px rgba(225, 48, 108, 0.45);
+      animation: pulseBanner 3.5s infinite alternate ease-in-out;
+      text-decoration: none;
       color: #fff;
+      transition: transform 0.2s;
     }
 
-    /* App-Store Dense Tile Grid */
-    .games-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
-      gap: 16px;
-      width: 100%;
-      max-width: 1200px;
-      padding: 10px 24px;
+    .ig-banner:hover {
+      transform: scale(1.04);
     }
 
-    @media (min-width: 768px) {
-      .games-grid {
-        grid-template-columns: repeat(auto-fill, minmax(105px, 1fr));
-        gap: 20px;
-      }
+    @keyframes pulseBanner {
+      0% { box-shadow: 0 0 16px rgba(225, 48, 108, 0.3); border-color: rgba(225, 48, 108, 0.5); }
+      100% { box-shadow: 0 0 30px rgba(0, 242, 254, 0.6); border-color: rgba(0, 242, 254, 0.5); }
     }
 
-    .game-tile {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      cursor: pointer;
-      text-align: center;
-      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-    .game-tile:hover {
-      transform: translateY(-4px) scale(1.04);
-    }
-    .game-tile:active {
-      transform: scale(0.95);
-    }
-
-    .tile-icon-box {
-      width: 82px;
-      height: 82px;
-      border-radius: 22px;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-      border: 2px solid rgba(255, 255, 255, 0.08);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #25233c;
-    }
-
-    @media (min-width: 768px) {
-      .tile-icon-box {
-        width: 98px;
-        height: 98px;
-        border-radius: 26px;
-      }
-    }
-
-    .tile-icon-box img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-
-    .tile-emoji {
-      font-size: 40px;
-    }
-
-    .tile-name {
-      font-size: 12px;
-      font-weight: 700;
-      margin-top: 8px;
-      max-width: 90px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      color: #e2e2ec;
-    }
-
-    .featured-tag {
-      position: absolute;
-      top: 6px;
-      right: 6px;
-      background: #ff4757;
-      color: #fff;
-      font-size: 8px;
-      font-weight: 900;
-      padding: 2px 5px;
-      border-radius: 6px;
-      text-transform: uppercase;
-    }
-
-    /* Modal Backdrop */
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(8, 7, 15, 0.88);
-      backdrop-filter: blur(10px);
-      z-index: 1000;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 12px;
-    }
-
-    .modal-content {
-      background: #181726;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 24px;
-      width: 100%;
-      max-width: 640px;
-      overflow: hidden;
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8);
-      display: flex;
-      flex-direction: column;
-    }
-
-    .modal-header {
-      padding: 14px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      background: #141320;
-    }
-
-    .close-btn {
-      background: #252438;
-      border: none;
-      color: #fff;
-      width: 32px;
-      height: 32px;
+    .ig-badge {
+      width: 28px;
+      height: 28px;
       border-radius: 50%;
-      font-size: 18px;
-      cursor: pointer;
+      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: 0.2s;
+      font-weight: 900;
+      font-size: 14px;
+      box-shadow: 0 0 10px rgba(230, 104, 60, 0.6);
     }
-    .close-btn:hover { background: #ff4757; }
 
-    /* Touch Controls */
-    .mobile-controls {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 14px 24px;
-      background: #13121f;
-      border-top: 1px solid rgba(255, 255, 255, 0.06);
-    }
-    .d-pad { display: flex; gap: 10px; }
-    .ctrl-btn {
-      width: 54px;
-      height: 54px;
-      border-radius: 18px;
-      background: #24223b;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: #fff;
-      font-size: 22px;
+    .ig-handle {
+      font-size: 12px;
+      font-weight: 800;
       display: flex;
       align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    .ctrl-btn:active { background: var(--accent-color); }
-    .jump-btn { background: #00cec9; color: #111; width: 70px; }
-
-    .instructions-hint {
-      text-align: center;
-      font-size: 11px;
-      color: var(--text-dim);
-      padding: 8px 12px;
-      background: #11101a;
-    }
-        body {
-      background: radial-gradient(circle at 50% 20%, #1e1b4b 0%, #090d16 100%) !important;
-      color: #f8fafc;
-      font-family: 'Outfit', -apple-system, sans-serif;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      overflow-x: hidden;
-      perspective: 1200px;
-    }
-    
-        /* Instagram Glowing Banner & Animations */
-    @keyframes instaGlow {
-      0% {
-        box-shadow: 0 0 12px rgba(220, 39, 67, 0.5), 0 0 24px rgba(240, 148, 51, 0.3);
-        background-position: 0% 50%;
-      }
-      50% {
-        box-shadow: 0 0 20px rgba(188, 24, 136, 0.7), 0 0 32px rgba(220, 39, 67, 0.4);
-        background-position: 100% 50%;
-      }
-      100% {
-        box-shadow: 0 0 12px rgba(220, 39, 67, 0.5), 0 0 24px rgba(240, 148, 51, 0.3);
-        background-position: 0% 50%;
-      }
+      gap: 5px;
     }
 
-    @keyframes badgePulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-    }
-
-    .insta-btn-animated {
+    .verified-dot {
+      width: 14px;
+      height: 14px;
+      background: #0095f6;
+      border-radius: 50%;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      background: linear-gradient(120deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888, #f09433);
-      background-size: 300% 300%;
-      animation: instaGlow 4s ease infinite;
-      color: #fff !important;
+      justify-content: center;
+      font-size: 8px;
+      box-shadow: 0 0 6px #0095f6;
+    }
+
+    /* Category Pill Selector */
+    .category-bar {
+      display: flex;
+      gap: 10px;
+      padding: 10px 16px;
+      margin-bottom: 22px;
+      overflow-x: auto;
+      max-width: 100vw;
+      scrollbar-width: none;
+    }
+    .category-bar::-webkit-scrollbar { display: none; }
+
+    .cat-btn {
+      padding: 8px 20px;
+      border-radius: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(18, 25, 45, 0.7);
+      backdrop-filter: blur(10px);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      transition: all 0.25s ease;
+    }
+
+    .cat-btn.active {
+      background: linear-gradient(135deg, #00f2fe, #7928ca);
+      border-color: #00f2fe;
+      box-shadow: 0 0 20px rgba(0, 242, 254, 0.45);
+    }
+
+    /* Grid Area */
+    .main-content {
+      width: 100%;
+      max-width: 1100px;
+      padding: 0 16px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      gap: 18px;
+    }
+
+    @media (min-width: 600px) {
+      .grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 24px;
+      }
+    }
+
+    /* 3D GAME TILE WITH HOLOGRAPHIC SCANLINE */
+    .game-tile {
+      perspective: 900px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       text-decoration: none;
-      padding: 8px 16px;
-      border-radius: 999px;
-      font-weight: 800;
-      font-size: 13px;
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      color: inherit;
+      cursor: pointer;
+      background: var(--card-bg) !important;
+      backdrop-filter: blur(18px) !important;
+      -webkit-backdrop-filter: blur(18px) !important;
+      border: 1px solid rgba(0, 242, 254, 0.25) !important;
+      border-radius: 26px;
+      padding: 14px 8px;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(0, 242, 254, 0.08) !important;
+      transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease, border-color 0.3s ease !important;
       position: relative;
       overflow: hidden;
+      animation: floatCard 4s ease-in-out infinite alternate;
     }
 
-    .insta-btn-animated:hover {
-      transform: translateY(-3px) scale(1.06);
+    .game-tile:nth-child(2n) { animation-duration: 4.6s; animation-delay: -1s; }
+    .game-tile:nth-child(3n) { animation-duration: 5.2s; animation-delay: -2s; }
+
+    @keyframes floatCard {
+      0% { transform: translateY(0px); }
+      100% { transform: translateY(-7px); }
     }
 
-    .insta-btn-animated:active {
-      transform: scale(0.96);
-    }
-
-    .insta-btn-animated::after {
+    /* Holographic sweep light across card */
+    .game-tile::before {
       content: "";
       position: absolute;
       top: -50%;
       left: -60%;
       width: 40%;
       height: 200%;
-      background: rgba(255, 255, 255, 0.25);
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.22), transparent);
       transform: rotate(25deg);
-      transition: all 0.7s ease;
+      transition: left 0.75s ease;
+      pointer-events: none;
     }
 
-    .insta-btn-animated:hover::after {
-      left: 130%;
+    .game-tile:hover::before {
+      left: 140%;
     }
 
-    .creator-tag {
-      background: rgba(255, 255, 255, 0.07);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      color: var(--text-dim);
-      display: inline-flex;
+    /* 3D GLOWING FRAME PEDESTAL ON LOGOS */
+    .tile-logo-frame {
+      width: 78px;
+      height: 78px;
+      position: relative;
+      border-radius: 22px;
+      display: flex;
       align-items: center;
-      gap: 6px;
-      backdrop-filter: blur(8px);
+      justify-content: center;
+      margin-bottom: 9px;
+      
+      /* Glowing RGB Edge */
+      border: 2px solid #00f2fe;
+      outline: 2px solid rgba(255, 255, 255, 0.2);
+      outline-offset: -5px;
+
+      /* Dynamic Multi-Stage 3D Shadows & Auras */
+      box-shadow: 
+        0 2px 0 rgba(255, 255, 255, 0.5) inset,
+        0 -3px 0 rgba(0, 0, 0, 0.8) inset,
+        0 14px 26px -4px rgba(0, 0, 0, 0.85),
+        0 0 22px rgba(0, 242, 254, 0.5),
+        0 0 45px rgba(255, 0, 127, 0.3);
+      
+      transform: translateZ(16px);
+      transition: all 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
+      overflow: hidden;
+      animation: glowBorderPulse 3s infinite alternate ease-in-out;
     }
 
-    .creator-tag strong {
-      color: #fff;
-      text-shadow: 0 0 10px rgba(108, 92, 231, 0.8);
+    @keyframes glowBorderPulse {
+      0% {
+        border-color: #00f2fe;
+        box-shadow: 
+          0 2px 0 rgba(255, 255, 255, 0.5) inset,
+          0 -3px 0 rgba(0, 0, 0, 0.8) inset,
+          0 14px 26px -4px rgba(0, 0, 0, 0.85),
+          0 0 20px rgba(0, 242, 254, 0.55),
+          0 0 40px rgba(255, 0, 127, 0.2);
+      }
+      100% {
+        border-color: #ff007f;
+        box-shadow: 
+          0 2px 0 rgba(255, 255, 255, 0.6) inset,
+          0 -3px 0 rgba(0, 0, 0, 0.8) inset,
+          0 16px 28px -4px rgba(0, 0, 0, 0.9),
+          0 0 28px rgba(255, 0, 127, 0.65),
+          0 0 50px rgba(0, 242, 254, 0.35);
+      }
     }
-    
+
+    .tile-logo-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 19px;
+      transition: transform 0.35s ease;
+    }
+
+    .tile-badge {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      font-size: 8px;
+      font-weight: 900;
+      padding: 2px 7px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #ff007f, #ff4757);
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      box-shadow: 0 0 10px rgba(255, 0, 127, 0.65);
+    }
+
+    .tile-title {
+      font-size: 12px;
+      font-weight: 800;
+      text-align: center;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 95px;
+      letter-spacing: 0.3px;
+    }
+
+    /* 3D Pop on Hover & Tap */
+    .game-tile:hover, .game-tile:active {
+      transform: translateY(-9px) scale(1.05) !important;
+      box-shadow: 0 20px 45px rgba(0, 242, 254, 0.35), inset 0 0 25px rgba(0, 242, 254, 0.25) !important;
+      border-color: #00f2fe !important;
+    }
+
+    .game-tile:hover .tile-logo-frame, .game-tile:active .tile-logo-frame {
+      transform: translateY(-6px) translateZ(30px) scale(1.1) rotateX(6deg);
+      box-shadow: 
+        0 2px 0 rgba(255, 255, 255, 0.8) inset,
+        0 -4px 0 rgba(0, 0, 0, 0.9) inset,
+        0 24px 34px -6px rgba(0, 0, 0, 0.95),
+        0 0 35px #00f2fe,
+        0 0 60px #ff007f;
+    }
+
+    .game-tile:hover .tile-logo-frame img {
+      transform: scale(1.08);
+    }
+
+    /* Modal Architecture */
+    .modal-layer {
+      position: fixed;
+      inset: 0;
+      background: rgba(4, 7, 17, 0.92);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 16px;
+    }
+
+    .modal-box {
+      background: #0d152a;
+      border: 1px solid rgba(0, 242, 254, 0.45);
+      border-radius: 26px;
+      width: 100%;
+      max-width: 400px;
+      padding: 24px;
+      position: relative;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85), 0 0 35px rgba(0, 242, 254, 0.3);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      animation: modalPop 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes modalPop {
+      0% { transform: scale(0.85); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: rgba(255, 255, 255, 0.12);
+      border: none;
+      color: #fff;
+      font-size: 18px;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+
+    .close-btn:hover { background: #ff007f; }
+
+    /* Tic-Tac-Toe */
+    .ttt-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      width: 240px;
+      margin: 16px 0;
+    }
+
+    .ttt-cell {
+      width: 72px;
+      height: 72px;
+      background: #16203a;
+      border: 2px solid rgba(255, 255, 255, 0.12);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      font-weight: 900;
+      cursor: pointer;
+      color: #fff;
+      transition: transform 0.15s, border-color 0.2s;
+    }
+
+    .ttt-cell:active { transform: scale(0.92); }
+
+    /* Speed Math */
+    .math-bar {
+      width: 100%;
+      height: 8px;
+      background: #1a243e;
+      border-radius: 4px;
+      overflow: hidden;
+      margin: 12px 0;
+    }
+
+    .math-fill {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #ff4757, #00f2fe);
+      transition: width 0.1s linear;
+    }
+
+    .math-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      width: 100%;
+      margin-top: 14px;
+    }
+
+    .math-choice-btn {
+      padding: 14px;
+      background: #18223d;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 14px;
+      color: #fff;
+      font-size: 18px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.15s, background 0.2s;
+    }
+
+    .math-choice-btn:active { transform: scale(0.95); }
+
+    /* Tap Reflex */
+    .reflex-pad {
+      width: 100%;
+      height: 190px;
+      border-radius: 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      margin-top: 14px;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    .reflex-pad:active { transform: scale(0.98); }
   </style>
 </head>
 <body>
-<canvas id="canvas3d-bg"></canvas>
-  
-    <!-- Header with Glowing Animated Instagram Banner -->
-  <header style="width: 100%; max-width: 1200px; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
+
+  <!-- Three.js 3D Background Canvas -->
+  <canvas id="canvas3d-bg"></canvas>
+
+  <!-- Top Navigation Header -->
+  <header>
     <div class="brand">
       <span>🕹️ ARCADE PACK</span>
-      <span class="brand-badge">100+ Games</span>
+      <span class="brand-badge">100+ GAMES</span>
     </div>
 
-    <!-- Animated Creator & Instagram Pill -->
-    <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-      <div class="creator-tag">
-        <span>⚡ Created by</span>
-        <strong>Satish</strong>
+    <!-- Instagram Header Banner -->
+    <a href="https://instagram.com/_satish_official_16" target="_blank" class="ig-banner">
+      <div class="ig-badge">S</div>
+      <div>
+        <div class="ig-handle">@_satish_official_16 <span class="verified-dot">✓</span></div>
       </div>
-
-      <a href="https://instagram.com/_satish_official_16" target="_blank" rel="noopener noreferrer" class="insta-btn-animated">
-        <svg style="width: 16px; height: 16px; fill: currentColor;" viewBox="0 0 24 24">
-          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-        </svg>
-        <span>@_satish_official_16</span>
-      </a>
-    </div>
+    </a>
   </header>
 
-
-  <!-- Filter Category Tags -->
-  <div class="filter-bar">
-    <div class="filter-pill active">🔥 All Games</div>
-    <div class="filter-pill">⚡ Action & Reflex</div>
-    <div class="filter-pill">👥 1v1 Multi</div>
-    <div class="filter-pill">🧩 Brain & Logic</div>
-    <div class="filter-pill">🏃 Endless</div>
+  <!-- Category Selection -->
+  <div class="category-bar">
+    <button class="cat-btn active">🔥 All Games</button>
+    <button class="cat-btn">⚡ Action & Reflex</button>
+    <button class="cat-btn">👥 1v1 Multiplayer</button>
+    <button class="cat-btn">🧩 Puzzle & Brain</button>
   </div>
 
-  <!-- App-Store Dense Game Grid -->
-  <main class="games-grid">
-    
-    <!-- 1. LEVEL DEVIL (PLAYABLE) -->
-    <div class="game-tile" id="openLevelDevil">
-      <div class="tile-icon-box" style="background: #f3c969;">
-        <span class="featured-tag">200 LVL</span>
-        <img src="level-devil.png" onerror="this.src='images/level-devil.png'; this.onerror=()=>{this.style.display='none'; this.nextElementSibling.style.display='block';}" alt="Level Devil" />
-        <div class="tile-emoji" style="display: none;">😈</div>
-      </div>
-      <div class="tile-name">Level Devil</div>
-    </div>
-
-    
-      <!-- Super Matino Adventure Game Tile -->
-      <a href="matino-adventure.html" style="text-decoration: none; color: inherit;">
-        <div class="game-tile">
-          <div class="tile-icon-box" style="background: #1e1b4b;">
-            <span class="featured-tag" style="background: #38bdf8; color: #000;">ACTION</span>
-            <img src="34160.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/808/808439.png'" style="width: 100%; height: 100%; object-fit: cover; border-radius: 18px;">
-          </div>
-          <div class="tile-name">Just Run</div>
+  <!-- Main Grid of Games -->
+  <main class="main-content">
+    <div class="grid">
+      <!-- 1. Table Tennis 3D (External Link) -->
+      <a href="table-tennis.html" class="game-tile">
+        <div class="tile-logo-frame">
+          <img src="34170.jpg" alt="Table Tennis 3D" onerror="this.src='https://placehold.co/100x100/004e92/ffffff?text=3D+TT'" />
+          <span class="tile-badge">3D 1v1</span>
         </div>
-      </a>
-    
-    <!-- 3. TIC TAC TOE (PLAYABLE) -->
-    <div class="game-tile" id="openTicTacToe">
-      <div class="tile-icon-box" style="background: #1e1d33;">
-        <img src="tic-tac-toe.png" onerror="this.src='images/tic-tac-toe.png'; this.onerror=()=>{this.style.display='none'; this.nextElementSibling.style.display='block';}" alt="Tic Tac Toe" />
-        <div class="tile-emoji" style="display: none;">❌⭕</div>
-      </div>
-      <div class="tile-name">Tic-Tac-Toe</div>
-    </div>
-    
-
-    <!-- 7. SNAKE GAME -->
-      <a href="snake.html" style="text-decoration: none; color: inherit;">
-        <div class="game-tile">
-          <div class="tile-icon-box" style="background: #1e3a1e;">
-            <span class="featured-tag" style="background: #22c55e; color: #000;">RETRO</span>
-            <img src="snake-logo.jpg" style="width: 100%; height: 100%; object-fit: cover; border-radius: 18px;">
-          </div>
-          <div class="tile-name">Snake Game</div>
-        </div>
+        <span class="tile-title">Table Tennis</span>
       </a>
 
-      <!-- 8. WHACK A MOLE -->
-      <a href="whack-a-mole.html" style="text-decoration: none; color: inherit;">
-        <div class="game-tile">
-          <div class="tile-icon-box" style="background: #1e1136;">
-            <span class="featured-tag" style="background: #f59e0b; color: #000;">ARCADE</span>
-            <img src="34146.png" style="width: 100%; height: 100%; object-fit: cover; border-radius: 18px;">
-          </div>
-          <div class="tile-name">Whack Mole</div>
+      <!-- 2. Matino / Just Run (External Link) -->
+      <a href="matino-adventure.html" class="game-tile">
+        <div class="tile-logo-frame">
+          <img src="34160.jpg" alt="Just Run" onerror="this.src='https://placehold.co/100x100/ff007f/ffffff?text=RUN'" />
+          <span class="tile-badge">ACTION</span>
         </div>
+        <span class="tile-title">Just Run</span>
       </a>
-    
-<!-- 3D Table Tennis Tile -->
-<a href="table-tennis.html" style="text-decoration: none; color: inherit;">
-  <div class="game-tile">
-    <div class="tile-icon-box" style="background: #0055a5;">
-      <span class="featured-tag" style="background: #ff007f; color: #fff;">3D 1v1</span>
-      <img src="34170.jpg" onerror="this.style.display='none'">
-      <div class="tile-emoji" style="display: none;">🏓</div>
-    </div>
-    <div class="tile-name">Ping Pong 3D</div>
-  </div>
-</a>
-        <div class="game-tile" onclick="openMathRush()">
-  <div class="tile-icon-box" style="background: #1e3c72;">
-    <span class="featured-tag" style="background: #ffcc00; color: #111;">SPEED</span>
-    <img src="math-rush.jpg" alt="Math Rush" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;">
-  </div>
-  <div class="tile-name">Math Rush</div>
+
+      <!-- 3. Level Devil (External Link) -->
+      <a href="matino-adventure.html" class="game-tile">
+        <div class="tile-logo-frame">
+          <img src="level-devil.png" alt="Level Devil" onerror="this.src='https://placehold.co/100x100/ff9900/ffffff?text=DEVIL'" />
+          <span class="tile-badge">200 LVL</span>
         </div>
-    
-   <!-- TAP REFLEX TILE -->
-<div class="game-tile" id="openReflexGame" onclick="runReflexTest()" style="cursor: pointer;">
-  <div class="tile-icon-box" style="background: #120e24;">
-    <span class="featured-tag" style="background: #00f0ff; color: #111;">SPEED</span>
-    <img src="tap-reflex.jpg" onerror="this.src='images/tap-reflex.jpg'" alt="Tap Reflex" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;">
-  </div>
-  <div class="tile-name">Tap Reflex</div>
-</div>
+        <span class="tile-title">Level Devil</span>
+      </a>
 
-        <!-- 6. SPEED RACING CAR GAME CARD -->
-    <div class="game-tile" id="openCarGame">
-      <div class="tile-icon-box" style="background: linear-gradient(135deg, #f39c12, #d35400);">
-        <span class="featured-tag" style="background: #e74c3c; color: #fff;">1v1 & BOT</span>
-        <img src="speed-car.png" onerror="this.src='images/speed-car.png'; this.onerror=()=>{this.style.display='none'; this.nextElementSibling.style.display='block';}" alt="Speed Racing Car" />
-        <div class="tile-emoji" style="display: none;">🏎️</div>
+      <!-- 4. Tic-Tac-Toe (Built-in) -->
+      <div class="game-tile" onclick="openTicTacToe()">
+        <div class="tile-logo-frame">
+          <img src="tic-tac-toe.png" alt="Tic-Tac-Toe" onerror="this.src='https://placehold.co/100x100/9b51e0/ffffff?text=X+O'" />
+          <span class="tile-badge">BOT/1v1</span>
+        </div>
+        <span class="tile-title">Tic-Tac-Toe</span>
       </div>
-      <div class="tile-name">Speed Car 3D</div>
-    </div>
-    <!-- 2. TEMPLE RUN (PLAYABLE) -->
-    <div class="game-tile" id="openTempleRun">
-      <div class="tile-icon-box" style="background: #e67e22;">
-        <span class="featured-tag" style="background: #00cec9; color: #000;">1v1 CODE</span>
-        <img src="temple-run.jpg" onerror="this.src='images/temple-run.jpg'; this.onerror=()=>{this.style.display='none'; this.nextElementSibling.style.display='block';}" alt="Temple Run" />
-        <div class="tile-emoji" style="display: none;">🏃</div>
+
+      <!-- 5. Math Rush (Built-in) -->
+      <div class="game-tile" onclick="runSpeedMath()">
+        <div class="tile-logo-frame">
+          <img src="math-rush.jpg" alt="Math Rush" onerror="this.src='https://placehold.co/100x100/ff4757/ffffff?text=MATH'" />
+          <span class="tile-badge">SPEED</span>
+        </div>
+        <span class="tile-title">Math Rush</span>
       </div>
-      <div class="tile-name">Temple Run</div>
+
+      <!-- 6. Tap Reflex (Built-in) -->
+      <div class="game-tile" onclick="runReflexTest()">
+        <div class="tile-logo-frame">
+          <img src="tap-reflex.jpg" alt="Tap Reflex" onerror="this.src='https://placehold.co/100x100/2ed573/ffffff?text=REFLEX'" />
+          <span class="tile-badge">RANK</span>
+        </div>
+        <span class="tile-title">Tap Reflex</span>
+      </div>
+
+      <!-- 7. Speed Car Racer (Built-in) -->
+      <div class="game-tile" onclick="openCarRaceModal()">
+        <div class="tile-logo-frame">
+          <img src="car-race.jpg" alt="Speed Car 3D" onerror="this.src='https://placehold.co/100x100/e67e22/ffffff?text=RACE'" />
+          <span class="tile-badge">DUEL</span>
+        </div>
+        <span class="tile-title">Speed Car 3D</span>
+      </div>
+
+      <!-- 8. Temple Run (External Link) -->
+      <a href="matino-adventure.html" class="game-tile">
+        <div class="tile-logo-frame">
+          <img src="temple-run.jpg" alt="Temple Run" onerror="this.src='https://placehold.co/100x100/ffd700/000000?text=TEMPLE'" />
+          <span class="tile-badge">ENDLESS</span>
+        </div>
+        <span class="tile-title">Temple Run</span>
+      </a>
+
+      <!-- 9. Space Dash (External Link) -->
+      <a href="matino-adventure.html" class="game-tile">
+        <div class="tile-logo-frame">
+          <img src="space-dash.jpg" alt="Space Dash" onerror="this.src='https://placehold.co/100x100/00f2fe/000000?text=SPACE'" />
+          <span class="tile-badge">RETRO</span>
+        </div>
+        <span class="tile-title">Space Dash</span>
+      </a>
+
+      <!-- 10. 8 Ball Lite (External Link) -->
+      <a href="matino-adventure.html" class="game-tile">
+        <div class="tile-logo-frame">
+          <img src="8-ball.jpg" alt="8 Ball Lite" onerror="this.src='https://placehold.co/100x100/333333/ffffff?text=8+BALL'" />
+          <span class="tile-badge">PVP</span>
+        </div>
+        <span class="tile-title">8 Ball Lite</span>
+      </a>
     </div>
-          
-
-    
-    
-    <!-- ARCADE WALL OF TILES (Matching your reference template) -->
-    <div class="game-tile" onclick="alert('Unlock more stars in Level Devil to play!')"><div class="tile-icon-box" style="background: #0984e3;"><div class="tile-emoji">🚀</div></div><div class="tile-name">Space Dash</div></div>
-    <div class="game-tile" onclick="alert('Unlock more stars in Level Devil to play!')"><div class="tile-icon-box" style="background: #fdcb6e;"><div class="tile-emoji">🎱</div></div><div class="tile-name">8 Ball Lite</div></div>
-    <div class="game-tile" onclick="alert('Unlock more stars in Level Devil to play!')"><div class="tile-icon-box" style="background: #00b894;"><div class="tile-emoji">🐍</div></div><div class="tile-name">Snake Neon</div></div>
-    <div class="game-tile" onclick="alert('Unlock more stars in Level Devil to play!')"><div class="tile-icon-box" style="background: #e17055;"><div class="tile-emoji">🏎️</div></div><div class="tile-name">Drift King</div></div>
-    <div class="game-tile" onclick="alert('Unlock more stars in Level Devil to play!')"><div class="tile-icon-box" style="background: #6c5ce7;"><div class="tile-emoji">🧱</div></div><div class="tile-name">Breakout</div></div>
-    <div class="game-tile" onclick="alert('Unlock more stars in Level Devil to play!')"><div class="tile-icon-box" style="background: #00cec9;"><div class="tile-emoji">🔪</div></div><div class="tile-name">Knife Hit</div></div>
-    <div class="game-tile" onclick="alert('Unlock more stars in Level Devil to play!')"><div class="tile-icon-box" style="background: #e84393;"><div class="tile-emoji">🐥</div></div><div class="tile-name">Flappy Chirp</div></div>
-    <div class="game-tile" onclick="alert('Unlock more stars in Level Devil to play!')"><div class="tile-icon-box" style="background: #2d3436;"><div class="tile-emoji">💣</div></div><div class="tile-name">Mines 3D</div></div>
-    <div class="game-tile" onclick="alert('Unlock more stars in Level Devil to play!')"><div class="tile-icon-box" style="background: #a29bfe;"><div class="tile-emoji">🎲</div></div><div class="tile-name">Ludo Solo</div></div>
-    <div class="game-tile" onclick="alert('Unlock more stars in Level Devil to play!')"><div class="tile-icon-box" style="background: #55efc4;"><div class="tile-emoji">🏹</div></div><div class="tile-name">Bowmaster</div></div>
-    <div class="game-tile" onclick="alert('Unlock more stars in Level Devil to play!')"><div class="tile-icon-box" style="background: #ffeaa7;"><div class="tile-emoji">🐻</div></div><div class="tile-name">Bear Escape</div></div>
-    <div class="game-tile" onclick="alert('Unlock more stars in Level Devil to play!')"><div class="tile-icon-box" style="background: #fab1a0;"><div class="tile-emoji">🎣</div></div><div class="tile-name">Hook Catch</div></div>
-    <div class="game-tile" onclick="alert('Unlock more stars in Level Devil to play!')"><div class="tile-icon-box" style="background: #74b9ff;"><div class="tile-emoji">✈️</div></div><div class="tile-name">Sky Flight</div></div>
-    <div class="game-tile" onclick="alert('Unlock more stars in Level Devil to play!')"><div class="tile-icon-box" style="background: #ff7675;"><div class="tile-emoji">🥊</div></div><div class="tile-name">Brawler</div></div>
-    <div class="game-tile" onclick="alert('Unlock more stars in Level Devil to play!')"><div class="tile-icon-box" style="background: #636e72;"><div class="tile-emoji">🪓</div></div><div class="tile-name">Timber Churn</div></div>
-    <div class="game-tile" onclick="alert('Unlock more stars in Level Devil to play!')"><div class="tile-icon-box" style="background: #fd79a8;"><div class="tile-emoji">🍬</div></div><div class="tile-name">Sugar Match</div></div>
-    <div class="game-tile" onclick="alert('Unlock more stars in Level Devil to play!')"><div class="tile-icon-box" style="background: #81ecec;"><div class="tile-emoji">🛹</div></div><div class="tile-name">Ollie Jump</div></div>
-    <div class="game-tile" onclick="alert('Unlock more stars in Level Devil to play!')"><div class="tile-icon-box" style="background: #b2bec3;"><div class="tile-emoji">🏀</div></div><div class="tile-name">Dunk Shot</div></div>
-
   </main>
 
-  <!-- ===================================================================== -->
-  <!-- MODAL 1: LEVEL DEVIL (200 PROCEDURAL STAGES)                          -->
-  <!-- ===================================================================== -->
-  <div class="modal-backdrop" id="ldModal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <div style="font-weight: 800; display: flex; align-items: center; gap: 8px;">
-          <span>😈</span>
-          <span id="ldTitle">Level 1 / 200</span>
-        </div>
-        <button class="close-btn" id="closeLdBtn">&times;</button>
-      </div>
-
-      <canvas id="ldCanvas" width="640" height="420" style="width: 100%; aspect-ratio: 16/10.5; background: #f3c969; display: block;"></canvas>
-
-      <div class="mobile-controls">
-        <div class="d-pad">
-          <button class="ctrl-btn" id="ldLeft">◀</button>
-          <button class="ctrl-btn" id="ldRight">▶</button>
-        </div>
-        <button class="ctrl-btn jump-btn" id="ldJump">▲</button>
-      </div>
-      <div class="instructions-hint">Arrow Keys or On-Screen Controls • Beware of disappearing ground and troll doors!</div>
-    </div>
-  </div>
-
-  <!-- ===================================================================== -->
-  <!-- MODAL 2: TEMPLE RUN 3D (SOLO & 1v1 DUEL)                             -->
-  <!-- ===================================================================== -->
-  <div class="modal-backdrop" id="trModal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <div style="font-weight: 800; display: flex; align-items: center; gap: 8px;">
-          <span>🏃</span>
-          <span id="trStats">Distance: 0m | Coins: 0</span>
-        </div>
-        <button class="close-btn" id="closeTrBtn">&times;</button>
-      </div>
-
-      <!-- 1v1 Multiplayer Action Bar -->
-      <div style="background: #141320; padding: 10px 16px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: center; border-bottom: 1px solid rgba(255,255,255,0.08);">
-        <button id="trSoloBtn" style="background: #2ed573; color: #111; border: none; padding: 6px 12px; border-radius: 12px; font-weight: bold; font-size: 12px; cursor: pointer;">Solo Play</button>
-        <button id="trHostBtn" style="background: #e67e22; color: #fff; border: none; padding: 6px 12px; border-radius: 12px; font-weight: bold; font-size: 12px; cursor: pointer;">➕ Invite Friend</button>
-        <input id="trCodeInput" type="text" placeholder="5-digit code" maxlength="5" style="width: 105px; padding: 6px 8px; border-radius: 12px; border: 1px solid #3d3b54; background: #222035; color: #fff; text-align: center; text-transform: uppercase; font-weight: bold; font-size: 12px;" />
-        <button id="trJoinBtn" style="background: #00cec9; color: #111; border: none; padding: 6px 12px; border-radius: 12px; font-weight: bold; font-size: 12px; cursor: pointer;">🔗 Join</button>
-        <div id="trStatusText" style="font-size: 12px; color: #f1c40f; font-weight: bold; width: 100%; text-align: center; margin-top: 4px;">Mode: Solo Endless Run</div>
-      </div>
-
-      <canvas id="trCanvas" width="600" height="420" style="width: 100%; aspect-ratio: 4/3; background: #11140e; display: block;"></canvas>
-
-      <div class="mobile-controls">
-        <div class="d-pad">
-          <button class="ctrl-btn" id="trLeft">◀</button>
-          <button class="ctrl-btn" id="trSlide">▼</button>
-          <button class="ctrl-btn" id="trRight">▶</button>
-        </div>
-        <button class="ctrl-btn jump-btn" id="trJump" style="background: #e67e22; color: #fff;">▲</button>
-      </div>
-      <div class="instructions-hint">A/D = Lanes | W = Jump Tree Log | S = Slide Under Spikes</div>
-    </div>
-  </div>
-
-  <!-- ===================================================================== -->
-  <!-- MODAL 3: TIC-TAC-TOE                                                  -->
-  <!-- ===================================================================== -->
-  <div class="modal-backdrop" id="tttModal">
-    <div class="modal-content" style="max-width: 420px; text-align: center;">
-      <div class="modal-header">
-        <div style="font-weight: 800;">❌⭕ Tic-Tac-Toe</div>
-        <button class="close-btn" id="closeTttBtn">&times;</button>
-      </div>
-      <div style="padding: 24px;">
-        <div style="display: flex; gap: 10px; justify-content: center; margin-bottom: 16px;">
-          <button id="tttModeBot" style="padding: 8px 16px; border-radius: 12px; border: none; background: var(--accent-color); color: #fff; font-weight: bold; cursor: pointer;">vs Smart Bot</button>
-          <button id="tttMode2P" style="padding: 8px 16px; border-radius: 12px; border: none; background: #28263f; color: #fff; font-weight: bold; cursor: pointer;">2 Players</button>
-        </div>
-        <div id="tttStatus" style="font-size: 16px; font-weight: 800; color: #f1c40f; margin-bottom: 16px;">Your Turn (X)</div>
-        <div id="tttBoard" style="display: grid; grid-template-columns: repeat(3, 80px); gap: 8px; justify-content: center; margin: 0 auto;">
-          <button class="ttt-cell" data-idx="0" style="width: 80px; height: 80px; font-size: 32px; background: #25243a; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; color: #fff; cursor: pointer;"></button>
-          <button class="ttt-cell" data-idx="1" style="width: 80px; height: 80px; font-size: 32px; background: #25243a; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; color: #fff; cursor: pointer;"></button>
-          <button class="ttt-cell" data-idx="2" style="width: 80px; height: 80px; font-size: 32px; background: #25243a; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; color: #fff; cursor: pointer;"></button>
-          <button class="ttt-cell" data-idx="3" style="width: 80px; height: 80px; font-size: 32px; background: #25243a; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; color: #fff; cursor: pointer;"></button>
-          <button class="ttt-cell" data-idx="4" style="width: 80px; height: 80px; font-size: 32px; background: #25243a; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; color: #fff; cursor: pointer;"></button>
-          <button class="ttt-cell" data-idx="5" style="width: 80px; height: 80px; font-size: 32px; background: #25243a; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; color: #fff; cursor: pointer;"></button>
-          <button class="ttt-cell" data-idx="6" style="width: 80px; height: 80px; font-size: 32px; background: #25243a; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; color: #fff; cursor: pointer;"></button>
-          <button class="ttt-cell" data-idx="7" style="width: 80px; height: 80px; font-size: 32px; background: #25243a; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; color: #fff; cursor: pointer;"></button>
-          <button class="ttt-cell" data-idx="8" style="width: 80px; height: 80px; font-size: 32px; background: #25243a; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; color: #fff; cursor: pointer;"></button>
-        </div>
-        <button id="tttReset" style="margin-top: 20px; background: #333150; border: none; color: #fff; padding: 10px 20px; border-radius: 14px; font-weight: bold; cursor: pointer;">Clear Board</button>
-      </div>
-    </div>
-  </div>
+  <!-- ============================================== -->
+  <!-- MODALS FOR INLINE ENGINES                      -->
+  <!-- ============================================== -->
   
-  <!-- ===================================================================== -->
-  <!-- MODAL: SPEED RACING CAR (AI BOT & 1v1 CODE DUEL)                     -->
-  <!-- ===================================================================== -->
-  <div class="modal-backdrop" id="carModal">
-    <div class="modal-content" style="max-width: 660px;">
-      <div class="modal-header">
-        <div style="font-weight: 800; display: flex; align-items: center; gap: 8px;">
-          <span>🏎️</span>
-          <span id="carScoreDisplay">Speed: 0 KM/H | Distance: 0m</span>
-        </div>
-        <button class="close-btn" id="closeCarBtn">&times;</button>
-      </div>
-
-      <!-- Mode Selector & Multiplayer Code Input -->
-      <div style="background: #141320; padding: 10px 16px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: center; border-bottom: 1px solid rgba(255,255,255,0.08);">
-        <button id="carModeBotBtn" style="background: #00cec9; color: #111; border: none; padding: 6px 12px; border-radius: 12px; font-weight: bold; font-size: 12px; cursor: pointer;">🏎️ vs AI Bot</button>
-        <button id="carCreateRoomBtn" style="background: #e67e22; color: #fff; border: none; padding: 6px 12px; border-radius: 12px; font-weight: bold; font-size: 12px; cursor: pointer;">➕ Invite Friend</button>
-        <input id="carRoomCodeInput" type="text" placeholder="5-digit code" maxlength="5" style="width: 105px; padding: 6px 8px; border-radius: 12px; border: 1px solid #3d3b54; background: #222035; color: #fff; text-align: center; text-transform: uppercase; font-weight: bold; font-size: 12px;" />
-        <button id="carJoinRoomBtn" style="background: #fdcb6e; color: #111; border: none; padding: 6px 12px; border-radius: 12px; font-weight: bold; font-size: 12px; cursor: pointer;">🔗 Join</button>
-        <div id="carRoomStatus" style="font-size: 12px; color: #f1c40f; font-weight: bold; width: 100%; text-align: center; margin-top: 4px;">Mode: Race vs AI Bot</div>
-      </div>
-
-      <canvas id="carCanvas" width="640" height="420" style="width: 100%; aspect-ratio: 16/10.5; background: #87ceeb; display: block;"></canvas>
-
-      <!-- Mobile Driving Controls -->
-      <div class="mobile-controls">
-        <div class="d-pad">
-          <button class="ctrl-btn" id="carSteerLeft">◀</button>
-          <button class="ctrl-btn" id="carSteerRight">▶</button>
-        </div>
-        <div style="display: flex; gap: 10px;">
-          <button class="ctrl-btn" id="carBrakeBtn" style="background: #d63031; font-size: 14px; font-weight: 900;">BRAKE</button>
-          <button class="ctrl-btn jump-btn" id="carGasBtn" style="background: #00b894; font-size: 15px; font-weight: 900;">NITRO</button>
-        </div>
-      </div>
-      <div class="instructions-hint">A/D or Arrows = Steer | W or Up = Accelerate / Nitro | S = Brake</div>
-    </div>
-  </div>
-  
-  <!-- ===================================================================== -->
-  <!-- GAME ENGINES & SCRIPTS                                                -->
-  <!-- ===================================================================== -->
-  <script>
-    // --- Optional Firebase Configuration (Multiplayer Sync) ---
-      const firebaseConfig = {
-      apiKey: "AIzaSyBzLchy5M2fLne4c7Ghw1KNN8wVrlZdd8M",
-      authDomain: "friendsgame-872f5.firebaseapp.com",
-      databaseURL: "https://friendsgame-872f5-default-rtdb.firebaseio.com",
-      projectId: "friendsgame-872f5",
-      storageBucket: "friendsgame-872f5.firebasestorage.app",
-      messagingSenderId: "522534013233",
-      appId: "1:522534013233:web:f5faa6e6795023d0420810",
-      measurementId: "G-PW5H3G97QR"
-    };
-    if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
-    }
-    // ============================================================================
-// 1. LEVEL DEVIL 200-STAGE PROCEDURAL ENGINE
-// ============================================================================
-    
-const ldModal = document.getElementById("ldModal");
-const openLd = document.getElementById("openLevelDevil");
-const closeLd = document.getElementById("closeLdBtn");
-const ldCanvas = document.getElementById("ldCanvas");
-const ldCtx = ldCanvas ? ldCanvas.getContext("2d") : null;
-const ldTitle = document.getElementById("ldTitle");
-
-let ldLevel = 1;
-let ldDeaths = 0;
-let ldRunning = false;
-let ldAnimId = null;
-
-const ldInput = { left: false, right: false, jump: false };
-let ldPlayer = { x: 30, y: 220, w: 18, h: 22, vx: 0, vy: 0, grounded: false };
-let ldDoor = { x: 290, y: 200, w: 22, h: 34, fleeing: false };
-
-let ldPlatforms = [];
-let ldSpikes = [];
-let ldFakePlatforms = [];
-let ldFallingCeilings = [];
-let ldControlsInverted = false;
-let ldShake = 0;
-
-const ldThemes = [
-  { bg: "#f3c969", platform: "#1e3a5f", spike: "#d90429", player: "#111111" },
-  { bg: "#cd8d7a", platform: "#4a1c40", spike: "#f43f5e", player: "#ffffff" },
-  { bg: "#a8dadc", platform: "#1d3557", spike: "#e63946", player: "#111111" },
-  { bg: "#95d5b2", platform: "#081c15", spike: "#d00000", player: "#ffffff" }
-];
-let ldCurTheme = ldThemes[0];
-
-function buildLdLevel(lvl) {
-  if (!ldCanvas) return;
-  const W = ldCanvas.width || 340;
-  const H = ldCanvas.height || 260;
-
-  ldPlatforms = [];
-  ldSpikes = [];
-  ldFakePlatforms = [];
-  ldFallingCeilings = [];
-  ldCurTheme = ldThemes[(lvl - 1) % ldThemes.length];
-
-  // Troll 1: Controls invert every 3rd level and above level 80
-  ldControlsInverted = (lvl % 3 === 0 || lvl >= 80);
-
-  // Spawn floor
-  ldPlatforms.push({ x: 0, y: H - 35, w: 75, h: 35, type: "solid" });
-
-  // Troll 2: Dynamic platform shrinking and collapsing
-  const platformCount = Math.min(3 + Math.floor(lvl / 25), 6);
-  const stepX = (W - 130) / platformCount;
-
-  for (let i = 1; i <= platformCount; i++) {
-    const px = 60 + i * stepX;
-    const py = (H - 50) - Math.abs(Math.sin(i * 1.4 + lvl)) * 65;
-    const pw = Math.max(60 - Math.floor(lvl * 0.18), 32);
-
-    const isFake = (lvl >= 8 && i % 2 === 1);
-    const isCrumble = (lvl >= 20 && i % 3 === 0);
-
-    if (isFake) {
-      ldFakePlatforms.push({ x: px, y: py, w: pw, h: 12, triggered: false });
-    } else {
-      ldPlatforms.push({ x: px, y: py, w: pw, h: 12, type: isCrumble ? "crumble" : "solid", stepped: 0 });
-    }
-
-    // Troll 3: Moving spikes and jump-seeking hazards
-    const spikeSpeed = (1.2 + lvl * 0.02) * (i % 2 === 0 ? 1 : -1);
-    ldSpikes.push({
-      x: px + pw / 2 - 6,
-      y: py - 10,
-      w: 12,
-      h: 10,
-      vx: lvl >= 12 ? spikeSpeed : 0,
-      minX: px,
-      maxX: px + pw - 12,
-      jumpTrigger: (lvl >= 25 && i === 2)
-    });
-  }
-
-  // Troll 4: Falling ceiling blocks (Level 35+)
-  if (lvl >= 35) {
-    for (let c = 0; c < 2; c++) {
-      ldFallingCeilings.push({
-        x: 90 + c * 100,
-        y: -30,
-        w: 32,
-        h: 18,
-        vy: 0,
-        fallen: false
-      });
-    }
-  }
-
-  // Goal Door & Platform
-  ldDoor.x = W - 45;
-  ldDoor.y = H - 69;
-  ldDoor.fleeing = false;
-  ldPlatforms.push({ x: W - 60, y: H - 35, w: 60, h: 35, type: "solid" });
-
-  // Reset player state
-  ldPlayer.x = 20;
-  ldPlayer.y = H - 60;
-  ldPlayer.vx = 0;
-  ldPlayer.vy = 0;
-  ldPlayer.grounded = false;
-
-  if (ldTitle) {
-    ldTitle.textContent = `😈 Level ${lvl} / 200 | Deaths: ${ldDeaths}`;
-  }
-}
-
-function ldDie() {
-  ldDeaths++;
-  ldShake = 7;
-  buildLdLevel(ldLevel);
-}
-
-function ldUpdate() {
-  if (!ldRunning || !ldCanvas) return;
-  const W = ldCanvas.width || 340;
-  const H = ldCanvas.height || 260;
-
-  const moveLeft = ldControlsInverted ? ldInput.right : ldInput.left;
-  const moveRight = ldControlsInverted ? ldInput.left : ldInput.right;
-
-  if (moveLeft) ldPlayer.vx = -3.2;
-  else if (moveRight) ldPlayer.vx = 3.2;
-  else ldPlayer.vx *= 0.65;
-
-  if (ldInput.jump && ldPlayer.grounded) {
-    ldPlayer.vy = -7.5;
-    ldPlayer.grounded = false;
-    ldSpikes.forEach(s => {
-      if (s.jumpTrigger) s.vx = (ldPlayer.x < s.x ? -3.5 : 3.5);
-    });
-  }
-
-  ldPlayer.vy += 0.36;
-  ldPlayer.x += ldPlayer.vx;
-  ldPlayer.y += ldPlayer.vy;
-  ldPlayer.grounded = false;
-
-  // Solid & Crumbling Platforms
-  ldPlatforms.forEach(plat => {
-    if (plat.type === "crumble" && plat.stepped > 16) return;
-
-    if (
-      ldPlayer.x + ldPlayer.w > plat.x &&
-      ldPlayer.x < plat.x + plat.w &&
-      ldPlayer.y + ldPlayer.h >= plat.y &&
-      ldPlayer.y + ldPlayer.h <= plat.y + 10 &&
-      ldPlayer.vy >= 0
-    ) {
-      if (plat.type === "crumble") plat.stepped++;
-      ldPlayer.y = plat.y - ldPlayer.h;
-      ldPlayer.vy = 0;
-      ldPlayer.grounded = true;
-    }
-  });
-
-  // Fake platform collision
-  ldFakePlatforms.forEach(fake => {
-    if (
-      ldPlayer.x + ldPlayer.w > fake.x &&
-      ldPlayer.x < fake.x + fake.w &&
-      ldPlayer.y + ldPlayer.h >= fake.y &&
-      ldPlayer.y + ldPlayer.h <= fake.y + 10
-    ) {
-      fake.triggered = true;
-      ldDie();
-    }
-  });
-
-  // Spikes collision
-  ldSpikes.forEach(s => {
-    s.x += s.vx;
-    if (s.x < s.minX || s.x > s.maxX) s.vx *= -1;
-
-    if (
-      ldPlayer.x < s.x + s.w &&
-      ldPlayer.x + ldPlayer.w > s.x &&
-      ldPlayer.y < s.y + s.h &&
-      ldPlayer.y + ldPlayer.h > s.y
-    ) {
-      ldDie();
-    }
-  });
-
-  // Falling Ceilings
-  ldFallingCeilings.forEach(c => {
-    if (Math.abs(ldPlayer.x - c.x) < 28 && !c.fallen) c.vy = 5;
-    c.y += c.vy;
-
-    if (
-      ldPlayer.x < c.x + c.w &&
-      ldPlayer.x + ldPlayer.w > c.x &&
-      ldPlayer.y < c.y + c.h &&
-      ldPlayer.y + ldPlayer.h > c.y
-    ) {
-      ldDie();
-    }
-  });
-
-  // Troll 5: Fleeing door (Level 30+)
-  if (ldLevel >= 30) {
-    const dist = Math.hypot(ldPlayer.x - ldDoor.x, ldPlayer.y - ldDoor.y);
-    if (dist < 55 && !ldDoor.fleeing) {
-      ldDoor.fleeing = true;
-      ldDoor.x = (ldDoor.x > W / 2) ? 20 : W - 45;
-    }
-  }
-
-  // Reach door goal
-  if (
-    ldPlayer.x < ldDoor.x + ldDoor.w &&
-    ldPlayer.x + ldPlayer.w > ldDoor.x &&
-    ldPlayer.y < ldDoor.y + ldDoor.h &&
-    ldPlayer.y + ldPlayer.h > ldDoor.y
-  ) {
-    if (ldLevel < 200) {
-      ldLevel++;
-      buildLdLevel(ldLevel);
-    } else {
-      alert("CONGRATULATIONS! You cleared all 200 Level Devil stages!");
-      ldLevel = 1;
-      buildLdLevel(1);
-    }
-  }
-
-  // Pit death
-  if (ldPlayer.y > H + 30) ldDie();
-}
-
-function ldDraw() {
-  if (!ldCtx || !ldCanvas) return;
-  const W = ldCanvas.width || 340;
-  const H = ldCanvas.height || 260;
-
-  ldCtx.save();
-  if (ldShake > 0) {
-    ldCtx.translate((Math.random() - 0.5) * ldShake, (Math.random() - 0.5) * ldShake);
-    ldShake *= 0.8;
-    if (ldShake < 0.5) ldShake = 0;
-  }
-
-  // Background
-  ldCtx.fillStyle = ldCurTheme.bg;
-  ldCtx.fillRect(0, 0, W, H);
-
-  // Platforms
-  ldPlatforms.forEach(plat => {
-    ldCtx.fillStyle = plat.type === "crumble" ? "#d97706" : ldCurTheme.platform;
-    ldCtx.fillRect(plat.x, plat.y, plat.w, plat.h);
-  });
-
-  // Fake platforms
-  ldFakePlatforms.forEach(fake => {
-    ldCtx.fillStyle = fake.triggered ? "#dc2626" : ldCurTheme.platform;
-    ldCtx.fillRect(fake.x, fake.y, fake.w, fake.h);
-  });
-
-  // Spikes
-  ldCtx.fillStyle = ldCurTheme.spike;
-  ldSpikes.forEach(s => {
-    ldCtx.beginPath();
-    ldCtx.moveTo(s.x, s.y + s.h);
-    ldCtx.lineTo(s.x + s.w / 2, s.y);
-    ldCtx.lineTo(s.x + s.w, s.y + s.h);
-    ldCtx.fill();
-  });
-
-  // Falling ceiling blocks
-  ldCtx.fillStyle = "#8b5cf6";
-  ldFallingCeilings.forEach(c => {
-    ldCtx.fillRect(c.x, c.y, c.w, c.h);
-  });
-
-  // Door
-  ldCtx.fillStyle = "#10b981";
-  ldCtx.fillRect(ldDoor.x, ldDoor.y, ldDoor.w, ldDoor.h);
-  ldCtx.fillStyle = "#047857";
-  ldCtx.fillRect(ldDoor.x + 3, ldDoor.y + 3, ldDoor.w - 6, ldDoor.h - 3);
-
-  // Player
-  ldCtx.fillStyle = ldCurTheme.player || "#111111";
-  ldCtx.fillRect(ldPlayer.x, ldPlayer.y, ldPlayer.w, ldPlayer.h);
-
-  ldCtx.restore();
-}
-
-function ldLoop() {
-  if (!ldRunning) return;
-  ldUpdate();
-  ldDraw();
-  ldAnimId = requestAnimationFrame(ldLoop);
-}
-
-// Modal open/close listeners
-if (openLd) {
-  openLd.addEventListener("click", () => {
-    if (ldModal) ldModal.style.display = "flex";
-    if (ldCanvas) {
-      ldCanvas.width = 340;
-      ldCanvas.height = 260;
-    }
-    ldLevel = 1;
-    ldDeaths = 0;
-    buildLdLevel(ldLevel);
-    ldRunning = true;
-    cancelAnimationFrame(ldAnimId);
-    ldLoop();
-  });
-}
-
-if (closeLd) {
-  closeLd.addEventListener("click", () => {
-    if (ldModal) ldModal.style.display = "none";
-    ldRunning = false;
-    cancelAnimationFrame(ldAnimId);
-  });
-}
-
-// Keyboard Listeners
-window.addEventListener("keydown", (e) => {
-  if (e.code === "ArrowLeft" || e.code === "KeyA") ldInput.left = true;
-  if (e.code === "ArrowRight" || e.code === "KeyD") ldInput.right = true;
-  if (e.code === "ArrowUp" || e.code === "Space" || e.code === "KeyW") ldInput.jump = true;
-});
-
-window.addEventListener("keyup", (e) => {
-  if (e.code === "ArrowLeft" || e.code === "KeyA") ldInput.left = false;
-  if (e.code === "ArrowRight" || e.code === "KeyD") ldInput.right = false;
-  if (e.code === "ArrowUp" || e.code === "Space" || e.code === "KeyW") ldInput.jump = false;
-});
-
-// Mobile on-screen button binder
-function bindLdTouch(element, key) {
-  if (!element) return;
-  const start = (e) => { e.preventDefault(); ldInput[key] = true; };
-  const end = (e) => { e.preventDefault(); ldInput[key] = false; };
-  element.addEventListener("touchstart", start, { passive: false });
-  element.addEventListener("touchend", end, { passive: false });
-  element.addEventListener("mousedown", start);
-  element.addEventListener("mouseup", end);
-}
-
-// Automatically bind the 3 buttons rendered in your modal
-setTimeout(() => {
-  const modalBtns = document.querySelectorAll("#ldModal div[style*='display: flex'] div, #ldModal button");
-  const filtered = Array.from(modalBtns).filter(b => b.textContent.includes("◀") || b.textContent.includes("▶") || b.textContent.includes("▲") || b.innerText.includes("JUMP"));
-  
-  if (filtered.length >= 3) {
-    bindLdTouch(filtered[0], "left");
-    bindLdTouch(filtered[1], "right");
-    bindLdTouch(filtered[2], "jump");
-  } else {
-    // Fallback: Bind by click coordinates on modal controls area
-    const controlsArea = document.querySelector("#ldModal div:has(> button), #ldModal div:has(> div)");
-    if (controlsArea) {
-      controlsArea.addEventListener("touchstart", (e) => {
-        const touch = e.touches[0];
-        const rect = controlsArea.getBoundingClientRect();
-        const relX = touch.clientX - rect.left;
-        if (relX < rect.width * 0.33) ldInput.left = true;
-        else if (relX < rect.width * 0.66) ldInput.right = true;
-        else ldInput.jump = true;
-      });
-      controlsArea.addEventListener("touchend", () => {
-        ldInput.left = false;
-        ldInput.right = false;
-        ldInput.jump = false;
-      });
-    }
-  }
-}, 300);
+  <!-- Modal 1: Tic-Tac-Toe -->
+  <div class="modal-layer" id="tttModal">
+    <div class="modal-box">
+      <button class="close-btn" onclick="closeModal('tttModal')">✕</button>
+      <h3 style="font-size:18px; margin-bottom:4px;">Tic-Tac-Toe</h3>
+      <p id="tttStatus" style="font-size:12px; color:var(--neon-cyan);">Your Turn (X)</p>
       
+      <div class="ttt-grid">
+        <div class="ttt-cell" onclick="makeTttMove(0, this)"></div>
+        <div class="ttt-cell" onclick="makeTttMove(1, this)"></div>
+        <div class="ttt-cell" onclick="makeTttMove(2, this)"></div>
+        <div class="ttt-cell" onclick="makeTttMove(3, this)"></div>
+        <div class="ttt-cell" onclick="makeTttMove(4, this)"></div>
+        <div class="ttt-cell" onclick="makeTttMove(5, this)"></div>
+        <div class="ttt-cell" onclick="makeTttMove(6, this)"></div>
+        <div class="ttt-cell" onclick="makeTttMove(7, this)"></div>
+        <div class="ttt-cell" onclick="makeTttMove(8, this)"></div>
+      </div>
 
-    // =========================================================================
-    // 2. TEMPLE RUN 3D ENGINE (SOLO + 1v1 DUEL)
-    // =========================================================================
-    const trModal = document.getElementById("trModal");
-    const openTr = document.getElementById("openTempleRun");
-    const closeTr = document.getElementById("closeTrBtn");
-    const trCanvas = document.getElementById("trCanvas");
-    const trCtx = trCanvas.getContext("2d");
-    const trStats = document.getElementById("trStats");
-    const trStatusText = document.getElementById("trStatusText");
+      <button onclick="resetTtt()" style="padding:10px 24px; background:linear-gradient(135deg, #00f2fe, #7928ca); border:none; border-radius:20px; color:#fff; font-weight:800; cursor:pointer;">Restart Game</button>
+    </div>
+  </div>
 
-    let trAnimId = null;
-    let trRunning = false;
-    let trScore = 0;
-    let trCoins = 0;
-    let trSpeed = 5;
-    let trRoomId = null;
-    let trRole = "solo";
-    let trRoomRef = null;
+  <!-- Modal 2: Speed Math -->
+  <div class="modal-layer" id="mathModal">
+    <div class="modal-box">
+      <button class="close-btn" onclick="closeModal('mathModal')">✕</button>
+      <div style="width:100%; display:flex; justify-content:space-between; font-size:13px; font-weight:800;">
+        <span>SCORE: <b id="mathScoreTxt" style="color:var(--neon-gold);">0</b></span>
+        <span>STREAK: <b id="mathStreakTxt" style="color:var(--neon-pink);">0</b> 🔥</span>
+      </div>
+      <div class="math-bar"><div class="math-fill" id="mathTimeBar"></div></div>
+      <div id="mathEquation" style="font-size:38px; font-weight:900; margin:16px 0;">-- + --</div>
+      <div class="math-grid" id="mathOptions"></div>
+    </div>
+  </div>
 
-    const trLanes = [-110, 0, 110];
-    let trRunner = { lane: 1, curX: 0, tgtX: 0, y: 0, vy: 0, jumping: false, sliding: false, slideTime: 0 };
-    let trObjects = [];
-    let trSpawnCount = 0;
+  <!-- Modal 3: Tap Reflex -->
+  <div class="modal-layer" id="reflexModal">
+    <div class="modal-box">
+      <button class="close-btn" onclick="closeModal('reflexModal')">✕</button>
+      <h3 style="font-size:18px;">⚡ Reflex Test</h3>
+      <p style="font-size:12px; color:rgba(255,255,255,0.6);">Wait for green, then tap as fast as you can!</p>
+      <div class="reflex-pad" id="reflexPad" onclick="handleReflexAction()" style="background:#1d2642; border:2px solid #3b4b75;">
+        <div id="reflexIcon" style="font-size:38px;">⚡</div>
+        <div id="reflexStatus" style="font-weight:900; font-size:18px; margin-top:8px;">TAP TO START</div>
+        <div id="reflexSub" style="font-size:12px; color:rgba(255,255,255,0.5);">Test your reaction speed</div>
+      </div>
+    </div>
+  </div>
 
-    openTr.addEventListener("click", () => {
-      trModal.style.display = "flex";
-      startTrSolo();
-    });
+  <!-- Modal 4: Highway Car Racer -->
+  <div class="modal-layer" id="carModal">
+    <div class="modal-box" style="max-width:440px; padding:16px;">
+      <button class="close-btn" onclick="closeCarRaceModal()">✕</button>
+      <div style="width:100%; display:flex; justify-content:space-between; font-size:11px; font-weight:800; margin-bottom:8px;">
+        <span id="carScoreDisplay">Speed: 0 KM/H</span>
+        <span id="carRoomStatus" style="color:var(--neon-gold);">Mode: Race AI Bot</span>
+      </div>
+      <canvas id="carCanvas" width="360" height="420" style="border-radius:18px; background:#000; width:100%; height:auto;"></canvas>
+      <div style="display:flex; justify-content:space-between; width:100%; margin-top:12px;">
+        <div style="display:flex; gap:8px;">
+          <button id="carSteerLeft" style="padding:10px 18px; border-radius:14px; background:#1e294b; color:#fff; border:1px solid #3e4f80; font-weight:900;">◀</button>
+          <button id="carSteerRight" style="padding:10px 18px; border-radius:14px; background:#1e294b; color:#fff; border:1px solid #3e4f80; font-weight:900;">▶</button>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button id="carBrakeBtn" style="padding:10px 18px; border-radius:14px; background:#e74c3c; color:#fff; border:none; font-weight:900;">BRAKE</button>
+          <button id="carGasBtn" style="padding:10px 18px; border-radius:14px; background:#2ecc71; color:#fff; border:none; font-weight:900;">GAS</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    closeTr.addEventListener("click", () => {
-      trModal.style.display = "none";
-      trRunning = false;
-      cancelAnimationFrame(trAnimId);
-      if (trRoomRef) trRoomRef.off();
-    });
-
-    document.getElementById("trSoloBtn").addEventListener("click", startTrSolo);
-
-    function startTrSolo() {
-      if (trRoomRef) trRoomRef.off();
-      trRoomId = null;
-      trRole = "solo";
-      trStatusText.textContent = "Mode: Solo Endless Run";
-      initTr();
-      trRunning = true;
-      trLoop();
+  <!-- ============================================== -->
+  <!-- 3D WEBGL GRAPHICS & GAME SYSTEMS               -->
+  <!-- ============================================== -->
+  <script>
+    function closeModal(id) {
+      document.getElementById(id).style.display = 'none';
     }
 
-    document.getElementById("trHostBtn").addEventListener("click", () => {
-      if (typeof firebase === "undefined" || !firebase.apps.length) {
-        alert("Firebase is not configured! You can still play Solo mode.");
-        return;
-      }
-      trRoomId = Math.floor(10000 + Math.random() * 90000).toString();
-      trRole = "host";
-      trRoomRef = firebase.database().ref("temple_rooms/" + trRoomId);
-      trRoomRef.set({ hostScore: null, guestScore: null, status: "waiting" });
-      trStatusText.textContent = `Room Code: ${trRoomId} (Share with friend!)`;
+    // ------------------------------------------------
+    // 1. ADVANCED THREE.JS 3D CYBERPUNK UNIVERSE
+    // ------------------------------------------------
+    (function init3DBackground() {
+      const canvas = document.getElementById('canvas3d-bg');
+      if (!canvas) return;
 
-      trRoomRef.on("value", (snap) => {
-        const val = snap.val();
-        if (!val) return;
-        if (val.status === "ready" && !trRunning) {
-          trStatusText.textContent = `Friend connected in Room ${trRoomId}! Running!`;
-          initTr();
-          trRunning = true;
-          trLoop();
-        }
-        if (val.hostScore !== null && val.guestScore !== null) {
-          trDuelOver(val.hostScore, val.guestScore);
-        }
-      });
-    });
+      const scene = new THREE.Scene();
+      scene.fog = new THREE.FogExp2(0x03050c, 0.024);
 
-    document.getElementById("trJoinBtn").addEventListener("click", () => {
-      const code = document.getElementById("trCodeInput").value.trim().toUpperCase();
-      if (code.length < 5 || typeof firebase === "undefined" || !firebase.apps.length) return;
-      trRoomId = code;
-      trRole = "guest";
-      trRoomRef = firebase.database().ref("temple_rooms/" + trRoomId);
-      trRoomRef.once("value", (snap) => {
-        if (!snap.exists()) { alert("Room not found!"); startTrSolo(); return; }
-        trRoomRef.update({ status: "ready" });
-        trStatusText.textContent = `Joined Room: ${trRoomId}! Running!`;
-        trRoomRef.on("value", (s) => {
-          const val = s.val();
-          if (val && val.hostScore !== null && val.guestScore !== null) {
-            trDuelOver(val.guestScore, val.hostScore);
-          }
+      const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+      camera.position.set(0, 4, 15);
+      camera.lookAt(0, 0, 0);
+
+      const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+      // Neon Lights
+      const ambient = new THREE.AmbientLight(0xffffff, 0.7);
+      scene.add(ambient);
+
+      const cyanPoint = new THREE.PointLight(0x00f2fe, 3.5, 45);
+      cyanPoint.position.set(-12, 10, 6);
+      scene.add(cyanPoint);
+
+      const pinkPoint = new THREE.PointLight(0xff007f, 3.5, 45);
+      pinkPoint.position.set(12, 10, -6);
+      scene.add(pinkPoint);
+
+      // Infinite Cyber Grid Floor
+      const gridHelper = new THREE.GridHelper(90, 60, 0x00f2fe, 0x112244);
+      gridHelper.position.y = -4;
+      scene.add(gridHelper);
+
+      // Floating 3D Geometric Prisms with Wireframe Aura
+      const shapes = [];
+      const geometries = [
+        new THREE.IcosahedronGeometry(0.85, 0),
+        new THREE.TorusGeometry(0.65, 0.22, 16, 50),
+        new THREE.OctahedronGeometry(0.75, 0),
+        new THREE.TetrahedronGeometry(0.9, 0)
+      ];
+
+      const matCyan = new THREE.MeshStandardMaterial({ color: 0x00f2fe, roughness: 0.15, metalness: 0.85, wireframe: true });
+      const matPink = new THREE.MeshStandardMaterial({ color: 0xff007f, roughness: 0.15, metalness: 0.85, wireframe: true });
+
+      for (let i = 0; i < 20; i++) {
+        const geo = geometries[i % geometries.length];
+        const mat = (i % 2 === 0) ? matCyan : matPink;
+        const mesh = new THREE.Mesh(geo, mat);
+        mesh.position.set(
+          (Math.random() - 0.5) * 36,
+          Math.random() * 14 - 2,
+          (Math.random() - 0.5) * 24 - 4
+        );
+        scene.add(mesh);
+        shapes.push({
+          mesh,
+          rotX: (Math.random() - 0.5) * 0.024,
+          rotY: (Math.random() - 0.5) * 0.024,
+          floatSpeed: 0.0018 + Math.random() * 0.002,
+          offset: Math.random() * Math.PI * 2
         });
-        initTr();
-        trRunning = true;
-        trLoop();
+      }
+
+      // Starfield Particle Dust
+      const partGeo = new THREE.BufferGeometry();
+      const count = 400;
+      const positions = new Float32Array(count * 3);
+      for (let i = 0; i < count * 3; i += 3) {
+        positions[i] = (Math.random() - 0.5) * 60;
+        positions[i + 1] = Math.random() * 30 - 6;
+        positions[i + 2] = (Math.random() - 0.5) * 50;
+      }
+      partGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      const partMat = new THREE.PointsMaterial({ size: 0.14, color: 0x00f2fe, transparent: true, opacity: 0.85 });
+      const particles = new THREE.Points(partGeo, partMat);
+      scene.add(particles);
+
+      // Interactive Tilt Physics
+      let targetMouseX = 0, targetMouseY = 0;
+      let currentMouseX = 0, currentMouseY = 0;
+
+      window.addEventListener('pointermove', (e) => {
+        targetMouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+        targetMouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+      });
+
+      window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+
+      function renderLoop() {
+        requestAnimationFrame(renderLoop);
+        const now = performance.now();
+
+        // Animate Floating Shapes
+        shapes.forEach(item => {
+          item.mesh.rotation.x += item.rotX;
+          item.mesh.rotation.y += item.rotY;
+          item.mesh.position.y += Math.sin(now * item.floatSpeed + item.offset) * 0.012;
+        });
+
+        // Grid translation
+        gridHelper.position.z = (now * 0.005) % 1.5;
+
+        // Smooth camera dampening
+        currentMouseX += (targetMouseX - currentMouseX) * 0.05;
+        currentMouseY += (targetMouseY - currentMouseY) * 0.05;
+
+        camera.position.x = currentMouseX * 2.2;
+        camera.position.y = -currentMouseY * 1.5 + 4;
+        camera.lookAt(0, 0, 0);
+
+        renderer.render(scene, camera);
+      }
+      renderLoop();
+    })();
+
+    // ------------------------------------------------
+    // 2. REAL-TIME 3D CARD TILT SCRIPT
+    // ------------------------------------------------
+    document.querySelectorAll('.game-tile').forEach(tile => {
+      tile.addEventListener('pointermove', (e) => {
+        const rect = tile.getBoundingClientRect();
+        const x = e.clientX - rect.left - rect.width / 2;
+        const y = e.clientY - rect.top - rect.height / 2;
+        const tiltX = -(y / (rect.height / 2)) * 12;
+        const tiltY = (x / (rect.width / 2)) * 12;
+        tile.style.transform = `perspective(900px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale(1.05)`;
+      });
+
+      tile.addEventListener('pointerleave', () => {
+        tile.style.transform = '';
       });
     });
 
-    window.addEventListener("keydown", (e) => {
-      if (!trRunning) return;
-      if (e.code === "ArrowLeft" || e.code === "KeyA") shiftLane(-1);
-      if (e.code === "ArrowRight" || e.code === "KeyD") shiftLane(1);
-      if ((e.code === "ArrowUp" || e.code === "KeyW" || e.code === "Space") && !trRunner.jumping) {
-        trRunner.vy = -14; trRunner.jumping = true;
-      }
-      if (e.code === "ArrowDown" || e.code === "KeyS") {
-        trRunner.sliding = true; trRunner.slideTime = 35;
-      }
-    });
+    // ------------------------------------------------
+    // 3. TIC-TAC-TOE GAME ENGINE
+    // ------------------------------------------------
+    let tttBoard = ["", "", "", "", "", "", "", "", ""];
+    let tttTurn = "X";
+    let tttActive = true;
+    const winCombos = [
+      [0,1,2],[3,4,5],[6,7,8],
+      [0,3,6],[1,4,7],[2,5,8],
+      [0,4,8],[2,4,6]
+    ];
 
-    function shiftLane(d) {
-      trRunner.lane = Math.max(0, Math.min(2, trRunner.lane + d));
-      trRunner.tgtX = trLanes[trRunner.lane];
+    function openTicTacToe() {
+      document.getElementById('tttModal').style.display = 'flex';
+      resetTtt();
     }
 
-    function bindTrTouchBtn(id, fn) {
-      const el = document.getElementById(id);
-      if (!el) return;
-      const act = (e) => { if (e.cancelable) e.preventDefault(); fn(); };
-      el.addEventListener("touchstart", act, { passive: false });
-      el.addEventListener("mousedown", act);
-    }
-    bindTrTouchBtn("trLeft", () => shiftLane(-1));
-    bindTrTouchBtn("trRight", () => shiftLane(1));
-    bindTrTouchBtn("trJump", () => { if (!trRunner.jumping) { trRunner.vy = -14; trRunner.jumping = true; } });
-    bindTrTouchBtn("trSlide", () => { trRunner.sliding = true; trRunner.slideTime = 35; });
+    function makeTttMove(idx, el) {
+      if (!tttActive || tttBoard[idx] !== "") return;
+      tttBoard[idx] = tttTurn;
+      el.textContent = tttTurn;
+      el.style.color = tttTurn === "X" ? "#00f2fe" : "#ff007f";
 
-    function initTr() {
-      trScore = 0; trCoins = 0; trSpeed = 5; trObjects = []; trSpawnCount = 0;
-      trRunner = { lane: 1, curX: 0, tgtX: 0, y: 0, vy: 0, jumping: false, sliding: false, slideTime: 0 };
-    }
-
-    function updateTr() {
-      trScore += trSpeed * 0.05;
-      trSpeed = Math.min(13, trSpeed + 0.001);
-      trRunner.curX += (trRunner.tgtX - trRunner.curX) * 0.25;
-
-      if (trRunner.jumping) {
-        trRunner.y += trRunner.vy;
-        trRunner.vy += 0.8;
-        if (trRunner.y >= 0) { trRunner.y = 0; trRunner.vy = 0; trRunner.jumping = false; }
-      }
-
-      if (trRunner.sliding) {
-        trRunner.slideTime--;
-        if (trRunner.slideTime <= 0) trRunner.sliding = false;
-      }
-
-      trSpawnCount++;
-      if (trSpawnCount > 55 - Math.min(25, Math.floor(trSpeed * 2))) {
-        trSpawnCount = 0;
-        const lane = Math.floor(Math.random() * 3);
-        const r = Math.random();
-        if (r < 0.4) trObjects.push({ z: 600, lane: lane, type: "low" });
-        else if (r < 0.7) trObjects.push({ z: 600, lane: lane, type: "high" });
-        else trObjects.push({ z: 600, lane: lane, type: "coin" });
-      }
-
-      for (let i = trObjects.length - 1; i >= 0; i--) {
-        const obj = trObjects[i];
-        obj.z -= trSpeed * 2.2;
-        if (obj.z <= 50 && obj.z >= 10 && obj.lane === trRunner.lane) {
-          if (obj.type === "coin") {
-            trCoins++; trObjects.splice(i, 1); continue;
-          }
-          if (obj.type === "low" && trRunner.y > -25) { crashTr(); return; }
-          if (obj.type === "high" && !trRunner.sliding) { crashTr(); return; }
-        }
-        if (obj.z <= 0) trObjects.splice(i, 1);
-      }
-      trStats.textContent = `Distance: ${Math.floor(trScore)}m | Coins: ${trCoins}`;
-    }
-
-    function renderTr() {
-      trCtx.clearRect(0, 0, trCanvas.width, trCanvas.height);
-      const horY = 130, botY = trCanvas.height, midX = trCanvas.width / 2;
-
-      // Sky
-      trCtx.fillStyle = "#122a1e";
-      trCtx.fillRect(0, 0, trCanvas.width, horY);
-
-      // Path
-      trCtx.fillStyle = "#8a7356";
-      trCtx.beginPath();
-      trCtx.moveTo(midX - 35, horY); trCtx.lineTo(midX + 35, horY);
-      trCtx.lineTo(midX + 175, botY); trCtx.lineTo(midX - 175, botY);
-      trCtx.fill();
-
-      // Objects
-      const sorted = [...trObjects].sort((a, b) => b.z - a.z);
-      sorted.forEach(obj => {
-        const d = 1 - (obj.z / 600);
-        if (d < 0) return;
-        const sy = horY + d * (botY - horY);
-        const sx = midX + trLanes[obj.lane] * d * 1.5;
-        const scale = 0.2 + d * 0.9;
-
-        if (obj.type === "coin") {
-          trCtx.fillStyle = "#f1c40f";
-          trCtx.beginPath(); trCtx.arc(sx, sy - 20 * scale, 10 * scale, 0, Math.PI * 2); trCtx.fill();
-        } else if (obj.type === "low") {
-          trCtx.fillStyle = "#e74c3c";
-          const w = 60 * scale, h = 18 * scale;
-          trCtx.fillRect(sx - w / 2, sy - h, w, h);
-        } else if (obj.type === "high") {
-          trCtx.fillStyle = "#2c3e50";
-          const w = 66 * scale, h = 14 * scale;
-          trCtx.fillRect(sx - w / 2, sy - (40 * scale), w, h);
-        }
-      });
-
-      // Runner
-      const px = midX + trRunner.curX;
-      const py = botY - 35 + trRunner.y;
-      trCtx.fillStyle = "#e67e22";
-      if (trRunner.sliding) {
-        trCtx.fillRect(px - 18, py + 8, 36, 16);
-      } else {
-        trCtx.fillRect(px - 12, py - 32, 24, 26);
-        trCtx.fillStyle = "#f5cd79";
-        trCtx.beginPath(); trCtx.arc(px, py - 40, 10, 0, Math.PI * 2); trCtx.fill();
-      }
-    }
-
-    function crashTr() {
-      trRunning = false;
-      cancelAnimationFrame(trAnimId);
-      const fin = Math.floor(trScore);
-
-      if (trRoomId && trRole !== "solo") {
-        const d = {};
-        if (trRole === "host") d.hostScore = fin;
-        if (trRole === "guest") d.guestScore = fin;
-        trRoomRef.update(d);
-
-        trCtx.fillStyle = "rgba(0,0,0,0.85)";
-        trCtx.fillRect(0, 0, trCanvas.width, trCanvas.height);
-        trCtx.fillStyle = "#e74c3c";
-        trCtx.font = "900 30px sans-serif";
-        trCtx.textAlign = "center";
-        trCtx.fillText("💀 CRASHED! 💀", trCanvas.width / 2, trCanvas.height / 2 - 10);
-        trCtx.fillStyle = "#fff";
-        trCtx.font = "16px sans-serif";
-        trCtx.fillText(`Score: ${fin}m | Waiting for opponent...`, trCanvas.width / 2, trCanvas.height / 2 + 25);
-      } else {
-        trCtx.fillStyle = "rgba(0,0,0,0.75)";
-        trCtx.fillRect(0, 0, trCanvas.width, trCanvas.height);
-        trCtx.fillStyle = "#e74c3c";
-        trCtx.font = "900 30px sans-serif";
-        trCtx.textAlign = "center";
-        trCtx.fillText("💥 GAME OVER 💥", trCanvas.width / 2, trCanvas.height / 2 - 10);
-        trCtx.fillStyle = "#f1c40f";
-        trCtx.font = "16px sans-serif";
-        trCtx.fillText(`Distance: ${fin}m | Click screen to restart`, trCanvas.width / 2, trCanvas.height / 2 + 25);
-        trCanvas.addEventListener("click", () => { initTr(); trRunning = true; trLoop(); }, { once: true });
-      }
-    }
-
-    function trDuelOver(my, op) {
-      trCtx.fillStyle = "rgba(0,0,0,0.9)";
-      trCtx.fillRect(0, 0, trCanvas.width, trCanvas.height);
-      trCtx.textAlign = "center";
-      trCtx.fillStyle = my > op ? "#00cec9" : (my < op ? "#ff4757" : "#f1c40f");
-      trCtx.font = "900 34px sans-serif";
-      trCtx.fillText(my > op ? "🏆 YOU WON! 🏆" : (my < op ? "💀 YOU LOST! 💀" : "🤝 TIE! 🤝"), trCanvas.width / 2, trCanvas.height / 2 - 20);
-      trCtx.fillStyle = "#fff";
-      trCtx.font = "bold 16px sans-serif";
-      trCtx.fillText(`You: ${my}m | Friend: ${op}m`, trCanvas.width / 2, trCanvas.height / 2 + 20);
-    }
-
-    function trLoop() {
-      if (trRunning) { updateTr(); renderTr(); trAnimId = requestAnimationFrame(trLoop); }
-    }
-
-    // =========================================================================
-    // 3. TIC-TAC-TOE ENGINE
-    // =========================================================================
-    const tttModal = document.getElementById("tttModal");
-    const openTtt = document.getElementById("openTicTacToe");
-    const closeTtt = document.getElementById("closeTttBtn");
-    const tttCells = document.querySelectorAll(".ttt-cell");
-    const tttStatus = document.getElementById("tttStatus");
-    const tttReset = document.getElementById("tttReset");
-    let tttBoardState = ["","","","","","","","",""];
-    let tttCurrentTurn = "X";
-    let tttGameActive = true;
-    let tttVsBot = true;
-
-    openTtt.addEventListener("click", () => tttModal.style.display = "flex");
-    closeTtt.addEventListener("click", () => tttModal.style.display = "none");
-    document.getElementById("tttModeBot").addEventListener("click", () => { tttVsBot = true; resetTtt(); });
-    document.getElementById("tttMode2P").addEventListener("click", () => { tttVsBot = false; resetTtt(); });
-
-    const winCombos = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-
-    tttCells.forEach(cell => {
-      cell.addEventListener("click", () => {
-        const i = cell.getAttribute("data-idx");
-        if (tttBoardState[i] !== "" || !tttGameActive) return;
-        makeTttMove(i, tttCurrentTurn);
-        if (tttGameActive && tttVsBot && tttCurrentTurn === "O") {
-          setTimeout(botTttMove, 300);
-        }
-      });
-    });
-
-    function makeTttMove(idx, p) {
-      tttBoardState[idx] = p;
-      tttCells[idx].textContent = p;
-      tttCells[idx].style.color = p === "X" ? "#ff4757" : "#00cec9";
-
-      if (checkTttWin(p)) {
-        tttStatus.textContent = `🎉 Player ${p} Wins!`;
-        tttGameActive = false;
+      if (checkTttWin(tttTurn)) {
+        document.getElementById('tttStatus').textContent = `🎉 Player ${tttTurn} Wins!`;
+        tttActive = false;
         return;
       }
-      if (!tttBoardState.includes("")) {
-        tttStatus.textContent = "🤝 Draw Game!";
-        tttGameActive = false;
+      if (!tttBoard.includes("")) {
+        document.getElementById('tttStatus').textContent = "🤝 Draw Game!";
+        tttActive = false;
         return;
       }
-      tttCurrentTurn = tttCurrentTurn === "X" ? "O" : "X";
-      tttStatus.textContent = `Player ${tttCurrentTurn}'s Turn`;
+
+      tttTurn = tttTurn === "X" ? "O" : "X";
+      document.getElementById('tttStatus').textContent = `Player ${tttTurn}'s Turn`;
+
+      if (tttTurn === "O" && tttActive) {
+        setTimeout(botTttMove, 250);
+      }
     }
 
     function botTttMove() {
-  if (!tttGameActive) return;
+      if (!tttActive) return;
+      const emptyIndices = tttBoard.map((v, i) => v === "" ? i : null).filter(v => v !== null);
+      if (emptyIndices.length === 0) return;
 
-  // 1. Gather all empty cell indexes
-  let empty = [];
-  tttBoardState.forEach((val, i) => {
-    if (val === "") empty.push(i);
-  });
-
-  if (empty.length === 0) return;
-
-  // 2. Can Bot ("O") win right now?
-  for (let idx of empty) {
-    tttBoardState[idx] = "O";
-    if (checkTttWin("O")) {
-      tttBoardState[idx] = "";
-      makeTttMove(idx, "O");
-      return;
+      const chosen = emptyIndices.includes(4) ? 4 : emptyIndices[Math.floor(Math.random() * emptyIndices.length)];
+      const cells = document.querySelectorAll('.ttt-cell');
+      makeTttMove(chosen, cells[chosen]);
     }
-    tttBoardState[idx] = "";
-  }
-
-  // 3. Can Player ("X") win next turn? Block them!
-  for (let idx of empty) {
-    tttBoardState[idx] = "X";
-    if (checkTttWin("X")) {
-      tttBoardState[idx] = "";
-      makeTttMove(idx, "O");
-      return;
-    }
-    tttBoardState[idx] = "";
-  }
-
-  // 4. Take center square if available
-  if (empty.includes(4)) {
-    makeTttMove(4, "O");
-    return;
-  }
-
-  // 5. Otherwise, pick a random available spot
-  let pick = empty[Math.floor(Math.random() * empty.length)];
-  makeTttMove(pick, "O");
-}
-
 
     function checkTttWin(p) {
-      return winCombos.some(c => c.every(i => tttBoardState[i] === p));
+      return winCombos.some(combo => combo.every(i => tttBoard[i] === p));
     }
 
     function resetTtt() {
-      tttBoardState = ["","","","","","","","",""];
-      tttCurrentTurn = "X";
-      tttGameActive = true;
-      tttStatus.textContent = "Your Turn (X)";
-      tttCells.forEach(c => c.textContent = "");
-    }
-    tttReset.addEventListener("click", resetTtt);
-
-    // =========================================================================
-    // 4. MINI ARCADE EXTRAS
-   // ========================================================================= 
-
-let mathScore = 0;
-let mathStreak = 0;
-let mathTimerInterval = null;
-let mathTimeLeft = 100;
-let currentAnswer = 0;
-
-function runSpeedMath() {
-  mathScore = 0;
-  mathStreak = 0;
-  showMathModal();
-  nextMathQuestion();
-}
-
-function showMathModal() {
-  let modal = document.getElementById("mathModal");
-  if (!modal) {
-    modal = document.createElement("div");
-    modal.id = "mathModal";
-    modal.style.cssText = "position: fixed; inset: 0; background: rgba(10, 8, 24, 0.95); backdrop-filter: blur(8px); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 99999; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;";
-    document.body.appendChild(modal);
-  }
-
-  modal.innerHTML = `
-    <div id="mathCard" style="background: #19162c; border: 2px solid #ffcc00; border-radius: 20px; padding: 20px; width: 90%; max-width: 350px; text-align: center; box-shadow: 0 0 35px rgba(255, 204, 0, 0.35); position: relative; transform: scale(0.95); transition: transform 0.15s ease;">
-      <button onclick="closeMathModal()" style="position: absolute; right: 14px; top: 14px; background: rgba(255,255,255,0.1); border: none; color: #fff; width: 30px; height: 30px; border-radius: 50%; font-size: 16px; cursor: pointer;">✕</button>
-
-      <!-- Logo Header -->
-      <img src="math-rush.jpg" onerror="this.style.display='none'" alt="Math Rush" style="width: 85px; height: 85px; border-radius: 16px; object-fit: cover; box-shadow: 0 4px 15px rgba(0,0,0,0.5); margin-bottom: 8px; border: 2px solid #ffcc00;">
-
-      <div style="display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 8px;">
-        <span style="color: #ffcc00; font-size: 15px;">SCORE: <span id="mathScoreTxt">0</span></span>
-        <span style="color: #ff4757; font-size: 15px;">STREAK: <span id="mathStreakTxt">0</span> 🔥</span>
-      </div>
-
-      <!-- Animated Time Bar -->
-      <div style="width: 100%; height: 10px; background: #25213f; border-radius: 5px; overflow: hidden; margin-bottom: 16px;">
-        <div id="mathTimeBar" style="width: 100%; height: 100%; background: linear-gradient(90deg, #ff4757, #ffcc00); transition: width 0.08s linear;"></div>
-      </div>
-
-      <!-- Equation Display -->
-      <div id="mathEquation" style="font-size: 32px; font-weight: 900; color: #fff; margin: 12px 0; text-shadow: 0 0 12px rgba(255, 255, 255, 0.5); letter-spacing: 2px;">--</div>
-
-      <!-- 4 Answer Options -->
-      <div id="mathOptions" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px;"></div>
-    </div>
-  `;
-  modal.style.display = "flex";
-}
-
-function closeMathModal() {
-  clearInterval(mathTimerInterval);
-  const modal = document.getElementById("mathModal");
-  if (modal) modal.style.display = "none";
-}
-
-function nextMathQuestion() {
-  clearInterval(mathTimerInterval);
-
-  const ops = mathScore >= 20 ? ["+", "-", "×"] : ["+", "-"];
-  const op = ops[Math.floor(Math.random() * ops.length)];
-  let a, b, answer;
-
-  if (op === "+") {
-    a = Math.floor(Math.random() * 20) + 1;
-    b = Math.floor(Math.random() * 20) + 1;
-    answer = a + b;
-  } else if (op === "-") {
-    a = Math.floor(Math.random() * 30) + 10;
-    b = Math.floor(Math.random() * a) + 1;
-    answer = a - b;
-  } else {
-    a = Math.floor(Math.random() * 9) + 2;
-    b = Math.floor(Math.random() * 9) + 2;
-    answer = a * b;
-  }
-  currentAnswer = answer;
-
-  const eqEl = document.getElementById("mathEquation");
-  if (eqEl) {
-    eqEl.textContent = `${a} ${op} ${b} = ?`;
-    eqEl.style.transform = "scale(1.1)";
-    setTimeout(() => { if (eqEl) eqEl.style.transform = "scale(1)"; }, 120);
-  }
-
-  const choices = new Set([answer]);
-  while (choices.size < 4) {
-    const offset = (Math.floor(Math.random() * 5) + 1) * (Math.random() > 0.5 ? 1 : -1);
-    const fake = answer + offset;
-    if (fake >= 0) choices.add(fake);
-  }
-
-  const shuffled = Array.from(choices).sort(() => Math.random() - 0.5);
-  const container = document.getElementById("mathOptions");
-  if (!container) return;
-  container.innerHTML = "";
-
-  shuffled.forEach(choice => {
-    const btn = document.createElement("button");
-    btn.textContent = choice;
-    btn.style.cssText = "background: #272242; border: 1.5px solid rgba(255,255,255,0.12); color: #fff; padding: 12px; font-size: 18px; font-weight: bold; border-radius: 12px; cursor: pointer; transition: transform 0.08s, background 0.1s;";
-    btn.onclick = () => verifyMathAnswer(choice, btn);
-    container.appendChild(btn);
-  });
-
-  mathTimeLeft = 100;
-  const decrement = Math.min(2.8 + (mathScore * 0.1), 5.5);
-  mathTimerInterval = setInterval(() => {
-    mathTimeLeft -= decrement;
-    const bar = document.getElementById("mathTimeBar");
-    if (bar) bar.style.width = Math.max(mathTimeLeft, 0) + "%";
-
-    if (mathTimeLeft <= 0) {
-      clearInterval(mathTimerInterval);
-      handleMathTimeout();
-    }
-  }, 100);
-}
-
-function verifyMathAnswer(selected, button) {
-  clearInterval(mathTimerInterval);
-  const card = document.getElementById("mathCard");
-
-  if (selected === currentAnswer) {
-    button.style.background = "#2ecc71";
-    button.style.borderColor = "#2ecc71";
-    button.style.transform = "scale(1.08)";
-
-    mathStreak++;
-    mathScore += 10 + (mathStreak * 2);
-
-    const sTxt = document.getElementById("mathScoreTxt");
-    const stTxt = document.getElementById("mathStreakTxt");
-    if (sTxt) sTxt.textContent = mathScore;
-    if (stTxt) stTxt.textContent = mathStreak;
-
-    createMathSparkles(button);
-    setTimeout(nextMathQuestion, 200);
-  } else {
-    button.style.background = "#ff4757";
-    button.style.borderColor = "#ff4757";
-    if (card) {
-      card.style.transform = "translate(6px, 0)";
-      setTimeout(() => card.style.transform = "translate(-6px, 0)", 50);
-      setTimeout(() => card.style.transform = "none", 120);
-    }
-    setTimeout(handleMathTimeout, 250);
-  }
-}
-
-function handleMathTimeout() {
-  alert(`⚡ TIME'S UP! ⚡\nScore: ${mathScore}\nStreak: ${mathStreak}`);
-  runSpeedMath();
-}
-
-function createMathSparkles(target) {
-  const rect = target.getBoundingClientRect();
-  for (let i = 0; i < 8; i++) {
-    const p = document.createElement("div");
-    p.textContent = ["⭐", "✨", "🎉", "🔥"][Math.floor(Math.random() * 4)];
-    p.style.cssText = `position: fixed; left: ${rect.left + rect.width / 2}px; top: ${rect.top}px; font-size: 16px; pointer-events: none; z-index: 100000; transition: transform 0.5s ease-out, opacity 0.5s;`;
-    document.body.appendChild(p);
-    setTimeout(() => {
-      const angle = Math.random() * Math.PI * 2;
-      const dist = Math.random() * 50 + 20;
-      p.style.transform = `translate(${Math.cos(angle) * dist}px, ${Math.sin(angle) * dist}px) scale(0.5)`;
-      p.style.opacity = "0";
-    }, 20);
-    setTimeout(() => p.remove(), 550);
-  }
-    }
-    // Ensure mobile and desktop click listeners attach automatically
-document.addEventListener("DOMContentLoaded", () => {
-  const mathBtn = document.getElementById("openMathRush") || 
-                  Array.from(document.querySelectorAll(".game-tile, .tile-name"))
-                       .find(el => el.textContent.includes("Math Rush"));
-                       
-  if (mathBtn) {
-    mathBtn.style.cursor = "pointer";
-    mathBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      runSpeedMath();
-    });
-    mathBtn.addEventListener("touchend", (e) => {
-      e.preventDefault();
-      runSpeedMath();
-    });
-  }
-});
-
-// Immediate hook in case DOMContentLoaded already fired
-const instantMathBtn = document.getElementById("openMathRush");
-if (instantMathBtn) {
-  instantMathBtn.onclick = runSpeedMath;
-}
- 
-  // ============================================================================
-// TAP REFLEX ARCADE ENGINE (ANIMATED REACTIVE PAD + GAMER RANK SYSTEM)
-// ============================================================================
-
-let reflexState = "idle"; // "idle", "waiting", "ready", "finished"
-let reflexStartTime = 0;
-let reflexTimer = null;
-let reflexBest = localStorage.getItem("tapReflexBest") || null;
-
-function runReflexTest() {
-  showReflexModal();
-  initReflexGame();
-}
-
-function showReflexModal() {
-  let modal = document.getElementById("reflexModal");
-  if (!modal) {
-    modal = document.createElement("div");
-    modal.id = "reflexModal";
-    modal.style.cssText = "position: fixed; inset: 0; background: rgba(8, 6, 18, 0.94); backdrop-filter: blur(10px); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 99999; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;";
-    document.body.appendChild(modal);
-  }
-
-  modal.innerHTML = `
-    <div id="reflexCard" style="background: #141226; border: 2px solid #00f0ff; border-radius: 24px; padding: 22px; width: 90%; max-width: 360px; text-align: center; box-shadow: 0 0 35px rgba(0, 240, 255, 0.3); position: relative;">
-      <button onclick="closeReflexModal()" style="position: absolute; right: 14px; top: 14px; background: rgba(255,255,255,0.1); border: none; color: #fff; width: 32px; height: 32px; border-radius: 50%; font-size: 16px; cursor: pointer;">✕</button>
-
-      <!-- Logo Header -->
-      <img src="tap-reflex.jpg" onerror="this.style.display='none'" alt="Tap Reflex" style="width: 80px; height: 80px; border-radius: 18px; object-fit: cover; box-shadow: 0 4px 15px rgba(0,0,0,0.6); margin-bottom: 10px; border: 2px solid #00f0ff;">
-
-      <div style="display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 12px; font-size: 13px;">
-        <span style="color: #00f0ff;">BEST: <span id="reflexBestTxt">${reflexBest ? reflexBest + " ms" : "--"}</span></span>
-        <span style="color: #a29bfe;">ARCADE MODE</span>
-      </div>
-
-      <!-- Interactive Tap Arena Pad -->
-      <div id="reflexPad" style="
-        width: 100%; height: 210px; border-radius: 18px; display: flex; flex-direction: column;
-        align-items: center; justify-content: center; cursor: pointer; user-select: none;
-        transition: background 0.15s, transform 0.08s; box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
-      ">
-        <div id="reflexIcon" style="font-size: 40px; margin-bottom: 6px;">⚡</div>
-        <div id="reflexStatus" style="font-size: 22px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase;">TAP TO START</div>
-        <div id="reflexSubtext" style="font-size: 13px; opacity: 0.8; margin-top: 4px;">Wait for Green...</div>
-      </div>
-    </div>
-  `;
-  modal.style.display = "flex";
-
-  const pad = document.getElementById("reflexPad");
-  pad.addEventListener("mousedown", handleReflexAction);
-  pad.addEventListener("touchstart", (e) => {
-    e.preventDefault();
-    handleReflexAction();
-  }, { passive: false });
-}
-
-function closeReflexModal() {
-  clearTimeout(reflexTimer);
-  reflexState = "idle";
-  const modal = document.getElementById("reflexModal");
-  if (modal) modal.style.display = "none";
-}
-
-function initReflexGame() {
-  clearTimeout(reflexTimer);
-  reflexState = "idle";
-  const pad = document.getElementById("reflexPad");
-  const icon = document.getElementById("reflexIcon");
-  const status = document.getElementById("reflexStatus");
-  const sub = document.getElementById("reflexSubtext");
-
-  if (!pad) return;
-  pad.style.background = "#252140";
-  pad.style.border = "2px solid #3d3568";
-  icon.textContent = "⚡";
-  status.textContent = "TAP TO START";
-  status.style.color = "#ffffff";
-  sub.textContent = "Touch anywhere on this box";
-}
-
-function handleReflexAction() {
-  const pad = document.getElementById("reflexPad");
-  const icon = document.getElementById("reflexIcon");
-  const status = document.getElementById("reflexStatus");
-  const sub = document.getElementById("reflexSubtext");
-
-  // 1. Start Challenge
-  if (reflexState === "idle" || reflexState === "finished") {
-    reflexState = "waiting";
-    pad.style.background = "#ff4757"; // RED: Wait
-    pad.style.border = "2px solid #ff6b81";
-    icon.textContent = "🛑";
-    status.textContent = "WAIT FOR GREEN...";
-    status.style.color = "#fff";
-    sub.textContent = "Do NOT tap yet!";
-
-    // Random trigger delay between 1.8s and 4.8s
-    const randomDelay = Math.floor(Math.random() * 3000) + 1800;
-    reflexTimer = setTimeout(() => {
-      reflexState = "ready";
-      reflexStartTime = performance.now();
-      pad.style.background = "#2ed573"; // GREEN: Strike!
-      pad.style.border = "3px solid #7bed9f";
-      icon.textContent = "⚡";
-      status.textContent = "TAP NOW!";
-      sub.textContent = "QUICK!";
-      pad.style.transform = "scale(1.03)";
-      setTimeout(() => pad.style.transform = "scale(1)", 100);
-    }, randomDelay);
-    return;
-  }
-
-  // 2. Tapped Too Early Penalty
-  if (reflexState === "waiting") {
-    clearTimeout(reflexTimer);
-    reflexState = "finished";
-    pad.style.background = "#57606f";
-    pad.style.border = "2px solid #747d8c";
-    icon.textContent = "❌";
-    status.textContent = "TOO EARLY!";
-    status.style.color = "#ffa502";
-    sub.textContent = "Tap to try again";
-    return;
-  }
-
-  // 3. Successful Reactive Strike
-  if (reflexState === "ready") {
-    const elapsed = Math.round(performance.now() - reflexStartTime);
-    reflexState = "finished";
-
-    // Best Record Check
-    if (!reflexBest || elapsed < reflexBest) {
-      reflexBest = elapsed;
-      localStorage.setItem("tapReflexBest", reflexBest);
-      const bTxt = document.getElementById("reflexBestTxt");
-      if (bTxt) bTxt.textContent = reflexBest + " ms";
+      tttBoard = ["", "", "", "", "", "", "", "", ""];
+      tttTurn = "X";
+      tttActive = true;
+      document.getElementById('tttStatus').textContent = "Your Turn (X)";
+      document.querySelectorAll('.ttt-cell').forEach(c => c.textContent = "");
     }
 
-    // Assign Gamer Rank
-    let rank = "🐢 Turtle Pace";
-    let rankColor = "#ced6e0";
-    if (elapsed < 190) { rank = "⚡ GODLIKE REFLEX"; rankColor = "#00f0ff"; }
-    else if (elapsed < 240) { rank = "🔥 PRO GAMER"; rankColor = "#ff4757"; }
-    else if (elapsed < 300) { rank = "🎯 AVERAGE HUMAN"; rankColor = "#2ed573"; }
+    // ------------------------------------------------
+    // 4. SPEED MATH ARCADE ENGINE
+    // ------------------------------------------------
+    let mathScore = 0;
+    let mathStreak = 0;
+    let mathTimer = null;
+    let mathTimeLeft = 100;
+    let mathCurrentAns = 0;
 
-    pad.style.background = "#1e1b38";
-    pad.style.border = `2px solid ${rankColor}`;
-    icon.textContent = "🏆";
-    status.textContent = `${elapsed} ms`;
-    status.style.color = rankColor;
-    sub.textContent = `${rank} • Tap to retry`;
+    function runSpeedMath() {
+      document.getElementById('mathModal').style.display = 'flex';
+      mathScore = 0;
+      mathStreak = 0;
+      document.getElementById('mathScoreTxt').textContent = "0";
+      document.getElementById('mathStreakTxt').textContent = "0";
+      nextMathQuestion();
+    }
 
-    spawnReflexRings(pad);
-  }
-}
+    function nextMathQuestion() {
+      clearInterval(mathTimer);
+      const ops = ["+", "-", "×"];
+      const op = ops[Math.floor(Math.random() * ops.length)];
+      let a = Math.floor(Math.random() * 12) + 1;
+      let b = Math.floor(Math.random() * 12) + 1;
 
-function spawnReflexRings(target) {
-  const rect = target.getBoundingClientRect();
-  for (let i = 0; i < 12; i++) {
-    const p = document.createElement("div");
-    p.textContent = ["⚡", "✨", "🟢", "💥"][Math.floor(Math.random() * 4)];
-    p.style.cssText = `position: fixed; left: ${rect.left + rect.width / 2}px; top: ${rect.top + rect.height / 2}px; font-size: 18px; pointer-events: none; z-index: 100000; transition: transform 0.5s ease-out, opacity 0.5s;`;
-    document.body.appendChild(p);
-    setTimeout(() => {
-      const angle = Math.random() * Math.PI * 2;
-      const dist = Math.random() * 80 + 30;
-      p.style.transform = `translate(${Math.cos(angle) * dist}px, ${Math.sin(angle) * dist}px) scale(0.4)`;
-      p.style.opacity = "0";
-    }, 20);
-    setTimeout(() => p.remove(), 550);
-  }
-}
+      if (op === "+") mathCurrentAns = a + b;
+      else if (op === "-") {
+        if (a < b) [a, b] = [b, a];
+        mathCurrentAns = a - b;
+      } else {
+        mathCurrentAns = a * b;
+      }
 
-// Auto-wire listener fallback
-document.addEventListener("DOMContentLoaded", () => {
-  const reflexBtn = document.getElementById("openReflexGame") || 
-                    Array.from(document.querySelectorAll(".game-tile, .tile-name"))
-                         .find(el => el.textContent.includes("Reflex"));
-  if (reflexBtn) {
-    reflexBtn.onclick = runReflexTest;
-  }
-});
-    
-     // =========================================================================
-    // 5. 3D SPEED RACING CAR ENGINE (AI BOT & 1v1 MULTIPLAYER)
-    // =========================================================================
-    const carModal = document.getElementById("carModal");
-    const openCarBtn = document.getElementById("openCarGame");
-    const closeCarBtn = document.getElementById("closeCarBtn");
-    const carCanvas = document.getElementById("carCanvas");
-    const carCtx = carCanvas.getContext("2d");
-    const carScoreDisplay = document.getElementById("carScoreDisplay");
-    const carRoomStatus = document.getElementById("carRoomStatus");
-    const carModeBotBtn = document.getElementById("carModeBotBtn");
-    const carCreateRoomBtn = document.getElementById("carCreateRoomBtn");
-    const carJoinRoomBtn = document.getElementById("carJoinRoomBtn");
-    const carRoomCodeInput = document.getElementById("carRoomCodeInput");
+      document.getElementById('mathEquation').textContent = `${a} ${op} ${b}`;
 
+      const choices = new Set([mathCurrentAns]);
+      while (choices.size < 4) {
+        choices.add(mathCurrentAns + (Math.floor(Math.random() * 9) - 4) || (mathCurrentAns + 1));
+      }
+
+      const container = document.getElementById('mathOptions');
+      container.innerHTML = "";
+      Array.from(choices).sort(() => Math.random() - 0.5).forEach(choice => {
+        const btn = document.createElement('button');
+        btn.className = "math-choice-btn";
+        btn.textContent = choice;
+        btn.onclick = () => verifyMathAnswer(choice, btn);
+        container.appendChild(btn);
+      });
+
+      mathTimeLeft = 100;
+      mathTimer = setInterval(() => {
+        mathTimeLeft -= 2.5;
+        document.getElementById('mathTimeBar').style.width = Math.max(0, mathTimeLeft) + "%";
+        if (mathTimeLeft <= 0) {
+          clearInterval(mathTimer);
+          alert(`⏰ TIME'S UP!\nFinal Score: ${mathScore}\nStreak: ${mathStreak}`);
+          closeModal('mathModal');
+        }
+      }, 100);
+    }
+
+    function verifyMathAnswer(chosen, btn) {
+      clearInterval(mathTimer);
+      if (chosen === mathCurrentAns) {
+        mathScore += 10 + (mathStreak * 2);
+        mathStreak++;
+        btn.style.background = "#2ecc71";
+        document.getElementById('mathScoreTxt').textContent = mathScore;
+        document.getElementById('mathStreakTxt').textContent = mathStreak;
+        setTimeout(nextMathQuestion, 200);
+      } else {
+        btn.style.background = "#e74c3c";
+        alert(`❌ Wrong Answer!\nCorrect was ${mathCurrentAns}\nFinal Score: ${mathScore}`);
+        closeModal('mathModal');
+      }
+    }
+
+    // ------------------------------------------------
+    // 5. TAP REFLEX ARCADE ENGINE
+    // ------------------------------------------------
+    let reflexState = "idle";
+    let reflexStartTime = 0;
+    let reflexTimer = null;
+
+    function runReflexTest() {
+      document.getElementById('reflexModal').style.display = 'flex';
+      const pad = document.getElementById('reflexPad');
+      pad.style.background = "#1d2642";
+      document.getElementById('reflexIcon').textContent = "⚡";
+      document.getElementById('reflexStatus').textContent = "TAP TO START";
+      document.getElementById('reflexSub').textContent = "Test your reaction speed";
+      reflexState = "idle";
+    }
+
+    function handleReflexAction() {
+      const pad = document.getElementById('reflexPad');
+      const icon = document.getElementById('reflexIcon');
+      const status = document.getElementById('reflexStatus');
+      const sub = document.getElementById('reflexSub');
+
+      if (reflexState === "idle" || reflexState === "finished") {
+        reflexState = "waiting";
+        pad.style.background = "#e74c3c";
+        icon.textContent = "🛑";
+        status.textContent = "WAIT FOR GREEN...";
+        sub.textContent = "Do NOT tap yet!";
+
+        const delay = Math.floor(Math.random() * 2500) + 1200;
+        reflexTimer = setTimeout(() => {
+          reflexState = "ready";
+          reflexStartTime = performance.now();
+          pad.style.background = "#2ecc71";
+          icon.textContent = "⚡";
+          status.textContent = "TAP NOW!";
+          sub.textContent = "QUICK!";
+        }, delay);
+        return;
+      }
+
+      if (reflexState === "waiting") {
+        clearTimeout(reflexTimer);
+        reflexState = "finished";
+        pad.style.background = "#374151";
+        icon.textContent = "❌";
+        status.textContent = "TOO EARLY!";
+        sub.textContent = "Tap to try again";
+        return;
+      }
+
+      if (reflexState === "ready") {
+        const elapsed = Math.round(performance.now() - reflexStartTime);
+        reflexState = "finished";
+        pad.style.background = "#16203a";
+        icon.textContent = "🏆";
+        status.textContent = `${elapsed} ms`;
+        
+        let rank = "AVERAGE HUMAN";
+        if (elapsed < 200) rank = "⚡ GODLIKE REFLEX";
+        else if (elapsed < 280) rank = "🔥 PRO GAMER";
+        sub.textContent = `${rank} • Tap to retry`;
+      }
+    }
+
+    // ------------------------------------------------
+    // 6. HIGHWAY CAR RACER ENGINE
+    // ------------------------------------------------
+    const carCanvas = document.getElementById('carCanvas');
+    const carCtx = carCanvas.getContext('2d');
     let carRunning = false;
     let carAnimId = null;
-
     let carSpeed = 0;
-    const carMaxSpeed = 260;
-    const carAccel = 1.8;
-    const carFriction = 0.985;
+    const carMaxSpeed = 220;
     let carX = 0;
     let carDistance = 0;
-
     const carKeys = { left: false, right: false, gas: false, brake: false };
-    let rivals = [];
-    let trafficCars = [];
+    let traffic = [];
 
-    let carRoomId = null;
-    let carPlayerRole = "bot";
-    let carRoomRef = null;
-
-    openCarBtn.addEventListener("click", () => {
-      carModal.style.display = "flex";
-      startCarVsBot();
-    });
-
-    closeCarBtn.addEventListener("click", () => {
-      carModal.style.display = "none";
-      carRunning = false;
-      cancelAnimationFrame(carAnimId);
-      if (carRoomRef) carRoomRef.off();
-    });
-
-    carModeBotBtn.addEventListener("click", startCarVsBot);
-
-    function startCarVsBot() {
-      if (carRoomRef) carRoomRef.off();
-      carRoomId = null;
-      carPlayerRole = "bot";
-      carRoomStatus.textContent = "Mode: Race vs AI Bot (Finish 1500m to win!)";
+    function openCarRaceModal() {
+      document.getElementById('carModal').style.display = 'flex';
       initCarRace();
       carRunning = true;
       carGameLoop();
     }
 
-    carCreateRoomBtn.addEventListener("click", () => {
-      if (typeof firebase === "undefined" || !firebase.apps.length) {
-        alert("Firebase is not connected! You can play vs AI Bot.");
-        return;
-      }
-      carRoomId = Math.floor(10000 + Math.random() * 90000).toString();
-      carPlayerRole = "host";
-      carRoomRef = firebase.database().ref("car_rooms/" + carRoomId);
-      carRoomRef.set({
-        hostDist: 0,
-        guestDist: 0,
-        status: "waiting"
-      });
-      carRoomStatus.textContent = `Room Code: ${carRoomId} (Share with a friend!)`;
-
-      carRoomRef.on("value", (snap) => {
-        const val = snap.val();
-        if (!val) return;
-        if (val.status === "racing" && !carRunning) {
-          carRoomStatus.textContent = `Friend connected in Room ${carRoomId}! Race started!`;
-          initCarRace();
-          carRunning = true;
-          carGameLoop();
-        }
-        if (val.hostDist >= 1500 || val.guestDist >= 1500) {
-          concludeCarDuel(val.hostDist, val.guestDist);
-        }
-      });
-    });
-
-    carJoinRoomBtn.addEventListener("click", () => {
-      const code = carRoomCodeInput.value.trim().toUpperCase();
-      if (code.length < 5 || typeof firebase === "undefined" || !firebase.apps.length) return;
-      carRoomId = code;
-      carPlayerRole = "guest";
-      carRoomRef = firebase.database().ref("car_rooms/" + carRoomId);
-
-      carRoomRef.once("value", (snap) => {
-        if (!snap.exists()) {
-          alert("Room code not found!");
-          startCarVsBot();
-          return;
-        }
-        carRoomRef.update({ status: "racing" });
-        carRoomStatus.textContent = `Joined Room: ${carRoomId}! Race started!`;
-        carRoomRef.on("value", (s) => {
-          const val = s.val();
-          if (val && (val.hostDist >= 1500 || val.guestDist >= 1500)) {
-            concludeCarDuel(val.guestDist, val.hostDist);
-          }
-        });
-        initCarRace();
-        carRunning = true;
-        carGameLoop();
-      });
-    });
-
-    window.addEventListener("keydown", (e) => {
-      if (!carRunning) return;
-      if (e.code === "ArrowLeft" || e.code === "KeyA") carKeys.left = true;
-      if (e.code === "ArrowRight" || e.code === "KeyD") carKeys.right = true;
-      if (e.code === "ArrowUp" || e.code === "KeyW") carKeys.gas = true;
-      if (e.code === "ArrowDown" || e.code === "KeyS") carKeys.brake = true;
-    });
-
-    window.addEventListener("keyup", (e) => {
-      if (e.code === "ArrowLeft" || e.code === "KeyA") carKeys.left = false;
-      if (e.code === "ArrowRight" || e.code === "KeyD") carKeys.right = false;
-      if (e.code === "ArrowUp" || e.code === "KeyW") carKeys.gas = false;
-      if (e.code === "ArrowDown" || e.code === "KeyS") carKeys.brake = false;
-    });
-
-    function bindCarTouch(id, k) {
-      const b = document.getElementById(id);
-      if (!b) return;
-      const onStart = (e) => { if (e.cancelable) e.preventDefault(); carKeys[k] = true; };
-      const onEnd = (e) => { if (e.cancelable) e.preventDefault(); carKeys[k] = false; };
-      b.addEventListener("touchstart", onStart, { passive: false });
-      b.addEventListener("touchend", onEnd);
-      b.addEventListener("mousedown", onStart);
-      b.addEventListener("mouseup", onEnd);
+    function closeCarRaceModal() {
+      carRunning = false;
+      cancelAnimationFrame(carAnimId);
+      closeModal('carModal');
     }
-    bindCarTouch("carSteerLeft", "left");
-    bindCarTouch("carSteerRight", "right");
-    bindCarTouch("carGasBtn", "gas");
-    bindCarTouch("carBrakeBtn", "brake");
 
     function initCarRace() {
-      carSpeed = 60;
+      carSpeed = 80;
       carX = 0;
       carDistance = 0;
-      trafficCars = [];
-
-      rivals = [
-        { name: "Apex Bot", x: 0.35, distance: 30, speed: 180, color: "#e67e22" }
-      ];
-
-      for (let i = 1; i <= 6; i++) {
-        trafficCars.push({
-          z: i * 180 + Math.random() * 80,
-          laneX: (Math.random() * 1.4) - 0.7,
-          color: i % 2 === 0 ? "#ffffff" : "#2ed573",
-          speed: 80 + Math.random() * 40
+      traffic = [];
+      for (let i = 0; i < 6; i++) {
+        traffic.push({
+          x: (Math.random() * 1.4) - 0.7,
+          distance: 100 + (i * 120),
+          speed: 70 + Math.random() * 40,
+          color: i % 2 === 0 ? "#00f2fe" : "#ff007f"
         });
       }
     }
 
     function updateCarPhysics() {
-      if (carKeys.gas) {
-        carSpeed = Math.min(carMaxSpeed, carSpeed + carAccel);
-      } else if (carKeys.brake) {
-        carSpeed = Math.max(0, carSpeed - 4.5);
-      } else {
-        carSpeed = Math.max(0, carSpeed * carFriction);
-      }
+      if (carKeys.gas) carSpeed = Math.min(carMaxSpeed, carSpeed + 1.8);
+      else if (carKeys.brake) carSpeed = Math.max(0, carSpeed - 4.5);
+      else carSpeed = Math.max(0, carSpeed - 0.4);
 
-      const steerPower = 0.00018 * carSpeed;
-      if (carKeys.left) carX -= steerPower;
-      if (carKeys.right) carX += steerPower;
-
-      if (Math.abs(carX) > 0.85) {
-        carSpeed = Math.max(20, carSpeed - 3);
-      }
-      carX = Math.max(-1.15, Math.min(1.15, carX));
+      if (carKeys.left) carX -= 0.035 * (carSpeed / 120);
+      if (carKeys.right) carX += 0.035 * (carSpeed / 120);
+      carX = Math.max(-1.1, Math.min(1.1, carX));
 
       carDistance += carSpeed * 0.04;
+      document.getElementById('carScoreDisplay').textContent = `Speed: ${Math.floor(carSpeed)} KM/H | ${Math.floor(carDistance)}m`;
 
-      rivals.forEach(r => {
-        r.distance += r.speed * 0.04;
-        if (carDistance > r.distance + 40) r.speed = Math.min(250, r.speed + 0.8);
-        else if (r.distance > carDistance + 60) r.speed = Math.max(140, r.speed - 0.5);
-      });
-
-      if (carRoomId && carRoomRef && carPlayerRole !== "bot") {
-        if (carPlayerRole === "host") carRoomRef.update({ hostDist: Math.floor(carDistance) });
-        if (carPlayerRole === "guest") carRoomRef.update({ guestDist: Math.floor(carDistance) });
-      }
-
-      trafficCars.forEach(t => {
-        t.z -= (carSpeed - t.speed) * 0.1;
-        if (t.z < 10) {
-          if (Math.abs(carX - t.laneX) < 0.32) {
-            carSpeed = 25;
-            carDistance = Math.max(0, carDistance - 15);
-          }
+      traffic.forEach(t => {
+        t.distance += (t.speed - carSpeed) * 0.04;
+        if (Math.abs(t.distance) < 8 && Math.abs(carX - t.x) < 0.28) {
+          carSpeed = Math.max(20, carSpeed - 50);
         }
-        if (t.z <= -20) {
-          t.z = 700 + Math.random() * 200;
-          t.laneX = (Math.random() * 1.4) - 0.7;
+        if (t.distance < -40) {
+          t.distance = 400 + Math.random() * 150;
+          t.x = (Math.random() * 1.4) - 0.7;
         }
       });
-
-      if (carDistance >= 1500 && carPlayerRole === "bot") {
-        carRunning = false;
-        cancelAnimationFrame(carAnimId);
-        const botWon = rivals[0].distance > carDistance;
-        renderRaceFinish(botWon ? "💀 AI BOT WON!" : "🏆 1ST PLACE WINNER!", !botWon);
-        return;
-      }
-
-      carScoreDisplay.textContent = `Speed: ${Math.floor(carSpeed)} KM/H | Distance: ${Math.floor(carDistance)}m / 1500m`;
     }
 
     function renderCarScene() {
@@ -2210,286 +1131,85 @@ document.addEventListener("DOMContentLoaded", () => {
       const bottomY = carCanvas.height;
       const midX = carCanvas.width / 2;
 
-      const sky = carCtx.createLinearGradient(0, 0, 0, horizonY);
-      sky.addColorStop(0, "#3a7bd5");
-      sky.addColorStop(1, "#f1c40f");
-      carCtx.fillStyle = sky;
-      carCtx.fillRect(0, 0, carCanvas.width, horizonY);
-
-      carCtx.fillStyle = "#2c3e50";
-      carCtx.fillRect(40, horizonY - 45, 70, 45);
-      carCtx.fillRect(130, horizonY - 65, 85, 65);
-      carCtx.fillRect(230, horizonY - 40, 60, 40);
-      carCtx.fillRect(420, horizonY - 55, 90, 55);
-      carCtx.fillRect(530, horizonY - 35, 60, 35);
-
-      carCtx.fillStyle = "#27ae60";
-      carCtx.fillRect(0, horizonY, carCanvas.width, bottomY - horizonY);
-
-      const roadW = 220;
-      carCtx.fillStyle = "#34495e";
+      // Road background
+      carCtx.fillStyle = "#161b2e";
       carCtx.beginPath();
-      carCtx.moveTo(midX - 50, horizonY);
-      carCtx.lineTo(midX + 50, horizonY);
-      carCtx.lineTo(midX + roadW + 120, bottomY);
-      carCtx.lineTo(midX - roadW - 120, bottomY);
+      carCtx.moveTo(midX - 30, horizonY);
+      carCtx.lineTo(midX + 30, horizonY);
+      carCtx.lineTo(carCanvas.width + 40, bottomY);
+      carCtx.lineTo(-40, bottomY);
       carCtx.fill();
 
-      carCtx.fillStyle = "#e74c3c";
-      carCtx.beginPath();
-      carCtx.moveTo(midX - 54, horizonY);
-      carCtx.lineTo(midX - 50, horizonY);
-      carCtx.lineTo(midX - roadW - 120, bottomY);
-      carCtx.lineTo(midX - roadW - 135, bottomY);
-      carCtx.fill();
-
-      carCtx.beginPath();
-      carCtx.moveTo(midX + 50, horizonY);
-      carCtx.lineTo(midX + 54, horizonY);
-      carCtx.lineTo(midX + roadW + 135, bottomY);
-      carCtx.lineTo(midX + roadW + 120, bottomY);
-      carCtx.fill();
-
+      // Lane markings
       carCtx.strokeStyle = "#ffffff";
-      carCtx.lineWidth = 4;
-      const dashOffset = (carDistance * 3) % 40;
-      carCtx.setLineDash([20, 20]);
-      carCtx.lineDashOffset = -dashOffset;
+      carCtx.lineWidth = 3;
+      carCtx.setLineDash([16, 16]);
+      carCtx.lineDashOffset = -(carDistance * 3) % 32;
       carCtx.beginPath();
       carCtx.moveTo(midX, horizonY);
       carCtx.lineTo(midX, bottomY);
       carCtx.stroke();
       carCtx.setLineDash([]);
 
-      const sortedEntities = [...trafficCars.map(t => ({ ...t, kind: "traffic" }))];
-      rivals.forEach(r => {
-        const relativeZ = 200 + (r.distance - carDistance) * 3;
-        if (relativeZ > 0 && relativeZ < 800) {
-          sortedEntities.push({ z: relativeZ, laneX: r.x, color: r.color, kind: "rival", name: r.name });
+      // Traffic Cars
+      traffic.forEach(t => {
+        if (t.distance > 0 && t.distance < 400) {
+          const depth = 1 - (t.distance / 400);
+          const ty = horizonY + depth * (bottomY - horizonY);
+          const tx = midX + (t.x * 200 * depth);
+          const scale = 0.2 + depth * 0.8;
+
+          carCtx.fillStyle = t.color;
+          carCtx.fillRect(tx - 16 * scale, ty - 12 * scale, 32 * scale, 24 * scale);
         }
       });
-      sortedEntities.sort((a, b) => b.z - a.z);
 
-      sortedEntities.forEach(ent => {
-        const depth = 1 - (ent.z / 750);
-        if (depth <= 0) return;
-        const eY = horizonY + depth * (bottomY - horizonY);
-        const eX = midX + ent.laneX * (roadW * depth * 1.5);
-        const scale = 0.2 + depth * 0.9;
-
-        carCtx.fillStyle = ent.color;
-        const cW = 55 * scale;
-        const cH = 28 * scale;
-        carCtx.fillRect(eX - cW / 2, eY - cH, cW, cH);
-        carCtx.fillStyle = "#111";
-        carCtx.fillRect(eX - cW / 2 + 4 * scale, eY - 6 * scale, 10 * scale, 6 * scale);
-        carCtx.fillRect(eX + cW / 2 - 14 * scale, eY - 6 * scale, 10 * scale, 6 * scale);
-
-        carCtx.fillStyle = "#ff0000";
-        carCtx.fillRect(eX - cW / 2 + 3 * scale, eY - 14 * scale, 8 * scale, 4 * scale);
-        carCtx.fillRect(eX + cW / 2 - 11 * scale, eY - 14 * scale, 8 * scale, 4 * scale);
-      });
-
-      const playerScreenX = midX + carX * (roadW * 0.9);
-      const playerScreenY = bottomY - 50;
-
-      carCtx.fillStyle = "rgba(46, 204, 113, 0.45)";
-      carCtx.beginPath();
-      carCtx.ellipse(playerScreenX, playerScreenY + 12, 50, 14, 0, 0, Math.PI * 2);
-      carCtx.fill();
-
-      carCtx.fillStyle = "#e74c3c";
-      carCtx.beginPath();
-      carCtx.roundRect(playerScreenX - 44, playerScreenY - 30, 88, 42, 8);
-      carCtx.fill();
-
-      carCtx.fillStyle = "#ffffff";
-      carCtx.fillRect(playerScreenX - 10, playerScreenY - 30, 7, 42);
-      carCtx.fillRect(playerScreenX + 3, playerScreenY - 30, 7, 42);
-
-      carCtx.fillStyle = "#1e272e";
-      carCtx.beginPath();
-      carCtx.roundRect(playerScreenX - 30, playerScreenY - 26, 60, 22, 6);
-      carCtx.fill();
-
-      if (carKeys.gas && carSpeed > 100) {
-        carCtx.fillStyle = "#00cec9";
-        carCtx.beginPath();
-        carCtx.arc(playerScreenX - 22, playerScreenY + 16, 6, 0, Math.PI * 2);
-        carCtx.arc(playerScreenX + 22, playerScreenY + 16, 6, 0, Math.PI * 2);
-        carCtx.fill();
-      }
-
-      carCtx.fillStyle = "#ff3838";
-      carCtx.fillRect(playerScreenX - 38, playerScreenY - 10, 14, 6);
-      carCtx.fillRect(playerScreenX + 24, playerScreenY - 10, 14, 6);
-
-      carCtx.fillStyle = "rgba(0, 0, 0, 0.65)";
-      carCtx.beginPath();
-      carCtx.roundRect(carCanvas.width - 125, 12, 112, 56, 12);
-      carCtx.fill();
-      carCtx.fillStyle = "#f1c40f";
-      carCtx.font = "900 18px sans-serif";
-      carCtx.fillText(`${Math.floor(carSpeed)}`, carCanvas.width - 105, 38);
-      carCtx.font = "bold 11px sans-serif";
-      carCtx.fillStyle = "#ffffff";
-      carCtx.fillText("KM / H", carCanvas.width - 65, 38);
-
-      carCtx.fillStyle = "#2c3e50";
-      carCtx.fillRect(carCanvas.width - 115, 48, 92, 8);
-      carCtx.fillStyle = "#00cec9";
-      carCtx.fillRect(carCanvas.width - 115, 48, (carSpeed / carMaxSpeed) * 92, 8);
-    }
-
-    function renderRaceFinish(title, won) {
-      carCtx.fillStyle = "rgba(0, 0, 0, 0.88)";
-      carCtx.fillRect(0, 0, carCanvas.width, carCanvas.height);
-      carCtx.textAlign = "center";
-      carCtx.fillStyle = won ? "#00cec9" : "#ff4757";
-      carCtx.font = "900 36px sans-serif";
-      carCtx.fillText(title, carCanvas.width / 2, carCanvas.height / 2 - 20);
-      carCtx.fillStyle = "#ffffff";
-      carCtx.font = "bold 16px sans-serif";
-      carCtx.fillText(`Final Distance: ${Math.floor(carDistance)}m`, carCanvas.width / 2, carCanvas.height / 2 + 15);
-      carCtx.fillStyle = "#f1c40f";
-      carCtx.font = "14px sans-serif";
-      carCtx.fillText("Tap screen to race again", carCanvas.width / 2, carCanvas.height / 2 + 50);
-
-      carCanvas.addEventListener("click", () => {
-        initCarRace();
-        carRunning = true;
-        carGameLoop();
-      }, { once: true });
-    }
-
-    function concludeCarDuel(myDist, friendDist) {
-      carRunning = false;
-      cancelAnimationFrame(carAnimId);
-      const won = myDist > friendDist;
-      renderRaceFinish(won ? "🏆 YOU WON 1v1!" : "💀 FRIEND WON!", won);
+      // Player Car
+      const playerY = bottomY - 50;
+      const playerX = midX + (carX * 120);
+      carCtx.fillStyle = "#00f2fe";
+      carCtx.fillRect(playerX - 18, playerY - 14, 36, 28);
+      carCtx.fillStyle = "#ff007f";
+      carCtx.fillRect(playerX - 12, playerY - 6, 24, 12);
     }
 
     function carGameLoop() {
-      if (carRunning) {
-        updateCarPhysics();
-        renderCarScene();
-        carAnimId = requestAnimationFrame(carGameLoop);
-      }
+      if (!carRunning) return;
+      updateCarPhysics();
+      renderCarScene();
+      carAnimId = requestAnimationFrame(carGameLoop);
     }
-    // ==========================================
-// 3D CYBERPUNK BACKGROUND ENGINE & PARTICLES
-// ==========================================
-(function init3DBackground() {
-  const canvas = document.getElementById('canvas3d-bg');
-  if (!canvas) return;
 
-  const scene = new THREE.Scene();
-  scene.fog = new THREE.FogExp2(0x040711, 0.025);
+    function bindTouch(id, key) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const on = (e) => { e.preventDefault(); carKeys[key] = true; };
+      const off = (e) => { e.preventDefault(); carKeys[key] = false; };
+      el.addEventListener('touchstart', on, { passive: false });
+      el.addEventListener('touchend', off, { passive: false });
+      el.addEventListener('mousedown', on);
+      el.addEventListener('mouseup', off);
+    }
 
-  const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-  camera.position.set(0, 4, 15);
-  camera.lookAt(0, 0, 0);
+    bindTouch('carSteerLeft', 'left');
+    bindTouch('carSteerRight', 'right');
+    bindTouch('carGasBtn', 'gas');
+    bindTouch('carBrakeBtn', 'brake');
 
-  const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-  // Neon Lights
-  const ambient = new THREE.AmbientLight(0xffffff, 0.6);
-  scene.add(ambient);
-
-  const cyanLight = new THREE.PointLight(0x00f2fe, 3, 40);
-  cyanLight.position.set(-10, 8, 5);
-  scene.add(cyanLight);
-
-  const pinkLight = new THREE.PointLight(0xff007f, 3, 40);
-  pinkLight.position.set(10, 8, -5);
-  scene.add(pinkLight);
-
-  // 3D Cyber Grid Floor
-  const gridHelper = new THREE.GridHelper(80, 50, 0x00f2fe, 0x112244);
-  gridHelper.position.y = -4;
-  scene.add(gridHelper);
-
-  // Floating 3D Prisms / Crystals
-  const shapes = [];
-  const geomList = [
-    new THREE.IcosahedronGeometry(0.8, 0),
-    new THREE.TorusGeometry(0.6, 0.2, 16, 50),
-    new THREE.OctahedronGeometry(0.7, 0)
-  ];
-  const matCyan = new THREE.MeshStandardMaterial({ color: 0x00f2fe, roughness: 0.2, metalness: 0.8, wireframe: true });
-  const matPink = new THREE.MeshStandardMaterial({ color: 0xff007f, roughness: 0.2, metalness: 0.8, wireframe: true });
-
-  for (let i = 0; i < 16; i++) {
-    const geo = geomList[i % geomList.length];
-    const mat = (i % 2 === 0) ? matCyan : matPink;
-    const mesh = new THREE.Mesh(geo, mat);
-    mesh.position.set(
-      (Math.random() - 0.5) * 30,
-      Math.random() * 12 - 2,
-      (Math.random() - 0.5) * 20 - 5
-    );
-    scene.add(mesh);
-    shapes.push({
-      mesh,
-      rotX: (Math.random() - 0.5) * 0.02,
-      rotY: (Math.random() - 0.5) * 0.02,
-      floatSpeed: 0.0015 + Math.random() * 0.002,
-      offset: Math.random() * Math.PI * 2
-    });
-  }
-
-  // Particle Starfield
-  const partGeo = new THREE.BufferGeometry();
-  const count = 300;
-  const positions = new Float32Array(count * 3);
-  for (let i = 0; i < count * 3; i += 3) {
-    positions[i] = (Math.random() - 0.5) * 50;
-    positions[i + 1] = Math.random() * 25 - 5;
-    positions[i + 2] = (Math.random() - 0.5) * 40;
-  }
-  partGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-  const partMat = new THREE.PointsMaterial({ size: 0.12, color: 0x00f2fe, transparent: true, opacity: 0.8 });
-  const particles = new THREE.Points(partGeo, partMat);
-  scene.add(particles);
-
-  // Parallax on Scroll & Mouse
-  let mouseX = 0, mouseY = 0;
-  window.addEventListener('pointermove', (e) => {
-    mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
-    mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
-  });
-
-  window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-  });
-
-  function renderLoop() {
-    requestAnimationFrame(renderLoop);
-    const now = performance.now();
-
-    // Rotate and animate floating 3D shapes
-    shapes.forEach(item => {
-      item.mesh.rotation.x += item.rotX;
-      item.mesh.rotation.y += item.rotY;
-      item.mesh.position.y += Math.sin(now * item.floatSpeed + item.offset) * 0.01;
+    window.addEventListener('keydown', (e) => {
+      if (!carRunning) return;
+      if (e.key === 'ArrowLeft' || e.key === 'a') carKeys.left = true;
+      if (e.key === 'ArrowRight' || e.key === 'd') carKeys.right = true;
+      if (e.key === 'ArrowUp' || e.key === 'w') carKeys.gas = true;
+      if (e.key === 'ArrowDown' || e.key === 's') carKeys.brake = true;
     });
 
-    // Slow continuous motion
-    gridHelper.position.z = (now * 0.004) % 1.6;
-    camera.position.x += (mouseX * 1.5 - camera.position.x) * 0.05;
-    camera.position.y += (-mouseY * 1.2 + 4 - camera.position.y) * 0.05;
-    camera.lookAt(0, 0, 0);
-
-    renderer.render(scene, camera);
-  }
-  renderLoop();
-})();
-      
- 
+    window.addEventListener('keyup', (e) => {
+      if (e.key === 'ArrowLeft' || e.key === 'a') carKeys.left = false;
+      if (e.key === 'ArrowRight' || e.key === 'd') carKeys.right = false;
+      if (e.key === 'ArrowUp' || e.key === 'w') carKeys.gas = false;
+      if (e.key === 'ArrowDown' || e.key === 's') carKeys.brake = false;
+    });
   </script>
 </body>
 </html>
