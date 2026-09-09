@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>International Tic Tac Toe 3D - Online & AI</title>
+
+  <!-- PeerJS P2P Networking -->
+  <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #07090e;
+      --card-bg: rgba(18, 24, 38, 0.9);
+      --border: rgba(255, 255, 255, 0.14);
+      --cyan: #00f2fe;
+      --pink: #ff007f;
+      --gold: #ffd700;
+      --green: #2ecc71;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 10%, #151c30 0%, #06080d 100%);
+      color: #fff;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 12px 10px 40px;
+    }
+
+    /* Top Instagram Profile Bar */
+    .ig-header {
+      width: 95%;
+      max-width: 440px;
+      margin-bottom: 12px;
+      padding: 8px 16px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      backdrop-filter: blur(14px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+    }
+
+    .ig-profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .dp-frame {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      padding: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .dp-img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .ig-name {
+      font-size: 13px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .verified {
+      background: #0095f6;
+      color: #fff;
+      font-size: 8px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .follow-btn {
+      background: linear-gradient(135deg, #f58529, #dd2a7b, #8134af);
+      color: #fff;
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 6px 14px;
+      border-radius: 20px;
+    }
+
+    /* Mode Navigation Tabs */
+    .mode-nav {
+      display: flex;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 14px;
+      padding: 4px;
+      gap: 4px;
+      width: 95%;
+      max-width: 440px;
+      margin-bottom: 12px;
+    }
+
+    .nav-tab {
+      flex: 1;
+      padding: 8px 4px;
+      background: transparent;
+      border: none;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 12px;
+      font-weight: 800;
+      border-radius: 10px;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .nav-tab.active {
+      background: linear-gradient(135deg, var(--cyan), #0072ff);
+      color: #050812;
+      box-shadow: 0 2px 10px rgba(0, 242, 254, 0.3);
+    }
+
+    /* Room Code Panel (For Online Multiplayer) */
+    .online-panel {
+      display: none;
+      width: 95%;
+      max-width: 440px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 12px;
+      margin-bottom: 12px;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .code-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .code-input {
+      flex: 1;
+      background: #090c14;
+      border: 1px solid var(--cyan);
+      border-radius: 12px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 900;
+      text-align: center;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 8px;
+    }
+
+    .btn-action {
+      background: linear-gradient(135deg, var(--cyan), #0072ff);
+      color: #040814;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 12px;
+      font-weight: 900;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .btn-create {
+      background: linear-gradient(135deg, var(--pink), #e60067);
+      color: #fff;
+    }
+
+    /* Game Status HUD */
+    .hud-box {
+      width: 95%;
+      max-width: 440px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 10px 16px;
+      margin-bottom: 12px;
+    }
+
+    .hud-status {
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+    }
+
+    .score-badge {
+      font-size: 12px;
+      font-weight: 800;
+      display: flex;
+      gap: 12px;
+    }
+
+    /* Rules Variation Switcher */
+    .rule-switch {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 95%;
+      max-width: 440px;
+      margin-bottom: 12px;
+      font-size: 12px;
+      font-weight: 800;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .switch-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+      padding: 4px 10px;
+      border-radius: 14px;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    /* Classic 3x3 Grid */
+    .classic-board {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      width: min(92vw, 340px);
+      height: min(92vw, 340px);
+      margin: 10px 0;
+    }
+
+    .classic-cell {
+      background: rgba(25, 32, 50, 0.85);
+      border: 2px solid rgba(255, 255, 255, 0.12);
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+      transition: transform 0.15s, background 0.15s;
+    }
+
+    .classic-cell:active {
+      transform: scale(0.94);
+    }
+
+    /* Ultimate 9x9 Nested Macro Board */
+    .ultimate-board {
+      display: none;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      width: min(96vw, 380px);
+      height: min(96vw, 380px);
+      margin: 8px 0;
+    }
+
+    .sub-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3px;
+      background: rgba(14, 18, 28, 0.9);
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      padding: 4px;
+      position: relative;
+    }
+
+    .sub-grid.active-zone {
+      border-color: var(--gold);
+      box-shadow: 0 0 12px rgba(255, 215, 0, 0.6);
+      background: rgba(255, 215, 0, 0.06);
+    }
+
+    .sub-grid.macro-won-X::after,
+    .sub-grid.macro-won-O::after {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 58px;
+      font-weight: 900;
+      border-radius: 10px;
+      z-index: 5;
+    }
+
+    .sub-grid.macro-won-X::after {
+      content: 'X';
+      color: var(--cyan);
+      background: rgba(0, 242, 254, 0.4);
+      backdrop-filter: blur(4px);
+    }
+
+    .sub-grid.macro-won-O::after {
+      content: 'O';
+      color: var(--pink);
+      background: rgba(255, 0, 127, 0.4);
+      backdrop-filter: blur(4px);
+    }
+
+    .sub-cell {
+      background: rgba(26, 34, 52, 0.8);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .mark-x { color: var(--cyan); text-shadow: 0 0 10px rgba(0, 242, 254, 0.7); }
+    .mark-o { color: var(--pink); text-shadow: 0 0 10px rgba(255, 0, 127, 0.7); }
+    .win-line { background: rgba(46, 204, 113, 0.35) !important; border-color: var(--green) !important; }
+
+    /* Control Bar */
+    .btn-reset {
+      margin-top: 14px;
+      width: min(92vw, 340px);
+      padding: 12px;
+      border-radius: 16px;
+      border: none;
+      font-size: 14px;
+      font-weight: 900;
+      cursor: pointer;
+      background: linear-gradient(135deg, var(--cyan), #0072ff);
+      color: #040814;
+      box-shadow: 0 4px 18px rgba(0, 242, 254, 0.3);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Instagram Header -->
+  <header class="ig-header">
+    <div class="ig-profile">
+      <div class="dp-frame">
+        <img src="insta.jpg" alt="Satish DP" class="dp-img" onerror="this.style.display='none'; this.parentNode.innerHTML='<b style=\'color:#fff;\'>S</b>';" />
+      </div>
+      <div>
+        <div class="ig-name">@_satish_official_16 <span class="verified">✓</span></div>
+        <div style="font-size:9px; color:rgba(255,255,255,0.6);">International Tic Tac Toe</div>
+      </div>
+    </div>
+    <a href="https://instagram.com/_satish_official_16" target="_blank" class="follow-btn">Follow ↗</a>
+  </header>
+
+  <!-- Mode Selector -->
+  <div class="mode-nav">
+    <button class="nav-tab active" id="tabAi" onclick="setMode('ai')">🤖 VS AI Bot</button>
+    <button class="nav-tab" id="tabOnline" onclick="setMode('online')">🌐 Online Code</button>
+    <button class="nav-tab" id="tabOffline" onclick="setMode('offline')">👥 Offline 1v1</button>
+  </div>
+
+  <!-- Online Room Code Bar -->
+  <div class="online-panel" id="onlinePanel">
+    <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:800; color:var(--cyan);">
+      <span>PEER-TO-PEER 1v1 MULTIPLAYER</span>
+      <span id="p2pStatus">STANDBY</span>
+    </div>
+    <div class="code-row">
+      <button class="btn-action btn-create" onclick="createRoom()">Create Room</button>
+      <input type="text" id="joinCode" class="code-input" placeholder="CODE" maxlength="4" />
+      <button class="btn-action" onclick="joinRoom()">Join</button>
+    </div>
+    <div id="roomBadge" style="display:none; font-size:12px; font-weight:900; color:var(--gold); text-align:center;">
+      ROOM CODE: <span id="roomCodeDisplay" style="background:#090c14; padding:2px 8px; border-radius:6px; letter-spacing:2px; color:#fff;">----</span> (Share with friend)
+    </div>
+  </div>
+
+  <!-- Game Rules Switcher -->
+  <div class="rule-switch">
+    <span>Tournament Format: <b id="ruleLabel" style="color:var(--gold);">Classic 3x3</b></span>
+    <button class="switch-btn" onclick="toggleRuleFormat()">Switch Format 🔄</button>
+  </div>
+
+  <!-- Score & Turn HUD -->
+  <div class="hud-box">
+    <div class="hud-status" id="turnStatus">Turn: <span class="mark-x">Player X</span></div>
+    <div class="score-badge">
+      <span class="mark-x" id="scoreX">X: 0</span>
+      <span class="mark-o" id="scoreO">O: 0</span>
+    </div>
+  </div>
+
+  <!-- 1. Classic 3x3 Grid Board -->
+  <div class="classic-board" id="classicBoard"></div>
+
+  <!-- 2. Ultimate 9-Board Nested Macro Grid -->
+  <div class="ultimate-board" id="ultimateBoard"></div>
+
+  <!-- Reset Button -->
+  <button class="btn-reset" onclick="resetBoard()">Reset Match 🔁</button>
+
+  <script>
+    // ==========================================
+    // AUDIO SYNTHESIZER
+    // ==========================================
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playBeep(freq, duration = 0.08) {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const osc = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+      g.gain.setValueAtTime(0.2, audioCtx.currentTime);
+      g.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+      osc.connect(g);
+      g.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + duration);
+    }
+
+    // ==========================================
+    // GAME STATE & MODES
+    // ==========================================
+    let gameMode = 'ai'; // 'ai' | 'online' | 'offline'
+    let isUltimate = false; // false: Classic 3x3, true: Ultimate 81-square
+    let turn = 'X';
+    let gameOver = false;
+    let scoreX = 0, scoreO = 0;
+
+    // Classic 3x3 State
+    let board3x3 = Array(9).fill('');
+
+    // Ultimate 9x9 State
+    let macroBoards = Array(9).fill(''); // Won status for each subgrid
+    let subBoards = Array(9).fill(null).map(() => Array(9).fill(''));
+    let activeSubGrid = -1; // -1 means free move anywhere
+
+    // Online P2P Variables
+    let peer = null;
+    let conn = null;
+    let mySymbol = 'X';
+
+    const WIN_COMBOS = [
+      [0,1,2],[3,4,5],[6,7,8],
+      [0,3,6],[1,4,7],[2,5,8],
+      [0,4,8],[2,4,6]
+    ];
+
+    // ==========================================
+    // MODE SWITCHING & P2P MULTIPLAYER
+    // ==========================================
+    function setMode(mode) {
+      gameMode = mode;
+      document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+      if (mode === 'ai') document.getElementById('tabAi').classList.add('active');
+      if (mode === 'online') document.getElementById('tabOnline').classList.add('active');
+      if (mode === 'offline') document.getElementById('tabOffline').classList.add('active');
+
+      document.getElementById('onlinePanel').style.display = mode === 'online' ? 'flex' : 'none';
+      resetBoard();
+    }
+
+    function createRoom() {
+      const code = Math.random().toString(36).substring(2, 6).toUpperCase();
+      peer = new Peer('ttt-' + code);
+
+      peer.on('open', () => {
+        document.getElementById('roomBadge').style.display = 'block';
+        document.getElementById('roomCodeDisplay').textContent = code;
+        document.getElementById('p2pStatus').textContent = 'WAITING FOR FRIEND...';
+        mySymbol = 'X';
+      });
+
+      peer.on('connection', (c) => {
+        conn = c;
+        setupP2P();
+      });
+    }
+
+    function joinRoom() {
+      const code = document.getElementById('joinCode').value.trim().toUpperCase();
+      if (code.length < 4) return alert("Enter valid 4-character code!");
+
+      peer = new Peer();
+      peer.on('open', () => {
+        conn = peer.connect('ttt-' + code);
+        mySymbol = 'O';
+        setupP2P();
+      });
+    }
+
+    function setupP2P() {
+      document.getElementById('p2pStatus').textContent = 'CONNECTED! 🟢';
+      conn.on('data', (data) => {
+        if (data.type === 'move_classic') {
+          makeClassicMove(data.index, false);
+        } else if (data.type === 'move_ultimate') {
+          makeUltimateMove(data.gridIdx, data.cellIdx, false);
+        } else if (data.type === 'reset') {
+          resetBoard(false);
+        }
+      });
+    }
+
+    // ==========================================
+    // FORMAT TOGGLE (CLASSIC VS ULTIMATE)
+    // ==========================================
+    function toggleRuleFormat() {
+      isUltimate = !isUltimate;
+      document.getElementById('ruleLabel').textContent = isUltimate ? "Ultimate 9-Grid (International)" : "Classic 3x3";
+      document.getElementById('classicBoard').style.display = isUltimate ? 'none' : 'grid';
+      document.getElementById('ultimateBoard').style.display = isUltimate ? 'grid' : 'none';
+      resetBoard();
+    }
+
+    // ==========================================
+    // 1. CLASSIC 3x3 LOGIC & MINIMAX BOT
+    // ==========================================
+    function renderClassic() {
+      const board = document.getElementById('classicBoard');
+      board.innerHTML = '';
+      board3x3.forEach((val, i) => {
+        const cell = document.createElement('div');
+        cell.className = `classic-cell ${val === 'X' ? 'mark-x' : (val === 'O' ? 'mark-o' : '')}`;
+        cell.textContent = val;
+        cell.onclick = () => makeClassicMove(i, true);
+        board.appendChild(cell);
+      });
+    }
+
+    function makeClassicMove(i, isLocal = true) {
+      if (board3x3[i] !== '' || gameOver) return;
+      if (gameMode === 'online' && isLocal && turn !== mySymbol) return;
+
+      board3x3[i] = turn;
+      playBeep(turn === 'X' ? 520 : 680);
+
+      if (isLocal && gameMode === 'online' && conn) {
+        conn.send({ type: 'move_classic', index: i });
+      }
+
+      const winCombo = checkWin(board3x3, turn);
+      if (winCombo) {
+        endClassicGame(turn, winCombo);
+        return;
+      } else if (board3x3.every(c => c !== '')) {
+        endClassicGame('draw', null);
+        return;
+      }
+
+      turn = turn === 'X' ? 'O' : 'X';
+      updateTurnStatus();
+      renderClassic();
+
+      // AI Turn
+      if (gameMode === 'ai' && turn === 'O' && !gameOver) {
+        setTimeout(playAiMoveClassic, 260);
+      }
+    }
+
+    function playAiMoveClassic() {
+      // 1. Check if Bot can win
+      for (let i = 0; i < 9; i++) {
+        if (board3x3[i] === '') {
+          board3x3[i] = 'O';
+          if (checkWin(board3x3, 'O')) { board3x3[i] = ''; makeClassicMove(i, true); return; }
+          board3x3[i] = '';
+        }
+      }
+      // 2. Block Opponent's win
+      for (let i = 0; i < 9; i++) {
+        if (board3x3[i] === '') {
+          board3x3[i] = 'X';
+          if (checkWin(board3x3, 'X')) { board3x3[i] = ''; makeClassicMove(i, true); return; }
+          board3x3[i] = '';
+        }
+      }
+      // 3. Take center
+      if (board3x3[4] === '') { makeClassicMove(4, true); return; }
+      // 4. Take corners or sides
+      const empties = board3x3.map((v, i) => v === '' ? i : null).filter(v => v !== null);
+      makeClassicMove(empties[Math.floor(Math.random() * empties.length)], true);
+    }
+
+    function endClassicGame(winner, combo) {
+      gameOver = true;
+      if (winner === 'draw') {
+        document.getElementById('turnStatus').textContent = "Result: Draw Game! 🤝";
+      } else {
+        document.getElementById('turnStatus').textContent = `Winner: Player ${winner}! 👑`;
+        if (winner === 'X') { scoreX++; document.getElementById('scoreX').textContent = `X: ${scoreX}`; }
+        else { scoreO++; document.getElementById('scoreO').textContent = `O: ${scoreO}`; }
+      }
+      renderClassic();
+      if (combo) {
+        const cells = document.querySelectorAll('.classic-cell');
+        combo.forEach(idx => cells[idx].classList.add('win-line'));
+      }
+    }
+
+    // ==========================================
+    // 2. ULTIMATE TIC-TAC-TOE RULES ENGINE
+    // ==========================================
+    function renderUltimate() {
+      const board = document.getElementById('ultimateBoard');
+      board.innerHTML = '';
+
+      for (let g = 0; g < 9; g++) {
+        const subGrid = document.createElement('div');
+        const isWon = macroBoards[g] !== '';
+        subGrid.className = `sub-grid ${isWon ? `macro-won-${macroBoards[g]}` : ''} ${(!isWon && (activeSubGrid === -1 || activeSubGrid === g)) ? 'active-zone' : ''}`;
+
+        for (let c = 0; c < 9; c++) {
+          const val = subBoards[g][c];
+          const cell = document.createElement('div');
+          cell.className = `sub-cell ${val === 'X' ? 'mark-x' : (val === 'O' ? 'mark-o' : '')}`;
+          cell.textContent = val;
+          cell.onclick = () => makeUltimateMove(g, c, true);
+          subGrid.appendChild(cell);
+        }
+        board.appendChild(subGrid);
+      }
+    }
+
+    function makeUltimateMove(g, c, isLocal = true) {
+      if (gameOver) return;
+      if (gameMode === 'online' && isLocal && turn !== mySymbol) return;
+
+      // International Rule: Must play in active designated sub-grid unless it's open/won
+      if (activeSubGrid !== -1 && activeSubGrid !== g) return;
+      if (macroBoards[g] !== '' || subBoards[g][c] !== '') return;
+
+      subBoards[g][c] = turn;
+      playBeep(turn === 'X' ? 520 : 680);
+
+      if (isLocal && gameMode === 'online' && conn) {
+        conn.send({ type: 'move_ultimate', gridIdx: g, cellIdx: c });
+      }
+
+      // Check if this move wins the small 3x3 board
+      if (checkWin(subBoards[g], turn)) {
+        macroBoards[g] = turn; // Claim macro square
+        playBeep(900, 0.2);
+      } else if (subBoards[g].every(v => v !== '')) {
+                macroBoards[g] = 'D'; // Draw
+      }
+
+      // Check if macro board has 3 in a row
+      const macroWin = checkWin(macroBoards, turn);
+      if (macroWin) {
+        gameOver = true;
+        document.getElementById('turnStatus').textContent = `Ultimate Champion: ${turn}! 👑`;
+        if (turn === 'X') { scoreX++; document.getElementById('scoreX').textContent = `X: ${scoreX}`; }
+        else { scoreO++; document.getElementById('scoreO').textContent = `O: ${scoreO}`; }
+        renderUltimate();
+        return;
+      }
+
+      // Target next board determined by cell index clicked
+      if (macroBoards[c] !== '') {
+        activeSubGrid = -1; // Free move anywhere on the board
+      } else {
+        activeSubGrid = c;
+      }
+
+      turn = turn === 'X' ? 'O' : 'X';
+      updateTurnStatus();
+      renderUltimate();
+
+      // Bot Turn in Ultimate Mode
+      if (gameMode === 'ai' && turn === 'O' && !gameOver) {
+        setTimeout(playAiMoveUltimate, 300);
+      }
+    }
+
+    function playAiMoveUltimate() {
+      // Find valid available sub-grids
+      let validGrids = [];
+      if (activeSubGrid === -1) {
+        validGrids = macroBoards.map((v, i) => v === '' ? i : null).filter(v => v !== null);
+      } else {
+        validGrids = [activeSubGrid];
+      }
+
+      // Pick best grid and empty cell
+      const targetGrid = validGrids[Math.floor(Math.random() * validGrids.length)];
+      const empties = subBoards[targetGrid].map((v, i) => v === '' ? i : null).filter(v => v !== null);
+      const chosenCell = empties[Math.floor(Math.random() * empties.length)];
+
+      makeUltimateMove(targetGrid, chosenCell, true);
+    }
+
+    // ==========================================
+    // HELPERS & RESET
+    // ==========================================
+    function checkWin(arr, player) {
+      for (const [a, b, c] of WIN_COMBOS) {
+        if (arr[a] === player && arr[b] === player && arr[c] === player) {
+          return [a, b, c];
+        }
+      }
+      return null;
+    }
+
+    function updateTurnStatus() {
+      document.getElementById('turnStatus').innerHTML = `Turn: <span class="${turn === 'X' ? 'mark-x' : 'mark-o'}">Player ${turn}</span>`;
+    }
+
+    function resetBoard(sendP2P = true) {
+      turn = 'X';
+      gameOver = false;
+      board3x3 = Array(9).fill('');
+      macroBoards = Array(9).fill('');
+      subBoards = Array(9).fill(null).map(() => Array(9).fill(''));
+      activeSubGrid = -1;
+      updateTurnStatus();
+
+      if (isUltimate) renderUltimate();
+      else renderClassic();
+
+      if (sendP2P && gameMode === 'online' && conn) {
+        conn.send({ type: 'reset' });
+      }
+    }
+
+    // Initialize on load
+    renderClassic();
+  </script>
+</body>
+</html>
+
