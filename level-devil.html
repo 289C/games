@@ -825,11 +825,12 @@
         }
       });
 
-      // Flag
-      if (flagGroup) {
+            // Flag
+      if (flagGroup && !isLevelTransitioning && !pState.dead) {
         const flagDist = Math.hypot(pState.x - flagGroup.position.x, pState.y - (flagGroup.position.y + 0.8));
         if (flagDist < 1.15) triggerVictory();
       }
+
 
       // Void Falls
       if (pState.y < -6.5 || pState.y > 18.0) triggerDeath();
