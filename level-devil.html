@@ -3,17 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Level Devil 3D - 16:9 Flag Challenge</title>
+  <title>Level Devil 3D - 100 Levels</title>
 
   <!-- Three.js 3D Engine -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
   <style>
     :root {
-      --bg-dark: #0a0b10;
-      --flag-gold: #ffd32a;
-      --spike-red: #ff3838;
+      --bg: #07090e;
+      --card-bg: rgba(18, 24, 38, 0.9);
+      --border: rgba(255, 255, 255, 0.14);
       --cyan: #00f2fe;
+      --pink: #ff007f;
+      --gold: #ffd700;
+      --red: #ff3838;
     }
 
     * {
@@ -22,354 +25,267 @@
       padding: 0;
       user-select: none;
       -webkit-user-select: none;
-      touch-action: none;
+      touch-action: manipulation;
     }
 
     body {
-      background: var(--bg-dark);
+      background: radial-gradient(circle at 50% 10%, #151c30 0%, #06080d 100%);
       color: #fff;
-      font-family: system-ui, -apple-system, sans-serif;
-      overflow: hidden;
-      width: 100vw;
-      height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      padding: 12px 10px 20px;
+      overflow-x: hidden;
     }
 
-    /* Fixed 16:9 Aspect Ratio Frame */
-    .game-wrapper {
-      position: relative;
-      width: min(96vw, calc(90vh * (16 / 9)));
-      aspect-ratio: 16 / 9;
-      border: 2px solid rgba(255, 255, 255, 0.15);
-      border-radius: 18px;
-      overflow: hidden;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 25px rgba(0, 242, 254, 0.15);
-      background: #0f1016;
-    }
-
-        /* Strict 16:9 YouTube video ratio */
-    #canvas3d {
-      width: min(100vw, calc(100vh * (16 / 9))) !important;
-      height: calc(min(100vw, calc(100vh * (16 / 9))) * (9 / 16)) !important;
-      max-width: 100vw;
-      max-height: 100vh;
-      display: block;
-      margin: auto;
-      border: 2px solid rgba(255, 255, 255, 0.2);
-      border-radius: 16px;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9);
-    }
-
-    /* Instagram Banner with Custom Logo Avatar */
-    .ig-banner {
-      position: absolute;
-      top: 12px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 30;
-      width: 90%;
-      max-width: 400px;
-      padding: 6px 14px;
-      background: rgba(18, 20, 28, 0.9);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+    /* Pinned Instagram Header */
+    .ig-header {
+      width: 95%;
+      max-width: 440px;
+      margin-bottom: 10px;
+      padding: 8px 16px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
       border-radius: 50px;
+      backdrop-filter: blur(14px);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
     }
-
-    .brand-logo-badge {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #00f2fe, #ff007f);
-      border: 1.5px solid #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 900;
-      font-size: 14px;
-      color: #fff;
-      overflow: hidden;
-    }
-
-    .brand-logo-badge img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
 
     .ig-profile {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
 
-    /* Custom Logo Badge */
-    .brand-logo-badge {
-      width: 30px;
-      height: 30px;
+    .dp-frame {
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #00f2fe, #7928ca);
-      border: 1.5px solid #fff;
+      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      padding: 2px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: 900;
-      font-size: 14px;
-      color: #fff;
       overflow: hidden;
     }
 
-    .brand-logo-badge img {
+    .dp-img {
       width: 100%;
       height: 100%;
+      border-radius: 50%;
       object-fit: cover;
     }
 
-    .ig-handle {
-      font-size: 12px;
+    .ig-name {
+      font-size: 13px;
       font-weight: 800;
       display: flex;
       align-items: center;
       gap: 4px;
     }
 
-    .verified-dot {
+    .verified {
+      background: #0095f6;
+      color: #fff;
+      font-size: 8px;
       width: 12px;
       height: 12px;
-      background: #0095f6;
       border-radius: 50%;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-size: 8px;
     }
 
-    .ig-btn {
+    .follow-btn {
       background: linear-gradient(135deg, #f58529, #dd2a7b, #8134af);
       color: #fff;
       text-decoration: none;
-      font-size: 10px;
+      font-size: 11px;
       font-weight: 800;
-      padding: 5px 12px;
+      padding: 6px 14px;
       border-radius: 20px;
     }
 
-    /* HUD */
-    .hud {
-      position: absolute;
-      top: 56px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 90%;
+    /* Game HUD */
+    .hud-box {
+      width: 95%;
+      max-width: 440px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      z-index: 20;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 10px 16px;
+      margin-bottom: 10px;
     }
 
-    .hud-card {
-      background: rgba(18, 20, 28, 0.85);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 12px;
-      padding: 4px 12px;
-      backdrop-filter: blur(8px);
-    }
-
-    .hud-title {
-      font-size: 9px;
-      color: var(--flag-gold);
-      font-weight: 800;
-      text-transform: uppercase;
-    }
-
-    .hud-val {
-      font-size: 16px;
+    .hud-stat {
+      font-size: 13px;
       font-weight: 900;
+      letter-spacing: 0.5px;
     }
 
-    #trollMessage {
+    /* Strict 16:9 YouTube Widescreen Container */
+    .screen-16-9 {
+      position: relative;
+      width: min(95vw, 440px);
+      height: calc(min(95vw, 440px) * (9 / 16));
+      border: 2px solid rgba(255, 255, 255, 0.16);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9), 0 0 20px rgba(0, 242, 254, 0.1);
+      background: #090a0f;
+    }
+
+    #canvas3d {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Troll Alert Message */
+    #trollMsg {
       position: absolute;
-      top: 110px;
+      top: 15px;
       left: 50%;
       transform: translateX(-50%) scale(0);
       background: rgba(255, 56, 56, 0.95);
       color: #fff;
-      font-size: 13px;
+      font-size: 11px;
       font-weight: 900;
-      padding: 6px 18px;
+      padding: 4px 14px;
       border-radius: 20px;
-      z-index: 25;
+      z-index: 20;
       letter-spacing: 0.5px;
-      box-shadow: 0 0 20px rgba(255, 56, 56, 0.8);
       transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 0 15px rgba(255, 56, 56, 0.8);
+      white-space: nowrap;
     }
 
-    /* Mobile On-Screen Controls */
-    .controls {
-      position: absolute;
-      bottom: 12px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 92%;
+    /* On-Screen Mobile Controls */
+    .controls-panel {
+      width: 95%;
+      max-width: 440px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      z-index: 25;
+      margin-top: 14px;
+      padding: 0 4px;
     }
 
     .ctrl-group {
       display: flex;
-      gap: 10px;
+      gap: 12px;
     }
 
     .ctrl-btn {
-      width: 52px;
-      height: 52px;
-      border-radius: 16px;
-      background: rgba(25, 28, 40, 0.82);
-      border: 1px solid rgba(255, 255, 255, 0.25);
+      width: 62px;
+      height: 62px;
+      border-radius: 18px;
+      background: rgba(22, 28, 44, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       color: #fff;
-      font-size: 20px;
+      font-size: 24px;
       font-weight: 900;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
       cursor: pointer;
-      backdrop-filter: blur(8px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
     }
 
     .ctrl-btn:active {
       transform: scale(0.92);
-      background: rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.25);
     }
 
     .btn-jump {
-      background: rgba(255, 56, 56, 0.35);
-      border-color: var(--spike-red);
-      width: 68px;
+      width: 82px;
+      background: linear-gradient(135deg, rgba(255, 56, 56, 0.8), #c0392b);
+      border-color: rgba(255, 56, 56, 0.5);
     }
 
     .btn-jump:active {
-      background: var(--spike-red);
+      background: #ff3838;
     }
   </style>
 </head>
 <body>
 
-  <!-- 16:9 Viewport Canvas Container -->
-  <div class="game-wrapper" id="gameFrame">
-  <!-- Instagram Header with Your Logo -->
-  <div class="ig-banner">
+  <!-- Top Instagram Header -->
+  <header class="ig-header">
     <div class="ig-profile">
-      <div class="brand-logo-badge">
-        <img src="insta.jpg" alt="Logo" onerror="this.style.display='none'; this.parentNode.textContent='S';" />
+      <div class="dp-frame">
+        <img src="Insta.jpg" alt="DP" class="dp-img" onerror="this.onerror=null; this.src='insta.jpg';" />
       </div>
       <div>
-        <div class="ig-handle">@_satish_official_16 <span class="verified-dot">✓</span></div>
-        <div style="font-size:9px; color:rgba(255,255,255,0.6);">Level Devil 3D • 16:9 View</div>
+        <div class="ig-name">@_satish_official_16 <span class="verified">✓</span></div>
+        <div style="font-size:9px; color:rgba(255,255,255,0.6);">Level Devil 3D • 100 Levels</div>
       </div>
     </div>
-    <a href="https://instagram.com/_satish_official_16" target="_blank" class="ig-btn">Follow ↗</a>
+    <a href="https://instagram.com/_satish_official_16" target="_blank" class="follow-btn">Follow ↗</a>
+  </header>
+
+  <!-- Stage & Death Status Bar -->
+  <div class="hud-box">
+    <div class="hud-stat" style="color:var(--gold);" id="levelText">STAGE: LEVEL 1/100</div>
+    <div class="hud-stat" style="color:var(--red);" id="deathText">DEATHS: 0</div>
   </div>
 
-    <!-- HUD -->
-    <div class="hud">
-      <div class="hud-card">
-        <div class="hud-title">Objective</div>
-        <div class="hud-val" id="levelText" style="color:var(--flag-gold);">REACH THE FLAG 🚩</div>
-      </div>
-
-      <div class="hud-card">
-        <div class="hud-title" style="color:var(--spike-red);">Deaths</div>
-        <div class="hud-val" id="deathText" style="color:var(--spike-red);">0</div>
-      </div>
-    </div>
-
-    <div id="trollMessage">😈 WRONG PATH!</div>
-
-    <!-- 3D Canvas -->
+  <!-- 16:9 Screen Box -->
+  <div class="screen-16-9" id="gameFrame">
+    <div id="trollMsg">😈 VOID EXPANDED!</div>
     <canvas id="canvas3d"></canvas>
+  </div>
 
-    <!-- Controls -->
-    <div class="controls">
-      <div class="ctrl-group">
-        <div class="ctrl-btn" id="btnLeft">◀</div>
-        <div class="ctrl-btn" id="btnRight">▶</div>
-      </div>
-      <div class="ctrl-group">
-        <div class="ctrl-btn btn-jump" id="btnJump">▲</div>
-      </div>
+  <!-- Responsive Controls -->
+  <div class="controls-panel">
+    <div class="ctrl-group">
+      <div class="ctrl-btn" id="btnLeft">◀</div>
+      <div class="ctrl-btn" id="btnRight">▶</div>
+    </div>
+    <div class="ctrl-group">
+      <div class="ctrl-btn btn-jump" id="btnJump">▲</div>
     </div>
   </div>
 
   <script>
     // Audio Synthesizer
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-    function playSound(type) {
+    function playBeep(freq, type = 'sine', duration = 0.08, gainVal = 0.2) {
       if (audioCtx.state === 'suspended') audioCtx.resume();
       const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      const now = audioCtx.currentTime;
-
-      if (type === 'jump') {
-        osc.type = 'square';
-        osc.frequency.setValueAtTime(190, now);
-        osc.frequency.exponentialRampToValueAtTime(380, now + 0.12);
-        gain.gain.setValueAtTime(0.2, now);
-        gain.gain.linearRampToValueAtTime(0.01, now + 0.12);
-        osc.start(now); osc.stop(now + 0.12);
-      } else if (type === 'die') {
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(280, now);
-        osc.frequency.exponentialRampToValueAtTime(30, now + 0.3);
-        gain.gain.setValueAtTime(0.4, now);
-        gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
-        osc.start(now); osc.stop(now + 0.3);
-      } else if (type === 'flag') {
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(440, now);
-        osc.frequency.setValueAtTime(554, now + 0.08);
-        osc.frequency.setValueAtTime(659, now + 0.16);
-        osc.frequency.setValueAtTime(880, now + 0.24);
-        gain.gain.setValueAtTime(0.3, now);
-        gain.gain.linearRampToValueAtTime(0.01, now + 0.4);
-        osc.start(now); osc.stop(now + 0.4);
-      } else if (type === 'troll') {
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(400, now);
-        osc.frequency.linearRampToValueAtTime(120, now + 0.2);
-        gain.gain.setValueAtTime(0.3, now);
-        gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
-        osc.start(now); osc.stop(now + 0.2);
-      }
+      const g = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+      g.gain.setValueAtTime(gainVal, audioCtx.currentTime);
+      g.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+      osc.connect(g);
+      g.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + duration);
     }
 
-    // Three.js 3D Engine Setup
+    // 3D Engine Setup
     let scene, camera, renderer;
     let playerMesh;
     let flagGroup = null;
     let currentLevel = 1;
     let deaths = 0;
-    let gravity = -0.016;
+    const gravity = -0.016;
 
     const platforms = [];
     const spikes = [];
     const traps = [];
 
     const pState = {
-      x: -9,
+      x: -8.5,
       y: 1.0,
       z: 0,
       vx: 0,
@@ -383,49 +299,42 @@
     const keys = { left: false, right: false, jump: false };
 
     function init3D() {
-      const container = document.getElementById('gameFrame');
+      const frame = document.getElementById('gameFrame');
       const canvas = document.getElementById('canvas3d');
 
       scene = new THREE.Scene();
-      scene.background = new THREE.Color(0x0a0b10);
-      scene.fog = new THREE.Fog(0x0a0b10, 20, 50);
+      scene.background = new THREE.Color(0x090a0f);
 
-      // Camera calibrated for 16:9 perspective
-      camera = new THREE.PerspectiveCamera(50, 16 / 9, 0.1, 1000);
-      camera.position.set(0, 3.8, 20);
+      camera = new THREE.PerspectiveCamera(50, 16 / 9, 0.1, 100);
+      camera.position.set(0, 3.2, 19);
       camera.lookAt(0, 0, 0);
 
       renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      renderer.setSize(container.clientWidth, container.clientHeight);
-      renderer.shadowMap.enabled = true;
+      renderer.setSize(frame.clientWidth, frame.clientHeight);
 
-      const ambient = new THREE.AmbientLight(0xffffff, 0.7);
+      const ambient = new THREE.AmbientLight(0xffffff, 0.8);
       scene.add(ambient);
 
-      const dirLight = new THREE.DirectionalLight(0xffffff, 0.85);
+      const dirLight = new THREE.DirectionalLight(0xffffff, 0.7);
       dirLight.position.set(10, 20, 15);
-      dirLight.castShadow = true;
       scene.add(dirLight);
 
-      // 3D Player Mesh
+      // Player Block Mesh
       playerMesh = new THREE.Group();
       const body = new THREE.Mesh(
         new THREE.BoxGeometry(0.85, 0.85, 0.85),
         new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2 })
       );
-      body.castShadow = true;
       playerMesh.add(body);
 
-      const eyeL = new THREE.Mesh(
-        new THREE.BoxGeometry(0.14, 0.24, 0.08),
+      const eye = new THREE.Mesh(
+        new THREE.BoxGeometry(0.14, 0.22, 0.08),
         new THREE.MeshBasicMaterial({ color: 0x111111 })
       );
-      eyeL.position.set(0.16, 0.14, 0.44);
-      const eyeR = eyeL.clone();
-      eyeR.position.x = 0.38;
-      playerMesh.add(eyeL);
-      playerMesh.add(eyeR);
+      eye.position.set(0.18, 0.14, 0.44);
+      playerMesh.add(eye);
+
       scene.add(playerMesh);
 
       bindControls();
@@ -434,14 +343,12 @@
       animate();
     }
 
-    // 3D Element Spawners
-    function createPlatform(x, y, w, h, color = 0x272b38) {
+    function createPlatform(x, y, w, h, color = 0x242836) {
       const geo = new THREE.BoxGeometry(w, h, 2.2);
-      const mat = new THREE.MeshStandardMaterial({ color, roughness: 0.7 });
+      const mat = new THREE.MeshStandardMaterial({ color, roughness: 0.6 });
       const mesh = new THREE.Mesh(geo, mat);
       mesh.position.set(x, y, 0);
-      mesh.receiveShadow = true;
-      mesh.userData = { w, h, falling: false, ghost: false };
+      mesh.userData = { w, h, falling: false };
       scene.add(mesh);
       platforms.push(mesh);
       return mesh;
@@ -454,34 +361,26 @@
       mesh.rotation.y = Math.PI / 4;
       if (!pointingUp) mesh.rotation.z = Math.PI;
       mesh.position.set(x, y, 0);
-      mesh.castShadow = true;
-      mesh.userData = { scale, active: false, vy: 0 };
+      mesh.userData = { scale, active: false };
       scene.add(mesh);
       spikes.push(mesh);
       return mesh;
     }
 
-    // 3D Animated Checkpoint Flag
     function createFlag(x, y) {
       const group = new THREE.Group();
-
-      // Pole
       const pole = new THREE.Mesh(
         new THREE.CylinderGeometry(0.06, 0.06, 2.4, 8),
-        new THREE.MeshStandardMaterial({ color: 0xcccccc, metalness: 0.8 })
+        new THREE.MeshStandardMaterial({ color: 0xdddddd })
       );
       pole.position.y = 1.2;
       group.add(pole);
 
-      // Gold Pennant Cloth
-      const clothGeo = new THREE.PlaneGeometry(0.9, 0.6);
-      const clothMat = new THREE.MeshStandardMaterial({
-        color: 0xffd32a,
-        side: THREE.DoubleSide,
-        roughness: 0.3
-      });
-      const cloth = new THREE.Mesh(clothGeo, clothMat);
-      cloth.position.set(0.45, 2.0, 0);
+      const cloth = new THREE.Mesh(
+        new THREE.PlaneGeometry(0.9, 0.6),
+        new THREE.MeshStandardMaterial({ color: 0xffd32a, side: THREE.DoubleSide })
+      );
+      cloth.position.set(0.45, 1.9, 0);
       group.add(cloth);
 
       group.position.set(x, y, 0);
@@ -490,10 +389,7 @@
       return group;
     }
 
-    // ==========================================
-    // SINGLE-PATH TROLL LOGIC LEVELS
-    // ==========================================
-    function clearCurrentLevel() {
+    function clearLevel() {
       platforms.forEach(p => scene.remove(p));
       spikes.forEach(s => scene.remove(s));
       if (flagGroup) scene.remove(flagGroup);
@@ -503,165 +399,136 @@
       flagGroup = null;
     }
 
+    // 100 Solvable Levels
     function loadLevel(lvl) {
-      clearCurrentLevel();
+      clearLevel();
       currentLevel = lvl;
-      document.getElementById('levelText').textContent = `STAGE ${lvl}: FIND THE TRUE PATH 🚩`;
+      document.getElementById('levelText').textContent = `STAGE: LEVEL ${lvl}/100`;
 
-      pState.x = -9;
+      pState.x = -8.5;
       pState.y = 1.0;
       pState.vx = 0;
       pState.vy = 0;
       pState.dead = false;
       playerMesh.visible = true;
-      playerMesh.rotation.set(0, 0, 0);
 
-      // Starting Safe Platform
+      // Base Platform
       createPlatform(-8.5, -0.5, 4.5, 1.4);
 
       if (lvl === 1) {
-        // Obvious top path collapses; lower tunnel is the only route to the flag
-        const topBridge = createPlatform(0, 0.5, 8.5, 0.8);
-        createPlatform(0, -3.2, 11, 0.8); // True lower path
-        createPlatform(8.5, -0.5, 4.5, 1.4);
-        createFlag(9.0, 0.2);
+        // Solvable Platform Jump
+        const bridge = createPlatform(3.5, -0.5, 8.5, 1.4);
+        createFlag(7.0, 0.2);
 
-        // Troll Trigger: stepping onto the direct top bridge breaks it
         traps.push({
           triggered: false,
-          check: () => pState.x > -4.0 && pState.y > 0,
+          check: () => pState.x > -5.5,
           action: () => {
-            popTrollText("THE HIGH ROAD IS A TRAP! 😈");
-            topBridge.userData.falling = true;
+            showTroll("VOID EXPANDED! 😈");
+            bridge.position.x += 1.5; // Reachable leap
           }
         });
-      }
-      else if (lvl === 2) {
-        // Direct jump to flag has hidden spikes; jumping backward activates the true bridge
-        createPlatform(0, -0.5, 21, 1.4);
+      } else if (lvl === 2) {
+        // Fake high road, real lower bridge
+        const fakeTop = createPlatform(0, 1.5, 6.0, 0.8);
+        createPlatform(0, -2.5, 7.5, 0.8);
+        createPlatform(8.0, -0.5, 4.5, 1.4);
         createFlag(8.5, 0.2);
 
-        let secretPathUnlocked = false;
-
-        // Frontal approach triggers a wall of spikes
         traps.push({
           triggered: false,
-          check: () => pState.x > -1.5 && !secretPathUnlocked,
+          check: () => pState.x > -2.5 && pState.y > 0.5,
           action: () => {
-            popTrollText("WALKING FORWARD TRIGGERS DEATH! 🌵");
-            for (let i = 0; i < 6; i++) {
-              createSpike(0 + (i * 0.9), 0.65, 1.4);
-            }
+            showTroll("FAKE PATH! 💥");
+            fakeTop.userData.falling = true;
+          }
+        });
+      } else if (lvl === 3) {
+        // Retreat to disarm
+        createPlatform(0, -0.5, 20, 1.4);
+        createFlag(8.0, 0.2);
+
+        let disarmed = false;
+        traps.push({
+          triggered: false,
+          check: () => pState.x > -2.0 && !disarmed,
+          action: () => {
+            showTroll("STEP BACK TO DISARM 🌵");
+            for (let i = 0; i < 4; i++) createSpike(i * 0.9, 0.65, 1.2);
           }
         });
 
-        // Secret: retreat left to touch wall to disarm traps
         traps.push({
           triggered: false,
-          check: () => pState.x < -10.2,
+          check: () => pState.x < -9.5,
           action: () => {
-            popTrollText("SECRET SWITCH FOUND! PATH CLEAR! 🔓");
-            secretPathUnlocked = true;
+            showTroll("TRAP DISARMED! 🔓");
+            disarmed = true;
             spikes.forEach(s => scene.remove(s));
             spikes.length = 0;
           }
         });
-      }
-      else if (lvl === 3) {
-        // The flag moves away unless you use the ceiling rail
-        createPlatform(-2.5, -0.5, 4.0, 1.4);
-        createPlatform(2.5, -0.5, 4.0, 1.4);
-        createPlatform(8.5, -0.5, 4.5, 1.4);
-        const ceilingPlatform = createPlatform(0, 4.2, 9, 0.8);
-        createFlag(9.0, 0.2);
-
-        traps.push({
-          triggered: false,
-          check: () => pState.x > -1.0 && pState.y < 2.0,
-          action: () => {
-            popTrollText("USE THE CEILING ROUTE! 🏃");
-            flagGroup.position.x = 14; // Flees into the abyss
-            setTimeout(() => {
-              if (!pState.dead) flagGroup.position.x = 9.0;
-            }, 2500);
-          }
-        });
-      }
-      else {
-        // Procedural Single-Path Logic for Levels 4-100
-        const isUpperPathTrue = (lvl % 2 === 0);
-
-        const upperPath = createPlatform(0, 2.5, 8.5, 0.8);
-        const lowerPath = createPlatform(0, -1.8, 8.5, 0.8);
-        createPlatform(8.5, -0.5, 4.5, 1.4);
-        createFlag(9.0, 0.2);
-
-        if (isUpperPathTrue) {
-          // Lower path collapses
+      } else {
+        // Procedural Levels 4 to 100
+        const variant = lvl % 3;
+        if (variant === 0) {
+          const step = createPlatform(0, -0.5, 3.8, 1.0);
+          createPlatform(8.0, -0.5, 4.5, 1.4);
+          createFlag(8.5, 0.2);
           traps.push({
             triggered: false,
-            check: () => pState.x > -3.5 && pState.y < 0,
+            check: () => pState.x > -1.5,
             action: () => {
-              popTrollText("LOWER PATH COLLAPSED! 😈");
-              lowerPath.userData.falling = true;
+              showTroll("SINKING FLOOR! ⏱️");
+              setTimeout(() => { step.userData.falling = true; }, 400);
+            }
+          });
+        } else if (variant === 1) {
+          createPlatform(0, -0.5, 20, 1.4);
+          createFlag(8.0, 0.2);
+          traps.push({
+            triggered: false,
+            check: () => pState.x > 3.0,
+            action: () => {
+              showTroll("FLAG LEAPED! 🚩");
+              flagGroup.position.y += 2.2;
             }
           });
         } else {
-          // Upper path drops spikes
+          createPlatform(0, -0.5, 20, 1.4);
+          const dropSpike = createSpike(2.0, 6.5, 1.5, false);
+          createFlag(8.0, 0.2);
           traps.push({
             triggered: false,
-            check: () => pState.x > -3.5 && pState.y > 1.5,
+            check: () => pState.x > -1.0,
             action: () => {
-              popTrollText("UPPER SPIKE TRAP! ⚡");
-              const s = createSpike(pState.x + 1.2, 6.0, 1.6, false);
-              s.userData.active = true;
+              showTroll("LOOK UP! ⚡");
+              setTimeout(() => { dropSpike.userData.active = true; }, 400);
             }
           });
         }
       }
     }
 
-    function popTrollText(msg) {
-      playSound('troll');
-      const box = document.getElementById('trollMessage');
+    function showTroll(msg) {
+      playBeep(240, 'triangle', 0.2);
+      const box = document.getElementById('trollMsg');
       box.textContent = msg;
       box.style.transform = 'translateX(-50%) scale(1)';
-      setTimeout(() => {
-        box.style.transform = 'translateX(-50%) scale(0)';
-      }, 1300);
+      setTimeout(() => { box.style.transform = 'translateX(-50%) scale(0)'; }, 1300);
     }
 
     function die() {
       if (pState.dead) return;
       pState.dead = true;
-      playSound('die');
+      playBeep(120, 'sawtooth', 0.3, 0.4);
       deaths++;
-      document.getElementById('deathText').textContent = deaths;
-
+      document.getElementById('deathText').textContent = `DEATHS: ${deaths}`;
       playerMesh.visible = false;
-      cameraShake();
-
-      setTimeout(() => {
-        loadLevel(currentLevel);
-      }, 500);
+      setTimeout(() => { loadLevel(currentLevel); }, 400);
     }
 
-    function cameraShake() {
-      const origX = camera.position.x;
-      const origY = camera.position.y;
-      let count = 0;
-      const shake = setInterval(() => {
-        camera.position.x = origX + (Math.random() - 0.5) * 0.5;
-        camera.position.y = origY + (Math.random() - 0.5) * 0.5;
-        count++;
-        if (count > 5) {
-          clearInterval(shake);
-          camera.position.set(0, 3.8, 20);
-        }
-      }, 25);
-    }
-
-    // Physics & Platform Collision Loop
+    // Physics Engine
     function updatePhysics() {
       if (pState.dead) return;
 
@@ -672,7 +539,7 @@
       if (keys.jump && pState.isGrounded) {
         pState.vy = pState.jumpForce;
         pState.isGrounded = false;
-        playSound('jump');
+        playBeep(320, 'square', 0.1);
       }
 
       pState.vy += gravity;
@@ -680,11 +547,9 @@
       pState.y += pState.vy;
       pState.isGrounded = false;
 
-      // Platform Collisions
+      // Collisions
       platforms.forEach(p => {
         if (p.userData.falling) p.position.y -= 0.14;
-        if (p.userData.ghost) return;
-
         const halfW = p.userData.w / 2;
         const halfH = p.userData.h / 2;
 
@@ -701,16 +566,12 @@
         }
       });
 
-      // Spikes Collisions
       spikes.forEach(s => {
-        if (s.userData.active) s.position.y -= 0.22;
+        if (s.userData.active) s.position.y -= 0.25;
         const dist = Math.hypot(pState.x - s.position.x, pState.y - s.position.y);
-        if (dist < 0.8 * (s.userData.scale || 1)) {
-          die();
-        }
+        if (dist < 0.8 * (s.userData.scale || 1)) die();
       });
 
-      // Traps Check
       traps.forEach(t => {
         if (!t.triggered && t.check()) {
           t.triggered = true;
@@ -718,49 +579,37 @@
         }
       });
 
-      // Flag Wave Animation & Win Trigger
       if (flagGroup) {
-        const flagCloth = flagGroup.children[1];
-        if (flagCloth) {
-                    flagCloth.rotation.y = Math.sin(performance.now() * 0.008) * 0.3;
-        }
-
-        const flagDist = Math.hypot(pState.x - flagGroup.position.x, pState.y - (flagGroup.position.y + 1.0));
-        if (flagDist < 1.1) {
-          playSound('flag');
+        const flagDist = Math.hypot(pState.x - flagGroup.position.x, pState.y - (flagGroup.position.y + 0.9));
+        if (flagDist < 1.2) {
+          playBeep(660, 'sine', 0.25);
           currentLevel++;
+          if (currentLevel > 100) {
+            alert("👑 ALL 100 LEVELS COMPLETED!");
+            currentLevel = 1;
+          }
           loadLevel(currentLevel);
         }
       }
 
-      // Void Death Check
-      if (pState.y < -8 || pState.y > 15) {
-        die();
-      }
+      if (pState.y < -7 || pState.y > 15) die();
 
       playerMesh.position.set(pState.x, pState.y, pState.z);
-      if (pState.vx !== 0) {
-        playerMesh.rotation.z = -pState.vx * 1.4;
-      } else {
-        playerMesh.rotation.z = 0;
-      }
+      playerMesh.rotation.z = pState.vx !== 0 ? -pState.vx * 1.4 : 0;
     }
 
-    // Input Binding
+    // Input Handlers
     function bindControls() {
-      const setKey = (k, state) => keys[k] = state;
-
-      const bindBtn = (id, k) => {
+      const setKey = (k, v) => keys[k] = v;
+      const bind = (id, k) => {
         const el = document.getElementById(id);
-        el.addEventListener('touchstart', (e) => { e.preventDefault(); setKey(k, true); }, { passive: false });
-        el.addEventListener('touchend', (e) => { e.preventDefault(); setKey(k, false); }, { passive: false });
-        el.addEventListener('mousedown', () => setKey(k, true));
-        el.addEventListener('mouseup', () => setKey(k, false));
+        el.onpointerdown = (e) => { e.preventDefault(); setKey(k, true); };
+        el.onpointerup = (e) => { e.preventDefault(); setKey(k, false); };
       };
 
-      bindBtn('btnLeft', 'left');
-      bindBtn('btnRight', 'right');
-      bindBtn('btnJump', 'jump');
+      bind('btnLeft', 'left');
+      bind('btnRight', 'right');
+      bind('btnJump', 'jump');
 
       window.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowLeft' || e.key === 'a') setKey('left', true);
@@ -775,15 +624,12 @@
       });
     }
 
-        function onResize() {
-      const canvas = document.getElementById('canvas3d');
-      const w = canvas.clientWidth;
-      const h = canvas.clientHeight;
+    function onResize() {
+      const frame = document.getElementById('gameFrame');
+      renderer.setSize(frame.clientWidth, frame.clientHeight);
       camera.aspect = 16 / 9;
       camera.updateProjectionMatrix();
-      renderer.setSize(w, h, false);
     }
-
 
     function animate() {
       requestAnimationFrame(animate);
