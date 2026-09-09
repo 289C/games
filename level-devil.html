@@ -618,79 +618,327 @@
           triggered: false,
           check: () => Math.abs(pState.x - launch.position.x) < 0.8,
           action: () => {
-            showTroll("SUPER JUMP ENGAGED! 🦘");
-            pState.vy = JUMP_POWER * 1.35;
-            playBeep(480, 'sine', 0.15);
+    // ==============================================================
+    // DYNAMIC 100-LEVEL PROCEDURAL OBSTACLE ENGINE
+    // ==============================================================
+    function loadLevel(lvl) {
+      clearLevel();
+      currentLevel = lvl;
+      document.getElementById('levelText').textContent = `STAGE: LEVEL ${lvl}/100`;
+
+      // 10 Distinct Worlds with Unique Cyber Lighting
+      const worldIndex = Math.min(9, Math.floor((lvl - 1) / 10));
+      const world = WORLDS[worldIndex];
+      document.getElementById('worldSubTitle').textContent = `World ${worldIndex + 1} • ${world.name} (Lvl ${lvl})`;
+      playerPointLight.color.setHex(world.glow);
+
+      // Reset Player State
+      pState.x = -7.5;
+      pState.y = 1.5;
+      pState.vx = 0;
+      pState.vy = 0;
+      pState.scaleX = 1;
+      pState.scaleY = 1;
+      pState.dead = false;
+      playerGroup.visible = true;
+
+      // Base Starting Platform
+      createPlatform(-7.5, 0.0, 3.8, 1.2, 0x1e2738, world.glow);
+
+      // Level Specific Variable Seed (Every single level 1-100 calculates its own layout)
+      const sub = (lvl - 1) % 10; // 0 to 9 within each world
+      const difficultyOffset = Math.floor(lvl / 10) * 0.15;
+
+      switch (worldIndex) {
+        // ----------------------------------------------------
+        // WORLD 1: THE DECEPTION GAPS (Levels 1 - 10)
+        // ----------------------------------------------------
+        case 0: {
+          const gapWidth = 5.5 + sub * 0.3;
+          const island = createPlatform(7.0 + sub * 0.2, 0.0, 4.0, 1.2, 0x1e2738, world.glow);
+          createFlag(7.5 + sub * 0.2, 0.7);
+
+          if (sub === 0) {
+            // Level 1: Stepping stones emerge when you retreat
+            const s1 = createPlatform(-1.5, -5.0, 2.0, 0.8, 0x00f2fe);
+            const s2 = createPlatform(2.5, -5.0, 2.0, 0.8, 0x00f2fe);
+            s1.userData.targetY = 0.2;
+            s2.userData.targetY = 0.5;
+            let revealed = false;
+
+            traps.push({
+              triggered: false,
+              check: () => pState.x > -5.0 && !revealed,
+              action: () => { showTroll("VOID TOO WIDE! BACK UP 🏃"); island.position.x += 1.5; }
+            });
+            traps.push({
+              triggered: false,
+              check: () => pState.x < -7.6,
+              action: () => {
+                revealed = true;
+                showTroll("BRIDGES REVEALED! 🌟");
+                island.position.x = 7.0;
+                spawnParticles(-1.5, 0.2, 0x00f2fe, 15);
+                spawnParticles(2.5, 0.5, 0x00f2fe, 15);
+              }
+            });
+          } else if (sub % 2 === 1) {
+            // Uneven sinking stepping platforms
+            const bridge = createPlatform(0, 0.0, 3.2, 1.0, 0x1e2738, world.glow);
+            traps.push({
+              triggered: false,
+              check: () => Math.abs(pState.x - bridge.position.x) < 1.0,
+              action: () => { showTroll("SINKING BRIDGE! ⏱️"); setTimeout(() => bridge.userData.falling = true, 500); }
+            });
+          } else {
+            // False goal ledge that flips backwards
+            const mid = createPlatform(0, 0.2, 2.5, 1.0, 0x1e2738, world.glow);
+            traps.push({
+              triggered: false,
+              check: () => pState.x > -2.0,
+              action: () => { showTroll("ISLAND ROTATING! 🔄"); mid.position.y += 1.2; }
+            });
           }
-        });
+          break;
+        }
 
-      } else if (worldIndex === 6) {
-        // WORLD 7 (Levels 61-70): Ghost Stepping Stones
-        const g1 = createPlatform(-1.0, 0.2, 2.0, 0.6, 0x111622, false);
-        const g2 = createPlatform(3.0, 0.5, 2.0, 0.6, 0x111622, false);
-        g1.visible = false;
-        g2.visible = false;
-        createPlatform(7.5, 0.0, 4.0, 1.2, 0x1e2738, world.glow);
-        createFlag(7.5, 0.7);
+        // ----------------------------------------------------
+        // WORLD 2: CEILING CRUMBLES & DROP HAZARDS (Levels 11 - 20)
+        // ----------------------------------------------------
+        case 1: {
+          const ceiling = createPlatform(0, 2.4 + sub * 0.1, 7.0, 0.8, 0x242836, 0xff007f);
+          createPlatform(0, -1.2, 6.5, 1.0, 0x1e2738, world.glow);
+          createPlatform(7.5, 0.0, 4.0, 1.2, 0x1e2738, world.glow);
+          createFlag(7.5, 0.7);
 
-        traps.push({
-          triggered: false,
-          check: () => pState.x > -4.0,
-          action: () => {
-            showTroll("GHOST BRIDGE ILLUMINATED! 👻");
-            g1.visible = true;
-            g2.visible = true;
-            spawnParticles(-1.0, 0.2, 0x1abc9c, 10);
-            spawnParticles(3.0, 0.5, 0x1abc9c, 10);
+          // Falling stalactite spikes
+          const dropSpike = createSpike(sub * 0.5 - 1.0, 5.0, 1.3, false);
+
+          traps.push({
+            triggered: false,
+            check: () => pState.x > -2.5 && pState.y > 0.8,
+            action: () => {
+              showTroll("CAVE COLLAPSE! 💥");
+              ceiling.userData.falling = true;
+              setTimeout(() => { dropSpike.userData.active = true; }, 200);
+            }
+          });
+          break;
+        }
+
+        // ----------------------------------------------------
+        // WORLD 3: RUNAWAY & TELEPORTING FLAGS (Levels 21 - 30)
+        // ----------------------------------------------------
+        case 2: {
+          createPlatform(0, 0.0, 18.0, 1.2, 0x1e2738, world.glow);
+          const initialFlagX = 3.0 + sub * 0.4;
+          createFlag(initialFlagX, 0.7);
+
+          let runaway = false;
+          let stillCounter = 0;
+
+          traps.push({
+            triggered: false,
+            check: () => pState.x > initialFlagX - 3.5 && !runaway,
+            action: () => {
+              showTroll("FLAG RAN AWAY! FREEZE TO ATTRACT 🛑");
+              flagGroup.position.x = 8.5;
+              runaway = true;
+            }
+          });
+
+          traps.push({
+            triggered: false,
+            check: () => {
+              if (runaway && Math.abs(pState.vx) < 0.02 && pState.x > -4.0) {
+                stillCounter++;
+                return stillCounter > (35 - sub); // Faster response as levels advance
+              }
+              return false;
+            },
+            action: () => {
+              showTroll("MAGNETIC RECALL! 🚩");
+              flagGroup.position.x = pState.x + 1.2;
+              spawnParticles(flagGroup.position.x, 0.7, 0xffd700, 20);
+            }
+          });
+          break;
+        }
+
+        // ----------------------------------------------------
+        // WORLD 4: ELEVATOR PARADOX & PILLARS (Levels 31 - 40)
+        // ----------------------------------------------------
+        case 3: {
+          const elevY = (sub % 2 === 0) ? 0.0 : -2.0;
+          const elev = createPlatform(0, elevY, 3.2, 1.0, 0x2ecc71, 0x2ecc71);
+          const goalHeight = (sub % 3 === 0) ? 2.5 : 0.5;
+
+          createPlatform(7.5, goalHeight, 4.0, 1.2, 0x1e2738, world.glow);
+          createFlag(7.5, goalHeight + 0.7);
+
+          traps.push({
+            triggered: false,
+            check: () => Math.abs(pState.x - elev.position.x) < 1.4 && pState.isGrounded,
+            action: () => {
+              showTroll("ELEVATOR ASCENDING! 🚀");
+              elev.userData.targetY = goalHeight + 0.2;
+              spawnParticles(elev.position.x, elev.position.y, 0x2ecc71, 12);
+            }
+          });
+          break;
+        }
+
+        // ----------------------------------------------------
+        // WORLD 5: POP-UP SPIKE AMBUSH (Levels 41 - 50)
+        // ----------------------------------------------------
+        case 4: {
+          createPlatform(0, 0.0, 5.0, 1.2, 0x1e2738, world.glow);
+          createPlatform(7.5, 0.0, 4.0, 1.2, 0x1e2738, world.glow);
+          createFlag(7.5, 0.7);
+
+          // Array of underground hidden spikes
+          const spikeCount = 2 + (sub % 3);
+          const ambushSpikes = [];
+          for (let i = 0; i < spikeCount; i++) {
+            const s = createSpike(-1.2 + i * 1.3, -4.0, 1.2);
+            ambushSpikes.push(s);
           }
-        });
 
-      } else if (worldIndex === 7) {
-        // WORLD 8 (Levels 71-80): Troll Pressure Levers
-        const barrier = createPlatform(2.0, 1.5, 0.8, 4.0, 0xff3838, 0xff3838);
-        const button = createPlatform(-2.0, 0.0, 1.5, 0.4, 0xe67e22, 0xffd700);
-        createPlatform(7.5, 0.0, 4.0, 1.2, 0x1e2738, world.glow);
-        createFlag(7.5, 0.7);
+          traps.push({
+            triggered: false,
+            check: () => pState.x > -3.2,
+            action: () => {
+              showTroll(`AMBUSH! ${spikeCount} SPIKES POPPING ⚠️`);
+              setTimeout(() => {
+                ambushSpikes.forEach((sp, idx) => {
+                  setTimeout(() => {
+                    sp.position.y = 0.85;
+                    spawnParticles(sp.position.x, 0.6, 0xff3838, 8);
+                  }, idx * 120);
+                });
+              }, 380);
+            }
+          });
+          break;
+        }
 
-        traps.push({
-          triggered: false,
-          check: () => Math.abs(pState.x - button.position.x) < 0.6 && pState.isGrounded,
-          action: () => {
-            showTroll("DOOR UNLOCKED! 🔓");
-            barrier.position.y = -5.0;
-            spawnParticles(2.0, 1.5, 0xe67e22, 14);
-          }
-        });
+        // ----------------------------------------------------
+        // WORLD 6: GRAVITY WELLS & LAUNCHERS (Levels 51 - 60)
+        // ----------------------------------------------------
+        case 5: {
+          createSpike(0.5, 0.85, 1.4);
+          const launchPad = createPlatform(-2.5, 0.0, 2.0, 1.2, 0x9b59b6, 0x9b59b6);
+          const destinationY = 1.0 + (sub % 3) * 0.8;
 
-      } else if (worldIndex === 8) {
-        // WORLD 9 (Levels 81-90): Speed Runner Lasers
-        createPlatform(0, 0.0, 4.0, 1.2, 0x1e2738, world.glow);
-        createPlatform(7.5, 0.0, 4.0, 1.2, 0x1e2738, world.glow);
-        createFlag(7.5, 0.7);
+          createPlatform(7.5, destinationY, 4.0, 1.2, 0x1e2738, world.glow);
+          createFlag(7.5, destinationY + 0.7);
 
-        traps.push({
-          triggered: false,
-          check: () => pState.x > -3.0,
-          action: () => {
-            showTroll("SPRINT! RUN BEFORE FLOOR DROPS ⏱️");
-            setTimeout(() => { platforms[1].userData.falling = true; }, 1200);
-          }
-        });
+          traps.push({
+            triggered: false,
+            check: () => Math.abs(pState.x - launchPad.position.x) < 0.7 && pState.isGrounded,
+            action: () => {
+              showTroll("GRAVITY BOUNCE! 🦘");
+              pState.vy = JUMP_POWER * (1.35 + sub * 0.02);
+              playBeep(520, 'sine', 0.2);
+              spawnParticles(launchPad.position.x, 0.5, 0x9b59b6, 16);
+            }
+          });
+          break;
+        }
 
-      } else {
-        // WORLD 10 (Levels 91-100): The Final Master Gauntlet
-        createPlatform(-2.0, 0.0, 2.5, 1.0, 0x1e2738, world.glow);
-        createPlatform(2.0, 0.6, 2.5, 1.0, 0x1e2738, world.glow);
-        createPlatform(7.5, 1.2, 3.5, 1.0, 0x1e2738, world.glow);
-        createFlag(8.0, 1.9);
+        // ----------------------------------------------------
+        // WORLD 7: GHOST STEPPING STONES (Levels 61 - 70)
+        // ----------------------------------------------------
+        case 6: {
+          const g1 = createPlatform(-1.5, 0.2, 2.2, 0.6, 0x111622, false);
+          const g2 = createPlatform(2.8, 0.6, 2.2, 0.6, 0x111622, false);
+          g1.visible = false;
+          g2.visible = false;
 
-        traps.push({
-          triggered: false,
-          check: () => pState.x > -1.0,
-          action: () => {
-            showTroll(lvl === 100 ? "👑 FINAL STAGE: TRIUMPH!" : "PRECISION LEAP REQUIRED! 🎯");
-          }
-        });
+          createPlatform(7.5, 0.0, 4.0, 1.2, 0x1e2738, world.glow);
+          createFlag(7.5, 0.7);
+
+          traps.push({
+            triggered: false,
+            check: () => pState.x > -4.5,
+            action: () => {
+              showTroll("NEON PATHWAY REVEALED! 👻");
+              g1.visible = true;
+              g2.visible = true;
+              spawnParticles(-1.5, 0.2, 0x1abc9c, 14);
+              spawnParticles(2.8, 0.6, 0x1abc9c, 14);
+            }
+          });
+          break;
+        }
+
+        // ----------------------------------------------------
+        // WORLD 8: PRESSURE SWITCHES & GATES (Levels 71 - 80)
+        // ----------------------------------------------------
+        case 7: {
+          const barrier = createPlatform(2.5, 1.8, 0.8, 4.5, 0xff3838, 0xff3838);
+          const switchPad = createPlatform(-2.0, 0.0, 1.8, 0.4, 0xe67e22, 0xffd700);
+
+          createPlatform(7.5, 0.0, 4.0, 1.2, 0x1e2738, world.glow);
+          createFlag(7.5, 0.7);
+
+          traps.push({
+            triggered: false,
+            check: () => Math.abs(pState.x - switchPad.position.x) < 0.7 && pState.isGrounded,
+            action: () => {
+              showTroll("LASER GATE DOWN! 🔓");
+              barrier.position.y = -6.0;
+              spawnParticles(2.5, 1.8, 0xe67e22, 16);
+            }
+          });
+          break;
+        }
+
+        // ----------------------------------------------------
+        // WORLD 9: SPEED RUNNER CRUMBLES (Levels 81 - 90)
+        // ----------------------------------------------------
+        case 8: {
+          const p1 = createPlatform(-1.5, 0.0, 3.0, 1.2, 0x1e2738, world.glow);
+          const p2 = createPlatform(2.5, 0.0, 3.0, 1.2, 0x1e2738, world.glow);
+
+          createPlatform(7.5, 0.0, 4.0, 1.2, 0x1e2738, world.glow);
+          createFlag(7.5, 0.7);
+
+          traps.push({
+            triggered: false,
+            check: () => pState.x > -4.0,
+            action: () => {
+              showTroll("DON'T STOP! FLOOR COLLAPSES IN 1s ⏱️");
+              setTimeout(() => { p1.userData.falling = true; }, 1000);
+              setTimeout(() => { p2.userData.falling = true; }, 1600);
+            }
+          });
+          break;
+        }
+
+        // ----------------------------------------------------
+        // WORLD 10: THE FINAL GAUNTLET (Levels 91 - 100)
+        // ----------------------------------------------------
+        case 9: {
+          const stepHeight = sub * 0.15;
+          createPlatform(-2.5, 0.2 + stepHeight, 2.2, 0.8, 0x1e2738, world.glow);
+          createPlatform(1.8, 0.6 + stepHeight, 2.2, 0.8, 0x1e2738, world.glow);
+
+          // Moving spike trap
+          const roamingSpike = createSpike(1.8, 1.3 + stepHeight, 1.2);
+
+          createPlatform(7.5, 1.2 + stepHeight, 3.6, 1.0, 0x1e2738, world.glow);
+          createFlag(8.0, 1.9 + stepHeight);
+
+          traps.push({
+            triggered: false,
+            check: () => pState.x > -1.0,
+            action: () => {
+              showTroll(lvl === 100 ? "👑 GRAND FINALE: THE 100TH LEAP!" : `STAGE ${lvl}: PRECISION GAUNTLET! 🎯`);
+            }
+          });
+          break;
+        }
       }
     }
 
