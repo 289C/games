@@ -224,7 +224,6 @@
 </head>
 <body>
 
-  <!-- Top Instagram Header -->
   <header class="ig-header">
     <div class="ig-profile">
       <div class="dp-frame">
@@ -232,25 +231,22 @@
       </div>
       <div>
         <div class="ig-name">@_satish_official_16 <span class="verified">✓</span></div>
-        <div style="font-size:9px; color:rgba(255,255,255,0.6);" id="worldSubTitle">World 1 • The Deception Gap</div>
+        <div style="font-size:9px; color:rgba(255,255,255,0.6);" id="worldSubTitle">World 1 • The Deception Gap (Lvl 1)</div>
       </div>
     </div>
     <a href="https://instagram.com/_satish_official_16" target="_blank" class="follow-btn">Follow ↗</a>
   </header>
 
-  <!-- Level & Death Stats Bar -->
   <div class="hud-box">
     <div class="hud-stat" style="color:var(--gold);" id="levelText">STAGE: LEVEL 1/100</div>
     <div class="hud-stat" style="color:var(--red);" id="deathText">DEATHS: 0</div>
   </div>
 
-  <!-- 16:9 Screen Game Display -->
   <div class="screen-16-9" id="gameFrame">
     <div id="trollMsg">😈 VOID EXPANDED!</div>
     <canvas id="canvas3d"></canvas>
   </div>
 
-  <!-- On-Screen Controls -->
   <div class="controls-panel">
     <div class="ctrl-group">
       <div class="ctrl-btn" id="btnLeft">◀</div>
@@ -278,12 +274,12 @@
       osc.stop(audioCtx.currentTime + duration);
     }
 
-    // 3D Scene Architecture
     let scene, camera, renderer;
     let playerGroup, playerBody, playerEye, playerPointLight;
     let flagGroup = null;
     let currentLevel = 1;
     let deaths = 0;
+    let isLevelTransitioning = false;
 
     const GRAVITY = -0.018;
     const HORIZONTAL_ACCEL = 0.04;
@@ -311,7 +307,6 @@
 
     const keys = { left: false, right: false, jump: false };
 
-    // World Themes (10 Worlds x 10 Levels)
     const WORLDS = [
       { name: "The Deception Gap", glow: 0x00f2fe },
       { name: "Ceiling Crumbles", glow: 0xff007f },
@@ -348,7 +343,6 @@
       mainLight.position.set(5, 15, 12);
       scene.add(mainLight);
 
-      // Player Setup
       playerGroup = new THREE.Group();
       
       const bodyGeo = new THREE.BoxGeometry(0.85, 0.85, 0.85);
@@ -379,7 +373,7 @@
       const mat = new THREE.MeshStandardMaterial({ color, roughness: 0.5, metalness: 0.2 });
       const mesh = new THREE.Mesh(geo, mat);
       mesh.position.set(x, y, 0);
-      mesh.userData = { w, h, targetY: y, falling: false, isGhost: false };
+      mesh.userData = { w, h, targetY: y, falling: false };
 
       if (glowColor) {
         const borderGeo = new THREE.BoxGeometry(w, 0.08, 2.22);
@@ -470,169 +464,16 @@
       flagGroup = null;
     }
 
-    // ==============================================================
-    // 100 LEVEL MASTER LOGIC ARCHITECTURE
-    // ==============================================================
     function loadLevel(lvl) {
       clearLevel();
       currentLevel = lvl;
       document.getElementById('levelText').textContent = `STAGE: LEVEL ${lvl}/100`;
 
-      const worldIndex = Math.min(9, Math.floor((lvl - 1) / 10));
-      const world = WORLDS[worldIndex];
-      document.getElementById('worldSubTitle').textContent = `World ${worldIndex + 1} • ${world.name}`;
-      playerPointLight.color.setHex(world.glow);
-
-      pState.x = -7.5;
-      pState.y = 1.5;
-      pState.vx = 0;
-      pState.vy = 0;
-      pState.scaleX = 1;
-      pState.scaleY = 1;
-      pState.dead = false;
-      playerGroup.visible = true;
-
-      // Starting Platform
-      createPlatform(-7.5, 0.0, 4.0, 1.2, 0x1e2738, world.glow);
-
-      // World-Specific Mechanics across all 100 Levels
-      if (worldIndex === 0) {
-        // WORLD 1 (Levels 1-10): The Deception Gap
-        const island = createPlatform(7.0, 0.0, 4.5, 1.2, 0x1e2738, world.glow);
-        createFlag(7.5, 0.7);
-
-        const step1 = createPlatform(-1.5, -5.0, 2.2, 0.8, 0x00f2fe, 0xffffff);
-        const step2 = createPlatform(2.2, -5.0, 2.2, 0.8, 0x00f2fe, 0xffffff);
-        step1.userData.targetY = 0.2;
-        step2.userData.targetY = 0.5;
-
-        let triggered = false;
-        traps.push({
-          triggered: false,
-          check: () => pState.x > -5.0 && !triggered,
-          action: () => {
-            showTroll("GAP EXPANDED! BACK UP 🏃");
-            island.position.x = 8.5;
-          }
-        });
-        traps.push({
-          triggered: false,
-          check: () => pState.x < -7.8,
-          action: () => {
-            triggered = true;
-            showTroll("STAIRS REVEALED! 🌟");
-            island.position.x = 6.8;
-            spawnParticles(-1.5, 0.2, 0x00f2fe, 15);
-            spawnParticles(2.2, 0.5, 0x00f2fe, 15);
-          }
-        });
-
-      } else if (worldIndex === 1) {
-        // WORLD 2 (Levels 11-20): Ceiling Crumbles
-        const fakeCeiling = createPlatform(0, 2.5, 5.0, 0.8, 0x242836, 0xff007f);
-        createPlatform(0, -1.0, 6.0, 1.0, 0x1e2738, world.glow);
-        createPlatform(7.5, 0.0, 4.0, 1.2, 0x1e2738, world.glow);
-        createFlag(7.5, 0.7);
-
-        traps.push({
-          triggered: false,
-          check: () => pState.x > -2.0 && pState.y > 1.2,
-          action: () => {
-            showTroll("CEILING COLLAPSED! 💥");
-            fakeCeiling.userData.falling = true;
-          }
-        });
-
-      } else if (worldIndex === 2) {
-        // WORLD 3 (Levels 21-30): Runaway Flags
-        createPlatform(0, 0.0, 18.0, 1.2, 0x1e2738, world.glow);
-        createFlag(4.0, 0.7);
-
-        let runawayDone = false;
-        let freezeTimer = 0;
-
-        traps.push({
-          triggered: false,
-          check: () => pState.x > -1.0 && !runawayDone,
-          action: () => {
-            showTroll("STOP MOVING! 🛑");
-            flagGroup.position.x = 7.5;
-            runawayDone = true;
-          }
-        });
-        traps.push({
-          triggered: false,
-          check: () => {
-            if (runawayDone && Math.abs(pState.vx) < 0.02 && pState.x > -2.5) {
-              freezeTimer++;
-              return freezeTimer > 35;
-            }
-            return false;
-          },
-          action: () => {
-            showTroll("FLAG RETURNED! 🚩");
-            flagGroup.position.x = pState.x + 1.2;
-            spawnParticles(flagGroup.position.x, 0.5, 0xffd700, 20);
-          }
-        });
-
-      } else if (worldIndex === 3) {
-        // WORLD 4 (Levels 31-40): Elevator Paradox
-        const elev = createPlatform(0, 0.0, 3.5, 1.0, 0x2ecc71, 0x2ecc71);
-        createPlatform(7.5, 2.0, 4.0, 1.2, 0x1e2738, world.glow);
-        createFlag(7.5, 2.7);
-
-        traps.push({
-          triggered: false,
-          check: () => pState.x > -1.5,
-          action: () => {
-            showTroll("RIDING ELEVATOR! 🚀");
-            elev.userData.targetY = 2.0;
-          }
-        });
-
-      } else if (worldIndex === 4) {
-        // WORLD 5 (Levels 41-50): Spike Ambush
-        createPlatform(0, 0.0, 4.0, 1.2, 0x1e2738, world.glow);
-        const s = createSpike(0, -3.0, 1.2);
-        createPlatform(7.5, 0.0, 4.0, 1.2, 0x1e2738, world.glow);
-        createFlag(7.5, 0.7);
-
-        traps.push({
-          triggered: false,
-          check: () => pState.x > -2.5,
-          action: () => {
-            showTroll("SPIKE POPPING IN 0.4s! ⚠️");
-            setTimeout(() => { s.position.y = 0.85; spawnParticles(0, 0.6, 0xff3838, 12); }, 400);
-          }
-        });
-
-      } else if (worldIndex === 5) {
-        // WORLD 6 (Levels 51-60): Gravity Shifts
-        createSpike(0, 0.85, 1.3);
-        const launch = createPlatform(-3.0, 0.0, 2.2, 1.2, 0x9b59b6, 0x9b59b6);
-        createPlatform(7.5, 0.0, 4.0, 1.2, 0x1e2738, world.glow);
-        createFlag(7.5, 0.7);
-
-        traps.push({
-          triggered: false,
-          check: () => Math.abs(pState.x - launch.position.x) < 0.8,
-          action: () => {
-    // ==============================================================
-    // DYNAMIC 100-LEVEL PROCEDURAL OBSTACLE ENGINE
-    // ==============================================================
-    function loadLevel(lvl) {
-      clearLevel();
-      currentLevel = lvl;
-      document.getElementById('levelText').textContent = `STAGE: LEVEL ${lvl}/100`;
-
-      // 10 Distinct Worlds with Unique Cyber Lighting
       const worldIndex = Math.min(9, Math.floor((lvl - 1) / 10));
       const world = WORLDS[worldIndex];
       document.getElementById('worldSubTitle').textContent = `World ${worldIndex + 1} • ${world.name} (Lvl ${lvl})`;
       playerPointLight.color.setHex(world.glow);
 
-      // Reset Player State
       pState.x = -7.5;
       pState.y = 1.5;
       pState.vx = 0;
@@ -642,24 +483,16 @@
       pState.dead = false;
       playerGroup.visible = true;
 
-      // Base Starting Platform
       createPlatform(-7.5, 0.0, 3.8, 1.2, 0x1e2738, world.glow);
 
-      // Level Specific Variable Seed (Every single level 1-100 calculates its own layout)
-      const sub = (lvl - 1) % 10; // 0 to 9 within each world
-      const difficultyOffset = Math.floor(lvl / 10) * 0.15;
+      const sub = (lvl - 1) % 10;
 
       switch (worldIndex) {
-        // ----------------------------------------------------
-        // WORLD 1: THE DECEPTION GAPS (Levels 1 - 10)
-        // ----------------------------------------------------
         case 0: {
-          const gapWidth = 5.5 + sub * 0.3;
           const island = createPlatform(7.0 + sub * 0.2, 0.0, 4.0, 1.2, 0x1e2738, world.glow);
           createFlag(7.5 + sub * 0.2, 0.7);
 
           if (sub === 0) {
-            // Level 1: Stepping stones emerge when you retreat
             const s1 = createPlatform(-1.5, -5.0, 2.0, 0.8, 0x00f2fe);
             const s2 = createPlatform(2.5, -5.0, 2.0, 0.8, 0x00f2fe);
             s1.userData.targetY = 0.2;
@@ -683,7 +516,6 @@
               }
             });
           } else if (sub % 2 === 1) {
-            // Uneven sinking stepping platforms
             const bridge = createPlatform(0, 0.0, 3.2, 1.0, 0x1e2738, world.glow);
             traps.push({
               triggered: false,
@@ -691,7 +523,6 @@
               action: () => { showTroll("SINKING BRIDGE! ⏱️"); setTimeout(() => bridge.userData.falling = true, 500); }
             });
           } else {
-            // False goal ledge that flips backwards
             const mid = createPlatform(0, 0.2, 2.5, 1.0, 0x1e2738, world.glow);
             traps.push({
               triggered: false,
@@ -702,16 +533,12 @@
           break;
         }
 
-        // ----------------------------------------------------
-        // WORLD 2: CEILING CRUMBLES & DROP HAZARDS (Levels 11 - 20)
-        // ----------------------------------------------------
         case 1: {
           const ceiling = createPlatform(0, 2.4 + sub * 0.1, 7.0, 0.8, 0x242836, 0xff007f);
           createPlatform(0, -1.2, 6.5, 1.0, 0x1e2738, world.glow);
           createPlatform(7.5, 0.0, 4.0, 1.2, 0x1e2738, world.glow);
           createFlag(7.5, 0.7);
 
-          // Falling stalactite spikes
           const dropSpike = createSpike(sub * 0.5 - 1.0, 5.0, 1.3, false);
 
           traps.push({
@@ -726,9 +553,6 @@
           break;
         }
 
-        // ----------------------------------------------------
-        // WORLD 3: RUNAWAY & TELEPORTING FLAGS (Levels 21 - 30)
-        // ----------------------------------------------------
         case 2: {
           createPlatform(0, 0.0, 18.0, 1.2, 0x1e2738, world.glow);
           const initialFlagX = 3.0 + sub * 0.4;
@@ -752,7 +576,7 @@
             check: () => {
               if (runaway && Math.abs(pState.vx) < 0.02 && pState.x > -4.0) {
                 stillCounter++;
-                return stillCounter > (35 - sub); // Faster response as levels advance
+                return stillCounter > (35 - sub);
               }
               return false;
             },
@@ -765,9 +589,6 @@
           break;
         }
 
-        // ----------------------------------------------------
-        // WORLD 4: ELEVATOR PARADOX & PILLARS (Levels 31 - 40)
-        // ----------------------------------------------------
         case 3: {
           const elevY = (sub % 2 === 0) ? 0.0 : -2.0;
           const elev = createPlatform(0, elevY, 3.2, 1.0, 0x2ecc71, 0x2ecc71);
@@ -788,15 +609,11 @@
           break;
         }
 
-        // ----------------------------------------------------
-        // WORLD 5: POP-UP SPIKE AMBUSH (Levels 41 - 50)
-        // ----------------------------------------------------
         case 4: {
           createPlatform(0, 0.0, 5.0, 1.2, 0x1e2738, world.glow);
           createPlatform(7.5, 0.0, 4.0, 1.2, 0x1e2738, world.glow);
           createFlag(7.5, 0.7);
 
-          // Array of underground hidden spikes
           const spikeCount = 2 + (sub % 3);
           const ambushSpikes = [];
           for (let i = 0; i < spikeCount; i++) {
@@ -822,16 +639,13 @@
           break;
         }
 
-        // ----------------------------------------------------
-        // WORLD 6: GRAVITY WELLS & LAUNCHERS (Levels 51 - 60)
-        // ----------------------------------------------------
         case 5: {
           createSpike(0.5, 0.85, 1.4);
           const launchPad = createPlatform(-2.5, 0.0, 2.0, 1.2, 0x9b59b6, 0x9b59b6);
           const destinationY = 1.0 + (sub % 3) * 0.8;
 
           createPlatform(7.5, destinationY, 4.0, 1.2, 0x1e2738, world.glow);
-          createFlag(7.5, destinationY + 0.7);
+              createFlag(7.5, destinationY + 0.7);
 
           traps.push({
             triggered: false,
@@ -846,9 +660,6 @@
           break;
         }
 
-        // ----------------------------------------------------
-        // WORLD 7: GHOST STEPPING STONES (Levels 61 - 70)
-        // ----------------------------------------------------
         case 6: {
           const g1 = createPlatform(-1.5, 0.2, 2.2, 0.6, 0x111622, false);
           const g2 = createPlatform(2.8, 0.6, 2.2, 0.6, 0x111622, false);
@@ -872,9 +683,6 @@
           break;
         }
 
-        // ----------------------------------------------------
-        // WORLD 8: PRESSURE SWITCHES & GATES (Levels 71 - 80)
-        // ----------------------------------------------------
         case 7: {
           const barrier = createPlatform(2.5, 1.8, 0.8, 4.5, 0xff3838, 0xff3838);
           const switchPad = createPlatform(-2.0, 0.0, 1.8, 0.4, 0xe67e22, 0xffd700);
@@ -894,9 +702,6 @@
           break;
         }
 
-        // ----------------------------------------------------
-        // WORLD 9: SPEED RUNNER CRUMBLES (Levels 81 - 90)
-        // ----------------------------------------------------
         case 8: {
           const p1 = createPlatform(-1.5, 0.0, 3.0, 1.2, 0x1e2738, world.glow);
           const p2 = createPlatform(2.5, 0.0, 3.0, 1.2, 0x1e2738, world.glow);
@@ -916,16 +721,10 @@
           break;
         }
 
-        // ----------------------------------------------------
-        // WORLD 10: THE FINAL GAUNTLET (Levels 91 - 100)
-        // ----------------------------------------------------
         case 9: {
           const stepHeight = sub * 0.15;
           createPlatform(-2.5, 0.2 + stepHeight, 2.2, 0.8, 0x1e2738, world.glow);
           createPlatform(1.8, 0.6 + stepHeight, 2.2, 0.8, 0x1e2738, world.glow);
-
-          // Moving spike trap
-          const roamingSpike = createSpike(1.8, 1.3 + stepHeight, 1.2);
 
           createPlatform(7.5, 1.2 + stepHeight, 3.6, 1.0, 0x1e2738, world.glow);
           createFlag(8.0, 1.9 + stepHeight);
@@ -961,10 +760,7 @@
       setTimeout(() => { loadLevel(currentLevel); }, 450);
     }
 
-        let isLevelTransitioning = false;
-
     function triggerVictory() {
-      // Guard lock: prevents multi-triggering in a single frame
       if (isLevelTransitioning) return;
       isLevelTransitioning = true;
 
@@ -975,7 +771,6 @@
         spawnParticles(flagGroup.position.x, flagGroup.position.y + 1, 0xffd700, 36, 0.25);
       }
 
-      // Step forward by strictly 1 level
       currentLevel += 1;
 
       if (currentLevel > 100) {
@@ -985,15 +780,13 @@
 
       setTimeout(() => {
         loadLevel(currentLevel);
-        isLevelTransitioning = false; // Unlock for next level
+        isLevelTransitioning = false;
       }, 400);
     }
-
 
     function updatePhysics() {
       if (pState.dead) return;
 
-      // Platform Elevation Movement
       platforms.forEach(p => {
         if (p.userData.falling) {
           p.position.y -= 0.16;
@@ -1002,12 +795,10 @@
         }
       });
 
-      // Air and Ground Movement
       if (keys.left) pState.vx = Math.max(-MAX_SPEED, pState.vx - HORIZONTAL_ACCEL);
       else if (keys.right) pState.vx = Math.min(MAX_SPEED, pState.vx + HORIZONTAL_ACCEL);
       else pState.vx *= FRICTION;
 
-      // Jump Buffering & Coyote Mechanics
       if (pState.isGrounded) pState.coyoteTimer = 7;
       else if (pState.coyoteTimer > 0) pState.coyoteTimer--;
 
@@ -1030,7 +821,6 @@
       pState.y += pState.vy;
       pState.isGrounded = false;
 
-      // AABB Box Collisions
       const pBoxRadius = 0.42;
       platforms.forEach(p => {
         if (!p.visible) return;
@@ -1059,13 +849,11 @@
         }
       });
 
-      // Spikes
       spikes.forEach(s => {
         const dist = Math.hypot(pState.x - s.position.x, pState.y - s.position.y);
         if (dist < 0.72 * (s.userData.scale || 1)) triggerDeath();
       });
 
-      // Traps
       traps.forEach(t => {
         if (!t.triggered && t.check()) {
           t.triggered = true;
@@ -1073,17 +861,13 @@
         }
       });
 
-            // Flag
       if (flagGroup && !isLevelTransitioning && !pState.dead) {
         const flagDist = Math.hypot(pState.x - flagGroup.position.x, pState.y - (flagGroup.position.y + 0.8));
         if (flagDist < 1.15) triggerVictory();
       }
 
-
-      // Void Falls
       if (pState.y < -6.5 || pState.y > 18.0) triggerDeath();
 
-      // Kinematic recovery
       pState.scaleX += (1 - pState.scaleX) * 0.15;
       pState.scaleY += (1 - pState.scaleY) * 0.15;
 
@@ -1095,7 +879,6 @@
         playerEye.position.x = pState.vx > 0 ? 0.22 : -0.22;
       }
 
-      // Particles
       for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i];
         p.position.x += p.userData.vx;
