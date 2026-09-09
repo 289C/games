@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Level Devil 3D - 100 Levels</title>
+  <title>Level Devil 3D - 100 Levels Edition</title>
 
   <!-- Three.js 3D Engine -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -134,7 +134,7 @@
       letter-spacing: 0.5px;
     }
 
-    /* 16:9 Screen Container */
+    /* 16:9 Screen Display */
     .screen-16-9 {
       position: relative;
       width: min(95vw, 440px);
@@ -142,7 +142,7 @@
       border: 2px solid rgba(255, 255, 255, 0.16);
       border-radius: 18px;
       overflow: hidden;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9), 0 0 25px rgba(0, 242, 254, 0.15);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9), 0 0 25px rgba(0, 242, 254, 0.2);
       background: #06070a;
     }
 
@@ -167,11 +167,11 @@
       z-index: 20;
       letter-spacing: 0.5px;
       transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      box-shadow: 0 0 15px rgba(255, 56, 56, 0.8);
+      box-shadow: 0 0 18px rgba(255, 56, 56, 0.85);
       white-space: nowrap;
     }
 
-    /* Mobile Controls */
+    /* Controls */
     .controls-panel {
       width: 95%;
       max-width: 440px;
@@ -232,7 +232,7 @@
       </div>
       <div>
         <div class="ig-name">@_satish_official_16 <span class="verified">✓</span></div>
-        <div style="font-size:9px; color:rgba(255,255,255,0.6);">Level Devil 3D • 100 Levels</div>
+        <div style="font-size:9px; color:rgba(255,255,255,0.6);" id="worldSubTitle">World 1 • The Deception Gap</div>
       </div>
     </div>
     <a href="https://instagram.com/_satish_official_16" target="_blank" class="follow-btn">Follow ↗</a>
@@ -262,9 +262,7 @@
   </div>
 
   <script>
-    // ==========================================
-    // AUDIO SYNTHESIZER
-    // ==========================================
+    // Audio Synthesizer
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     function playBeep(freq, type = 'sine', duration = 0.08, gainVal = 0.2) {
       if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -280,31 +278,27 @@
       osc.stop(audioCtx.currentTime + duration);
     }
 
-    // ==========================================
-    // 3D SCENE & ENGINE ARCHITECTURE
-    // ==========================================
+    // 3D Scene Architecture
     let scene, camera, renderer;
-    let playerGroup, playerBody, playerEye, playerLight;
+    let playerGroup, playerBody, playerEye, playerPointLight;
     let flagGroup = null;
     let currentLevel = 1;
     let deaths = 0;
 
-    // Physics Engine Constants
-    const GRAVITY = -0.0165;
-    const HORIZONTAL_ACCEL = 0.035;
-    const MAX_SPEED = 0.16;
-    const FRICTION = 0.78;
-    const JUMP_POWER = 0.355;
+    const GRAVITY = -0.018;
+    const HORIZONTAL_ACCEL = 0.04;
+    const MAX_SPEED = 0.17;
+    const FRICTION = 0.8;
+    const JUMP_POWER = 0.40;
 
     const platforms = [];
     const spikes = [];
     const traps = [];
     const particles = [];
 
-    // Smooth Physics State
     const pState = {
-      x: -8.0,
-      y: 1.0,
+      x: -7.5,
+      y: 1.5,
       vx: 0,
       vy: 0,
       isGrounded: false,
@@ -317,59 +311,60 @@
 
     const keys = { left: false, right: false, jump: false };
 
+    // World Themes (10 Worlds x 10 Levels)
+    const WORLDS = [
+      { name: "The Deception Gap", glow: 0x00f2fe },
+      { name: "Ceiling Crumbles", glow: 0xff007f },
+      { name: "Runaway Flags", glow: 0xffd700 },
+      { name: "Elevator Paradox", glow: 0x2ecc71 },
+      { name: "Spike Ambush", glow: 0xff3838 },
+      { name: "Gravity Shifts", glow: 0x9b59b6 },
+      { name: "Ghost Stepping Stones", glow: 0x1abc9c },
+      { name: "Troll Pressure Levers", glow: 0xe67e22 },
+      { name: "Speed Runner Lasers", glow: 0xe84393 },
+      { name: "The Final Master Gauntlet", glow: 0xf1c40f }
+    ];
+
     function init3D() {
       const frame = document.getElementById('gameFrame');
       const canvas = document.getElementById('canvas3d');
 
       scene = new THREE.Scene();
       scene.background = new THREE.Color(0x06070a);
-      scene.fog = new THREE.FogExp2(0x06070a, 0.025);
+      scene.fog = new THREE.FogExp2(0x06070a, 0.022);
 
-      camera = new THREE.PerspectiveCamera(48, 16 / 9, 0.1, 100);
-      camera.position.set(0, 2.8, 18);
-      camera.lookAt(0, 0.4, 0);
+      camera = new THREE.PerspectiveCamera(46, 16 / 9, 0.1, 100);
+      camera.position.set(0, 2.2, 17);
+      camera.lookAt(0, 0.2, 0);
 
-      renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
+      renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       renderer.setSize(frame.clientWidth, frame.clientHeight);
-      renderer.shadowMap.enabled = true;
 
-      // Dynamic Stage Lighting
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.55);
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.65);
       scene.add(ambientLight);
 
       const mainLight = new THREE.DirectionalLight(0xa5b1c2, 0.85);
       mainLight.position.set(5, 15, 12);
       scene.add(mainLight);
 
-      // Backlit Neon Rim
-      const rimLight = new THREE.PointLight(0x00f2fe, 0.8, 30);
-      rimLight.position.set(0, 8, -6);
-      scene.add(rimLight);
-
-      // Player Entity Setup
+      // Player Setup
       playerGroup = new THREE.Group();
       
       const bodyGeo = new THREE.BoxGeometry(0.85, 0.85, 0.85);
-      const bodyMat = new THREE.MeshStandardMaterial({
-        color: 0xffffff,
-        roughness: 0.15,
-        metalness: 0.1
-      });
+      const bodyMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.15, metalness: 0.1 });
       playerBody = new THREE.Mesh(bodyGeo, bodyMat);
       playerGroup.add(playerBody);
 
-      // Cute Dynamic Eye
       const eyeGeo = new THREE.BoxGeometry(0.12, 0.22, 0.08);
       const eyeMat = new THREE.MeshBasicMaterial({ color: 0x111111 });
       playerEye = new THREE.Mesh(eyeGeo, eyeMat);
       playerEye.position.set(0.2, 0.12, 0.44);
       playerGroup.add(playerEye);
 
-      // Player Aura PointLight
-      playerLight = new THREE.PointLight(0x00f2fe, 1.2, 5);
-      playerLight.position.set(0, 0, 0.6);
-      playerGroup.add(playerLight);
+      playerPointLight = new THREE.PointLight(0x00f2fe, 1.4, 6);
+      playerPointLight.position.set(0, 0, 0.6);
+      playerGroup.add(playerPointLight);
 
       scene.add(playerGroup);
 
@@ -379,23 +374,16 @@
       animate();
     }
 
-    // ==========================================
-    // PROCEDURAL BUILDER TOOLS
-    // ==========================================
-    function createPlatform(x, y, w, h, color = 0x1e2738, glowBorder = true) {
+    function createPlatform(x, y, w, h, color = 0x1e2738, glowColor = 0x00f2fe) {
       const geo = new THREE.BoxGeometry(w, h, 2.2);
-      const mat = new THREE.MeshStandardMaterial({
-        color,
-        roughness: 0.5,
-        metalness: 0.2
-      });
+      const mat = new THREE.MeshStandardMaterial({ color, roughness: 0.5, metalness: 0.2 });
       const mesh = new THREE.Mesh(geo, mat);
       mesh.position.set(x, y, 0);
-      mesh.userData = { w, h, initialX: x, initialY: y, falling: false };
+      mesh.userData = { w, h, targetY: y, falling: false, isGhost: false };
 
-      if (glowBorder) {
+      if (glowColor) {
         const borderGeo = new THREE.BoxGeometry(w, 0.08, 2.22);
-        const borderMat = new THREE.MeshBasicMaterial({ color: 0x00f2fe, transparent: true, opacity: 0.6 });
+        const borderMat = new THREE.MeshBasicMaterial({ color: glowColor, transparent: true, opacity: 0.85 });
         const border = new THREE.Mesh(borderGeo, borderMat);
         border.position.y = h / 2 + 0.02;
         mesh.add(border);
@@ -411,14 +399,14 @@
       const mat = new THREE.MeshStandardMaterial({
         color: 0xff3838,
         emissive: 0x7f0000,
-        emissiveIntensity: 0.4,
+        emissiveIntensity: 0.5,
         roughness: 0.2
       });
       const mesh = new THREE.Mesh(geo, mat);
       mesh.rotation.y = Math.PI / 4;
       if (!pointingUp) mesh.rotation.z = Math.PI;
       mesh.position.set(x, y, 0);
-      mesh.userData = { scale, active: false, initialY: y };
+      mesh.userData = { scale, active: false };
       scene.add(mesh);
       spikes.push(mesh);
       return mesh;
@@ -439,8 +427,7 @@
       cloth.position.set(0.48, 1.9, 0);
       group.add(cloth);
 
-      // Gold Beacon Light
-      const flagLight = new THREE.PointLight(0xffd700, 1.6, 6);
+      const flagLight = new THREE.PointLight(0xffd700, 2.0, 7);
       flagLight.position.set(0.5, 2.0, 1);
       group.add(flagLight);
 
@@ -452,7 +439,7 @@
 
     function spawnParticles(x, y, colorHex, count = 12, speed = 0.15) {
       for (let i = 0; i < count; i++) {
-        const size = 0.1 + Math.random() * 0.12;
+        const size = 0.08 + Math.random() * 0.1;
         const geo = new THREE.BoxGeometry(size, size, size);
         const mat = new THREE.MeshBasicMaterial({ color: colorHex, transparent: true, opacity: 1 });
         const p = new THREE.Mesh(geo, mat);
@@ -461,9 +448,9 @@
         const vel = (0.5 + Math.random() * 0.5) * speed;
         p.userData = {
           vx: Math.cos(angle) * vel,
-          vy: Math.sin(angle) * vel + 0.06,
+          vy: Math.sin(angle) * vel + 0.05,
           life: 1.0,
-          decay: 0.03 + Math.random() * 0.03
+          decay: 0.035 + Math.random() * 0.02
         };
         scene.add(p);
         particles.push(p);
@@ -483,17 +470,21 @@
       flagGroup = null;
     }
 
-    // ==========================================
-    // 100 SOLVABLE TRICK STAGES
-    // ==========================================
+    // ==============================================================
+    // 100 LEVEL MASTER LOGIC ARCHITECTURE
+    // ==============================================================
     function loadLevel(lvl) {
       clearLevel();
       currentLevel = lvl;
       document.getElementById('levelText').textContent = `STAGE: LEVEL ${lvl}/100`;
 
-      // Player Reset
-      pState.x = -8.0;
-      pState.y = 1.2;
+      const worldIndex = Math.min(9, Math.floor((lvl - 1) / 10));
+      const world = WORLDS[worldIndex];
+      document.getElementById('worldSubTitle').textContent = `World ${worldIndex + 1} • ${world.name}`;
+      playerPointLight.color.setHex(world.glow);
+
+      pState.x = -7.5;
+      pState.y = 1.5;
       pState.vx = 0;
       pState.vy = 0;
       pState.scaleX = 1;
@@ -501,142 +492,205 @@
       pState.dead = false;
       playerGroup.visible = true;
 
-      // Start Platform
-      createPlatform(-8.0, -0.6, 4.5, 1.4);
+      // Starting Platform
+      createPlatform(-7.5, 0.0, 4.0, 1.2, 0x1e2738, world.glow);
 
-      if (lvl === 1) {
-        // LEVEL 1: THE RETREAT BRIDGE
-        // Running forward opens gap to bait impossible jump.
-        // Backing up reveals floating stepping stones!
-        const island = createPlatform(7.5, -0.6, 5.0, 1.4);
-        createFlag(8.0, 0.1);
+      // World-Specific Mechanics across all 100 Levels
+      if (worldIndex === 0) {
+        // WORLD 1 (Levels 1-10): The Deception Gap
+        const island = createPlatform(7.0, 0.0, 4.5, 1.2, 0x1e2738, world.glow);
+        createFlag(7.5, 0.7);
 
-        const steppingStone1 = createPlatform(-1.0, -6.0, 2.2, 0.8, 0x00f2fe);
-        const steppingStone2 = createPlatform(2.5, -6.0, 2.2, 0.8, 0x00f2fe);
+        const step1 = createPlatform(-1.5, -5.0, 2.2, 0.8, 0x00f2fe, 0xffffff);
+        const step2 = createPlatform(2.2, -5.0, 2.2, 0.8, 0x00f2fe, 0xffffff);
+        step1.userData.targetY = 0.2;
+        step2.userData.targetY = 0.5;
 
-        let retreatTriggered = false;
-
+        let triggered = false;
         traps.push({
           triggered: false,
-          check: () => pState.x > -5.0 && !retreatTriggered,
+          check: () => pState.x > -5.0 && !triggered,
           action: () => {
-            showTroll("GAP TOO WIDE! BACK UP 🏃");
-            island.position.x = 9.5; // Gap widens
+            showTroll("GAP EXPANDED! BACK UP 🏃");
+            island.position.x = 8.5;
+          }
+        });
+        traps.push({
+          triggered: false,
+          check: () => pState.x < -7.8,
+          action: () => {
+            triggered = true;
+            showTroll("STAIRS REVEALED! 🌟");
+            island.position.x = 6.8;
+            spawnParticles(-1.5, 0.2, 0x00f2fe, 15);
+            spawnParticles(2.2, 0.5, 0x00f2fe, 15);
           }
         });
 
-        traps.push({
-          triggered: false,
-          check: () => pState.x < -8.2,
-          action: () => {
-            retreatTriggered = true;
-            showTroll("PATH REVEALED! 🌟");
-            steppingStone1.position.y = -0.6; // Rises up smoothly
-            steppingStone2.position.y = -0.6;
-            island.position.x = 7.5;
-            spawnParticles(-1.0, -0.6, 0x00f2fe, 16);
-            spawnParticles(2.5, -0.6, 0x00f2fe, 16);
-          }
-        });
-
-      } else if (lvl === 2) {
-        // LEVEL 2: INVERTED CEILING CEILING SPIKES
-        // Upper platform collapses; taking lower route with patience clears it!
-        const topTrap = createPlatform(0, 2.0, 6.0, 0.8, 0x242836);
-        createPlatform(0, -2.4, 7.0, 0.8);
-        createPlatform(8.0, -0.6, 4.5, 1.4);
-        createFlag(8.5, 0.1);
+      } else if (worldIndex === 1) {
+        // WORLD 2 (Levels 11-20): Ceiling Crumbles
+        const fakeCeiling = createPlatform(0, 2.5, 5.0, 0.8, 0x242836, 0xff007f);
+        createPlatform(0, -1.0, 6.0, 1.0, 0x1e2738, world.glow);
+        createPlatform(7.5, 0.0, 4.0, 1.2, 0x1e2738, world.glow);
+        createFlag(7.5, 0.7);
 
         traps.push({
           triggered: false,
-          check: () => pState.x > -2.0 && pState.y > 0.8,
+          check: () => pState.x > -2.0 && pState.y > 1.2,
           action: () => {
-            showTroll("FALSE CEILING! 💥");
-            topTrap.userData.falling = true;
+            showTroll("CEILING COLLAPSED! 💥");
+            fakeCeiling.userData.falling = true;
           }
         });
 
-      } else if (lvl === 3) {
-        // LEVEL 3: RUNAWAY FLAG
-        // Running towards flag makes it sprint away.
-        // Standing still for 1 second calls flag back to your hand!
-        createPlatform(0, -0.6, 20.0, 1.4);
-        createFlag(5.0, 0.1);
+      } else if (worldIndex === 2) {
+        // WORLD 3 (Levels 21-30): Runaway Flags
+        createPlatform(0, 0.0, 18.0, 1.2, 0x1e2738, world.glow);
+        createFlag(4.0, 0.7);
 
         let runawayDone = false;
-        let standStillTimer = 0;
+        let freezeTimer = 0;
 
         traps.push({
           triggered: false,
-          check: () => pState.x > 0 && !runawayDone,
+          check: () => pState.x > -1.0 && !runawayDone,
           action: () => {
-            showTroll("FLAG ESCAPED! STOP MOVING 🛑");
-            flagGroup.position.x = 9.0;
+            showTroll("STOP MOVING! 🛑");
+            flagGroup.position.x = 7.5;
             runawayDone = true;
           }
         });
-
         traps.push({
           triggered: false,
           check: () => {
-            if (runawayDone && Math.abs(pState.vx) < 0.01 && pState.x > -2) {
-              standStillTimer++;
-              return standStillTimer > 45; // ~0.75 seconds of standing still
+            if (runawayDone && Math.abs(pState.vx) < 0.02 && pState.x > -2.5) {
+              freezeTimer++;
+              return freezeTimer > 35;
             }
             return false;
           },
           action: () => {
-            showTroll("FLAG COMES TO YOU! 🚩");
+            showTroll("FLAG RETURNED! 🚩");
             flagGroup.position.x = pState.x + 1.2;
             spawnParticles(flagGroup.position.x, 0.5, 0xffd700, 20);
           }
         });
 
-      } else {
-        // PROCEDURAL CHALLENGES (LEVELS 4 - 100)
-        // All procedurally vetted with fair physical paths!
-        const mode = lvl % 3;
-        createPlatform(0, -0.6, 4.0, 1.2);
-        createPlatform(8.0, -0.6, 4.5, 1.4);
-        createFlag(8.5, 0.1);
+      } else if (worldIndex === 3) {
+        // WORLD 4 (Levels 31-40): Elevator Paradox
+        const elev = createPlatform(0, 0.0, 3.5, 1.0, 0x2ecc71, 0x2ecc71);
+        createPlatform(7.5, 2.0, 4.0, 1.2, 0x1e2738, world.glow);
+        createFlag(7.5, 2.7);
 
-        if (mode === 0) {
-          // Delayed pop-up spike with audio tell
-          const s = createSpike(0, -3.0, 1.2);
-          traps.push({
-            triggered: false,
-            check: () => pState.x > -2.0,
-            action: () => {
-              showTroll("SPIKE POPPING IN 0.5s! ⚠️");
-              setTimeout(() => { s.position.y = 0.4; spawnParticles(0, 0, 0xff3838, 10); }, 500);
-            }
-          });
-        } else if (mode === 1) {
-          // Ascending elevator platform
-          const elev = createPlatform(0, -0.6, 3.5, 1.0, 0x2ecc71);
-          traps.push({
-            triggered: false,
-            check: () => pState.x > -1.5,
-            action: () => {
-              showTroll("RIDING ELEVATOR! 🚀");
-              elev.position.y += 1.8;
-              flagGroup.position.y += 1.8;
-            }
-          });
-        } else {
-          // Safe overhead leap
-          createSpike(0, 0.3, 1.4);
-          const launchPad = createPlatform(-3.0, -0.6, 2.0, 1.4, 0x00f2fe);
-          traps.push({
-            triggered: false,
-            check: () => Math.abs(pState.x - launchPad.position.x) < 0.6,
-            action: () => {
-              showTroll("SUPER LEAP ENGAGED! 🦘");
-              pState.vy = JUMP_POWER * 1.35;
-              playBeep(480, 'sine', 0.15);
-            }
-          });
-        }
+        traps.push({
+          triggered: false,
+          check: () => pState.x > -1.5,
+          action: () => {
+            showTroll("RIDING ELEVATOR! 🚀");
+            elev.userData.targetY = 2.0;
+          }
+        });
+
+      } else if (worldIndex === 4) {
+        // WORLD 5 (Levels 41-50): Spike Ambush
+        createPlatform(0, 0.0, 4.0, 1.2, 0x1e2738, world.glow);
+        const s = createSpike(0, -3.0, 1.2);
+        createPlatform(7.5, 0.0, 4.0, 1.2, 0x1e2738, world.glow);
+        createFlag(7.5, 0.7);
+
+        traps.push({
+          triggered: false,
+          check: () => pState.x > -2.5,
+          action: () => {
+            showTroll("SPIKE POPPING IN 0.4s! ⚠️");
+            setTimeout(() => { s.position.y = 0.85; spawnParticles(0, 0.6, 0xff3838, 12); }, 400);
+          }
+        });
+
+      } else if (worldIndex === 5) {
+        // WORLD 6 (Levels 51-60): Gravity Shifts
+        createSpike(0, 0.85, 1.3);
+        const launch = createPlatform(-3.0, 0.0, 2.2, 1.2, 0x9b59b6, 0x9b59b6);
+        createPlatform(7.5, 0.0, 4.0, 1.2, 0x1e2738, world.glow);
+        createFlag(7.5, 0.7);
+
+        traps.push({
+          triggered: false,
+          check: () => Math.abs(pState.x - launch.position.x) < 0.8,
+          action: () => {
+            showTroll("SUPER JUMP ENGAGED! 🦘");
+            pState.vy = JUMP_POWER * 1.35;
+            playBeep(480, 'sine', 0.15);
+          }
+        });
+
+      } else if (worldIndex === 6) {
+        // WORLD 7 (Levels 61-70): Ghost Stepping Stones
+        const g1 = createPlatform(-1.0, 0.2, 2.0, 0.6, 0x111622, false);
+        const g2 = createPlatform(3.0, 0.5, 2.0, 0.6, 0x111622, false);
+        g1.visible = false;
+        g2.visible = false;
+        createPlatform(7.5, 0.0, 4.0, 1.2, 0x1e2738, world.glow);
+        createFlag(7.5, 0.7);
+
+        traps.push({
+          triggered: false,
+          check: () => pState.x > -4.0,
+          action: () => {
+            showTroll("GHOST BRIDGE ILLUMINATED! 👻");
+            g1.visible = true;
+            g2.visible = true;
+            spawnParticles(-1.0, 0.2, 0x1abc9c, 10);
+            spawnParticles(3.0, 0.5, 0x1abc9c, 10);
+          }
+        });
+
+      } else if (worldIndex === 7) {
+        // WORLD 8 (Levels 71-80): Troll Pressure Levers
+        const barrier = createPlatform(2.0, 1.5, 0.8, 4.0, 0xff3838, 0xff3838);
+        const button = createPlatform(-2.0, 0.0, 1.5, 0.4, 0xe67e22, 0xffd700);
+        createPlatform(7.5, 0.0, 4.0, 1.2, 0x1e2738, world.glow);
+        createFlag(7.5, 0.7);
+
+        traps.push({
+          triggered: false,
+          check: () => Math.abs(pState.x - button.position.x) < 0.6 && pState.isGrounded,
+          action: () => {
+            showTroll("DOOR UNLOCKED! 🔓");
+            barrier.position.y = -5.0;
+            spawnParticles(2.0, 1.5, 0xe67e22, 14);
+          }
+        });
+
+      } else if (worldIndex === 8) {
+        // WORLD 9 (Levels 81-90): Speed Runner Lasers
+        createPlatform(0, 0.0, 4.0, 1.2, 0x1e2738, world.glow);
+        createPlatform(7.5, 0.0, 4.0, 1.2, 0x1e2738, world.glow);
+        createFlag(7.5, 0.7);
+
+        traps.push({
+          triggered: false,
+          check: () => pState.x > -3.0,
+          action: () => {
+            showTroll("SPRINT! RUN BEFORE FLOOR DROPS ⏱️");
+            setTimeout(() => { platforms[1].userData.falling = true; }, 1200);
+          }
+        });
+
+      } else {
+        // WORLD 10 (Levels 91-100): The Final Master Gauntlet
+        createPlatform(-2.0, 0.0, 2.5, 1.0, 0x1e2738, world.glow);
+        createPlatform(2.0, 0.6, 2.5, 1.0, 0x1e2738, world.glow);
+        createPlatform(7.5, 1.2, 3.5, 1.0, 0x1e2738, world.glow);
+        createFlag(8.0, 1.9);
+
+        traps.push({
+          triggered: false,
+          check: () => pState.x > -1.0,
+          action: () => {
+            showTroll(lvl === 100 ? "👑 FINAL STAGE: TRIUMPH!" : "PRECISION LEAP REQUIRED! 🎯");
+          }
+        });
       }
     }
 
@@ -665,53 +719,56 @@
       spawnParticles(flagGroup.position.x, flagGroup.position.y + 1, 0xffd700, 36, 0.25);
       currentLevel++;
       if (currentLevel > 100) {
-        alert("👑 ALL 100 LEVELS CLEARED! YOU ARE THE ULTIMATE MASTER!");
+        alert("👑 INCREDIBLE! YOU HAVE CONQUERED ALL 100 LEVELS OF LEVEL DEVIL 3D!");
         currentLevel = 1;
       }
       setTimeout(() => loadLevel(currentLevel), 350);
     }
 
-    // ==========================================
-    // FLUID PHYSICS ENGINE & AABB COLLISION
-    // ==========================================
     function updatePhysics() {
       if (pState.dead) return;
 
-      // Horizontal Acceleration & Friction
+      // Platform Elevation Movement
+      platforms.forEach(p => {
+        if (p.userData.falling) {
+          p.position.y -= 0.16;
+        } else if (p.userData.targetY !== undefined && Math.abs(p.position.y - p.userData.targetY) > 0.02) {
+          p.position.y += (p.userData.targetY - p.position.y) * 0.14;
+        }
+      });
+
+      // Air and Ground Movement
       if (keys.left) pState.vx = Math.max(-MAX_SPEED, pState.vx - HORIZONTAL_ACCEL);
       else if (keys.right) pState.vx = Math.min(MAX_SPEED, pState.vx + HORIZONTAL_ACCEL);
       else pState.vx *= FRICTION;
 
-      // Coyote Time & Jump Buffering
-      if (pState.isGrounded) pState.coyoteTimer = 6;
+      // Jump Buffering & Coyote Mechanics
+      if (pState.isGrounded) pState.coyoteTimer = 7;
       else if (pState.coyoteTimer > 0) pState.coyoteTimer--;
 
-      if (keys.jump) pState.jumpBuffer = 5;
+      if (keys.jump) pState.jumpBuffer = 6;
       else if (pState.jumpBuffer > 0) pState.jumpBuffer--;
 
-      // Execute Jump
       if (pState.jumpBuffer > 0 && pState.coyoteTimer > 0) {
         pState.vy = JUMP_POWER;
         pState.isGrounded = false;
         pState.coyoteTimer = 0;
         pState.jumpBuffer = 0;
         pState.scaleX = 0.75;
-        pState.scaleY = 1.35; // Leap Stretch
+        pState.scaleY = 1.35;
         playBeep(340, 'square', 0.08);
         spawnParticles(pState.x, pState.y - 0.4, 0xffffff, 6, 0.06);
       }
 
-      // Gravity Application
       pState.vy += GRAVITY;
       pState.x += pState.vx;
       pState.y += pState.vy;
       pState.isGrounded = false;
 
-      // Platform Collisions (Rigid AABB Box)
+      // AABB Box Collisions
       const pBoxRadius = 0.42;
       platforms.forEach(p => {
-        if (p.userData.falling) p.position.y -= 0.16;
-
+        if (!p.visible) return;
         const halfW = p.userData.w / 2;
         const halfH = p.userData.h / 2;
 
@@ -721,32 +778,29 @@
         const botY = p.position.y - halfH;
 
         if (pState.x + pBoxRadius > minX && pState.x - pBoxRadius < maxX) {
-          // Landing on Top
-          if (pState.y - pBoxRadius <= topY && pState.y - pBoxRadius >= topY - 0.45 && pState.vy <= 0) {
+          if (pState.y - pBoxRadius <= topY && pState.y - pBoxRadius >= topY - 0.48 && pState.vy <= 0) {
             pState.y = topY + pBoxRadius;
             pState.vy = 0;
             if (!pState.isGrounded) {
-              pState.scaleX = 1.35;
-              pState.scaleY = 0.75; // Squash on impact
+              pState.scaleX = 1.3;
+              pState.scaleY = 0.78;
               spawnParticles(pState.x, pState.y - 0.4, 0x00f2fe, 5, 0.05);
             }
             pState.isGrounded = true;
-          }
-          // Hitting Ceiling
-          else if (pState.y + pBoxRadius >= botY && pState.y + pBoxRadius <= botY + 0.3 && pState.vy > 0) {
+          } else if (pState.y + pBoxRadius >= botY && pState.y + pBoxRadius <= botY + 0.3 && pState.vy > 0) {
             pState.y = botY - pBoxRadius;
             pState.vy = 0;
           }
         }
       });
 
-      // Spike Collision
+      // Spikes
       spikes.forEach(s => {
         const dist = Math.hypot(pState.x - s.position.x, pState.y - s.position.y);
-        if (dist < 0.75 * (s.userData.scale || 1)) triggerDeath();
+        if (dist < 0.72 * (s.userData.scale || 1)) triggerDeath();
       });
 
-      // Trigger Checks
+      // Traps
       traps.forEach(t => {
         if (!t.triggered && t.check()) {
           t.triggered = true;
@@ -754,30 +808,28 @@
         }
       });
 
-      // Victory Condition
+      // Flag
       if (flagGroup) {
         const flagDist = Math.hypot(pState.x - flagGroup.position.x, pState.y - (flagGroup.position.y + 0.8));
-        if (flagDist < 1.1) triggerVictory();
+        if (flagDist < 1.15) triggerVictory();
       }
 
-      // Void Fall Death
-      if (pState.y < -7.0 || pState.y > 18.0) triggerDeath();
+      // Void Falls
+      if (pState.y < -6.5 || pState.y > 18.0) triggerDeath();
 
-      // Squash & Stretch Spring Recovery
+      // Kinematic recovery
       pState.scaleX += (1 - pState.scaleX) * 0.15;
       pState.scaleY += (1 - pState.scaleY) * 0.15;
 
-      // Update 3D Transformations
       playerGroup.position.set(pState.x, pState.y, 0);
       playerGroup.scale.set(pState.scaleX, pState.scaleY, 1);
       playerGroup.rotation.z = -pState.vx * 1.2;
 
-      // Eye Direction Looking
       if (Math.abs(pState.vx) > 0.02) {
         playerEye.position.x = pState.vx > 0 ? 0.22 : -0.22;
       }
 
-      // Update Particles
+      // Particles
       for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i];
         p.position.x += p.userData.vx;
@@ -792,9 +844,6 @@
       }
     }
 
-    // ==========================================
-    // INPUT BINDINGS
-    // ==========================================
     function bindControls() {
       const setKey = (k, v) => keys[k] = v;
       const bindBtn = (id, k) => {
