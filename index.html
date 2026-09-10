@@ -337,6 +337,81 @@
       border-radius: 12px;
       border: 1px solid #ffd700;
       }
+    /* ==============================
+   TAP-TAP HOOPS CARD
+   ============================== */
+
+.basketball-thumb {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background:
+    radial-gradient(
+      circle at 50% 35%,
+      #ffd84d 0%,
+      #ff9d00 35%,
+      #e85b00 70%,
+      #17191d 100%
+    );
+
+  min-height: 150px;
+}
+
+.basketball-thumb::before {
+  content: "";
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,.25);
+  animation: basketballPulse 2s infinite;
+}
+
+.basketball-thumb img {
+  width: 95px;
+  height: 95px;
+  object-fit: contain;
+  position: relative;
+  z-index: 2;
+  filter: drop-shadow(0 10px 12px rgba(0,0,0,.45));
+  animation: basketballFloat 2.2s ease-in-out infinite;
+}
+
+.basketball-fallback {
+  position: absolute;
+  font-size: 82px;
+  z-index: 1;
+  animation: basketballFloat 2.2s ease-in-out infinite;
+}
+
+.basketball-thumb img + .basketball-fallback {
+  display: none;
+}
+
+@keyframes basketballFloat {
+  0%,100% {
+    transform: translateY(0) rotate(-5deg);
+  }
+
+  50% {
+    transform: translateY(-10px) rotate(5deg);
+  }
+}
+
+@keyframes basketballPulse {
+  0%,100% {
+    transform: scale(.8);
+    opacity: .15;
+  }
+
+  50% {
+    transform: scale(1.1);
+    opacity: .4;
+  }
+}
     
   </style>
 </head>
@@ -422,8 +497,37 @@
       <img src="tap-reflex.jpg" alt="Tap Reflex" class="tile-thumb" onerror="this.src='https://placehold.co/120x120/101420/26de81?text=REFLEX'" />
       <span class="tile-title">Tap Reflex</span>
     </div>
+    
+    <!-- 9. 🏀 TAP-TAP HOOPS -->
+<a href="basketball-game.html"
+   class="game-tile"
+   data-cat="arcade">
 
-    <!-- 9. Math Rush (Built-in Quick Game) -->
+  <div class="tile-thumb basketball-thumb">
+    <img
+      src="https://upload.wikimedia.org/wikipedia/commons/7/7a/Basketball.png"
+      alt="Basketball"
+      onerror="this.style.display='none';"
+    >
+
+    <div class="basketball-fallback">🏀</div>
+  </div>
+
+  <div class="tile-info">
+    <div class="tile-title">Tap-Tap Hoops</div>
+    <div class="tile-desc">
+      Shoot • Score • Move the basket 🔥
+    </div>
+  </div>
+
+  <span class="tile-badge"
+        style="background:linear-gradient(135deg,#ff9d00,#ff3f9f);">
+    NEW
+  </span>
+
+</a>
+
+    <!-- 10. Math Rush (Built-in Quick Game) -->
     <div class="game-tile" data-cat="arcade" onclick="openMathModal()">
       <span class="tile-badge badge-brain">SPEED</span>
       <img src="math-rush.jpg" alt="Math Rush" class="tile-thumb" onerror="this.src='https://placehold.co/120x120/101420/20bf6b?text=MATH'" />
