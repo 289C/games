@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Knife Hit 3D Pro - Ketchapp Arcade</title>
+
+  <!-- Three.js 3D Engine -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #09131f;
+      --card-bg: rgba(14, 23, 38, 0.92);
+      --border: rgba(255, 255, 255, 0.14);
+      --cyan: #00f2fe;
+      --gold: #ffd700;
+      --red: #ff3838;
+      --apple: #ff4757;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 15%, #102a45 0%, #050b14 100%);
+      color: #fff;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 8px 10px 16px;
+      overflow: hidden;
+    }
+
+    /* Top Navigation Bar */
+    .top-nav {
+      width: 95%;
+      max-width: 440px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      z-index: 20;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: #fff;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 800;
+      padding: 6px 14px;
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+    }
+
+    /* Pinned Instagram Header */
+    .ig-header {
+      width: 95%;
+      max-width: 440px;
+      margin-bottom: 6px;
+      padding: 6px 14px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      backdrop-filter: blur(14px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.6);
+      z-index: 10;
+    }
+
+    .ig-profile {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dp-frame {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      padding: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .dp-img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .ig-name {
+      font-size: 12px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .verified {
+      background: #0095f6;
+      color: #fff;
+      font-size: 8px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .follow-btn {
+      background: linear-gradient(135deg, #f58529, #dd2a7b, #8134af);
+      color: #fff;
+      text-decoration: none;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 5px 12px;
+      border-radius: 20px;
+    }
+
+    /* Game Header Stats */
+    .hud-box {
+      width: 95%;
+      max-width: 440px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+      padding: 0 4px;
+    }
+
+    .hud-stat {
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+    }
+
+    /* 3D Game Canvas Area */
+    .game-viewport {
+      position: relative;
+      width: min(96vw, 440px);
+      height: calc(min(96vw, 440px) * (16 / 10));
+      border: 2px solid rgba(255, 255, 255, 0.14);
+      border-radius: 20px;
+      overflow: hidden;
+      background: #071524;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9), 0 0 30px rgba(0, 242, 254, 0.15);
+      cursor: pointer;
+    }
+
+    #canvas3d {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Left Knife Counter Inventory HUD */
+    .knife-stack {
+      position: absolute;
+      left: 14px;
+      bottom: 24px;
+      display: flex;
+      flex-direction: column-reverse;
+      gap: 6px;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .knife-icon {
+      width: 12px;
+      height: 24px;
+      background: linear-gradient(180deg, #ffffff 60%, #ff793f 60%);
+      clip-path: polygon(50% 0%, 100% 20%, 100% 100%, 0% 100%, 0% 20%);
+      opacity: 0.9;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .knife-icon.spent {
+      opacity: 0.15;
+      background: #718093;
+    }
+
+    /* Stage Dots */
+    .stage-dots {
+      position: absolute;
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .stage-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .stage-dot.cleared {
+      background: var(--gold);
+      box-shadow: 0 0 8px var(--gold);
+    }
+
+    .stage-dot.boss {
+      clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+      border-radius: 0;
+      width: 11px;
+      height: 11px;
+    }
+
+    .stage-title {
+      position: absolute;
+      top: 28px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 13px;
+      font-weight: 900;
+      color: rgba(255, 255, 255, 0.85);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    /* Screen Tap Instruction */
+    .tap-hint {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 800;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    /* Apple Floating Text */
+    .apple-pop {
+      position: absolute;
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--apple);
+      pointer-events: none;
+      animation: floatUp 0.6s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.9);
+    }
+
+    @keyframes floatUp {
+      0% { transform: translate(-50%, 0) scale(0.6); opacity: 1; }
+      100% { transform: translate(-50%, -40px) scale(1.2); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Nav with Back Button -->
+  <div class="top-nav">
+    <a href="index.html" class="back-btn">← Back to Hub</a>
+    <div style="font-size:11px; font-weight:800; color:rgba(255,255,255,0.7);">KETCHAPP 3D STYLE</div>
+  </div>
+
+  <!-- Pinned Instagram Header -->
+  <header class="ig-header">
+    <div class="ig-profile">
+      <div class="dp-frame">
+        <img src="Insta.jpg" alt="DP" class="dp-img" onerror="this.onerror=null; this.src='insta.jpg';" />
+      </div>
+      <div>
+        <div class="ig-name">@_satish_official_16 <span class="verified">✓</span></div>
+        <div style="font-size:9px; color:rgba(255,255,255,0.6);">Knife Hit Master 3D</div>
+      </div>
+    </div>
+    <a href="https://instagram.com/_satish_official_16" target="_blank" class="follow-btn">Follow ↗</a>
+  </header>
+
+  <!-- Top Stats -->
+  <div class="hud-box">
+    <div class="hud-stat" style="color:#fff;" id="scoreDisplay">0</div>
+    <div class="hud-stat" style="color:var(--apple);" id="applesDisplay">🍎 0</div>
+  </div>
+
+  <!-- 3D Canvas Area -->
+  <div class="game-viewport" id="viewport">
+    <div class="stage-dots" id="stageDots"></div>
+    <div class="stage-title" id="stageTitle">STAGE 1</div>
+    <div class="knife-stack" id="knifeStack"></div>
+    <div class="tap-hint" id="tapHint">👆 TAP ANYWHERE TO THROW</div>
+    <canvas id="canvas3d"></canvas>
+  </div>
+
+  <script>
+    // ==============================================
+    // AUDIO SYNTHESIZER FOR KNIFE HIT SFX
+    // ==============================================
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playTone(freq, type = 'sine', duration = 0.08, gainVal = 0.25) {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const osc = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+      g.gain.setValueAtTime(gainVal, audioCtx.currentTime);
+      g.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+      osc.connect(g);
+      g.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + duration);
+    }
+
+    const Sound = {
+      thud: () => playTone(180, 'triangle', 0.09, 0.4),
+      clank: () => { playTone(820, 'square', 0.12, 0.35); setTimeout(() => playTone(440, 'triangle', 0.15), 30); },
+      apple: () => { playTone(980, 'sine', 0.08, 0.3); setTimeout(() => playTone(1320, 'sine', 0.1), 40); },
+      shatter: () => { playTone(120, 'sawtooth', 0.3, 0.4); playTone(300, 'square', 0.15); },
+      throw: () => playTone(420, 'sine', 0.04, 0.15)
+    };
+
+    // ==============================================
+    // THREE.JS 3D SCENE ARCHITECTURE
+    // ==============================================
+    let scene, camera, renderer;
+    let targetGroup, activeKnifeMesh;
+    const embeddedKnives = [];
+    const embeddedApples = [];
+    const debrisPieces = [];
+    const sparkParticles = [];
+
+    let score = 0;
+    let apples = 0;
+    let currentStage = 1;
+    let remainingKnives = 7;
+    let totalStageKnives = 7;
+    let isGameOver = false;
+    let isTransitioning = false;
+
+    // Target Physical Properties
+    const TARGET_RADIUS = 2.1;
+    const TARGET_DEPTH = 0.85;
+    const TARGET_Y = 2.5;
+    const KNIFE_READY_Y = -3.8;
+    const KNIFE_SPEED = 0.72;
+
+    // Rotation Dynamic Engine
+    let rotSpeed = 0.035;
+    let rotDirection = 1;
+    let speedPatternTimer = 0;
+
+    const flyingKnife = {
+      mesh: null,
+      active: false,
+      y: KNIFE_READY_Y,
+      rebounding: false,
+      vx: 0,
+      vy: 0,
+      rotZ: 0
+    };
+
+    function init3D() {
+      const frame = document.getElementById('viewport');
+      const canvas = document.getElementById('canvas3d');
+
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x06111e);
+
+      camera = new THREE.PerspectiveCamera(46, frame.clientWidth / frame.clientHeight, 0.1, 100);
+      camera.position.set(0, 0.4, 11.2);
+
+      renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setSize(frame.clientWidth, frame.clientHeight);
+
+      // Studio Lighting
+      const ambient = new THREE.AmbientLight(0xffffff, 0.75);
+      scene.add(ambient);
+
+      const mainLight = new THREE.DirectionalLight(0xffffff, 0.9);
+      mainLight.position.set(3, 8, 10);
+      scene.add(mainLight);
+
+      const backLight = new THREE.PointLight(0x00f2fe, 1.2, 20);
+      backLight.position.set(0, 2.5, -4);
+      scene.add(backLight);
+
+      buildReadyKnife();
+      loadStage(currentStage);
+
+      frame.addEventListener('pointerdown', handleThrow);
+      window.addEventListener('resize', onResize);
+      animate();
+    }
+
+    // ==============================================
+    // 3D PROCEDURAL MODELS: TARGET, KNIVES & APPLES
+    // ==============================================
+    function createKnifeModel() {
+      const group = new THREE.Group();
+
+      // Blade
+      const bladeShape = new THREE.Shape();
+      bladeShape.moveTo(-0.16, 0);
+      bladeShape.lineTo(0.16, 0);
+      bladeShape.lineTo(0.14, 1.5);
+      bladeShape.lineTo(0, 2.0); // Point
+      bladeShape.lineTo(-0.14, 1.5);
+      bladeShape.closePath();
+
+      const bladeGeo = new THREE.ExtrudeGeometry(bladeShape, { depth: 0.06, bevelEnabled: true, bevelSize: 0.02, bevelThickness: 0.02 });
+      const bladeMat = new THREE.MeshStandardMaterial({
+        color: 0xecf0f1,
+        metalness: 0.85,
+        roughness: 0.2
+      });
+      const bladeMesh = new THREE.Mesh(bladeGeo, bladeMat);
+      bladeMesh.position.set(0, 0, -0.03);
+      group.add(bladeMesh);
+
+      // Guard
+      const guardGeo = new THREE.BoxGeometry(0.52, 0.12, 0.14);
+      const guardMat = new THREE.MeshStandardMaterial({ color: 0xf39c12, metalness: 0.6, roughness: 0.3 });
+      const guard = new THREE.Mesh(guardGeo, guardMat);
+      guard.position.y = 0;
+      group.add(guard);
+
+      // Handle
+      const handleGeo = new THREE.CylinderGeometry(0.12, 0.14, 0.9, 8);
+      const handleMat = new THREE.MeshStandardMaterial({ color: 0xd35400, roughness: 0.6 });
+      const handle = new THREE.Mesh(handleGeo, handleMat);
+      handle.position.y = -0.48;
+      group.add(handle);
+
+      return group;
+    }
+
+    function createAppleModel() {
+      const group = new THREE.Group();
+      const appleGeo = new THREE.SphereGeometry(0.32, 16, 16);
+      const appleMat = new THREE.MeshStandardMaterial({ color: 0xff3838, roughness: 0.25, metalness: 0.1 });
+      const apple = new THREE.Mesh(appleGeo, appleMat);
+      group.add(apple);
+
+      // Stem
+      const stemGeo = new THREE.CylinderGeometry(0.03, 0.03, 0.22, 6);
+      const stemMat = new THREE.MeshBasicMaterial({ color: 0x27ae60 });
+      const stem = new THREE.Mesh(stemGeo, stemMat);
+      stem.position.y = 0.32;
+      group.add(stem);
+
+      return group;
+    }
+
+    function buildReadyKnife() {
+      activeKnifeMesh = createKnifeModel();
+      activeKnifeMesh.position.set(0, KNIFE_READY_Y, 0);
+      scene.add(activeKnifeMesh);
+    }
+
+    function buildTarget(isBoss, bossType) {
+      if (targetGroup) scene.remove(targetGroup);
+      targetGroup = new THREE.Group();
+      targetGroup.position.set(0, TARGET_Y, 0);
+
+      if (!isBoss) {
+        // Standard Wooden Log
+        const logGeo = new THREE.CylinderGeometry(TARGET_RADIUS, TARGET_RADIUS, TARGET_DEPTH, 32);
+        const logMat = new THREE.MeshStandardMaterial({
+          color: 0xdf9f52,
+          roughness: 0.6
+        });
+        const log = new THREE.Mesh(logGeo, logMat);
+        log.rotation.x = Math.PI / 2;
+        targetGroup.add(log);
+
+        // Core Tree Rings Overlay
+        const ringGeo = new THREE.RingGeometry(0.3, TARGET_RADIUS - 0.05, 32);
+        const ringMat = new THREE.MeshBasicMaterial({ color: 0xc87b28, side: THREE.DoubleSide });
+        const ring = new THREE.Mesh(ringGeo, ringMat);
+        ring.position.z = TARGET_DEPTH / 2 + 0.01;
+        targetGroup.add(ring);
+      } else {
+        // Boss Target (Green Monster or Jungle Carnivore)
+        const bossColor = bossType === 'monster' ? 0x2ecc71 : 0xe84118;
+        const bossGeo = new THREE.CylinderGeometry(TARGET_RADIUS * 1.15, TARGET_RADIUS * 1.15, TARGET_DEPTH, 32);
+        const bossMat = new THREE.MeshStandardMaterial({ color: bossColor, roughness: 0.4 });
+        const boss = new THREE.Mesh(bossGeo, bossMat);
+        boss.rotation.x = Math.PI / 2;
+        targetGroup.add(boss);
+
+        // Boss Face Details
+        const eyeMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+        const pupilMat = new THREE.MeshBasicMaterial({ color: 0x111111 });
+        [-0.7, 0.7].forEach(offset => {
+          const eye = new THREE.Mesh(new THREE.CircleGeometry(0.32, 16), eyeMat);
+          eye.position.set(offset, 0.5, TARGET_DEPTH / 2 + 0.02);
+          const pupil = new THREE.Mesh(new THREE.CircleGeometry(0.14, 16), pupilMat);
+          pupil.position.set(offset, 0.5, TARGET_DEPTH / 2 + 0.03);
+          targetGroup.add(eye);
+          targetGroup.add(pupil);
+        });
+      }
+
+      scene.add(targetGroup);
+    }
+
+    // ==============================================
+    // STAGE LOADER & BOSS MATRIX
+    // ==============================================
+    function loadStage(stg) {
+      embeddedKnives.length = 0;
+      embeddedApples.length = 0;
+      debrisPieces.forEach(p => scene.remove(p));
+      debrisPieces.length = 0;
+
+      const isBoss = (stg % 5 === 0);
+      const bossType = (stg % 10 === 0) ? 'carnivore' : 'monster';
+
+      buildTarget(isBoss, bossType);
+
+      // Knives configuration
+      totalStageKnives = isBoss ? 9 : (6 + (stg % 4));
+      remainingKnives = totalStageKnives;
+
+      // Update HUDs
+      document.getElementById('stageTitle').textContent = isBoss 
+        ? `🔥 BOSS CHALLENGE: ${bossType.toUpperCase()}!` 
+        : `STAGE ${stg}`;
+      renderStageDots(stg);
+      renderKnifeInventory();
+
+      // Pre-populate target with pre-existing obstacles & apples
+      const preKnivesCount = Math.min(4, Math.floor(stg / 2));
+      for (let i = 0; i < preKnivesCount; i++) {
+        const angle = (Math.PI * 2 / preKnivesCount) * i + (Math.random() * 0.4);
+        attachKnifeToTarget(angle);
+      }
+
+      // Spawn Apple randomly
+      if (Math.random() > 0.45) {
+        attachAppleToTarget(Math.random() * Math.PI * 2);
+      }
+
+      // Reset Ready Knife
+      activeKnifeMesh.visible = true;
+      activeKnifeMesh.position.set(0, KNIFE_READY_Y, 0);
+      flyingKnife.active = false;
+      flyingKnife.rebounding = false;
+      isGameOver = false;
+      isTransitioning = false;
+    }
+
+    function renderStageDots(stg) {
+      const container = document.getElementById('stageDots');
+      container.innerHTML = '';
+      const base = Math.floor((stg - 1) / 5) * 5;
+      for (let i = 1; i <= 5; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'stage-dot' + (i === 5 ? ' boss' : '');
+        if (base + i <= stg) dot.classList.add('cleared');
+        container.appendChild(dot);
+      }
+    }
+
+    function renderKnifeInventory() {
+      const stack = document.getElementById('knifeStack');
+      stack.innerHTML = '';
+      for (let i = 0; i < totalStageKnives; i++) {
+        const k = document.createElement('div');
+        k.className = 'knife-icon' + (i >= remainingKnives ? ' spent' : '');
+        stack.appendChild(k);
+      }
+    }
+
+    function attachKnifeToTarget(angle) {
+      const k = createKnifeModel();
+      k.rotation.z = angle - Math.PI / 2;
+      k.position.set(
+        Math.cos(angle) * TARGET_RADIUS,
+        Math.sin(angle) * TARGET_RADIUS,
+        0
+      );
+      targetGroup.add(k);
+      embeddedKnives.push({ angle: angle, mesh: k });
+    }
+
+    function attachAppleToTarget(angle) {
+      const apple = createAppleModel();
+      apple.position.set(
+        Math.cos(angle) * (TARGET_RADIUS + 0.2),
+        Math.sin(angle) * (TARGET_RADIUS + 0.2),
+        0
+      );
+      targetGroup.add(apple);
+      embeddedApples.push({ angle: angle, mesh: apple, sliced: false });
+    }
+
+    // ==============================================
+    // THROWING & COLLISION LOGIC
+    // ==============================================
+    function handleThrow() {
+      if (flyingKnife.active || isGameOver || isTransitioning || remainingKnives <= 0) return;
+      document.getElementById('tapHint').style.display = 'none';
+
+      flyingKnife.active = true;
+      flyingKnife.y = KNIFE_READY_Y;
+      activeKnifeMesh.visible = false;
+
+      // Duplicate model for high-speed flight
+      if (flyingKnife.mesh) scene.remove(flyingKnife.mesh);
+      flyingKnife.mesh = createKnifeModel();
+      flyingKnife.mesh.position.set(0, KNIFE_READY_Y, 0);
+      scene.add(flyingKnife.mesh);
+
+      Sound.throw();
+    }
+
+    function updatePhysics() {
+      // Dynamic Rotation Behaviors
+      speedPatternTimer += 0.02;
+      const wave = Math.sin(speedPatternTimer * 2);
+      targetGroup.rotation.z += (rotSpeed + wave * 0.018) * rotDirection;
+
+      // Random direction reversal on higher stages
+      if (currentStage > 2 && Math.random() < 0.003) {
+        rotDirection *= -1;
+      }
+
+      // Flying Knife Travel
+      if (flyingKnife.active) {
+        if (!flyingKnife.rebounding) {
+          flyingKnife.y += KNIFE_SPEED;
+          flyingKnife.mesh.position.y = flyingKnife.y;
+
+          // Check Target Tip Contact
+          if (flyingKnife.y >= TARGET_Y - TARGET_RADIUS) {
+            checkHitOutcome();
+          }
+        } else {
+          // Rebound Physics (Game Over clank bounce)
+          flyingKnife.mesh.position.x += flyingKnife.vx;
+          flyingKnife.mesh.position.y += flyingKnife.vy;
+          flyingKnife.vy -= 0.03;
+          flyingKnife.rotZ += 0.25;
+          flyingKnife.mesh.rotation.z = flyingKnife.rotZ;
+
+          if (flyingKnife.mesh.position.y < -10) {
+            triggerGameOver();
+          }
+        }
+      }
+
+      // Debris Physics during Shatter
+      for (let i = debrisPieces.length - 1; i >= 0; i--) {
+        const piece = debrisPieces[i];
+        piece.position.add(piece.userData.vel);
+        piece.userData.vel.y -= 0.015;
+        piece.rotation.x += 0.05;
+        piece.rotation.y += 0.05;
+        piece.userData.life -= 0.02;
+        if (piece.userData.life <= 0) {
+          scene.remove(piece);
+          debrisPieces.splice(i, 1);
+        }
+      }
+    }
+
+    function checkHitOutcome() {
+      // The knife enters at the bottom of the target (Angle = -PI/2 in world space)
+      const currentTargetRot = (targetGroup.rotation.z % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
+      const hitAngle = (-Math.PI / 2 - currentTargetRot + Math.PI * 2) % (Math.PI * 2);
+
+      // 1. Check Collision with existing stuck knives (Ricochet Check)
+      const MIN_ANGLE_SEPARATION = 0.28; // ~16 degrees
+      for (let ek of embeddedKnives) {
+        const normalizedDiff = Math.abs(((hitAngle - ek.angle + Math.PI) % (Math.PI * 2)) - Math.PI);
+        if (normalizedDiff < MIN_ANGLE_SEPARATION) {
+          // CLANK! HIT ANOTHER KNIFE!
+          Sound.clank();
+          flyingKnife.rebounding = true;
+          flyingKnife.vx = (Math.random() - 0.5) * 0.2;
+          flyingKnife.vy = -0.3;
+          spawnSparks(0, TARGET_Y - TARGET_RADIUS);
+          shakeCamera();
+          return;
+        }
+      }
+
+      // 2. Check Apple Slice
+      for (let app of embeddedApples) {
+        if (!app.sliced) {
+          const appDiff = Math.abs(((hitAngle - app.angle + Math.PI) % (Math.PI * 2)) - Math.PI);
+          if (appDiff < 0.35) {
+            app.sliced = true;
+            targetGroup.remove(app.mesh);
+            apples += 2;
+            document.getElementById('applesDisplay').textContent = `🍎 ${apples}`;
+            Sound.apple();
+            showApplePopup('+2');
+          }
+        }
+      }
+
+      // 3. Clean Solid Log Embed
+      Sound.thud();
+      shakeCamera(0.08);
+      scene.remove(flyingKnife.mesh);
+      flyingKnife.active = false;
+
+      attachKnifeToTarget(hitAngle);
+      remainingKnives--;
+      score++;
+      document.getElementById('scoreDisplay').textContent = score;
+      renderKnifeInventory();
+
+      // Check if target is shattered
+      if (remainingKnives <= 0) {
+        shatterTarget();
+      } else {
+        // Reset next ready knife
+        activeKnifeMesh.visible = true;
+        activeKnifeMesh.position.set(0, KNIFE_READY_Y, 0);
+      }
+    }
+
+    function shatterTarget() {
+      isTransitioning = true;
+      Sound.shatter();
+      shakeCamera(0.3);
+
+      // Spawn flying 3D sliced log wedges
+      targetGroup.visible = false;
+      const wedgeCount = 6;
+      for (let i = 0; i < wedgeCount; i++) {
+        const geo = new THREE.CylinderGeometry(TARGET_RADIUS, TARGET_RADIUS, TARGET_DEPTH, 8, 1, false, (Math.PI * 2 / wedgeCount) * i, Math.PI * 2 / wedgeCount);
+        const mat = new THREE.MeshStandardMaterial({ color: 0xdf9f52, roughness: 0.6 });
+        const wedge = new THREE.Mesh(geo, mat);
+        wedge.rotation.x = Math.PI / 2;
+        wedge.position.set(0, TARGET_Y, 0);
+
+        const angle = (Math.PI * 2 / wedgeCount) * i;
+        wedge.userData = {
+          vel: new THREE.Vector3(Math.cos(angle) * 0.22, Math.sin(angle) * 0.22 + 0.1, (Math.random() - 0.5) * 0.1),
+          life: 1.0
+        };
+        scene.add(wedge);
+        debrisPieces.push(wedge);
+      }
+
+      setTimeout(() => {
+        currentStage++;
+        loadStage(currentStage);
+      }, 700);
+    }
+
+    function triggerGameOver() {
+      isGameOver = true;
+      alert(`⚔️ KNIFE HIT OVER!\nFinal Score: ${score}\nApples Sliced: ${apples}`);
+      score = 0;
+      currentStage = 1;
+      loadStage(1);
+    }
+
+    function spawnSparks(x, y) {
+      for (let i = 0; i < 8; i++) {
+        const pGeo = new THREE.BoxGeometry(0.08, 0.08, 0.08);
+        const pMat = new THREE.MeshBasicMaterial({ color: 0xffd700 });
+        const p = new THREE.Mesh(pGeo, pMat);
+        p.position.set(x, y, 0);
+        p.userData = {
+          vel: new THREE.Vector3((Math.random() - 0.5) * 0.25, (Math.random() - 0.5) * 0.25, (Math.random() - 0.5) * 0.1),
+          life: 0.6
+        };
+        scene.add(p);
+        debrisPieces.push(p);
+      }
+    }
+
+    function shakeCamera(strength = 0.1) {
+      const origX = camera.position.x;
+      const origY = camera.position.y;
+      camera.position.x += (Math.random() - 0.5) * strength;
+      camera.position.y += (Math.random() - 0.5) * strength;
+      setTimeout(() => {
+        camera.position.x = origX;
+        camera.position.y = origY;
+      }, 50);
+    }
+
+    function showApplePopup(txt) {
+      const frame = document.getElementById('viewport');
+      const pop = document.createElement('div');
+      pop.className = 'apple-pop';
+      pop.textContent = txt;
+      pop.style.left = '50%';
+      pop.style.top = '40%';
+      frame.appendChild(pop);
+      setTimeout(() => pop.remove(), 600);
+    }
+
+    function onResize() {
+      const frame = document.getElementById('viewport');
+      renderer.setSize(frame.clientWidth, frame.clientHeight);
+      camera.aspect = frame.clientWidth / frame.clientHeight;
+      camera.updateProjectionMatrix();
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      updatePhysics();
+      renderer.render(scene, camera);
+    }
+
+    window.onload = init3D;
+  </script>
+</body>
+</html>
+
