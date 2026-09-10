@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Helix Jump 3D Pro - Arcade Hub</title>
 
-  <!-- Three.js 3D Engine -->
+  <!-- Three.js Engine -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
   <style>
@@ -40,7 +40,6 @@
       overflow: hidden;
     }
 
-    /* Top Navigation Bar */
     .top-nav {
       width: 95%;
       max-width: 440px;
@@ -67,7 +66,6 @@
       box-shadow: 0 4px 14px rgba(0,0,0,0.4);
     }
 
-    /* Pinned Instagram Header */
     .ig-header {
       width: 95%;
       max-width: 440px;
@@ -139,7 +137,6 @@
       border-radius: 20px;
     }
 
-    /* Level Progress Indicator */
     .progress-bar-wrap {
       width: 95%;
       max-width: 440px;
@@ -174,7 +171,6 @@
       transition: width 0.15s ease;
     }
 
-    /* 3D Game Canvas Frame */
     .canvas-container {
       position: relative;
       width: min(96vw, 440px);
@@ -192,7 +188,6 @@
       display: block;
     }
 
-    /* Overlays */
     .hud-overlay {
       position: absolute;
       top: 12px;
@@ -437,14 +432,12 @@
         });
       }
 
-      // Finish Base Platform
       const finishGeo = new THREE.CylinderGeometry(3.6, 3.6, 0.6, 32);
       const finishMat = new THREE.MeshStandardMaterial({ color: 0xffd700, roughness: 0.2 });
       const finishMesh = new THREE.Mesh(finishGeo, finishMat);
       finishMesh.position.y = -TOTAL_TIERS * TIER_SPACING;
       towerGroup.add(finishMesh);
 
-      // Reset Ball State
       ballPhys.y = 1.6;
       ballPhys.vy = 0;
       ballPhys.comboTiersPassed = 0;
@@ -467,7 +460,7 @@
 
       const extrudeSettings = { depth: 0.35, bevelEnabled: true, bevelSegments: 2, steps: 1, bevelSize: 0.04, bevelThickness: 0.04 };
       const geo = new THREE.ExtrudeGeometry(shape, extrudeSettings);
-      geo.rotateX(-Math.PI / 2); // Lay horizontal
+      geo.rotateX(-Math.PI / 2);
 
       const mat = new THREE.MeshStandardMaterial({
         color: color,
@@ -505,24 +498,20 @@
       window.addEventListener('pointercancel', onEnd);
     }
 
-        function updatePhysics() {
-      // 1. Clamp falling velocity so ball never skips through floors
+    function updatePhysics() {
       ballPhys.vy = Math.max(-0.24, ballPhys.vy + ballPhys.gravity);
       ballPhys.y += ballPhys.vy;
 
-      // 2. Continuous floor detection across tiers
       for (let i = 0; i < tiers.length; i++) {
         const tier = tiers[i];
         const tierSurfaceY = tier.y + 0.35;
         const ballBottomY = ballPhys.y - BALL_RADIUS;
 
-        // Check if ball bottom intersects tier surface while moving downwards
         if (ballBottomY <= tierSurfaceY && ballBottomY >= tierSurfaceY - 0.55 && ballPhys.vy < 0) {
           const normTowerRot = ((-towerGroup.rotation.y - tier.group.rotation.y) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
           const currentSlot = Math.floor(normTowerRot / (Math.PI / 4)) % 8;
 
           if (currentSlot === tier.gapSlot) {
-            // Drop through gap
             if (!tier.cleared) {
               tier.cleared = true;
               ballPhys.comboTiersPassed++;
@@ -535,7 +524,6 @@
               }
             }
           } else {
-            // Hit a solid tile
             const hitSeg = tier.segments.find(s => s.userData.slot === currentSlot && s.userData.intact);
 
             if (ballPhys.isFireball) {
@@ -549,59 +537,6 @@
               triggerGameOver();
               return;
             } else {
-              // Solid surface bounce
-              ballPhys.y = tierSurfaceY + BALL_RADIUS;
-              ballPhys.vy = ballPhys.bounceStrength;
-              ballPhys.comboTiersPassed = 0;
-              setFireballMode(false);
-              Sound.bounce();
-              createPaintSplat(tierSurfaceY + 0.01, tier.group);
-              
-              function updatePhysics() {
-      // 1. Clamp falling velocity so ball never skips through floors
-      ballPhys.vy = Math.max(-0.24, ballPhys.vy + ballPhys.gravity);
-      ballPhys.y += ballPhys.vy;
-
-      // 2. Continuous floor detection across tiers
-      for (let i = 0; i < tiers.length; i++) {
-        const tier = tiers[i];
-        const tierSurfaceY = tier.y + 0.35;
-        const ballBottomY = ballPhys.y - BALL_RADIUS;
-
-        // Check if ball bottom intersects tier surface while moving downwards
-        if (ballBottomY <= tierSurfaceY && ballBottomY >= tierSurfaceY - 0.55 && ballPhys.vy < 0) {
-          const normTowerRot = ((-towerGroup.rotation.y - tier.group.rotation.y) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
-          const currentSlot = Math.floor(normTowerRot / (Math.PI / 4)) % 8;
-
-          if (currentSlot === tier.gapSlot) {
-            // Drop through gap
-            if (!tier.cleared) {
-              tier.cleared = true;
-              ballPhys.comboTiersPassed++;
-              score += 15 * ballPhys.comboTiersPassed;
-              Sound.passTier();
-              showScorePopup(`+${15 * ballPhys.comboTiersPassed}`);
-
-              if (ballPhys.comboTiersPassed >= 3) {
-                setFireballMode(true);
-              }
-            }
-          } else {
-            // Hit a solid tile
-            const hitSeg = tier.segments.find(s => s.userData.slot === currentSlot && s.userData.intact);
-
-            if (ballPhys.isFireball) {
-              Sound.fireballSmash();
-              shatterTier(tier);
-              score += 80;
-              ballPhys.vy = -0.16;
-              setFireballMode(false);
-              showScorePopup('+80 BLAST! 🔥');
-            } else if (hitSeg && hitSeg.userData.isHazard) {
-              triggerGameOver();
-              return;
-            } else {
-              // Solid surface bounce
               ballPhys.y = tierSurfaceY + BALL_RADIUS;
               ballPhys.vy = ballPhys.bounceStrength;
               ballPhys.comboTiersPassed = 0;
@@ -614,7 +549,6 @@
         }
       }
 
-      // 3. Victory check at base
       if (ballPhys.y <= -TOTAL_TIERS * TIER_SPACING + 0.6) {
         triggerVictory();
         return;
@@ -622,7 +556,6 @@
 
       ballMesh.position.y = ballPhys.y;
 
-      // 4. Smooth camera tracking
       const targetCamY = THREE.MathUtils.lerp(camera.position.y, ballPhys.y + 3.0, 0.08);
       camera.position.y = targetCamY;
       camera.lookAt(0, targetCamY - 3.0, 0);
@@ -630,7 +563,6 @@
       document.getElementById('scoreVal').textContent = score;
       updateProgress();
 
-      // 5. Update shattered debris
       for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i];
         p.position.add(p.userData.vel);
@@ -642,80 +574,6 @@
           particles.splice(i, 1);
         }
       }
-    }
-
-    function setFireballMode(active) {
-      ballPhys.isFireball = active;
-      const pill = document.getElementById('fireballPill');
-      if (active) {
-        pill.classList.add('active');
-        ballMesh.material.color.setHex(0xff5722);
-        ballMesh.material.emissive.setHex(0xff007f);
-      } else {
-        pill.classList.remove('active');
-        ballMesh.material.color.setHex(0x00f2fe);
-        ballMesh.material.emissive.setHex(0x00a8ff);
-      }
-    }
-
-    function createPaintSplat(surfaceY, parentTier) {
-      const splatGeo = new THREE.CircleGeometry(0.32, 16);
-      const splatMat = new THREE.MeshBasicMaterial({ color: 0x00f2fe, side: THREE.DoubleSide });
-      const splat = new THREE.Mesh(splatGeo, splatMat);
-      splat.rotation.x = -Math.PI / 2;
-      splat.position.set(0, surfaceY - parentTier.position.y, BALL_FORWARD_Z);
-      parentTier.add(splat);
-    }
-
-    function shatterTier(tier) {
-      tier.segments.forEach(seg => {
-        seg.userData.intact = false;
-        seg.visible = false;
-        for (let i = 0; i < 4; i++) {
-          const geo = new THREE.BoxGeometry(0.4, 0.2, 0.4);
-          const mat = new THREE.MeshBasicMaterial({ color: seg.material.color, transparent: true });
-          const p = new THREE.Mesh(geo, mat);
-          p.position.set(ballMesh.position.x, ballPhys.y, ballMesh.position.z);
-          p.userData = {
-            vel: new THREE.Vector3((Math.random() - 0.5) * 0.2, 0.15 + Math.random() * 0.1, (Math.random() - 0.5) * 0.2),
-            life: 1.0
-          };
-          scene.add(p);
-          particles.push(p);
-        }
-      });
-    }
-
-    function updateProgress() {
-      const prog = Math.min(100, Math.max(0, (Math.abs(ballPhys.y) / (TOTAL_TIERS * TIER_SPACING)) * 100));
-      document.getElementById('progressFill').style.width = prog + '%';
-    }
-
-    function triggerGameOver() {
-      Sound.fail();
-      alert(`💥 GAME OVER!\nFinal Score: ${score}`);
-      score = 0;
-      buildLevel(currentLevel);
-    }
-
-    function triggerVictory() {
-      Sound.win();
-      alert(`🎉 LEVEL ${currentLevel} CLEARED!\nProceeding to Level ${currentLevel + 1}!`);
-      currentLevel++;
-      document.getElementById('currentLvlBadge').textContent = `LVL ${currentLevel}`;
-      document.getElementById('nextLvlBadge').textContent = `LVL ${currentLevel + 1}`;
-      buildLevel(currentLevel);
-    }
-
-    function showScorePopup(txt) {
-      const frame = document.getElementById('gameFrame');
-      const pop = document.createElement('div');
-      pop.className = 'score-pop';
-      pop.textContent = txt;
-      pop.style.left = '50%';
-      pop.style.top = '35%';
-      frame.appendChild(pop);
-      setTimeout(() => pop.remove(), 600);
     }
 
     function setFireballMode(active) {
