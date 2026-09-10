@@ -17,7 +17,6 @@
       --gold: #ffd700;
       --red: #ff3838;
       --green: #2ecc71;
-      --fire: #ff5722;
     }
 
     * {
@@ -193,7 +192,7 @@
       display: block;
     }
 
-    /* Overlays & Score Displays */
+    /* Overlays */
     .hud-overlay {
       position: absolute;
       top: 12px;
@@ -235,6 +234,8 @@
     .swipe-hint {
       position: absolute;
       bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
       background: rgba(0, 0, 0, 0.6);
       border: 1px solid rgba(255, 255, 255, 0.15);
       padding: 4px 14px;
@@ -242,9 +243,9 @@
       font-size: 11px;
       font-weight: 800;
       pointer-events: none;
+      white-space: nowrap;
     }
 
-    /* Score Floating Popup */
     .score-pop {
       position: absolute;
       font-size: 20px;
@@ -263,13 +264,11 @@
 </head>
 <body>
 
-  <!-- Top Nav with Back Button -->
   <div class="top-nav">
     <a href="index.html" class="back-btn">← Back to Hub</a>
     <div style="font-size:11px; font-weight:800; color:rgba(255,255,255,0.7);">VOODOO STYLE 3D</div>
   </div>
 
-  <!-- Pinned Instagram Header -->
   <header class="ig-header">
     <div class="ig-profile">
       <div class="dp-frame">
@@ -283,7 +282,6 @@
     <a href="https://instagram.com/_satish_official_16" target="_blank" class="follow-btn">Follow ↗</a>
   </header>
 
-  <!-- Progress Bar -->
   <div class="progress-bar-wrap">
     <span class="level-badge" id="currentLvlBadge">LVL 1</span>
     <div class="progress-track">
@@ -292,7 +290,6 @@
     <span class="level-badge" id="nextLvlBadge" style="border-color:var(--gold); color:var(--gold);">LVL 2</span>
   </div>
 
-  <!-- 3D Canvas Container -->
   <div class="canvas-container" id="gameFrame">
     <div class="hud-overlay">
       <div class="current-score" id="scoreVal">0</div>
@@ -303,11 +300,8 @@
   </div>
 
   <script>
-    // ==========================================
-    // AUDIO SYNTHESIZER
-    // ==========================================
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    function playBeep(freq, type = 'sine', duration = 0.08, gainVal = 0.25) {
+    function playTone(freq, type = 'sine', duration = 0.08, gainVal = 0.25) {
       if (audioCtx.state === 'suspended') audioCtx.resume();
       const osc = audioCtx.createOscillator();
       const g = audioCtx.createGain();
@@ -329,26 +323,23 @@
       win: () => { playTone(523, 'sine', 0.12); setTimeout(() => playTone(659, 'sine', 0.12), 100); setTimeout(() => playTone(784, 'sine', 0.2), 200); }
     };
 
-    // ==========================================
-    // THREE.JS 3D HELIX ARCHITECTURE
-    // ==========================================
     let scene, camera, renderer;
-    let towerGroup, ballMesh, ballTrail;
+    let towerGroup, ballMesh;
     const tiers = [];
     const particles = [];
 
     let currentLevel = 1;
     let score = 0;
-    const TOTAL_TIERS = 24; // Floors per tower
+    const TOTAL_TIERS = 24;
     const TIER_SPACING = 3.2;
+    const BALL_RADIUS = 0.36;
+    const BALL_FORWARD_Z = 2.4;
 
-    // Physics
     const ballPhys = {
-      y: 1.5,
+      y: 1.6,
       vy: 0,
-      gravity: -0.016,
-      bounceStrength: 0.32,
-      tierIndex: 0,
+      gravity: -0.015,
+      bounceStrength: 0.30,
       comboTiersPassed: 0,
       isFireball: false
     };
@@ -362,44 +353,37 @@
       scene.fog = new THREE.FogExp2(0x0a0e1a, 0.018);
 
       camera = new THREE.PerspectiveCamera(50, frame.clientWidth / frame.clientHeight, 0.1, 200);
-      camera.position.set(0, 4, 10.5);
+      camera.position.set(0, 4.2, 10.5);
       camera.lookAt(0, 0, 0);
 
       renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       renderer.setSize(frame.clientWidth, frame.clientHeight);
 
-      // Lighting
-      const ambient = new THREE.AmbientLight(0xffffff, 0.7);
+      const ambient = new THREE.AmbientLight(0xffffff, 0.75);
       scene.add(ambient);
 
-      const topLight = new THREE.DirectionalLight(0xfffaed, 0.9);
-      topLight.position.set(5, 20, 10);
-      scene.add(topLight);
+      const dirLight = new THREE.DirectionalLight(0xffffff, 0.9);
+      dirLight.position.set(5, 20, 10);
+      scene.add(dirLight);
 
-      const rimLight = new THREE.PointLight(0x00f2fe, 1.2, 25);
-      rimLight.position.set(0, 5, 6);
-      scene.add(rimLight);
-
-      // Tower Cylinder Core
       towerGroup = new THREE.Group();
-      const coreGeo = new THREE.CylinderGeometry(1.2, 1.2, TOTAL_TIERS * TIER_SPACING + 10, 32);
-      const coreMat = new THREE.MeshStandardMaterial({ color: 0x485460, roughness: 0.4, metalness: 0.1 });
+      const coreGeo = new THREE.CylinderGeometry(1.2, 1.2, TOTAL_TIERS * TIER_SPACING + 14, 32);
+      const coreMat = new THREE.MeshStandardMaterial({ color: 0x3d4756, roughness: 0.4 });
       const coreMesh = new THREE.Mesh(coreGeo, coreMat);
       coreMesh.position.y = - (TOTAL_TIERS * TIER_SPACING) / 2;
       towerGroup.add(coreMesh);
       scene.add(towerGroup);
 
-      // Ball Setup
-      const ballGeo = new THREE.SphereGeometry(0.38, 24, 24);
+      const ballGeo = new THREE.SphereGeometry(BALL_RADIUS, 24, 24);
       const ballMat = new THREE.MeshStandardMaterial({
         color: 0x00f2fe,
         emissive: 0x00a8ff,
-        emissiveIntensity: 0.4,
+        emissiveIntensity: 0.35,
         roughness: 0.2
       });
       ballMesh = new THREE.Mesh(ballGeo, ballMat);
-      ballMesh.position.set(0, 1.5, 2.2);
+      ballMesh.position.set(0, 1.6, BALL_FORWARD_Z);
       scene.add(ballMesh);
 
       buildLevel(currentLevel);
@@ -408,20 +392,15 @@
       animate();
     }
 
-    // ==========================================
-    // HELIX SECTOR & TIER BUILDER
-    // ==========================================
     function buildLevel(lvl) {
-      // Clear previous tier meshes
       tiers.forEach(t => towerGroup.remove(t.group));
       tiers.length = 0;
 
-      // Theme Colors per Level
       const themes = [
-        { safe: 0x2ecc71, hazard: 0xff3838 }, // Green / Red
-        { safe: 0xffd700, hazard: 0x8e44ad }, // Gold / Purple
-        { safe: 0x00f2fe, hazard: 0xff007f }, // Cyan / Magenta
-        { safe: 0xff9f43, hazard: 0xee5253 }  // Orange / Dark Red
+        { safe: 0x2ecc71, hazard: 0xff3838 },
+        { safe: 0xffd700, hazard: 0x9b59b6 },
+        { safe: 0x00f2fe, hazard: 0xff007f },
+        { safe: 0xff9f43, hazard: 0xee5253 }
       ];
       const theme = themes[(lvl - 1) % themes.length];
 
@@ -430,31 +409,29 @@
         const tierY = -i * TIER_SPACING;
         tierGroup.position.y = tierY;
 
-        // 8 Segments per tier circle (each 45 degrees)
+        const gapSlot = Math.floor(Math.random() * 8);
+        const hazardSlot = (gapSlot + 4) % 8;
         const segments = [];
-        const gapIndex = Math.floor(Math.random() * 8);
-        const hazardIndex = (gapIndex + 4) % 8; // Opposite quadrant has hazard
 
         for (let s = 0; s < 8; s++) {
-          if (s === gapIndex) continue; // The empty gap to fall through
+          if (s === gapSlot) continue;
 
-          const isHazard = (s === hazardIndex) && i > 0;
-          const color = isHazard ? theme.hazard : theme.safe;
+          const isHazard = (s === hazardSlot) && (i > 0);
+          const segMesh = createSectorMesh(isHazard ? theme.hazard : theme.safe, isHazard);
 
-          const segMesh = createSectorMesh(color, isHazard);
-          segMesh.rotation.y = (s * Math.PI) / 4;
-          segMesh.userData = { isHazard, intact: true };
+          segMesh.rotation.y = s * (Math.PI / 4);
+          segMesh.userData = { slot: s, isHazard, intact: true };
           tierGroup.add(segMesh);
           segments.push(segMesh);
         }
 
-        // Random rotation for each tier
         tierGroup.rotation.y = Math.random() * Math.PI * 2;
         towerGroup.add(tierGroup);
 
         tiers.push({
           group: tierGroup,
           y: tierY,
+          gapSlot: gapSlot,
           segments: segments,
           cleared: false
         });
@@ -468,42 +445,39 @@
       towerGroup.add(finishMesh);
 
       // Reset Ball State
-      ballPhys.y = 1.8;
+      ballPhys.y = 1.6;
       ballPhys.vy = 0;
-      ballPhys.tierIndex = 0;
       ballPhys.comboTiersPassed = 0;
       setFireballMode(false);
       updateProgress();
     }
 
     function createSectorMesh(color, isHazard) {
-      // Create pie segment using ExtrudeGeometry
       const shape = new THREE.Shape();
-      const innerRadius = 1.25;
-      const outerRadius = 3.6;
-      const arc = (Math.PI / 4) - 0.05; // 45 deg minus slight separation slit
+      const inner = 1.25;
+      const outer = 3.6;
+      const angleSpan = (Math.PI / 4) - 0.04;
 
-      shape.absarc(0, 0, outerRadius, 0, arc, false);
-      shape.lineTo(innerRadius * Math.cos(arc), innerRadius * Math.sin(arc));
-      shape.absarc(0, 0, innerRadius, arc, 0, true);
+      shape.moveTo(inner, 0);
+      shape.lineTo(outer, 0);
+      shape.absarc(0, 0, outer, 0, angleSpan, false);
+      shape.lineTo(inner * Math.cos(angleSpan), inner * Math.sin(angleSpan));
+      shape.absarc(0, 0, inner, angleSpan, 0, true);
       shape.closePath();
 
       const extrudeSettings = { depth: 0.35, bevelEnabled: true, bevelSegments: 2, steps: 1, bevelSize: 0.04, bevelThickness: 0.04 };
       const geo = new THREE.ExtrudeGeometry(shape, extrudeSettings);
-      geo.rotateX(Math.PI / 2);
+      geo.rotateX(-Math.PI / 2); // Lay horizontal
 
       const mat = new THREE.MeshStandardMaterial({
         color: color,
         roughness: 0.3,
-        metalness: isHazard ? 0.4 : 0.1
+        metalness: isHazard ? 0.35 : 0.05
       });
 
       return new THREE.Mesh(geo, mat);
     }
 
-    // ==========================================
-    // CONTROLS (TOWER ROTATION)
-    // ==========================================
     let isDragging = false;
     let prevTouchX = 0;
 
@@ -531,86 +505,80 @@
       window.addEventListener('pointercancel', onEnd);
     }
 
-    // ==========================================
-    // GAME PHYSICS & SPLASH ANIMATIONS
-    // ==========================================
     function updatePhysics() {
       ballPhys.vy += ballPhys.gravity;
       ballPhys.y += ballPhys.vy;
 
-      // Find relevant tier ball is currently reaching
-      const currentTierIdx = Math.floor(Math.abs(ballPhys.y) / TIER_SPACING);
-      const targetTier = tiers[currentTierIdx];
+      const tierIdx = Math.floor((-ballPhys.y + 0.35) / TIER_SPACING);
+      const tier = tiers[tierIdx];
 
-      if (targetTier) {
-        const tierTop = targetTier.y + 0.35;
+      if (tier) {
+        const tierSurfaceY = tier.y + 0.35;
+        const ballBottomY = ballPhys.y - BALL_RADIUS;
 
-        // Collision Window
-        if (ballPhys.y <= tierTop && ballPhys.y >= tierTop - 0.4 && ballPhys.vy < 0) {
-          // Check collision angle with the rotating tower
-          const worldAngle = (-towerGroup.rotation.y % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
-          const hitSegment = getHitSegment(targetTier, worldAngle);
+        // Collision Check Window
+        if (ballBottomY <= tierSurfaceY && ballBottomY >= tierSurfaceY - 0.45 && ballPhys.vy < 0) {
+          // Ball is located at angle = 0 in world space (along Z+ axis)
+          const angleUnderBall = ((-towerGroup.rotation.y - tier.group.rotation.y) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
+          const currentSlot = Math.floor(angleUnderBall / (Math.PI / 4)) % 8;
 
-          if (hitSegment) {
-            // Ball hit a solid segment
-            if (ballPhys.isFireball) {
-              // FIREBALL BLASTS THROUGH!
-              Sound.fireballSmash();
-              shatterTier(targetTier);
-              score += 80;
-              ballPhys.vy = -0.15; // Continue downward
-              setFireballMode(false);
-              showScorePopup('+80 BLAST! 🔥');
-            } else if (hitSegment.userData.isHazard) {
-              // GAME OVER (Landed on Red)
-              triggerGameOver();
-              return;
-            } else {
-              // Safe Bounce
-              ballPhys.y = tierTop;
-              ballPhys.vy = ballPhys.bounceStrength;
-              ballPhys.comboTiersPassed = 0;
-              setFireballMode(false);
-              Sound.bounce();
-              createPaintSplat(ballMesh.position.x, tierTop + 0.02, ballMesh.position.z, targetTier.group);
-            }
-          } else {
-            // Passed cleanly through the GAP!
-            if (!targetTier.cleared) {
-              targetTier.cleared = true;
+          if (currentSlot === tier.gapSlot) {
+            // Passed cleanly through the empty gap!
+            if (!tier.cleared) {
+              tier.cleared = true;
               ballPhys.comboTiersPassed++;
               score += 15 * ballPhys.comboTiersPassed;
               Sound.passTier();
               showScorePopup(`+${15 * ballPhys.comboTiersPassed}`);
 
-              // Trigger Fireball if 3+ tiers passed without bouncing
               if (ballPhys.comboTiersPassed >= 3) {
                 setFireballMode(true);
               }
+            }
+          } else {
+            // Hit a solid platform tile
+            const hitSeg = tier.segments.find(s => s.userData.slot === currentSlot && s.userData.intact);
+
+            if (ballPhys.isFireball) {
+              Sound.fireballSmash();
+              shatterTier(tier);
+              score += 80;
+              ballPhys.vy = -0.16;
+              setFireballMode(false);
+              showScorePopup('+80 BLAST! 🔥');
+            } else if (hitSeg && hitSeg.userData.isHazard) {
+              triggerGameOver();
+              return;
+            } else {
+              // Solid safe bounce
+              ballPhys.y = tierSurfaceY + BALL_RADIUS;
+              ballPhys.vy = ballPhys.bounceStrength;
+              ballPhys.comboTiersPassed = 0;
+              setFireballMode(false);
+              Sound.bounce();
+              createPaintSplat(tierSurfaceY + 0.01, tier.group);
             }
           }
         }
       }
 
-      // Check Victory at the tower base
+      // Check Finish Platform
       if (ballPhys.y <= -TOTAL_TIERS * TIER_SPACING + 0.6) {
         triggerVictory();
         return;
       }
 
-      // Sync Ball Visuals
       ballMesh.position.y = ballPhys.y;
 
-      // Smooth Camera Follow
-      const targetCamY = THREE.MathUtils.lerp(camera.position.y, ballPhys.y + 3.2, 0.08);
+      // Smooth Camera Tracking
+      const targetCamY = THREE.MathUtils.lerp(camera.position.y, ballPhys.y + 3.0, 0.08);
       camera.position.y = targetCamY;
-      camera.lookAt(0, targetCamY - 3.2, 0);
+      camera.lookAt(0, targetCamY - 3.0, 0);
 
-      // Score HUD
       document.getElementById('scoreVal').textContent = score;
       updateProgress();
 
-      // Update Shattered Particles
+      // Particle physics
       for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i];
         p.position.add(p.userData.vel);
@@ -624,19 +592,6 @@
       }
     }
 
-    function getHitSegment(tier, angle) {
-      // Find if an active segment is positioned at the ball's angle (Z = 2.2 is angle 0)
-      for (let seg of tier.segments) {
-        if (!seg.userData.intact) continue;
-        const segAngle = (seg.rotation.y % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
-        const diff = Math.abs(angle - segAngle);
-        if (diff < (Math.PI / 8) || diff > (Math.PI * 2 - (Math.PI / 8))) {
-          return seg;
-        }
-      }
-      return null; // Hit the open gap!
-    }
-
     function setFireballMode(active) {
       ballPhys.isFireball = active;
       const pill = document.getElementById('fireballPill');
@@ -647,16 +602,16 @@
       } else {
         pill.classList.remove('active');
         ballMesh.material.color.setHex(0x00f2fe);
-          ballMesh.material.emissive.setHex(0x00a8ff);
+        ballMesh.material.emissive.setHex(0x00a8ff);
       }
     }
 
-    function createPaintSplat(x, y, z, parentTier) {
+    function createPaintSplat(surfaceY, parentTier) {
       const splatGeo = new THREE.CircleGeometry(0.32, 16);
       const splatMat = new THREE.MeshBasicMaterial({ color: 0x00f2fe, side: THREE.DoubleSide });
       const splat = new THREE.Mesh(splatGeo, splatMat);
       splat.rotation.x = -Math.PI / 2;
-      splat.position.set(0, y - parentTier.position.y, 2.2);
+      splat.position.set(0, surfaceY - parentTier.position.y, BALL_FORWARD_Z);
       parentTier.add(splat);
     }
 
