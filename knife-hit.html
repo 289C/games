@@ -780,13 +780,13 @@
       }, 700);
     }
 
-    function triggerGameOver() {
+        function triggerGameOver() {
       isGameOver = true;
-      alert(`⚔️ KNIFE HIT OVER!\nFinal Score: ${score}\nApples Sliced: ${apples}`);
-      score = 0;
-      currentStage = 1;
-      loadStage(1);
+      alert(`⚔️ TRY AGAIN!\nRestarting Stage ${currentStage}...\nApples Saved: ${apples}`);
+      // Keeps currentStage intact and reloads the current stage
+      loadStage(currentStage);
     }
+
 
     function spawnSparks(x, y) {
       for (let i = 0; i < 8; i++) {
