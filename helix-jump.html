@@ -1,690 +1,408 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Helix Jump 3D Pro</title>
-<!-- Three.js Library -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<style>
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    user-select: none;
-    -webkit-user-select: none;
-  }
-  body, html {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background: #11131a;
-    font-family: 'Arial Black', Impact, sans-serif;
-  }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Helix Jump 3D Pro</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+    }
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 30%, #1a1c29, #090a10);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
 
-  /* TOP HEADER / INSTAGRAM BRANDING */
-  #header-bar {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 58px;
-    background: linear-gradient(180deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0) 100%);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 16px;
-    z-index: 100;
-  }
-  .back-btn {
-    color: #fff;
-    text-decoration: none;
-    background: rgba(255,255,255,0.15);
-    backdrop-filter: blur(4px);
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 13px;
-    border: 1px solid rgba(255,255,255,0.3);
-    transition: background 0.2s;
-  }
-  .back-btn:hover { background: rgba(255,255,255,0.3); }
+    #game-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
+    }
 
-  .insta-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
-    color: #fff;
-    text-decoration: none;
-    padding: 4px 12px 4px 6px;
-    border-radius: 24px;
-    font-size: 13px;
-    font-weight: bold;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-    transition: transform 0.15s ease-in-out;
-  }
-  .insta-link:hover { transform: scale(1.05); }
-  .insta-avatar {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 1.5px solid #fff;
-    background: #fff;
-  }
+    /* Top Navigation Bar */
+    #header-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 60px;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 10;
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.7) 0%, transparent 100%);
+      pointer-events: auto;
+    }
 
-  /* HUD */
-  #hud {
-    position: absolute;
-    top: 60px;
-    left: 0;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    z-index: 90;
-    pointer-events: none;
-  }
-  #score-display {
-    font-size: 46px;
-    color: #ffffff;
-    text-shadow: 0 4px 12px rgba(0,0,0,0.8);
-  }
-  #streak-banner {
-    font-size: 16px;
-    color: #ff3d00;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-weight: 900;
-    opacity: 0;
-    transform: scale(0.8);
-    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    text-shadow: 0 0 10px rgba(255, 61, 0, 0.8);
-  }
-  #streak-banner.active {
-    opacity: 1;
-    transform: scale(1.15);
-  }
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #fff;
+      text-decoration: none;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(8px);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
 
-  /* LEVEL PROGRESSION BAR */
-  #level-progress {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 4px;
-  }
-  .lvl-badge {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: #ff5722;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 15px;
-    font-weight: bold;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
-  }
-  #progress-track {
-    width: 170px;
-    height: 10px;
-    background: rgba(255,255,255,0.25);
-    border-radius: 5px;
-    overflow: hidden;
-  }
-  #progress-bar {
-    width: 0%;
-    height: 100%;
-    background: #00e676;
-    transition: width 0.15s ease-out;
-  }
+    .back-btn:hover, .back-btn:active {
+      background: rgba(255, 255, 255, 0.3);
+      transform: scale(0.96);
+    }
 
-  /* MODAL OVERLAYS */
-  #overlay-screen {
-    position: absolute;
-    inset: 0;
-    background: rgba(10, 10, 16, 0.88);
-    backdrop-filter: blur(6px);
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 200;
-    color: #fff;
-  }
-  .modal-card {
-    background: #1e212b;
-    border: 3px solid #ff5722;
-    border-radius: 20px;
-    padding: 30px;
-    text-align: center;
-    max-width: 380px;
-    width: 85%;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-  }
-  .modal-card h1 {
-    font-size: 32px;
-    margin-bottom: 8px;
-  }
-  .modal-card p {
-    font-size: 16px;
-    color: #ccc;
-    margin-bottom: 22px;
-  }
-  .btn-action {
-    background: linear-gradient(180deg, #ff5722, #d84315);
-    border: none;
-    color: #fff;
-    font-size: 18px;
-    font-weight: 900;
-    padding: 12px 36px;
-    border-radius: 12px;
-    cursor: pointer;
-    box-shadow: 0 5px 0 #9f2a08;
-    transition: transform 0.1s;
-  }
-  .btn-action:active {
-    transform: translateY(3px);
-    box-shadow: 0 2px 0 #9f2a08;
-  }
+    .game-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
 
-  #canvas3d {
-    width: 100%;
-    height: 100%;
-    display: block;
-    cursor: grab;
-  }
-  #canvas3d:active { cursor: grabbing; }
-</style>
+    .game-logo img {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      box-shadow: 0 0 12px rgba(255, 75, 43, 0.6);
+    }
+
+    .game-logo span {
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      background: linear-gradient(45deg, #ff416c, #ff4b2b);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-transform: uppercase;
+    }
+
+    /* Score & Level Display */
+    #ui-hud {
+      position: absolute;
+      top: 70px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    #score-val {
+      font-size: 48px;
+      font-weight: 900;
+      color: #ffffff;
+      text-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+    }
+
+    #level-badge {
+      font-size: 14px;
+      font-weight: 700;
+      color: #00f2fe;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    /* Game Over / Win Overlay */
+    #overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(8, 10, 16, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 20;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+    }
+
+    #overlay h1 {
+      font-size: 40px;
+      margin-bottom: 8px;
+    }
+
+    #overlay p {
+      color: #aaa;
+      margin-bottom: 24px;
+    }
+
+    #restart-btn {
+      padding: 12px 32px;
+      border-radius: 30px;
+      background: linear-gradient(45deg, #ff416c, #ff4b2b);
+      border: none;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(255, 65, 108, 0.5);
+    }
+  </style>
 </head>
 <body>
 
-  <!-- Top Navigation & Instagram Header -->
-  <div id="header-bar">
-    <a href="index.html" class="back-btn">⬅ Home</a>
-    <a href="https://instagram.com/_satish_official_16" target="_blank" class="insta-link">
-      <img src="Insta.jpg" alt="Logo" class="insta-avatar" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png'">
-      <span>@_satish_official_16</span>
-    </a>
-  </div>
-
-  <!-- HUD -->
-  <div id="hud">
-    <div id="score-display">0</div>
-    <div id="streak-banner">🔥 FIREBALL READY!</div>
-    <div id="level-progress">
-      <div class="lvl-badge" id="lvl-cur">1</div>
-      <div id="progress-track"><div id="progress-bar"></div></div>
-      <div class="lvl-badge" id="lvl-nxt" style="background:#444;">2</div>
+  <!-- Top Navigation Header -->
+  <header id="header-bar">
+    <a href="index.html" class="back-btn">🔙 Back</a>
+    <div class="game-logo">
+      <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png" alt="Helix Jump" />
+      <span>Helix 3D</span>
     </div>
+  </header>
+
+  <!-- Game HUD -->
+  <div id="ui-hud">
+    <div id="level-badge">Level 1</div>
+    <div id="score-val">0</div>
   </div>
 
-  <!-- Game Over & Clear Screens -->
-  <div id="overlay-screen">
-    <div class="modal-card">
-      <h1 id="overlay-title">GAME OVER</h1>
-      <p id="overlay-msg">Score: 0</p>
-      <button class="btn-action" id="overlay-btn" onclick="retryGame()">TRY AGAIN</button>
-    </div>
+  <!-- Game Over Screen -->
+  <div id="overlay">
+    <h1 id="overlay-title">GAME OVER</h1>
+    <p id="overlay-score">Score: 0</p>
+    <button id="restart-btn" onclick="resetGame()">PLAY AGAIN</button>
   </div>
 
-  <!-- 3D Canvas -->
-  <canvas id="canvas3d"></canvas>
+  <!-- Canvas -->
+  <canvas id="game-canvas"></canvas>
 
-<script>
-/* ============================================================
-   HELIX JUMP 3D - ADVANCED PHYSICS, SHATTER & RULES ENGINE
-   ============================================================ */
+  <script>
+    // --- 3D ENGINE & SCENE SETUP ---
+    const canvas = document.getElementById('game-canvas');
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x0e1017, 0.015);
 
-const canvas = document.getElementById('canvas3d');
-const scoreDisplay = document.getElementById('score-display');
-const streakBanner = document.getElementById('streak-banner');
-const progressBar = document.getElementById('progress-bar');
-const lvlCurEl = document.getElementById('lvl-cur');
-const lvlNxtEl = document.getElementById('lvl-nxt');
-const overlay = document.getElementById('overlay-screen');
-const overlayTitle = document.getElementById('overlay-title');
-const overlayMsg = document.getElementById('overlay-msg');
-const overlayBtn = document.getElementById('overlay-btn');
+    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-let scene, camera, renderer;
-let helixGroup, ballMesh, fireballAura;
-let shatteredPieces = [];
+    // Lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+    scene.add(ambientLight);
 
-// Game Physics Settings
-const TOWER_RADIUS = 3.2;
-const DISK_THICKNESS = 0.5;
-const DISK_GAP = 4.2;
-const TOTAL_DISKS = 20;
-const BALL_RADIUS = 0.44;
-const GRAVITY = -0.0165;
-const BOUNCE_VELOCITY = 0.33;
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    dirLight.position.set(10, 20, 15);
+    scene.add(dirLight);
 
-// Progressive Level Themes
-const COLOR_THEMES = [
-  { safe: 0xf5a623, trap: 0xd0021b, ball: 0x00e5ff, pole: 0x1f222e, bg: 0x141722 },
-  { safe: 0x4a90e2, trap: 0xe91e63, ball: 0xffeb3b, pole: 0x181a24, bg: 0x11131a },
-  { safe: 0x00e676, trap: 0x7b1fa2, ball: 0xff3d00, pole: 0x221f28, bg: 0x15121c },
-  { safe: 0xff007f, trap: 0x2979ff, ball: 0x76ff03, pole: 0x172322, bg: 0x0d1617 }
-];
+    // --- GAME CONSTANTS ---
+    const TOTAL_FLOORS = 15;
+    const FLOOR_SPACING = 9;
+    const POLE_RADIUS = 1.8;
+    const PLATFORM_RADIUS = 6.2;
+    const BALL_RADIUS = 0.55;
 
-// State Variables
-let level = 1;
-let score = 0;
-let isDead = false;
-let ballY = 0;
-let ballVY = 0;
-let activeDiskPointer = 0;
-let disks = [];
-let consecutivePasses = 0;
-let isFireball = false;
+    // Central Pillar
+    const poleGeo = new THREE.CylinderGeometry(POLE_RADIUS, POLE_RADIUS, TOTAL_FLOORS * FLOOR_SPACING + 20, 32);
+    const poleMat = new THREE.MeshStandardMaterial({ color: 0x222633, roughness: 0.5 });
+    const pole = new THREE.Mesh(poleGeo, poleMat);
+    pole.position.y = -(TOTAL_FLOORS * FLOOR_SPACING) / 2;
+    scene.add(pole);
 
-// Controls & Rotation
-let isPointerDown = false;
-let startPointerX = 0;
-let targetAngle = 0;
-let currentAngle = 0;
+    // Group for all rotating platforms
+    const helixGroup = new THREE.Group();
+    scene.add(helixGroup);
 
-// Camera Shake
-let shakeIntensity = 0;
+    // Platform Slices Generation
+    const safeMat = new THREE.MeshStandardMaterial({ color: 0xff4b2b, roughness: 0.3 });
+    const dangerMat = new THREE.MeshStandardMaterial({ color: 0x111318, roughness: 0.8 }); // Black/red danger zone
+    const finishMat = new THREE.MeshStandardMaterial({ color: 0x00f2fe, roughness: 0.2 });
 
-function init() {
-  scene = new THREE.Scene();
-  scene.fog = new THREE.FogExp2(0x11131a, 0.022);
+    const platforms = [];
 
-  camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 100);
-  camera.position.set(0, 4.2, 12.5);
+    function buildHelix() {
+      helixGroup.clear();
+      platforms.length = 0;
 
-  renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      for (let f = 0; f < TOTAL_FLOORS; f++) {
+        const floorY = -f * FLOOR_SPACING;
+        const floorObj = { y: floorY, segments: [] };
 
-  // Lights
-  const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 0.85);
-  scene.add(hemiLight);
-
-  const dirLight = new THREE.DirectionalLight(0xffffff, 0.7);
-  dirLight.position.set(8, 20, 10);
-  scene.add(dirLight);
-
-  // Helix Tower Group
-  helixGroup = new THREE.Group();
-  scene.add(helixGroup);
-
-  // Central Cylinder Column
-  const poleGeo = new THREE.CylinderGeometry(0.85, 0.85, TOTAL_DISKS * DISK_GAP + 12, 32);
-  const poleMat = new THREE.MeshLambertMaterial({ color: COLOR_THEMES[0].pole });
-  const pole = new THREE.Mesh(poleGeo, poleMat);
-  pole.position.y = - (TOTAL_DISKS * DISK_GAP) / 2;
-  helixGroup.add(pole);
-
-  // Bouncing Ball
-  const ballGeo = new THREE.SphereGeometry(BALL_RADIUS, 32, 32);
-  const ballMat = new THREE.MeshStandardMaterial({ color: COLOR_THEMES[0].ball, roughness: 0.25, metalness: 0.1 });
-  ballMesh = new THREE.Mesh(ballGeo, ballMat);
-  ballMesh.position.set(0, 0, TOWER_RADIUS * 0.65);
-  scene.add(ballMesh);
-
-  // Fireball Effect Aura
-  const auraGeo = new THREE.SphereGeometry(BALL_RADIUS * 1.35, 16, 16);
-  const auraMat = new THREE.MeshBasicMaterial({ color: 0xff3d00, wireframe: true, transparent: true, opacity: 0 });
-  fireballAura = new THREE.Mesh(auraGeo, auraMat);
-  ballMesh.add(fireballAura);
-
-  // Generate First Level
-  generateLevel();
-
-  // Event Listeners
-  window.addEventListener('resize', onResize);
-  setupPointerControls();
-
-  animate();
-}
-
-// Slice Builder for Platforms
-function buildSectorGeometry(innerR, outerR, startAngle, length) {
-  const shape = new THREE.Shape();
-  shape.absarc(0, 0, outerR, startAngle, startAngle + length, false);
-  const hole = new THREE.Path();
-  hole.absarc(0, 0, innerR, startAngle, startAngle + length, false);
-  
-  const extrude = {
-    depth: DISK_THICKNESS,
-    bevelEnabled: true,
-    bevelSegments: 2,
-    steps: 1,
-    bevelSize: 0.03,
-    bevelThickness: 0.03
-  };
-
-  const geo = new THREE.ExtrudeGeometry(shape, extrude);
-  geo.rotateX(Math.PI / 2);
-  return geo;
-}
-
-function generateLevel() {
-  // Clear old platforms
-  disks.forEach(d => helixGroup.remove(d.group));
-  disks = [];
-
-  const theme = COLOR_THEMES[(level - 1) % COLOR_THEMES.length];
-  ballMesh.material.color.setHex(theme.ball);
-
-  const numSlices = 12;
-  const sliceAngle = (Math.PI * 2) / numSlices;
-
-  for (let i = 0; i < TOTAL_DISKS; i++) {
-    const diskY = -i * DISK_GAP;
-    const diskGroup = new THREE.Group();
-    diskGroup.position.y = diskY;
-
-    const diskData = {
-      y: diskY,
-      index: i,
-      group: diskGroup,
-      shattered: false,
-      slices: []
-    };
-
-    // Safe gap logic (2 to 3 adjacent open slots)
-    const gapStart = Math.floor(Math.random() * numSlices);
-    const gapCount = (i === TOTAL_DISKS - 1) ? 0 : 2; // Bottom-most disk is solid victory platform
-
-    for (let s = 0; s < numSlices; s++) {
-      const isHole = (s >= gapStart && s < gapStart + gapCount) ||
-                     (gapStart + gapCount >= numSlices && s < (gapStart + gapCount) % numSlices);
-
-      if (isHole) continue;
-
-      // Trap Logic (no traps on first or finish platforms)
-      const isDanger = (i > 0 && i < TOTAL_DISKS - 1) && Math.random() < 0.23;
-      const sliceColor = isDanger ? theme.trap : theme.safe;
-
-      const geo = buildSectorGeometry(0.85, TOWER_RADIUS, s * sliceAngle, sliceAngle);
-      const mat = new THREE.MeshLambertMaterial({ color: sliceColor });
-      const mesh = new THREE.Mesh(geo, mat);
-
-      diskGroup.add(mesh);
-      diskData.slices.push({
-        mesh: mesh,
-        startAngle: s * sliceAngle,
-        endAngle: (s + 1) * sliceAngle,
-        isDanger: isDanger
-      });
-    }
-
-    helixGroup.add(diskGroup);
-    disks.push(diskData);
-  }
-
-  // Update HUD
-  lvlCurEl.innerText = level;
-  lvlNxtEl.innerText = level + 1;
-  progressBar.style.width = '0%';
-}
-
-// Controls
-function setupPointerControls() {
-  const onStart = (e) => {
-    if (isDead) return;
-    isPointerDown = true;
-    startPointerX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
-  };
-
-  const onMove = (e) => {
-    if (!isPointerDown || isDead) return;
-    const currentX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
-    const deltaX = currentX - startPointerX;
-    startPointerX = currentX;
-    targetAngle += deltaX * 0.009;
-  };
-
-  const onEnd = () => { isPointerDown = false; };
-
-  window.addEventListener('mousedown', onStart);
-  window.addEventListener('mousemove', onMove);
-  window.addEventListener('mouseup', onEnd);
-
-  window.addEventListener('touchstart', onStart, { passive: true });
-  window.addEventListener('touchmove', onMove, { passive: true });
-  window.addEventListener('touchend', onEnd);
-}
-
-// Paint Splash Effect
-function stampSplatter(x, y, z, color) {
-  const geo = new THREE.CircleGeometry(0.38, 16);
-  geo.rotateX(-Math.PI / 2);
-  const mat = new THREE.MeshBasicMaterial({ color: color, depthWrite: false });
-  const splash = new THREE.Mesh(geo, mat);
-  splash.position.set(x, y + 0.02, z);
-  helixGroup.add(splash);
-}
-
-// Physics Shatter Destruction
-function shatterDisk(disk) {
-  if (disk.shattered) return;
-  disk.shattered = true;
-  shakeIntensity = 0.22;
-
-  disk.slices.forEach(sl => {
-    const worldPos = new THREE.Vector3();
-    sl.mesh.getWorldPosition(worldPos);
-
-    // Detach to scene for physical gravity explosion
-    disk.group.remove(sl.mesh);
-    sl.mesh.position.copy(worldPos);
-    scene.add(sl.mesh);
-
-    const midAngle = (sl.startAngle + sl.endAngle) / 2 + helixGroup.rotation.y;
-    shatteredPieces.push({
-      mesh: sl.mesh,
-      vx: Math.sin(midAngle) * 0.12,
-      vy: 0.1 + Math.random() * 0.1,
-      vz: Math.cos(midAngle) * 0.12,
-      rotX: (Math.random() - 0.5) * 0.1,
-      rotZ: (Math.random() - 0.5) * 0.1,
-      life: 50
-    });
-  });
-}
-
-function updateShatteredPieces() {
-  for (let i = shatteredPieces.length - 1; i >= 0; i--) {
-    const p = shatteredPieces[i];
-    p.mesh.position.x += p.vx;
-    p.mesh.position.y += p.vy;
-    p.mesh.position.z += p.vz;
-    p.mesh.rotation.x += p.rotX;
-    p.mesh.rotation.z += p.rotZ;
-    p.vy -= 0.015;
-    p.life--;
-    if (p.life <= 0) {
-      scene.remove(p.mesh);
-      shatteredPieces.splice(i, 1);
-    }
-  }
-}
-
-// Main Physics Loop
-function updatePhysics() {
-  if (isDead) return;
-
-  // Tower rotation smoothing
-  currentAngle += (targetAngle - currentAngle) * 0.15;
-  helixGroup.rotation.y = currentAngle;
-
-  // Ball gravity
-  ballVY += GRAVITY;
-  ballY += ballVY;
-  ballMesh.position.y = ballY;
-
-  // Fireball rotation
-  if (isFireball) {
-    fireballAura.rotation.y += 0.08;
-    fireballAura.rotation.x += 0.05;
-  }
-
-  // Normalized angle of the ball relative to helix
-  let normAngle = (-helixGroup.rotation.y) % (Math.PI * 2);
-  if (normAngle < 0) normAngle += Math.PI * 2;
-
-  // Disk collision loop
-  disks.forEach(disk => {
-    if (disk.shattered) return;
-
-    const surfaceY = disk.y + DISK_THICKNESS / 2;
-    const ballBottom = ballY - BALL_RADIUS;
-
-    // Contact with disk surface traveling downward
-    if (ballVY < 0 && ballBottom <= surfaceY && ballBottom >= surfaceY - 0.55) {
-      const hitSlice = disk.slices.find(sl => normAngle >= sl.startAngle && normAngle <= sl.endAngle);
-
-      if (hitSlice) {
-        if (isFireball) {
-          // FIREBALL MODE: Shatters platform instantly regardless of trap!
-          shatterDisk(disk);
-          ballVY = BOUNCE_VELOCITY * 0.8;
-          consecutivePasses = 0;
-          deactivateFireball();
-          score += 30;
-          scoreDisplay.innerText = score;
-        } else if (hitSlice.isDanger) {
-          // Normal ball hitting red trap: Game Over
-          handleGameFinish(false);
+        if (f === TOTAL_FLOORS - 1) {
+          // Finish Platform
+          const geo = new THREE.CylinderGeometry(PLATFORM_RADIUS, PLATFORM_RADIUS, 0.6, 32, 1, false, 0, Math.PI * 2);
+          const mesh = new THREE.Mesh(geo, finishMat);
+          mesh.position.y = floorY;
+          helixGroup.add(mesh);
+          floorObj.isFinish = true;
         } else {
-          // Normal Bounce
-          ballY = surfaceY + BALL_RADIUS;
-          ballVY = BOUNCE_VELOCITY;
-          consecutivePasses = 0;
-          deactivateFireball();
+          // Segments with gap and danger zone
+          const segmentCount = 10;
+          const openSlot = Math.floor(Math.random() * segmentCount);
+          const dangerSlot = (openSlot + 2 + Math.floor(Math.random() * (segmentCount - 4))) % segmentCount;
 
-          // Splatter
-          const r = TOWER_RADIUS * 0.65;
-          stampSplatter(
-            Math.sin(normAngle) * r,
-            surfaceY,
-            Math.cos(normAngle) * r,
-            ballMesh.material.color
-          );
+          for (let s = 0; s < segmentCount; s++) {
+            if (s === openSlot || s === (openSlot + 1) % segmentCount) continue; // 2 slots wide empty drop hole
+
+            const isDanger = (f > 1 && s === dangerSlot);
+            const arcLength = (Math.PI * 2) / segmentCount;
+            const geo = new THREE.CylinderGeometry(
+              PLATFORM_RADIUS, PLATFORM_RADIUS, 0.5, 16, 1, false, 
+              s * arcLength, arcLength * 0.96
+            );
+            const mesh = new THREE.Mesh(geo, isDanger ? dangerMat : safeMat);
+            mesh.position.y = floorY;
+            helixGroup.add(mesh);
+
+            floorObj.segments.push({
+              startAngle: s * arcLength,
+              endAngle: (s + 1) * arcLength,
+              isDanger: isDanger
+            });
+          }
         }
+        platforms.push(floorObj);
       }
     }
 
-    // Pass through empty hole without hitting
-    if (ballY < disk.y - 0.5 && disk.index === activeDiskPointer) {
-      activeDiskPointer++;
-      consecutivePasses++;
-      score += 10 * consecutivePasses;
-      scoreDisplay.innerText = score;
+    // --- BALL CREATION ---
+    const ballGeo = new THREE.SphereGeometry(BALL_RADIUS, 32, 32);
+    const ballMat = new THREE.MeshStandardMaterial({ color: 0xffd700, roughness: 0.1, metalness: 0.2 });
+    const ball = new THREE.Mesh(ballGeo, ballMat);
+    ball.position.set(0, 3, (PLATFORM_RADIUS + POLE_RADIUS) / 2);
+    scene.add(ball);
 
-      // 3 or more drops activates Fireball
-      if (consecutivePasses >= 3 && !isFireball) {
-        activateFireball();
-      }
+    // --- GAME STATE ---
+    let ballVY = 0;
+    const gravity = -0.015;
+    const bounceVelocity = 0.32;
+    let score = 0;
+    let currentFloorIndex = 0;
+    let isGameOver = false;
 
-      // Progress bar update
-      const progress = (activeDiskPointer / (TOTAL_DISKS - 1)) * 100;
-      progressBar.style.width = Math.min(100, progress) + '%';
+    // Camera initial position
+    camera.position.set(0, 7, 18);
+    camera.lookAt(0, 2, 0);
 
-      // Win level check
-      if (activeDiskPointer >= TOTAL_DISKS - 1) {
-        handleGameFinish(true);
-      }
+    // --- CONTROLS (TOUCH & DRAG) ---
+    let isDragging = false;
+    let previousX = 0;
+
+    window.addEventListener('pointerdown', (e) => {
+      isDragging = true;
+      previousX = e.clientX;
+    });
+
+    window.addEventListener('pointermove', (e) => {
+      if (!isDragging || isGameOver) return;
+      const deltaX = e.clientX - previousX;
+      helixGroup.rotation.y += deltaX * 0.009;
+      previousX = e.clientX;
+    });
+
+    window.addEventListener('pointerup', () => isDragging = false);
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // --- COLLISION & GAME MECHANICS ---
+    function updateGame() {
+      if (isGameOver) return;
+
+      ballVY += gravity;
+      ball.position.y += ballVY;
+
+      // Check collision with the current and next floor
+      platforms.forEach((platform) => {
+        const distY = ball.position.y - (platform.y + 0.3);
+
+        if (distY <= BALL_RADIUS && distY >= -0.6 && ballVY < 0) {
+          if (platform.isFinish) {
+            triggerWin();
+            return;
+          }
+
+          // Calculate current angle on helix relative to ball position (fixed at angle 0 in world space)
+          let currentAngle = (-helixGroup.rotation.y) % (Math.PI * 2);
+          if (currentAngle < 0) currentAngle += Math.PI * 2;
+
+          let hitSegment = platform.segments.find(seg => 
+            currentAngle >= seg.startAngle && currentAngle <= seg.endAngle
+          );
+
+          if (hitSegment) {
+            if (hitSegment.isDanger) {
+              triggerGameOver();
+            } else {
+              // Bounce
+              ballVY = bounceVelocity;
+              ball.position.y = platform.y + 0.3 + BALL_RADIUS;
+            }
+          } else {
+            // Fell through hole
+            if (ball.position.y < platform.y - 1 && currentFloorIndex <= platform.y) {
+              score += 10;
+              document.getElementById('score-val').innerText = score;
+              currentFloorIndex = platform.y - FLOOR_SPACING;
+            }
+          }
+        }
+      });
+
+      // Smooth Camera tracking down
+      const targetCamY = ball.position.y + 5;
+      camera.position.y += (targetCamY - camera.position.y) * 0.08;
+      camera.lookAt(0, ball.position.y - 1, 0);
     }
-  });
 
-  updateShatteredPieces();
+    function triggerGameOver() {
+      isGameOver = true;
+      document.getElementById('overlay-title').innerText = 'GAME OVER';
+      document.getElementById('overlay-score').innerText = 'Final Score: ' + score;
+      document.getElementById('overlay').style.display = 'flex';
+    }
 
-  // Camera Shake & Follow
-  const targetCamY = ballY + 4.2;
-  camera.position.y += (targetCamY - camera.position.y) * 0.12;
+    function triggerWin() {
+      isGameOver = true;
+      document.getElementById('overlay-title').innerText = 'LEVEL CLEAR!';
+      document.getElementById('overlay-score').innerText = 'Awesome! Score: ' + score;
+      document.getElementById('overlay').style.display = 'flex';
+    }
 
-  if (shakeIntensity > 0) {
-    camera.position.x = (Math.random() - 0.5) * shakeIntensity;
-    camera.position.z = 12.5 + (Math.random() - 0.5) * shakeIntensity;
-    shakeIntensity *= 0.88;
-    if (shakeIntensity < 0.01) shakeIntensity = 0;
-  } else {
-    camera.position.x = 0;
-    camera.position.z = 12.5;
-  }
-}
-
-function activateFireball() {
-  isFireball = true;
-  streakBanner.classList.add('active');
-  fireballAura.material.opacity = 0.7;
-}
-
-function deactivateFireball() {
-  isFireball = false;
-  streakBanner.classList.remove('active');
-  fireballAura.material.opacity = 0;
-}
-
-function handleGameFinish(won) {
-  isDead = true;
-  overlay.style.display = 'flex';
-
-  if (won) {
-    overlayTitle.innerText = "LEVEL COMPLETE! 🎉";
-    overlayTitle.style.color = "#00e676";
-    overlayMsg.innerText = `Great job! Level ${level} cleared. Score: ${score}`;
-    overlayBtn.innerText = "NEXT LEVEL";
-    overlayBtn.onclick = () => {
-      level++;
-      resetSession();
-    };
-  } else {
-    overlayTitle.innerText = "GAME OVER 💥";
-    overlayTitle.style.color = "#ff3d00";
-    overlayMsg.innerText = `You landed on a trap! Final Score: ${score}`;
-    overlayBtn.innerText = "PLAY AGAIN";
-    overlayBtn.onclick = () => {
+    window.resetGame = function() {
+      isGameOver = false;
       score = 0;
-      scoreDisplay.innerText = score;
-      level = 1;
-      resetSession();
+      currentFloorIndex = 0;
+      ballVY = 0;
+      ball.position.set(0, 3, (PLATFORM_RADIUS + POLE_RADIUS) / 2);
+      helixGroup.rotation.y = 0;
+      document.getElementById('score-val').innerText = '0';
+      document.getElementById('overlay').style.display = 'none';
+      buildHelix();
     };
-  }
-}
 
-function resetSession() {
-  overlay.style.display = 'none';
-  ballY = 1.0;
-  ballVY = 0;
-  activeDiskPointer = 0;
-  consecutivePasses = 0;
-  targetAngle = 0;
-  currentAngle = 0;
-  helixGroup.rotation.y = 0;
-  deactivateFireball();
-  isDead = false;
-  generateLevel();
-}
+    // Initialize
+    buildHelix();
 
-function retryGame() {
-  score = 0;
-  scoreDisplay.innerText = score;
-  level = 1;
-  resetSession();
-}
-
-function onResize() {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-}
-
-function animate() {
-  requestAnimationFrame(animate);
-  updatePhysics();
-  renderer.render(scene, camera);
-}
-
-window.onload = init;
-</script>
+    // Render loop
+    function animate() {
+      requestAnimationFrame(animate);
+      updateGame();
+      renderer.render(scene, camera);
+    }
+    animate();
+  </script>
 </body>
 </html>
