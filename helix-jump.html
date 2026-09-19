@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <title>Helix Jump 3D Pro</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Helix Jump 3D</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <style>
     * {
@@ -14,11 +14,12 @@
       -webkit-user-select: none;
       touch-action: none;
     }
+
     body, html {
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background: radial-gradient(circle at 50% 30%, #1a1c29, #090a10);
+      background-color: #0d0f17;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 
@@ -32,94 +33,127 @@
     }
 
     /* Top Navigation Bar */
-    #header-bar {
+    #top-bar {
       position: absolute;
-      top: 0;
+      top: 14px;
       left: 0;
       width: 100%;
-      height: 60px;
       padding: 0 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       z-index: 10;
-      background: linear-gradient(180deg, rgba(0, 0, 0, 0.7) 0%, transparent 100%);
       pointer-events: auto;
     }
 
-    .back-btn {
+    .home-btn {
       display: flex;
       align-items: center;
       gap: 6px;
       color: #fff;
       text-decoration: none;
-      background: rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(8px);
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(10px);
       padding: 8px 16px;
       border-radius: 20px;
       font-weight: 700;
       font-size: 14px;
       border: 1px solid rgba(255, 255, 255, 0.2);
-      cursor: pointer;
-      transition: 0.2s ease;
+      transition: 0.2s;
     }
 
-    .back-btn:hover, .back-btn:active {
-      background: rgba(255, 255, 255, 0.3);
-      transform: scale(0.96);
+    .home-btn:active {
+      transform: scale(0.95);
+      background: rgba(255, 255, 255, 0.25);
     }
 
-    .game-logo {
+    .profile-badge {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      padding: 5px 14px 5px 6px;
+      border-radius: 25px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
     }
 
-    .game-logo img {
-      width: 38px;
-      height: 38px;
-      border-radius: 10px;
-      box-shadow: 0 0 12px rgba(255, 75, 43, 0.6);
+    .profile-badge img {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1.5px solid #ff416c;
     }
 
-    .game-logo span {
-      font-size: 18px;
-      font-weight: 900;
-      letter-spacing: 0.5px;
-      background: linear-gradient(45deg, #ff416c, #ff4b2b);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      text-transform: uppercase;
-    }
-
-    /* Score & Level Display */
-    #ui-hud {
+    /* HUD (Score & Progress) */
+    #hud {
       position: absolute;
       top: 70px;
       left: 50%;
       transform: translateX(-50%);
-      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       z-index: 10;
       pointer-events: none;
+      width: 80%;
+      max-width: 320px;
     }
 
     #score-val {
-      font-size: 48px;
+      font-size: 52px;
       font-weight: 900;
       color: #ffffff;
+      line-height: 1;
+      margin-bottom: 12px;
       text-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
     }
 
-    #level-badge {
-      font-size: 14px;
-      font-weight: 700;
-      color: #00f2fe;
-      text-transform: uppercase;
-      letter-spacing: 2px;
+    .progress-bar-wrap {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      gap: 10px;
     }
 
-    /* Game Over / Win Overlay */
-    #overlay {
+    .level-num {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #ff5e3a;
+      color: #fff;
+      font-weight: 800;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .level-num.next {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .bar-bg {
+      flex: 1;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #ff5e3a, #ff2a6d);
+      transition: width 0.3s ease;
+    }
+
+    /* Game Over / Victory Modal */
+    #modal {
       position: fixed;
       top: 0;
       left: 0;
@@ -127,72 +161,93 @@
       height: 100vh;
       background: rgba(8, 10, 16, 0.85);
       backdrop-filter: blur(8px);
-      z-index: 20;
+      z-index: 25;
       display: none;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+    }
+
+    .modal-box {
+      background: #141724;
+      border: 2px solid #ff416c;
+      padding: 30px 24px;
+      border-radius: 24px;
+      text-align: center;
+      width: 85%;
+      max-width: 320px;
+      box-shadow: 0 0 35px rgba(255, 65, 108, 0.35);
+    }
+
+    .modal-box h2 {
+      font-size: 26px;
       color: #fff;
+      margin-bottom: 10px;
     }
 
-    #overlay h1 {
-      font-size: 40px;
-      margin-bottom: 8px;
-    }
-
-    #overlay p {
+    .modal-box p {
       color: #aaa;
+      font-size: 15px;
       margin-bottom: 24px;
     }
 
-    #restart-btn {
-      padding: 12px 32px;
+    .play-btn {
+      width: 100%;
+      padding: 14px;
       border-radius: 30px;
       background: linear-gradient(45deg, #ff416c, #ff4b2b);
       border: none;
       color: #fff;
       font-size: 16px;
       font-weight: 800;
+      letter-spacing: 1px;
       cursor: pointer;
-      box-shadow: 0 4px 20px rgba(255, 65, 108, 0.5);
+      box-shadow: 0 6px 20px rgba(255, 65, 108, 0.4);
     }
   </style>
 </head>
 <body>
 
-  <!-- Top Navigation Header -->
-  <header id="header-bar">
-    <a href="index.html" class="back-btn">🔙 Back</a>
-    <div class="game-logo">
-      <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png" alt="Helix Jump" />
-      <span>Helix 3D</span>
+  <!-- Top Bar -->
+  <div id="top-bar">
+    <a href="index.html" class="home-btn">⬅ Home</a>
+    <div class="profile-badge">
+      <img src="insta.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'" alt="Satish" />
+      <span>@_satish_official_16</span>
     </div>
-  </header>
+  </div>
 
-  <!-- Game HUD -->
-  <div id="ui-hud">
-    <div id="level-badge">Level 1</div>
+  <!-- HUD -->
+  <div id="hud">
     <div id="score-val">0</div>
+    <div class="progress-bar-wrap">
+      <div class="level-num" id="curr-lvl">1</div>
+      <div class="bar-bg">
+        <div class="bar-fill" id="progress-fill"></div>
+      </div>
+      <div class="level-num next" id="next-lvl">2</div>
+    </div>
   </div>
 
-  <!-- Game Over Screen -->
-  <div id="overlay">
-    <h1 id="overlay-title">GAME OVER</h1>
-    <p id="overlay-score">Score: 0</p>
-    <button id="restart-btn" onclick="resetGame()">PLAY AGAIN</button>
+  <!-- Game Over Modal -->
+  <div id="modal">
+    <div class="modal-box">
+      <h2 id="modal-title">GAME OVER 💥</h2>
+      <p id="modal-desc">You landed on a trap! Final Score: 0</p>
+      <button class="play-btn" onclick="restartGame()">PLAY AGAIN</button>
+    </div>
   </div>
 
-  <!-- Canvas -->
   <canvas id="game-canvas"></canvas>
 
   <script>
-    // --- 3D ENGINE & SCENE SETUP ---
+    // --- THREE.JS SCENE SETUP ---
     const canvas = document.getElementById('game-canvas');
     const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x0e1017, 0.015);
+    scene.background = new THREE.Color(0x0e111a);
 
-    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
@@ -200,116 +255,231 @@
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
     scene.add(ambientLight);
 
-    const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
-    dirLight.position.set(10, 20, 15);
-    scene.add(dirLight);
+    const sun = new THREE.DirectionalLight(0xffffff, 0.9);
+    sun.position.set(10, 25, 20);
+    scene.add(sun);
 
     // --- GAME CONSTANTS ---
     const TOTAL_FLOORS = 15;
-    const FLOOR_SPACING = 9;
-    const POLE_RADIUS = 1.8;
-    const PLATFORM_RADIUS = 6.2;
-    const BALL_RADIUS = 0.55;
+    const FLOOR_GAP = 7.5;
+    const POLE_RADIUS = 1.4;
+    const PLAT_RADIUS = 5.2;
+    const BALL_RADIUS = 0.5;
+    const SEGMENTS_PER_RING = 12; // 30 degrees each
+    const ARC = (Math.PI * 2) / SEGMENTS_PER_RING;
 
-    // Central Pillar
-    const poleGeo = new THREE.CylinderGeometry(POLE_RADIUS, POLE_RADIUS, TOTAL_FLOORS * FLOOR_SPACING + 20, 32);
-    const poleMat = new THREE.MeshStandardMaterial({ color: 0x222633, roughness: 0.5 });
+    // Center Pillar
+    const poleGeo = new THREE.CylinderGeometry(POLE_RADIUS, POLE_RADIUS, TOTAL_FLOORS * FLOOR_GAP + 20, 32);
+    const poleMat = new THREE.MeshStandardMaterial({ color: 0x1f2330, roughness: 0.5 });
     const pole = new THREE.Mesh(poleGeo, poleMat);
-    pole.position.y = -(TOTAL_FLOORS * FLOOR_SPACING) / 2;
+    pole.position.y = -(TOTAL_FLOORS * FLOOR_GAP) / 2;
     scene.add(pole);
 
-    // Group for all rotating platforms
+    // Rotating World Group
     const helixGroup = new THREE.Group();
     scene.add(helixGroup);
 
-    // Platform Slices Generation
-    const safeMat = new THREE.MeshStandardMaterial({ color: 0xff4b2b, roughness: 0.3 });
-    const dangerMat = new THREE.MeshStandardMaterial({ color: 0x111318, roughness: 0.8 }); // Black/red danger zone
-    const finishMat = new THREE.MeshStandardMaterial({ color: 0x00f2fe, roughness: 0.2 });
+    // Materials
+    const normalMat = new THREE.MeshStandardMaterial({ color: 0xf5b041, roughness: 0.3 }); // Yellow
+    const trapMat = new THREE.MeshStandardMaterial({ color: 0xe74c3c, roughness: 0.2 });   // Red
+    const finishMat = new THREE.MeshStandardMaterial({ color: 0x2ecc71, roughness: 0.2 }); // Green
+    const splatMat = new THREE.MeshBasicMaterial({ color: 0x00f2fe, depthWrite: false });  // Cyan splatters
 
-    const platforms = [];
+    // --- BUILD HELIX LEVELS ---
+    let floors = [];
 
-    function buildHelix() {
-      helixGroup.clear();
-      platforms.length = 0;
+    function buildLevel() {
+      // Clear old meshes
+      while (helixGroup.children.length > 0) {
+        helixGroup.remove(helixGroup.children[0]);
+      }
+      floors = [];
 
       for (let f = 0; f < TOTAL_FLOORS; f++) {
-        const floorY = -f * FLOOR_SPACING;
-        const floorObj = { y: floorY, segments: [] };
+        const floorY = -f * FLOOR_GAP;
+        const floorData = { y: floorY, index: f, segments: [], passed: false };
 
         if (f === TOTAL_FLOORS - 1) {
-          // Finish Platform
-          const geo = new THREE.CylinderGeometry(PLATFORM_RADIUS, PLATFORM_RADIUS, 0.6, 32, 1, false, 0, Math.PI * 2);
-          const mesh = new THREE.Mesh(geo, finishMat);
-          mesh.position.y = floorY;
-          helixGroup.add(mesh);
-          floorObj.isFinish = true;
+          // Finish Platform (Solid green)
+          const finishGeo = new THREE.CylinderGeometry(PLAT_RADIUS, PLAT_RADIUS, 0.45, 32);
+          const finishMesh = new THREE.Mesh(finishGeo, finishMat);
+          finishMesh.position.y = floorY;
+          helixGroup.add(finishMesh);
+          floorData.isFinish = true;
         } else {
-          // Segments with gap and danger zone
-          const segmentCount = 10;
-          const openSlot = Math.floor(Math.random() * segmentCount);
-          const dangerSlot = (openSlot + 2 + Math.floor(Math.random() * (segmentCount - 4))) % segmentCount;
+          // Regular floor with holes and traps
+          // 2 or 3 empty slots for easy dropping
+          const holeStart = Math.floor(Math.random() * SEGMENTS_PER_RING);
+          const holeSize = 3; // 3 slots wide = 90 degree clear hole!
+          const trapSlot = (holeStart + 5 + Math.floor(Math.random() * 3)) % SEGMENTS_PER_RING;
 
-          for (let s = 0; s < segmentCount; s++) {
-            if (s === openSlot || s === (openSlot + 1) % segmentCount) continue; // 2 slots wide empty drop hole
+          for (let s = 0; s < SEGMENTS_PER_RING; s++) {
+            // Check if slot is inside hole
+            let isHole = false;
+            for (let h = 0; h < holeSize; h++) {
+              if (s === (holeStart + h) % SEGMENTS_PER_RING) isHole = true;
+            }
+            if (isHole) continue; // Skip rendering mesh (creates actual hole)
 
-            const isDanger = (f > 1 && s === dangerSlot);
-            const arcLength = (Math.PI * 2) / segmentCount;
-            const geo = new THREE.CylinderGeometry(
-              PLATFORM_RADIUS, PLATFORM_RADIUS, 0.5, 16, 1, false, 
-              s * arcLength, arcLength * 0.96
+            const isTrap = (f > 0 && s === trapSlot);
+            const segGeo = new THREE.CylinderGeometry(
+              PLAT_RADIUS, PLAT_RADIUS, 0.45, 12, 1, false,
+              s * ARC, ARC * 0.98
             );
-            const mesh = new THREE.Mesh(geo, isDanger ? dangerMat : safeMat);
-            mesh.position.y = floorY;
-            helixGroup.add(mesh);
+            const segMesh = new THREE.Mesh(segGeo, isTrap ? trapMat : normalMat);
+            segMesh.position.y = floorY;
+            helixGroup.add(segMesh);
 
-            floorObj.segments.push({
-              startAngle: s * arcLength,
-              endAngle: (s + 1) * arcLength,
-              isDanger: isDanger
+            floorData.segments.push({
+              startAngle: s * ARC,
+              endAngle: (s + 1) * ARC,
+              isTrap: isTrap
             });
           }
         }
-        platforms.push(floorObj);
+        floors.push(floorData);
       }
     }
 
     // --- BALL CREATION ---
     const ballGeo = new THREE.SphereGeometry(BALL_RADIUS, 32, 32);
-    const ballMat = new THREE.MeshStandardMaterial({ color: 0xffd700, roughness: 0.1, metalness: 0.2 });
+    const ballMat = new THREE.MeshStandardMaterial({
+      color: 0x00f2fe,
+      emissive: 0x00a8b5,
+      emissiveIntensity: 0.3,
+      roughness: 0.1
+    });
     const ball = new THREE.Mesh(ballGeo, ballMat);
-    ball.position.set(0, 3, (PLATFORM_RADIUS + POLE_RADIUS) / 2);
     scene.add(ball);
 
-    // --- GAME STATE ---
+    // Ball & Camera State
+    const ballZ = (PLAT_RADIUS + POLE_RADIUS) / 2;
+    let ballY = 2;
     let ballVY = 0;
-    const gravity = -0.015;
-    const bounceVelocity = 0.32;
+    const gravity = -0.016;
+    const bounceForce = 0.33;
+
     let score = 0;
-    let currentFloorIndex = 0;
+    let passedCount = 0;
     let isGameOver = false;
 
-    // Camera initial position
-    camera.position.set(0, 7, 18);
-    camera.lookAt(0, 2, 0);
+    // Steady camera that locks to current target floor
+    let cameraTargetY = 4;
+    camera.position.set(0, 4, 15);
+    camera.lookAt(0, 1, 0);
+
+    // --- SPLATTER EFFECT ON BOUNCE ---
+    function addSplatter(yPos) {
+      const splatGeo = new THREE.CircleGeometry(0.55 + Math.random() * 0.3, 16);
+      splatGeo.rotateX(-Math.PI / 2);
+      const splatMesh = new THREE.Mesh(splatGeo, splatMat);
+      splatMesh.position.set(0, yPos + 0.24, ballZ);
+      // Attach to helix so it rotates with tower
+      helixGroup.add(splatMesh);
+      // Keep it relative to current rotation
+      splatMesh.rotation.y = -helixGroup.rotation.y;
+    }
 
     // --- CONTROLS (TOUCH & DRAG) ---
     let isDragging = false;
-    let previousX = 0;
+    let lastX = 0;
 
     window.addEventListener('pointerdown', (e) => {
       isDragging = true;
-      previousX = e.clientX;
+      lastX = e.clientX;
     });
 
     window.addEventListener('pointermove', (e) => {
       if (!isDragging || isGameOver) return;
-      const deltaX = e.clientX - previousX;
-      helixGroup.rotation.y += deltaX * 0.009;
-      previousX = e.clientX;
+      const dx = e.clientX - lastX;
+      helixGroup.rotation.y += dx * 0.008; // Smooth rotational sensitivity
+      lastX = e.clientX;
     });
 
     window.addEventListener('pointerup', () => isDragging = false);
+    window.addEventListener('pointercancel', () => isDragging = false);
+
+    // --- GAME ENGINE LOOP ---
+    function updatePhysics() {
+      if (isGameOver) return;
+
+      ballVY += gravity;
+      ballY += ballVY;
+      ball.position.set(0, ballY, ballZ);
+
+      // Check collision with floors
+      for (let i = 0; i < floors.length; i++) {
+        const fl = floors[i];
+        const floorSurface = fl.y + 0.22;
+
+        // Has the ball hit the plane of this floor while moving downward?
+        if (ballY - BALL_RADIUS <= floorSurface && (ballY - ballVY - BALL_RADIUS) >= floorSurface - 0.5) {
+          if (fl.isFinish) {
+            // Won!
+            triggerModal("LEVEL CLEAR! 🏆", "Amazing run! Final Score: " + score);
+            return;
+          }
+
+          // Calculate current angle of the tower beneath the ball
+          let currentAngle = (-helixGroup.rotation.y) % (Math.PI * 2);
+          if (currentAngle < 0) currentAngle += Math.PI * 2;
+
+          // Check if ball lands on a solid segment
+          const hitSegment = fl.segments.find(seg => currentAngle >= seg.startAngle && currentAngle < seg.endAngle);
+
+          if (hitSegment) {
+            if (hitSegment.isTrap) {
+              triggerModal("GAME OVER 💥", "You landed on a trap! Final Score: " + score);
+              return;
+            } else {
+              // Bounce!
+              ballY = floorSurface + BALL_RADIUS;
+              ballVY = bounceForce;
+              addSplatter(fl.y);
+              break;
+            }
+          }
+        }
+
+        // Check if ball successfully fell below this floor without bouncing
+        if (!fl.passed && ballY < fl.y - 0.4) {
+          fl.passed = true;
+          passedCount++;
+          score += 10;
+          document.getElementById('score-val').innerText = score;
+          document.getElementById('progress-fill').style.width = (passedCount / (TOTAL_FLOORS - 1)) * 100 + "%";
+
+          // Lower camera smoothly to next floor
+          cameraTargetY = fl.y - 3.5;
+        }
+      }
+
+      // Smooth camera follow without shaking or dropping off screen
+      camera.position.y += (cameraTargetY - camera.position.y) * 0.08;
+      camera.lookAt(0, camera.position.y - 2.8, 0);
+    }
+
+    function triggerModal(title, desc) {
+      isGameOver = true;
+      document.getElementById('modal-title').innerText = title;
+      document.getElementById('modal-desc').innerText = desc;
+      document.getElementById('modal').style.display = 'flex';
+    }
+
+    window.restartGame = function() {
+      isGameOver = false;
+      score = 0;
+      passedCount = 0;
+      ballY = 2;
+      ballVY = 0;
+      cameraTargetY = 4;
+      camera.position.set(0, 4, 15);
+      helixGroup.rotation.y = 0;
+      document.getElementById('score-val').innerText = '0';
+      document.getElementById('progress-fill').style.width = '0%';
+      document.getElementById('modal').style.display = 'none';
+      buildLevel();
+    };
 
     window.addEventListener('resize', () => {
       camera.aspect = window.innerWidth / window.innerHeight;
@@ -317,92 +487,15 @@
       renderer.setSize(window.innerWidth, window.innerHeight);
     });
 
-    // --- COLLISION & GAME MECHANICS ---
-    function updateGame() {
-      if (isGameOver) return;
+    // Start
+    buildLevel();
 
-      ballVY += gravity;
-      ball.position.y += ballVY;
-
-      // Check collision with the current and next floor
-      platforms.forEach((platform) => {
-        const distY = ball.position.y - (platform.y + 0.3);
-
-        if (distY <= BALL_RADIUS && distY >= -0.6 && ballVY < 0) {
-          if (platform.isFinish) {
-            triggerWin();
-            return;
-          }
-
-          // Calculate current angle on helix relative to ball position (fixed at angle 0 in world space)
-          let currentAngle = (-helixGroup.rotation.y) % (Math.PI * 2);
-          if (currentAngle < 0) currentAngle += Math.PI * 2;
-
-          let hitSegment = platform.segments.find(seg => 
-            currentAngle >= seg.startAngle && currentAngle <= seg.endAngle
-          );
-
-          if (hitSegment) {
-            if (hitSegment.isDanger) {
-              triggerGameOver();
-            } else {
-              // Bounce
-              ballVY = bounceVelocity;
-              ball.position.y = platform.y + 0.3 + BALL_RADIUS;
-            }
-          } else {
-            // Fell through hole
-            if (ball.position.y < platform.y - 1 && currentFloorIndex <= platform.y) {
-              score += 10;
-              document.getElementById('score-val').innerText = score;
-              currentFloorIndex = platform.y - FLOOR_SPACING;
-            }
-          }
-        }
-      });
-
-      // Smooth Camera tracking down
-      const targetCamY = ball.position.y + 5;
-      camera.position.y += (targetCamY - camera.position.y) * 0.08;
-      camera.lookAt(0, ball.position.y - 1, 0);
-    }
-
-    function triggerGameOver() {
-      isGameOver = true;
-      document.getElementById('overlay-title').innerText = 'GAME OVER';
-      document.getElementById('overlay-score').innerText = 'Final Score: ' + score;
-      document.getElementById('overlay').style.display = 'flex';
-    }
-
-    function triggerWin() {
-      isGameOver = true;
-      document.getElementById('overlay-title').innerText = 'LEVEL CLEAR!';
-      document.getElementById('overlay-score').innerText = 'Awesome! Score: ' + score;
-      document.getElementById('overlay').style.display = 'flex';
-    }
-
-    window.resetGame = function() {
-      isGameOver = false;
-      score = 0;
-      currentFloorIndex = 0;
-      ballVY = 0;
-      ball.position.set(0, 3, (PLATFORM_RADIUS + POLE_RADIUS) / 2);
-      helixGroup.rotation.y = 0;
-      document.getElementById('score-val').innerText = '0';
-      document.getElementById('overlay').style.display = 'none';
-      buildHelix();
-    };
-
-    // Initialize
-    buildHelix();
-
-    // Render loop
-    function animate() {
-      requestAnimationFrame(animate);
-      updateGame();
+    function loop() {
+      requestAnimationFrame(loop);
+      updatePhysics();
       renderer.render(scene, camera);
     }
-    animate();
+    loop();
   </script>
 </body>
 </html>
