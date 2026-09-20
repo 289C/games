@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- PeerJS P2P Networking -->
+  <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+  
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>HOLE.IO 2 - City</title>
@@ -281,18 +284,33 @@
   <div id="lobbyScreen" class="screen-overlay">
     <div class="card">
       <h1 class="title">HOLE.IO 2</h1>
-      <p style="color: #94a3b8; font-size: 13px; margin-bottom: 12px;">Swallow the entire city and grow!</p>
+      <p style="color: #94a3b8; font-size: 13px; margin-bottom: 10px;">Play solo or 1v1 with friends live!</p>
       
       <input type="text" id="playerName" class="input-box" value="Player" maxlength="12" placeholder="Your Name" />
       
       <button id="btnSolo" type="button" class="btn btn-purple">Play Solo (vs Bots)</button>
-      <button id="btnRoom" type="button" class="btn btn-gray">Generate Room Code</button>
-      
-      <div id="roomCodeDisplay" style="margin-top: 10px; font-size: 14px; color:#d8b4fe;" class="hidden">
-        Room Code: <strong id="generatedCode" style="font-size: 20px; letter-spacing: 2px;"></strong>
+
+      <div style="margin: 12px 0 6px 0; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;">
+        <span style="font-size: 12px; color: #cbd5e1; font-weight: 700;">PLAY WITH A FRIEND (1v1)</span>
       </div>
-    </div>
-  </div>
+
+      <div style="display: flex; gap: 10px;">
+        <button id="btnCreateRoom" type="button" class="btn btn-gray" style="flex: 1;">Create Room</button>
+        <button id="btnJoinRoom" type="button" class="btn" style="flex: 1; background: #10b981; color: #fff;">Join Room</button>
+      </div>
+
+      <!-- Join Box -->
+      <div id="joinInputSec" class="hidden" style="margin-top: 10px;">
+        <input type="text" id="joinCodeInput" class="input-box" placeholder="Enter 6-digit Code" maxlength="6" style="text-transform: uppercase;" />
+        <button id="btnConnectRoom" type="button" class="btn btn-purple">Enter Match</button>
+      </div>
+      
+      <!-- Room Code Display -->
+      <div id="roomCodeDisplay" style="margin-top: 12px; font-size: 14px; color:#d8b4fe;" class="hidden">
+        Room Code: <strong id="generatedCode" style="font-size: 22px; letter-spacing: 2px; color:#38bdf8;"></strong>
+        <div style="font-size: 12px; color: #a1a1aa; margin-top: 4px;">Waiting for your friend to enter this code...</div>
+      </div>
+
 
   <!-- Game Over Screen -->
   <div id="gameOverScreen" class="screen-overlay hidden">
