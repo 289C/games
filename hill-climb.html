@@ -443,10 +443,13 @@
         groundedWheels++;
       }
 
-      // Driving force
+      // Driving force & Dynamic Fuel Consumption
       if (fuel > 0) {
+        // Constant idle engine burn (burns fuel even if coasting)
+        fuel -= 0.06;
+
         if (input.gas) {
-          fuel -= 0.08;
+          fuel -= 0.22; // Faster drain when holding GAS
           if (groundedWheels > 0) {
             bike.vx += 0.42 * cosA;
             bike.vy += 0.42 * sinA;
@@ -455,7 +458,7 @@
           }
         }
         if (input.brake) {
-          fuel -= 0.04;
+          fuel -= 0.12; // Moderate drain on BRAKE/REVERSE
           if (groundedWheels > 0) {
             bike.vx -= 0.3 * cosA;
             bike.vy -= 0.3 * sinA;
@@ -463,8 +466,12 @@
             bike.angularVelocity -= 0.0035; // Tilt down
           }
         }
-      } else if (groundedWheels === 0 && Math.abs(bike.vx) < 0.2) {
-        triggerGameOver("OUT OF FUEL! ⛽");
+      } else {
+        // Engine cuts out immediately when empty
+        bike.vx *= 0.96;
+        if (Math.abs(bike.vx) < 0.35) {
+          triggerGameOver("OUT OF FUEL! ⛽");
+        }
       }
 
       // Position update
