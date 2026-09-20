@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Helix Jump 3D</title>
+  <title>Helix Jump 3D - Fire Mode</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <style>
     * {
@@ -19,7 +19,7 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background-color: #0d0f17;
+      background-color: #0b0d14;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 
@@ -89,10 +89,10 @@
       border: 1.5px solid #ff416c;
     }
 
-    /* HUD (Score & Progress) */
+    /* HUD */
     #hud {
       position: absolute;
-      top: 70px;
+      top: 65px;
       left: 50%;
       transform: translateX(-50%);
       display: flex;
@@ -109,8 +109,33 @@
       font-weight: 900;
       color: #ffffff;
       line-height: 1;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
       text-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+    }
+
+    /* Fire mode combo banner */
+    #fire-banner {
+      font-size: 18px;
+      font-weight: 900;
+      color: #ff3b00;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      opacity: 0;
+      transform: scale(0.7);
+      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      text-shadow: 0 0 15px rgba(255, 69, 0, 0.9), 0 0 30px #ff0000;
+      margin-bottom: 6px;
+    }
+
+    #fire-banner.active {
+      opacity: 1;
+      transform: scale(1.15);
+      animation: pulseFire 0.4s infinite alternate;
+    }
+
+    @keyframes pulseFire {
+      0% { transform: scale(1.1); filter: brightness(1); }
+      100% { transform: scale(1.25); filter: brightness(1.5); }
     }
 
     .progress-bar-wrap {
@@ -121,20 +146,22 @@
     }
 
     .level-num {
-      width: 26px;
-      height: 26px;
+      width: 28px;
+      height: 28px;
       border-radius: 50%;
-      background: #ff5e3a;
+      background: #ff471a;
       color: #fff;
       font-weight: 800;
       font-size: 13px;
       display: flex;
       align-items: center;
       justify-content: center;
+      box-shadow: 0 0 10px rgba(255, 71, 26, 0.5);
     }
 
     .level-num.next {
       background: rgba(255, 255, 255, 0.2);
+      box-shadow: none;
     }
 
     .bar-bg {
@@ -148,18 +175,18 @@
     .bar-fill {
       width: 0%;
       height: 100%;
-      background: linear-gradient(90deg, #ff5e3a, #ff2a6d);
-      transition: width 0.3s ease;
+      background: linear-gradient(90deg, #ff9900, #ff2200);
+      transition: width 0.25s ease;
     }
 
-    /* Game Over / Victory Modal */
+    /* Modal */
     #modal {
       position: fixed;
       top: 0;
       left: 0;
       width: 100vw;
       height: 100vh;
-      background: rgba(8, 10, 16, 0.85);
+      background: rgba(8, 10, 16, 0.88);
       backdrop-filter: blur(8px);
       z-index: 25;
       display: none;
@@ -191,7 +218,7 @@
       margin-bottom: 24px;
     }
 
-    .play-btn {
+    .action-btn {
       width: 100%;
       padding: 14px;
       border-radius: 30px;
@@ -208,7 +235,6 @@
 </head>
 <body>
 
-  <!-- Top Bar -->
   <div id="top-bar">
     <a href="index.html" class="home-btn">⬅ Home</a>
     <div class="profile-badge">
@@ -217,9 +243,9 @@
     </div>
   </div>
 
-  <!-- HUD -->
   <div id="hud">
     <div id="score-val">0</div>
+    <div id="fire-banner">🔥 FIRE SMASH MODE! 🔥</div>
     <div class="progress-bar-wrap">
       <div class="level-num" id="curr-lvl">1</div>
       <div class="bar-bg">
@@ -229,12 +255,11 @@
     </div>
   </div>
 
-  <!-- Game Over Modal -->
   <div id="modal">
     <div class="modal-box">
       <h2 id="modal-title">GAME OVER 💥</h2>
-      <p id="modal-desc">You landed on a trap! Final Score: 0</p>
-      <button class="play-btn" onclick="restartGame()">PLAY AGAIN</button>
+      <p id="modal-desc">Score: 0</p>
+      <button class="action-btn" id="modal-btn" onclick="modalAction()">PLAY AGAIN</button>
     </div>
   </div>
 
@@ -244,84 +269,169 @@
     // --- THREE.JS SCENE SETUP ---
     const canvas = document.getElementById('game-canvas');
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x0e111a);
+    scene.background = new THREE.Color(0x0a0c14);
 
     const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-    // Lighting
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.75);
     scene.add(ambientLight);
 
-    const sun = new THREE.DirectionalLight(0xffffff, 0.9);
+    const sun = new THREE.DirectionalLight(0xffffff, 0.85);
     sun.position.set(10, 25, 20);
     scene.add(sun);
 
+    // --- GAME PALETTES (Different color for each of the 10 levels) ---
+    const LEVEL_THEMES = [
+      { normal: 0xf5b041, trap: 0xe74c3c, bg: 0x0a0c14 }, // L1: Amber / Red
+      { normal: 0x00f2fe, trap: 0xff007f, bg: 0x07111a }, // L2: Cyan / Neon Pink
+      { normal: 0x2ecc71, trap: 0x8e44ad, bg: 0x09140d }, // L3: Lime / Purple
+      { normal: 0xff793f, trap: 0x2c2c54, bg: 0x140e0a }, // L4: Orange / Indigo
+      { normal: 0xffbe76, trap: 0xeb4d4b, bg: 0x120c14 }, // L5: Peach / Crimson
+      { normal: 0x55efc4, trap: 0xd63031, bg: 0x071412 }, // L6: Mint / Dark Red
+      { normal: 0xa29bfe, trap: 0x6c5ce7, bg: 0x0e0d17 }, // L7: Lavender / Violet
+      { normal: 0xfdcb6e, trap: 0xd35400, bg: 0x141009 }, // L8: Gold / Rust
+      { normal: 0x74b9ff, trap: 0xe84393, bg: 0x09111a }, // L9: Sky / Magenta
+      { normal: 0xfffa65, trap: 0xff3838, bg: 0x141407 }  // L10: Neon Yellow / Ruby
+    ];
+
     // --- GAME CONSTANTS ---
-    const TOTAL_FLOORS = 15;
+    const MAX_LEVELS = 10;
+    const FLOORS_PER_LEVEL = 14;
     const FLOOR_GAP = 7.5;
     const POLE_RADIUS = 1.4;
     const PLAT_RADIUS = 5.2;
-    const BALL_RADIUS = 0.5;
-    const SEGMENTS_PER_RING = 12; // 30 degrees each
+    const BALL_RADIUS = 0.52;
+    const SEGMENTS_PER_RING = 12;
     const ARC = (Math.PI * 2) / SEGMENTS_PER_RING;
 
-    // Center Pillar
-    const poleGeo = new THREE.CylinderGeometry(POLE_RADIUS, POLE_RADIUS, TOTAL_FLOORS * FLOOR_GAP + 20, 32);
+    // Center Pole
+    const poleGeo = new THREE.CylinderGeometry(POLE_RADIUS, POLE_RADIUS, FLOORS_PER_LEVEL * FLOOR_GAP + 25, 32);
     const poleMat = new THREE.MeshStandardMaterial({ color: 0x1f2330, roughness: 0.5 });
     const pole = new THREE.Mesh(poleGeo, poleMat);
-    pole.position.y = -(TOTAL_FLOORS * FLOOR_GAP) / 2;
+    pole.position.y = -(FLOORS_PER_LEVEL * FLOOR_GAP) / 2;
     scene.add(pole);
 
-    // Rotating World Group
+    // Rotating Helix Group
     const helixGroup = new THREE.Group();
     scene.add(helixGroup);
 
-    // Materials
-    const normalMat = new THREE.MeshStandardMaterial({ color: 0xf5b041, roughness: 0.3 }); // Yellow
-    const trapMat = new THREE.MeshStandardMaterial({ color: 0xe74c3c, roughness: 0.2 });   // Red
-    const finishMat = new THREE.MeshStandardMaterial({ color: 0x2ecc71, roughness: 0.2 }); // Green
-    const splatMat = new THREE.MeshBasicMaterial({ color: 0x00f2fe, depthWrite: false });  // Cyan splatters
+    // Ball
+    const ballGeo = new THREE.SphereGeometry(BALL_RADIUS, 32, 32);
+    const ballNormalMat = new THREE.MeshStandardMaterial({
+      color: 0x00f2fe,
+      emissive: 0x00a8b5,
+      emissiveIntensity: 0.35,
+      roughness: 0.1
+    });
+    const ballFireMat = new THREE.MeshStandardMaterial({
+      color: 0xff3300,
+      emissive: 0xff7700,
+      emissiveIntensity: 0.8,
+      roughness: 0.1
+    });
 
-    // --- BUILD HELIX LEVELS ---
+    const ball = new THREE.Mesh(ballGeo, ballNormalMat);
+    scene.add(ball);
+
+    // Point light on ball for fire glow
+    const ballGlow = new THREE.PointLight(0xff4400, 0, 8);
+    scene.add(ballGlow);
+
+    // Fire Particles Trail
+    const particleCount = 45;
+    const particleGeo = new THREE.BufferGeometry();
+    const particlePositions = new Float32Array(particleCount * 3);
+    const particleData = [];
+
+    for (let i = 0; i < particleCount; i++) {
+      particlePositions[i * 3] = 0;
+      particlePositions[i * 3 + 1] = -100;
+      particlePositions[i * 3 + 2] = 0;
+      particleData.push({ x: 0, y: -100, z: 0, life: 0, maxLife: 20 + Math.random() * 15 });
+    }
+    particleGeo.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
+    const particleMat = new THREE.PointsMaterial({
+      color: 0xff4500,
+      size: 0.5,
+      transparent: true,
+      opacity: 0.8,
+      blending: THREE.AdditiveBlending
+    });
+    const particleSystem = new THREE.Points(particleGeo, particleMat);
+    scene.add(particleSystem);
+
+    // --- GAME STATE ---
+    let currentLevel = 1;
+    let score = 0;
+    let floorsPassed = 0;
+    let comboStreak = 0; // Tracks consecutive floors without bouncing
+    let isFireMode = false;
+    let isGameOver = false;
+    let isWin = false;
+
+    const ballZ = (PLAT_RADIUS + POLE_RADIUS) / 2;
+    let ballY = 2;
+    let ballVY = 0;
+    const gravity = -0.016;
+    const bounceForce = 0.33;
+
+    let cameraTargetY = 4;
+    camera.position.set(0, 4, 15);
+    camera.lookAt(0, 1, 0);
+
     let floors = [];
 
-    function buildLevel() {
-      // Clear old meshes
+    // --- BUILD LEVEL ---
+    function buildLevel(levelIdx) {
       while (helixGroup.children.length > 0) {
         helixGroup.remove(helixGroup.children[0]);
       }
       floors = [];
 
-      for (let f = 0; f < TOTAL_FLOORS; f++) {
-        const floorY = -f * FLOOR_GAP;
-        const floorData = { y: floorY, index: f, segments: [], passed: false };
+      const theme = LEVEL_THEMES[(levelIdx - 1) % LEVEL_THEMES.length];
+      scene.background.setHex(theme.bg);
 
-        if (f === TOTAL_FLOORS - 1) {
-          // Finish Platform (Solid green)
-          const finishGeo = new THREE.CylinderGeometry(PLAT_RADIUS, PLAT_RADIUS, 0.45, 32);
+      const normalMat = new THREE.MeshStandardMaterial({ color: theme.normal, roughness: 0.3 });
+      const trapMat = new THREE.MeshStandardMaterial({ color: theme.trap, roughness: 0.2 });
+      const finishMat = new THREE.MeshStandardMaterial({ color: 0x00ff88, roughness: 0.2 });
+
+      for (let f = 0; f < FLOORS_PER_LEVEL; f++) {
+        const floorY = -f * FLOOR_GAP;
+        const floorData = { y: floorY, index: f, segments: [], meshes: [], passed: false };
+
+        if (f === FLOORS_PER_LEVEL - 1) {
+          // Bottom Finish Ring
+          const finishGeo = new THREE.CylinderGeometry(PLAT_RADIUS, PLAT_RADIUS, 0.5, 32);
           const finishMesh = new THREE.Mesh(finishGeo, finishMat);
           finishMesh.position.y = floorY;
           helixGroup.add(finishMesh);
           floorData.isFinish = true;
         } else {
-          // Regular floor with holes and traps
-          // 2 or 3 empty slots for easy dropping
+          // 3-slot wide open hole (90 deg)
           const holeStart = Math.floor(Math.random() * SEGMENTS_PER_RING);
-          const holeSize = 3; // 3 slots wide = 90 degree clear hole!
-          const trapSlot = (holeStart + 5 + Math.floor(Math.random() * 3)) % SEGMENTS_PER_RING;
+          const holeSize = 3;
+
+          // Traps scale with level (1 trap early, up to 3 traps in later levels)
+          const trapSlots = [];
+          const trapCount = Math.min(3, Math.floor((levelIdx + 1) / 3) + 1);
+          for (let t = 0; t < trapCount; t++) {
+            if (f > 0) {
+              const slot = (holeStart + 4 + t * 2) % SEGMENTS_PER_RING;
+              trapSlots.push(slot);
+            }
+          }
 
           for (let s = 0; s < SEGMENTS_PER_RING; s++) {
-            // Check if slot is inside hole
             let isHole = false;
             for (let h = 0; h < holeSize; h++) {
               if (s === (holeStart + h) % SEGMENTS_PER_RING) isHole = true;
             }
-            if (isHole) continue; // Skip rendering mesh (creates actual hole)
+            if (isHole) continue;
 
-            const isTrap = (f > 0 && s === trapSlot);
+            const isTrap = trapSlots.includes(s);
             const segGeo = new THREE.CylinderGeometry(
               PLAT_RADIUS, PLAT_RADIUS, 0.45, 12, 1, false,
               s * ARC, ARC * 0.98
@@ -335,52 +445,19 @@
               endAngle: (s + 1) * ARC,
               isTrap: isTrap
             });
+            floorData.meshes.push(segMesh);
           }
         }
         floors.push(floorData);
       }
+
+      // Update UI Header
+      document.getElementById('curr-lvl').innerText = currentLevel;
+      document.getElementById('next-lvl').innerText = Math.min(MAX_LEVELS, currentLevel + 1);
+      document.getElementById('progress-fill').style.width = '0%';
     }
 
-    // --- BALL CREATION ---
-    const ballGeo = new THREE.SphereGeometry(BALL_RADIUS, 32, 32);
-    const ballMat = new THREE.MeshStandardMaterial({
-      color: 0x00f2fe,
-      emissive: 0x00a8b5,
-      emissiveIntensity: 0.3,
-      roughness: 0.1
-    });
-    const ball = new THREE.Mesh(ballGeo, ballMat);
-    scene.add(ball);
-
-    // Ball & Camera State
-    const ballZ = (PLAT_RADIUS + POLE_RADIUS) / 2;
-    let ballY = 2;
-    let ballVY = 0;
-    const gravity = -0.016;
-    const bounceForce = 0.33;
-
-    let score = 0;
-    let passedCount = 0;
-    let isGameOver = false;
-
-    // Steady camera that locks to current target floor
-    let cameraTargetY = 4;
-    camera.position.set(0, 4, 15);
-    camera.lookAt(0, 1, 0);
-
-    // --- SPLATTER EFFECT ON BOUNCE ---
-    function addSplatter(yPos) {
-      const splatGeo = new THREE.CircleGeometry(0.55 + Math.random() * 0.3, 16);
-      splatGeo.rotateX(-Math.PI / 2);
-      const splatMesh = new THREE.Mesh(splatGeo, splatMat);
-      splatMesh.position.set(0, yPos + 0.24, ballZ);
-      // Attach to helix so it rotates with tower
-      helixGroup.add(splatMesh);
-      // Keep it relative to current rotation
-      splatMesh.rotation.y = -helixGroup.rotation.y;
-    }
-
-    // --- CONTROLS (TOUCH & DRAG) ---
+    // --- CONTROLS ---
     let isDragging = false;
     let lastX = 0;
 
@@ -392,14 +469,62 @@
     window.addEventListener('pointermove', (e) => {
       if (!isDragging || isGameOver) return;
       const dx = e.clientX - lastX;
-      helixGroup.rotation.y += dx * 0.008; // Smooth rotational sensitivity
+      helixGroup.rotation.y += dx * 0.008;
       lastX = e.clientX;
     });
 
     window.addEventListener('pointerup', () => isDragging = false);
     window.addEventListener('pointercancel', () => isDragging = false);
 
-    // --- GAME ENGINE LOOP ---
+    // --- FIRE PARTICLES & EFFECTS ---
+    function updateFireParticles() {
+      const positions = particleGeo.attributes.position.array;
+      for (let i = 0; i < particleCount; i++) {
+        const p = particleData[i];
+        if (isFireMode) {
+          p.life--;
+          if (p.life <= 0) {
+            p.x = ball.position.x + (Math.random() - 0.5) * 0.4;
+            p.y = ball.position.y + (Math.random() - 0.5) * 0.4;
+            p.z = ball.position.z + (Math.random() - 0.5) * 0.4;
+            p.life = p.maxLife;
+          } else {
+            p.y += 0.08; // flame floats up
+          }
+        } else {
+          p.y = -100; // hide
+        }
+        positions[i * 3] = p.x;
+        positions[i * 3 + 1] = p.y;
+        positions[i * 3 + 2] = p.z;
+      }
+      particleGeo.attributes.position.needsUpdate = true;
+    }
+
+    function triggerFloorBreak(floor) {
+      // Destroy ring when smashed by fire mode
+      floor.meshes.forEach(m => {
+        helixGroup.remove(m);
+      });
+      floor.segments = [];
+      score += 40;
+      document.getElementById('score-val').innerText = score;
+    }
+
+    function addSplatter(yPos) {
+      const splatGeo = new THREE.CircleGeometry(0.55 + Math.random() * 0.3, 16);
+      splatGeo.rotateX(-Math.PI / 2);
+      const splatMat = new THREE.MeshBasicMaterial({
+        color: isFireMode ? 0xff4500 : 0x00f2fe,
+        depthWrite: false
+      });
+      const splatMesh = new THREE.Mesh(splatGeo, splatMat);
+      splatMesh.position.set(0, yPos + 0.24, ballZ);
+      helixGroup.add(splatMesh);
+      splatMesh.rotation.y = -helixGroup.rotation.y;
+    }
+
+    // --- MAIN PHYSICS LOOP ---
     function updatePhysics() {
       if (isGameOver) return;
 
@@ -407,79 +532,134 @@
       ballY += ballVY;
       ball.position.set(0, ballY, ballZ);
 
-      // Check collision with floors
+      ballGlow.position.set(0, ballY, ballZ);
+
+      // Check floors
       for (let i = 0; i < floors.length; i++) {
         const fl = floors[i];
         const floorSurface = fl.y + 0.22;
 
-        // Has the ball hit the plane of this floor while moving downward?
         if (ballY - BALL_RADIUS <= floorSurface && (ballY - ballVY - BALL_RADIUS) >= floorSurface - 0.5) {
           if (fl.isFinish) {
-            // Won!
-            triggerModal("LEVEL CLEAR! 🏆", "Amazing run! Final Score: " + score);
+            triggerWin();
             return;
           }
 
-          // Calculate current angle of the tower beneath the ball
           let currentAngle = (-helixGroup.rotation.y) % (Math.PI * 2);
           if (currentAngle < 0) currentAngle += Math.PI * 2;
 
-          // Check if ball lands on a solid segment
           const hitSegment = fl.segments.find(seg => currentAngle >= seg.startAngle && currentAngle < seg.endAngle);
 
           if (hitSegment) {
-            if (hitSegment.isTrap) {
-              triggerModal("GAME OVER 💥", "You landed on a trap! Final Score: " + score);
+            if (isFireMode) {
+              // FIRE SMASH! Smashes right through the floor
+              triggerFloorBreak(fl);
+              isFireMode = false;
+              comboStreak = 0;
+              ball.material = ballNormalMat;
+              ballGlow.intensity = 0;
+              document.getElementById('fire-banner').classList.remove('active');
+            } else if (hitSegment.isTrap) {
+              triggerGameOver();
               return;
             } else {
-              // Bounce!
+              // Normal bounce resets streak
               ballY = floorSurface + BALL_RADIUS;
               ballVY = bounceForce;
+              comboStreak = 0;
+              isFireMode = false;
+              ball.material = ballNormalMat;
+              ballGlow.intensity = 0;
+              document.getElementById('fire-banner').classList.remove('active');
               addSplatter(fl.y);
               break;
             }
           }
         }
 
-        // Check if ball successfully fell below this floor without bouncing
+        // Crossed floor without bouncing
         if (!fl.passed && ballY < fl.y - 0.4) {
           fl.passed = true;
-          passedCount++;
-          score += 10;
-          document.getElementById('score-val').innerText = score;
-          document.getElementById('progress-fill').style.width = (passedCount / (TOTAL_FLOORS - 1)) * 100 + "%";
+          floorsPassed++;
+          comboStreak++;
 
-          // Lower camera smoothly to next floor
+          score += 10 * Math.max(1, comboStreak);
+          document.getElementById('score-val').innerText = score;
+          document.getElementById('progress-fill').style.width = (floorsPassed / (FLOORS_PER_LEVEL - 1)) * 100 + "%";
+
           cameraTargetY = fl.y - 3.5;
+
+          // 🔥 ACTIVATES FIRE EFFECT WHEN CROSSING 3 FLOORS CONTINUOUSLY 🔥
+          if (comboStreak >= 3 && !isFireMode) {
+            isFireMode = true;
+            ball.material = ballFireMat;
+            ballGlow.intensity = 2;
+            document.getElementById('fire-banner').classList.add('active');
+          }
         }
       }
 
-      // Smooth camera follow without shaking or dropping off screen
+      // Smooth camera follow
       camera.position.y += (cameraTargetY - camera.position.y) * 0.08;
       camera.lookAt(0, camera.position.y - 2.8, 0);
+
+      updateFireParticles();
     }
 
-    function triggerModal(title, desc) {
+    // --- GAME ACTIONS & MODALS ---
+    function triggerGameOver() {
       isGameOver = true;
-      document.getElementById('modal-title').innerText = title;
-      document.getElementById('modal-desc').innerText = desc;
-      document.getElementById('modal').style.display = 'flex';
+      isWin = false;
+      document.getElementById('modal-title').innerText = "GAME OVER 💥";
+      document.getElementById('modal-desc').innerText = "Landed on a trap! Final Score: " + score;
+      document.getElementById('modal-btn').innerText = "RESTART LEVEL " + currentLevel;
+      document.getElementById('modal').style.display = "flex";
     }
 
-    window.restartGame = function() {
+    function triggerWin() {
+      isGameOver = true;
+      isWin = true;
+      if (currentLevel < MAX_LEVELS) {
+        document.getElementById('modal-title').innerText = "LEVEL " + currentLevel + " CLEAR! 🏆";
+        document.getElementById('modal-desc').innerText = "Great job! Score: " + score;
+        document.getElementById('modal-btn').innerText = "PLAY LEVEL " + (currentLevel + 1) + " ➡";
+      } else {
+        document.getElementById('modal-title').innerText = "ALL 10 LEVELS COMPLETE! 👑";
+        document.getElementById('modal-desc').innerText = "You mastered Helix Jump 3D! Total Score: " + score;
+        document.getElementById('modal-btn').innerText = "START OVER 🔄";
+      }
+      document.getElementById('modal').style.display = "flex";
+    }
+
+    window.modalAction = function() {
+      document.getElementById('modal').style.display = "none";
+      if (isWin) {
+        if (currentLevel < MAX_LEVELS) {
+          currentLevel++;
+        } else {
+          currentLevel = 1;
+          score = 0;
+        }
+      }
+      resetLevelState();
+    };
+
+    function resetLevelState() {
       isGameOver = false;
-      score = 0;
-      passedCount = 0;
+      floorsPassed = 0;
+      comboStreak = 0;
+      isFireMode = false;
       ballY = 2;
       ballVY = 0;
       cameraTargetY = 4;
       camera.position.set(0, 4, 15);
       helixGroup.rotation.y = 0;
-      document.getElementById('score-val').innerText = '0';
-      document.getElementById('progress-fill').style.width = '0%';
-      document.getElementById('modal').style.display = 'none';
-      buildLevel();
-    };
+      ball.material = ballNormalMat;
+      ballGlow.intensity = 0;
+      document.getElementById('score-val').innerText = score;
+      document.getElementById('fire-banner').classList.remove('active');
+      buildLevel(currentLevel);
+    }
 
     window.addEventListener('resize', () => {
       camera.aspect = window.innerWidth / window.innerHeight;
@@ -487,8 +667,8 @@
       renderer.setSize(window.innerWidth, window.innerHeight);
     });
 
-    // Start
-    buildLevel();
+    // Start Level 1
+    buildLevel(currentLevel);
 
     function loop() {
       requestAnimationFrame(loop);
