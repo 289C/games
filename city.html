@@ -895,30 +895,45 @@
       ctx.clearRect(0, 0, screenW, screenH);
 
       if (isPlaying) {
+        // 1. Draw city ground, roads, sidewalks
         drawRealCityGround(camera.x, camera.y);
 
-        // Draw ground props (non-falling)
+        // 2. Draw ground objects that are NOT falling yet
         cityProps.filter(p => !p.isFalling).forEach(p => p.draw(camera.x, camera.y));
         vehicles.filter(v => !v.isFalling).forEach(v => v.draw(camera.x, camera.y));
         humans.filter(h => !h.isFalling).forEach(h => h.draw(camera.x, camera.y));
 
-        // Draw Black Holes
+        // 3. Draw black holes (outer ring & background)
         opponents.forEach(b => b.draw(camera.x, camera.y));
         player.draw(camera.x, camera.y);
 
-        // Draw tumbling/sinking props falling INTO the hole vortex
-        cityProps.filter(p => p.isFalling).forEach(p => p.draw(camera.x, camera.y));
-        vehicles.filter(v => v.isFalling).forEach(v => v.draw(camera.x, camera.y));
-        humans.filter(h => h.isFalling).forEach(h => h.draw(camera.x, camera.y));
+        // 4. Clip falling objects INSIDE the black hole boundary so they fall into the void
+        const allHoles = [player, ...opponents];
+        allHoles.forEach(hole => {
+          const sx = hole.x - camera.x;
+          const sy = hole.y - camera.y;
 
+          ctx.save();
+          // Create clipping mask matching the black hole opening
+          ctx.beginPath();
+          ctx.arc(sx, sy, hole.radius, 0, Math.PI * 2);
+          ctx.clip();
+
+          // Draw falling tumbling objects masked inside the hole
+          cityProps.filter(p => p.isFalling && p.targetHole === hole).forEach(p => p.draw(camera.x, camera.y));
+          vehicles.filter(v => v.isFalling && v.targetHole === hole).forEach(v => v.draw(camera.x, camera.y));
+          humans.filter(h => h.isFalling && h.targetHole === hole).forEach(h => h.draw(camera.x, camera.y));
+
+          ctx.restore();
+        });
+
+        // 5. Draw on-screen virtual joystick
         drawVirtualController();
       }
 
       requestAnimationFrame(render);
     }
 
-    setInterval(gameLoop, 1000 / 60);
-    requestAnimationFrame(render);
 
     function saveAndGetLeaderboard(name, score) {
       let list = JSON.parse(localStorage.getItem('hole_city_scores') || '[]');
