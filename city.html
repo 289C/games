@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Hole City 3D</title>
+  <title>HOLE.IO 2 - City</title>
   <style>
     * {
       box-sizing: border-box;
@@ -18,7 +18,7 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background-color: #0b0d17;
+      background-color: #7da06d;
       color: #fff;
       touch-action: none;
     }
@@ -29,23 +29,23 @@
       top: 0;
       left: 0;
       right: 0;
-      height: 60px;
-      background: rgba(14, 16, 28, 0.75);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
+      height: 54px;
+      background: rgba(14, 16, 24, 0.8);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0 16px;
+      padding: 0 14px;
       z-index: 100;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
     }
 
     .nav-btn, .insta-btn {
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       color: #ffffff;
-      padding: 8px 14px;
+      padding: 6px 12px;
       border-radius: 20px;
       text-decoration: none;
       font-size: 13px;
@@ -53,13 +53,7 @@
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      transition: all 0.2s ease;
-    }
-
-    .nav-btn:hover, .insta-btn:hover {
-      background: rgba(255, 255, 255, 0.2);
-      transform: translateY(-1px);
+      gap: 7px;
     }
 
     .insta-img {
@@ -73,83 +67,76 @@
     .status-badge {
       display: flex;
       align-items: center;
-      gap: 8px;
-      background: rgba(0, 0, 0, 0.45);
-      padding: 6px 14px;
-      border-radius: 14px;
+      gap: 7px;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 5px 12px;
+      border-radius: 12px;
       font-size: 11px;
-      letter-spacing: 1.5px;
+      letter-spacing: 1.2px;
       font-weight: 800;
-      border: 1px solid rgba(0, 255, 136, 0.2);
     }
 
     .online-indicator {
-      width: 9px;
-      height: 9px;
+      width: 8px;
+      height: 8px;
       background-color: #00ff88;
       border-radius: 50%;
-      box-shadow: 0 0 10px #00ff88;
-      animation: radarPulse 1.6s infinite ease-in-out;
+      box-shadow: 0 0 8px #00ff88;
+      animation: pulse 1.6s infinite;
     }
 
-    @keyframes radarPulse {
-      0% { transform: scale(0.9); opacity: 0.6; box-shadow: 0 0 4px #00ff88; }
-      50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 12px #00ff88; }
-      100% { transform: scale(0.9); opacity: 0.6; box-shadow: 0 0 4px #00ff88; }
+    @keyframes pulse {
+      0% { transform: scale(0.9); opacity: 0.7; }
+      50% { transform: scale(1.3); opacity: 1; }
+      100% { transform: scale(0.9); opacity: 0.7; }
     }
 
-    /* Live HUD */
+    /* Live HUD matching Screenshots */
     .hud-container {
       position: absolute;
-      top: 72px;
+      top: 64px;
       left: 0;
       right: 0;
       display: flex;
       justify-content: space-between;
-      padding: 0 20px;
+      padding: 0 16px;
       z-index: 50;
       pointer-events: none;
     }
 
-    .hud-box {
-      background: rgba(14, 16, 28, 0.7);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      padding: 6px 16px;
-      border-radius: 14px;
+    .hud-col {
       text-align: center;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
     }
 
-    .hud-label {
-      font-size: 10px;
-      color: #94a3b8;
-      letter-spacing: 1.2px;
+    .hud-lbl {
+      font-size: 11px;
+      font-weight: 700;
+      color: #cbd5e1;
+      letter-spacing: 1px;
     }
 
-    .hud-val {
-      font-size: 22px;
+    .hud-num {
+      font-size: 26px;
       font-weight: 900;
-      color: #fff;
+      color: #ffffff;
     }
 
     #gameCanvas {
       width: 100vw;
       height: 100vh;
       display: block;
-      background: #141724;
     }
 
-    /* Screen Overlays */
+    /* Modals & Screens */
     .screen-overlay {
       position: absolute;
       inset: 0;
       display: flex;
       justify-content: center;
       align-items: center;
-      background: rgba(8, 10, 20, 0.86);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      background: rgba(10, 12, 18, 0.88);
+      backdrop-filter: blur(8px);
       z-index: 200;
     }
 
@@ -157,250 +144,99 @@
       display: none !important;
     }
 
-    .glass-panel {
+    .card {
       width: 90%;
-      max-width: 420px;
-      background: rgba(23, 26, 45, 0.85);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 28px;
-      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.8);
-      padding: 28px 22px;
+      max-width: 400px;
+      background: #181926;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 24px;
+      padding: 26px 20px;
       text-align: center;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7);
     }
 
-    .badge-online-glow {
-      display: inline-block;
-      font-size: 10px;
-      font-weight: 800;
-      color: #a855f7;
-      letter-spacing: 2px;
-      background: rgba(168, 85, 247, 0.12);
-      padding: 4px 10px;
-      border-radius: 20px;
-      margin-bottom: 8px;
-    }
-
-    .game-title {
-      font-size: 36px;
+    .title {
+      font-size: 32px;
       font-weight: 900;
       letter-spacing: 2px;
-      background: linear-gradient(135deg, #c084fc, #6366f1, #38bdf8);
+      background: linear-gradient(135deg, #c084fc, #a855f7);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-    }
-
-    .game-subtitle {
-      color: #94a3b8;
-      font-size: 13px;
-      margin: 6px 0 20px;
-    }
-
-    .input-group {
-      margin-bottom: 16px;
-      text-align: left;
-    }
-
-    .input-group label {
-      font-size: 11px;
-      color: #94a3b8;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-    }
-
-    .input-group input, .join-box input {
-      width: 100%;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      padding: 12px 14px;
-      border-radius: 14px;
-      color: #fff;
-      font-size: 15px;
-      margin-top: 5px;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-
-    .input-group input:focus, .join-box input:focus {
-      border-color: #8b5cf6;
-    }
-
-    .button-stack {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-bottom: 14px;
+      margin-bottom: 6px;
     }
 
     .btn {
-      padding: 14px 20px;
-      border-radius: 14px;
+      width: 100%;
+      padding: 13px;
+      border-radius: 12px;
+      border: none;
       font-size: 15px;
       font-weight: 800;
       cursor: pointer;
-      border: none;
-      transition: transform 0.15s ease;
+      margin-top: 10px;
     }
 
-    .btn:active {
-      transform: scale(0.97);
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, #9333ea, #6366f1);
-      color: #fff;
-      box-shadow: 0 6px 20px rgba(124, 58, 237, 0.45);
-    }
-
-    .btn-secondary {
-      background: rgba(255, 255, 255, 0.08);
-      color: #fff;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .join-box {
-      display: flex;
-      gap: 8px;
-      margin-top: 8px;
-    }
-
-    .btn-accent {
-      background: #2563eb;
+    .btn-purple {
+      background: #8b5cf6;
       color: #fff;
     }
 
-    .room-display {
-      margin-top: 16px;
+    .btn-gray {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    .input-box {
+      width: 100%;
       padding: 12px;
-      background: rgba(147, 51, 234, 0.15);
-      border: 1px solid rgba(147, 51, 234, 0.3);
-      border-radius: 14px;
-      font-size: 13px;
-    }
-
-    .room-display strong {
-      display: block;
-      font-size: 24px;
-      color: #d8b4fe;
-      letter-spacing: 4px;
-      margin: 4px 0;
-    }
-
-    .room-display small {
-      color: #94a3b8;
-      font-size: 11px;
-    }
-
-    /* Leaderboard */
-    .finish-title {
-      font-size: 28px;
-      font-weight: 900;
-      letter-spacing: 1.5px;
-    }
-
-    .final-stats {
-      display: flex;
-      justify-content: space-around;
-      margin: 16px 0 20px;
-      gap: 12px;
-    }
-
-    .score-chip {
-      flex: 1;
       background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 10px;
-      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      color: #fff;
+      font-size: 15px;
+      margin: 10px 0;
+      outline: none;
+      text-align: center;
     }
 
-    .chip-label {
-      display: block;
-      font-size: 10px;
-      color: #94a3b8;
-      letter-spacing: 1px;
-    }
-
-    .final-score-num {
-      font-size: 26px;
-      font-weight: 900;
-      color: #38bdf8;
-    }
-
-    .final-size-num {
-      font-size: 22px;
-      font-weight: 900;
-      color: #e2e8f0;
-    }
-
-    .leaderboard-section {
-      text-align: left;
-      margin-bottom: 20px;
-    }
-
-    .lb-header {
-      display: flex;
-      justify-content: space-between;
-      font-size: 11px;
-      font-weight: 700;
-      color: #94a3b8;
-      letter-spacing: 1px;
-      padding: 0 8px 6px;
-    }
-
-    .leaderboard-list {
-      max-height: 190px;
+    .leaderboard-box {
+      max-height: 180px;
       overflow-y: auto;
-      border-radius: 14px;
-      background: rgba(0, 0, 0, 0.35);
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 12px;
       padding: 6px 12px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      margin: 12px 0;
+      text-align: left;
     }
 
-    .lb-row {
+    .lb-item {
       display: flex;
       justify-content: space-between;
-      padding: 7px 4px;
-      font-size: 13.5px;
+      padding: 6px 0;
+      font-size: 14px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
 
-    .lb-row:last-child {
-      border-bottom: none;
-    }
-
-    .lb-row.active-user {
-      color: #38bdf8;
+    .lb-active {
+      color: #a855f7;
       font-weight: 800;
-      background: rgba(56, 189, 248, 0.12);
-      border-radius: 8px;
-      padding: 7px 8px;
     }
 
-    .lb-rank-badge {
-      font-weight: 800;
-      margin-right: 6px;
-      color: #facc15;
-    }
-
-    .floating-notifications {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      overflow: hidden;
-      z-index: 60;
-    }
-
-    .float-msg {
+    /* Floating Score Popups */
+    .float-fx {
       position: absolute;
       font-weight: 900;
-      font-size: 17px;
-      color: #38bdf8;
-      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9);
-      animation: swallowFloat 0.9s cubic-bezier(0.1, 0.8, 0.2, 1) forwards;
+      font-size: 20px;
+      color: #fbbf24;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
+      pointer-events: none;
+      animation: floatUp 0.8s ease-out forwards;
+      z-index: 80;
     }
 
-    @keyframes swallowFloat {
-      0% { opacity: 1; transform: translateY(0) scale(0.85); }
-      100% { opacity: 0; transform: translateY(-50px) scale(1.3); }
+    @keyframes floatUp {
+      0% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(-40px); }
     }
   </style>
 </head>
@@ -408,612 +244,834 @@
 
   <!-- Top Header Navigation -->
   <header class="top-nav">
-    <button id="backBtn" class="nav-btn" title="Back">&#128281; Back</button>
-    
+    <button id="backBtn" class="nav-btn">&#128281; Back</button>
     <div class="status-badge">
       <span class="online-indicator"></span>
-      <span id="roomStatus">ONLINE</span>
+      <span>ONLINE</span>
     </div>
-
-    <!-- Instagram Link with Profile Handle & Logo -->
-    <a id="instaLink" href="https://www.instagram.com/_satish_official_16?stkn=MTNzNXZ2cWpkdmRtNA==" target="_blank" rel="noopener noreferrer" class="insta-btn">
+    <a href="https://www.instagram.com/_satish_official_16?stkn=MTNzNXZ2cWpkdmRtNA==" target="_blank" rel="noopener noreferrer" class="insta-btn">
       <img src="Insta.jpg" alt="Instagram" class="insta-img" onerror="this.style.display='none'" />
       <span>@_satish_official_16</span>
     </a>
   </header>
 
-  <!-- Live In-Game HUD -->
+  <!-- Live Top Score HUD (From Screenshot) -->
   <div id="gameHUD" class="hud-container hidden">
-    <div class="hud-box">
-      <div class="hud-label">SCORE</div>
-      <div id="hudScore" class="hud-val">0</div>
+    <div class="hud-col">
+      <div class="hud-lbl">SCORE</div>
+      <div id="hudScore" class="hud-num">0</div>
     </div>
-    <div class="hud-box">
-      <div class="hud-label">TIME</div>
-      <div id="hudTime" class="hud-val">60</div>
+    <div class="hud-col">
+      <div class="hud-lbl">TIME</div>
+      <div id="hudTime" class="hud-num">120</div>
     </div>
-    <div class="hud-box">
-      <div class="hud-label">HOLE SIZE</div>
-      <div id="hudSize" class="hud-val">2.0m</div>
+    <div class="hud-col">
+      <div class="hud-lbl">SIZE</div>
+      <div id="hudSize" class="hud-num">2.4m</div>
     </div>
   </div>
 
-  <!-- Game Surface Canvas -->
   <canvas id="gameCanvas"></canvas>
+  <div id="fxLayer"></div>
 
-  <!-- Start Menu & Room Lobby -->
+  <!-- Start Menu -->
   <div id="lobbyScreen" class="screen-overlay">
-    <div class="menu-card glass-panel">
-      <div class="badge-online-glow">LIVE MULTIPLAYER</div>
-      <h1 class="game-title">HOLE CITY</h1>
-      <p class="game-subtitle">Devour the city. Swallow buildings, cars, and opponents!</p>
-
-      <div class="input-group">
-        <label for="playerName">Player Nickname</label>
-        <input type="text" id="playerName" maxlength="12" value="Player" placeholder="Enter your name" />
-      </div>
-
-      <div class="button-stack">
-        <button id="btnSolo" class="btn btn-primary">Play Solo (vs AI Bots)</button>
-        <button id="btnCreateRoom" class="btn btn-secondary">Generate Room Code</button>
-      </div>
-
-      <div class="join-box">
-        <input type="text" id="roomCodeInput" placeholder="6-DIGIT CODE" maxlength="6" />
-        <button id="btnJoinRoom" class="btn btn-accent">Join Room</button>
-      </div>
-
-      <div id="roomCodeDisplay" class="room-display hidden">
-        <span>Invite Code for Friends:</span>
-        <strong id="generatedCode"></strong>
-        <small>Match starting...</small>
-      </div>
-    </div>
-  </div>
-
-  <!-- Game Over Screen & Leaderboard (Top 10 & Top 10+) -->
-  <div id="gameOverScreen" class="screen-overlay hidden">
-    <div class="menu-card glass-panel">
-      <h2 class="finish-title">MATCH FINISHED</h2>
+    <div class="card">
+      <h1 class="title">HOLE.IO 2</h1>
+      <p style="color: #94a3b8; font-size: 13px; margin-bottom: 12px;">Swallow the entire city and grow!</p>
       
-      <div class="final-stats">
-        <div class="score-chip">
-          <span class="chip-label">FINAL SCORE</span>
-          <span class="final-score-num" id="endScore">0</span>
-        </div>
-        <div class="score-chip">
-          <span class="chip-label">FINAL SIZE</span>
-          <span class="final-size-num" id="endSize">2.0m</span>
-        </div>
+      <input type="text" id="playerName" class="input-box" value="Player" maxlength="12" placeholder="Your Name" />
+      
+      <button id="btnSolo" class="btn btn-purple">Play Solo (vs Bots)</button>
+      <button id="btnRoom" class="btn btn-gray">Generate Room Code</button>
+      
+      <div id="roomCodeDisplay" style="margin-top: 10px; font-size: 14px; color:#d8b4fe;" class="hidden">
+        Room Code: <strong id="generatedCode" style="font-size: 20px; letter-spacing: 2px;"></strong>
       </div>
-
-      <div class="leaderboard-section">
-        <div class="lb-header">
-          <span>RANK &amp; PLAYER</span>
-          <span>SCORE</span>
-        </div>
-        <div id="leaderboardList" class="leaderboard-list"></div>
-      </div>
-
-      <button id="btnRestart" class="btn btn-primary">Play Again</button>
     </div>
   </div>
 
-  <!-- Floating Text Layer -->
-  <div id="notificationLayer" class="floating-notifications"></div>
+  <!-- Game Over Screen -->
+  <div id="gameOverScreen" class="screen-overlay hidden">
+    <div class="card">
+      <h2 style="font-size: 26px; font-weight: 900; margin-bottom: 6px;">TIME'S UP</h2>
+      <div style="font-size: 38px; font-weight: 900; color: #a855f7;" id="endScore">0</div>
+      <div style="font-size: 14px; color: #94a3b8; margin-bottom: 12px;" id="endSize">Hole size: 20.0m</div>
 
-  <!-- Game Engine Code -->
+      <div class="leaderboard-box" id="leaderboardList"></div>
+
+      <button id="btnRestart" class="btn btn-purple">Play Again</button>
+    </div>
+  </div>
+
   <script>
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
 
-    let screenWidth = (canvas.width = window.innerWidth);
-    let screenHeight = (canvas.height = window.innerHeight);
+    let screenW = canvas.width = window.innerWidth;
+    let screenH = canvas.height = window.innerHeight;
 
     window.addEventListener('resize', () => {
-      screenWidth = canvas.width = window.innerWidth;
-      screenHeight = canvas.height = window.innerHeight;
+      screenW = canvas.width = window.innerWidth;
+      screenH = canvas.height = window.innerHeight;
     });
 
-    const WORLD_SIZE = 3600;
-    let gameTimer = 60;
-    let timerInterval = null;
+    const BLOCK_SIZE = 340;     // City square block size
+    const ROAD_WIDTH = 130;     // Road width
+    const WORLD_COLS = 12;
+    const WORLD_ROWS = 12;
+    const WORLD_W = WORLD_COLS * (BLOCK_SIZE + ROAD_WIDTH);
+    const WORLD_H = WORLD_ROWS * (BLOCK_SIZE + ROAD_WIDTH);
+
     let isPlaying = false;
-    let gameMode = 'solo';
+    let matchTime = 120;
+    let timerInterval = null;
 
     let player;
     let opponents = [];
+    let vehicles = [];
+    let humans = [];
     let cityProps = [];
+
     let camera = { x: 0, y: 0 };
-    let inputPos = { x: screenWidth / 2, y: screenHeight / 2 };
+    let joystick = {
+      active: false,
+      baseX: 0,
+      baseY: 0,
+      stickX: 0,
+      stickY: 0,
+      dirX: 0,
+      dirY: 0
+    };
 
-    const lobbyScreen = document.getElementById('lobbyScreen');
-    const gameOverScreen = document.getElementById('gameOverScreen');
-    const gameHUD = document.getElementById('gameHUD');
-    const hudScore = document.getElementById('hudScore');
-    const hudTime = document.getElementById('hudTime');
-    const hudSize = document.getElementById('hudSize');
-    const endScore = document.getElementById('endScore');
-    const endSize = document.getElementById('endSize');
-    const leaderboardList = document.getElementById('leaderboardList');
-    const roomCodeDisplay = document.getElementById('roomCodeDisplay');
-    const generatedCode = document.getElementById('generatedCode');
-    const notificationLayer = document.getElementById('notificationLayer');
-
-    document.getElementById('backBtn').addEventListener('click', () => {
-      if (isPlaying) {
-        if (confirm('Leave match and return to menu?')) {
-          endGame();
-          lobbyScreen.classList.remove('hidden');
-          gameOverScreen.classList.add('hidden');
-          gameHUD.classList.add('hidden');
-        }
-      } else {
-        if (window.history.length > 1) {
-          window.history.back();
-        } else {
-          window.location.href = 'index.html';
-        }
+    /* Controls: Touch & Mouse Virtual Controller Joystick */
+    function setJoyInput(clientX, clientY) {
+      if (!joystick.active) {
+        joystick.active = true;
+        joystick.baseX = clientX;
+        joystick.baseY = clientY;
       }
+      const dx = clientX - joystick.baseX;
+      const dy = clientY - joystick.baseY;
+      const dist = Math.hypot(dx, dy);
+      const maxR = 48;
+
+      if (dist > maxR) {
+        joystick.stickX = joystick.baseX + (dx / dist) * maxR;
+        joystick.stickY = joystick.baseY + (dy / dist) * maxR;
+      } else {
+        joystick.stickX = clientX;
+        joystick.stickY = clientY;
+      }
+
+      if (dist > 5) {
+        joystick.dirX = dx / dist;
+        joystick.dirY = dy / dist;
+      } else {
+        joystick.dirX = 0;
+        joystick.dirY = 0;
+      }
+    }
+
+    window.addEventListener('touchstart', e => {
+      if (e.touches.length > 0) setJoyInput(e.touches[0].clientX, e.touches[0].clientY);
+    });
+    window.addEventListener('touchmove', e => {
+      if (e.touches.length > 0) setJoyInput(e.touches[0].clientX, e.touches[0].clientY);
+    });
+    window.addEventListener('touchend', () => {
+      joystick.active = false;
+      joystick.dirX = 0;
+      joystick.dirY = 0;
     });
 
-    /* Leaderboard Storage */
-    const LEADERBOARD_KEY = 'city_hole_top10_records';
+    window.addEventListener('mousedown', e => setJoyInput(e.clientX, e.clientY));
+    window.addEventListener('mousemove', e => { if (joystick.active) setJoyInput(e.clientX, e.clientY); });
+    window.addEventListener('mouseup', () => {
+      joystick.active = false;
+      joystick.dirX = 0;
+      joystick.dirY = 0;
+    });
 
-    function getStoredScores() {
-      const data = localStorage.getItem(LEADERBOARD_KEY);
-      if (!data) {
-        return [
-          { name: 'NexusSwallow', score: 18400 },
-          { name: 'DarkHorizon', score: 16100 },
-          { name: 'VoidWalker', score: 14750 },
-          { name: 'CityCrusher', score: 13300 },
-          { name: 'BlackOrb_X', score: 11900 },
-          { name: 'AbyssPrime', score: 10400 },
-          { name: 'MegaGravity', score: 9200 },
-          { name: 'CosmoEater', score: 8100 },
-          { name: 'MetroTitan', score: 7050 },
-          { name: 'Quasar99', score: 6200 }
-        ];
-      }
-      return JSON.parse(data);
-    }
-
-    function recordScore(playerName, finalScore) {
-      let list = getStoredScores();
-      list.push({ name: playerName, score: finalScore });
-      list.sort((a, b) => b.score - a.score);
-
-      const rank = list.findIndex(e => e.name === playerName && e.score === finalScore) + 1;
-      const top10 = list.slice(0, 10);
-      localStorage.setItem(LEADERBOARD_KEY, JSON.stringify(top10));
-
-      return { rank, top10 };
-    }
-
-    function displayLeaderboard(playerName, finalScore) {
-      const { rank, top10 } = recordScore(playerName, finalScore);
-      leaderboardList.innerHTML = '';
-
-      top10.forEach((item, index) => {
-        const isCurrent = item.name === playerName && item.score === finalScore;
-        const row = document.createElement('div');
-        row.className = `lb-row ${isCurrent ? 'active-user' : ''}`;
-        row.innerHTML = `
-          <span><span class="lb-rank-badge">#${index + 1}</span> ${item.name}</span>
-          <span>${item.score.toLocaleString()}</span>
-        `;
-        leaderboardList.appendChild(row);
-      });
-
-      if (rank > 10) {
-        const overflowRow = document.createElement('div');
-        overflowRow.className = 'lb-row active-user';
-        overflowRow.innerHTML = `
-          <span><span class="lb-rank-badge">#Top 10+</span> (${rank}) ${playerName}</span>
-          <span>${finalScore.toLocaleString()}</span>
-        `;
-        leaderboardList.appendChild(overflowRow);
-      }
-    }
-
-    /* Hole Entities */
+    /* Black Hole Class */
     class BlackHole {
-      constructor(x, y, radius, themeColor, name, isBot = false) {
+      constructor(x, y, radius, color, name, isBot = false) {
         this.x = x;
         this.y = y;
         this.radius = radius;
         this.targetRadius = radius;
-        this.themeColor = themeColor;
+        this.color = color;
         this.name = name;
         this.isBot = isBot;
         this.score = 0;
-        this.speed = 3.8;
+        this.speed = 3.6;
         this.targetX = x;
         this.targetY = y;
-        this.pulse = Math.random() * Math.PI;
       }
 
       update() {
-        this.radius += (this.targetRadius - this.radius) * 0.12;
-        this.pulse += 0.06;
-        this.speed = Math.max(1.8, 4.0 - this.radius / 140);
+        this.radius += (this.targetRadius - this.radius) * 0.1;
+        this.speed = Math.max(1.9, 4.0 - this.radius / 150);
 
         if (this.isBot) {
-          const distToTarget = Math.hypot(this.targetX - this.x, this.targetY - this.y);
-          if (distToTarget < 60 || Math.random() < 0.02) {
-            this.targetX = Math.max(150, Math.min(WORLD_SIZE - 150, this.x + (Math.random() - 0.5) * 800));
-            this.targetY = Math.max(150, Math.min(WORLD_SIZE - 150, this.y + (Math.random() - 0.5) * 800));
+          if (Math.hypot(this.targetX - this.x, this.targetY - this.y) < 50 || Math.random() < 0.02) {
+            this.targetX = Math.max(200, Math.min(WORLD_W - 200, this.x + (Math.random() - 0.5) * 800));
+            this.targetY = Math.max(200, Math.min(WORLD_H - 200, this.y + (Math.random() - 0.5) * 800));
           }
           const angle = Math.atan2(this.targetY - this.y, this.targetX - this.x);
-          this.x += Math.cos(angle) * (this.speed * 0.78);
-          this.y += Math.sin(angle) * (this.speed * 0.78);
+          this.x += Math.cos(angle) * (this.speed * 0.75);
+          this.y += Math.sin(angle) * (this.speed * 0.75);
         } else {
-          const dx = inputPos.x + camera.x - this.x;
-          const dy = inputPos.y + camera.y - this.y;
-          const dist = Math.hypot(dx, dy);
-
-          if (dist > 12) {
-            this.x += (dx / dist) * this.speed;
-            this.y += (dy / dist) * this.speed;
+          if (joystick.dirX !== 0 || joystick.dirY !== 0) {
+            this.x += joystick.dirX * this.speed;
+            this.y += joystick.dirY * this.speed;
           }
         }
 
-        this.x = Math.max(this.radius, Math.min(WORLD_SIZE - this.radius, this.x));
-        this.y = Math.max(this.radius, Math.min(WORLD_SIZE - this.radius, this.y));
+        this.x = Math.max(this.radius, Math.min(WORLD_W - this.radius, this.x));
+        this.y = Math.max(this.radius, Math.min(WORLD_H - this.radius, this.y));
       }
 
       draw(camX, camY) {
         const sx = this.x - camX;
         const sy = this.y - camY;
-        const glow = Math.sin(this.pulse) * 4;
 
         ctx.save();
+        // Concentric outer magenta/purple glow
         ctx.beginPath();
-        ctx.arc(sx, sy, this.radius + 6 + glow, 0, Math.PI * 2);
-        ctx.fillStyle = this.themeColor + '38';
+        ctx.arc(sx, sy, this.radius + 6, 0, Math.PI * 2);
+        ctx.fillStyle = '#c026d3';
         ctx.fill();
 
+        // Dark concentric ring
         ctx.beginPath();
         ctx.arc(sx, sy, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = '#05060b';
+        ctx.fillStyle = '#260d36';
         ctx.fill();
-        ctx.lineWidth = 4;
-        ctx.strokeStyle = this.themeColor;
-        ctx.stroke();
 
+        // Segmented inner vortex pattern
         ctx.beginPath();
-        ctx.arc(sx, sy, this.radius * 0.85, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(0,0,0,0.5)';
+        ctx.arc(sx, sy, this.radius * 0.72, 0, Math.PI * 2);
+        ctx.fillStyle = '#170724';
         ctx.fill();
 
-        ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 12px -apple-system, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText(this.name, sx, sy - this.radius - 9);
+        // Void deep center
+        ctx.beginPath();
+        ctx.arc(sx, sy, this.radius * 0.48, 0, Math.PI * 2);
+        ctx.fillStyle = '#050209';
+        ctx.fill();
+
         ctx.restore();
       }
     }
 
-    /* City Props */
-    class CityProp {
-      constructor(x, y, kind) {
+    /* Vehicles: Real Running Cars & Buses */
+    class Vehicle {
+      constructor(type) {
+        this.type = type; // 'car' or 'bus'
+        this.isFalling = false;
+        this.fall = 1.0;
+        this.init();
+      }
+
+      init() {
+        this.isFalling = false;
+        this.fall = 1.0;
+        this.horizontal = Math.random() < 0.5;
+
+        if (this.type === 'bus') {
+          this.w = 70;
+          this.h = 24;
+          this.color = '#eab308'; // Yellow bus
+          this.reqRadius = 46;
+          this.points = 120;
+          this.speed = (Math.random() * 0.8 + 1.2) * (Math.random() < 0.5 ? 1 : -1);
+        } else {
+          this.w = 34;
+          this.h = 18;
+          const colors = ['#ef4444', '#3b82f6', '#10b981', '#f97316'];
+          this.color = colors[Math.floor(Math.random() * colors.length)];
+          this.reqRadius = 30;
+          this.points = 50;
+          this.speed = (Math.random() * 1.2 + 1.8) * (Math.random() < 0.5 ? 1 : -1);
+        }
+
+        if (this.horizontal) {
+          const row = Math.floor(Math.random() * WORLD_ROWS);
+          this.y = row * (BLOCK_SIZE + ROAD_WIDTH) + BLOCK_SIZE + ROAD_WIDTH / 2;
+          this.x = Math.random() * WORLD_W;
+        } else {
+          const col = Math.floor(Math.random() * WORLD_COLS);
+          this.x = col * (BLOCK_SIZE + ROAD_WIDTH) + BLOCK_SIZE + ROAD_WIDTH / 2;
+          this.y = Math.random() * WORLD_H;
+          // swap width/height for vertical driving
+          const temp = this.w;
+          this.w = this.h;
+          this.h = temp;
+        }
+      }
+
+      update() {
+        if (this.isFalling) {
+          this.fall -= 0.08;
+          return;
+        }
+
+        if (this.horizontal) {
+          this.x += this.speed;
+          if (this.x < 0) this.x = WORLD_W;
+          if (this.x > WORLD_W) this.x = 0;
+        } else {
+          this.y += this.speed;
+          if (this.y < 0) this.y = WORLD_H;
+          if (this.y > WORLD_H) this.y = 0;
+        }
+      }
+
+      draw(camX, camY) {
+        const sx = this.x - camX;
+        const sy = this.y - camY;
+
+        ctx.save();
+        ctx.translate(sx, sy);
+        if (this.isFalling) ctx.scale(this.fall, this.fall);
+
+        // Vehicle shadow
+        ctx.fillStyle = 'rgba(0,0,0,0.28)';
+        ctx.fillRect(-this.w / 2 + 3, -this.h / 2 + 3, this.w, this.h);
+
+        // Vehicle body
+        ctx.fillStyle = this.color;
+        ctx.fillRect(-this.w / 2, -this.h / 2, this.w, this.h);
+
+        // Windows
+        ctx.fillStyle = '#bae6fd';
+        if (this.w > this.h) {
+          ctx.fillRect(-this.w / 2 + 4, -this.h / 2 + 3, this.w - 8, this.h - 6);
+        } else {
+          ctx.fillRect(-this.w / 2 + 3, -this.h / 2 + 4, this.w - 6, this.h - 8);
+        }
+        ctx.restore();
+      }
+    }
+
+    /* Humans / Pedestrians */
+    class Human {
+      constructor() {
+        this.x = Math.random() * WORLD_W;
+        this.y = Math.random() * WORLD_H;
+        this.radius = 6;
+        this.reqRadius = 14;
+        this.points = 15;
+        this.color = Math.random() < 0.5 ? '#f43f5e' : '#06b6d4';
+        this.speed = 0.7;
+        this.angle = Math.random() * Math.PI * 2;
+        this.isFalling = false;
+        this.fall = 1.0;
+      }
+
+      update() {
+        if (this.isFalling) {
+          this.fall -= 0.1;
+          return;
+        }
+        this.x += Math.cos(this.angle) * this.speed;
+        this.y += Math.sin(this.angle) * this.speed;
+        if (Math.random() < 0.02) this.angle = Math.random() * Math.PI * 2;
+      }
+
+      draw(camX, camY) {
+        const sx = this.x - camX;
+        const sy = this.y - camY;
+        ctx.save();
+        ctx.translate(sx, sy);
+        if (this.isFalling) ctx.scale(this.fall, this.fall);
+
+        ctx.beginPath();
+        ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    /* Static City Buildings & Trees */
+    class CityBuilding {
+      constructor(x, y, w, h, isTree = false) {
         this.x = x;
         this.y = y;
-        this.kind = kind;
+        this.w = w;
+        this.h = h;
+        this.isTree = isTree;
         this.isFalling = false;
-        this.fallProgress = 1.0;
+        this.fall = 1.0;
 
-        switch (kind) {
-          case 'cone':
-            this.radius = 12;
-            this.reqHoleRadius = 16;
-            this.points = 10;
-            this.color = '#f97316';
-            break;
-          case 'tree':
-            this.radius = 20;
-            this.reqHoleRadius = 28;
-            this.points = 35;
-            this.color = '#10b981';
-            break;
-          case 'car':
-            this.radius = 34;
-            this.reqHoleRadius = 45;
-            this.points = 110;
-            this.color = '#ef4444';
-            break;
-          case 'building':
-            this.radius = 75;
-        this.reqHoleRadius = 90;
-        this.points = 400;
-        this.color = '#6366f1';
-        break;
-    }
-  }
-
-  draw(camX, camY) {
-    const sx = this.x - camX;
-    const sy = this.y - camY;
-
-    ctx.save();
-    ctx.translate(sx, sy);
-
-    if (this.isFalling) {
-      ctx.scale(this.fallProgress, this.fallProgress);
-      this.fallProgress -= 0.08;
-    }
-
-    if (this.kind === 'building') {
-      const w = this.radius * 1.5;
-      const h = this.radius * 1.5;
-      const depth = 28;
-
-      ctx.fillStyle = 'rgba(0,0,0,0.25)';
-      ctx.fillRect(-w / 2 + 8, -h / 2 + 8, w, h);
-
-      ctx.fillStyle = '#312e81';
-      ctx.fillRect(-w / 2, -h / 2 - depth, w, h);
-
-      ctx.fillStyle = '#4f46e5';
-      ctx.fillRect(-w / 2, -h / 2 - depth, w, 20);
-
-      ctx.fillStyle = '#fef08a';
-      for (let r = 0; r < 3; r++) {
-        for (let c = 0; c < 3; c++) {
-          ctx.fillRect(-w / 2 + 12 + c * 24, -h / 2 - depth + 28 + r * 18, 12, 10);
+        if (isTree) {
+          this.radius = 16;
+          this.reqRadius = 24;
+          this.points = 25;
+        } else {
+          this.radius = Math.max(w, h) / 2;
+          this.reqRadius = this.radius * 0.95;
+          this.points = 350;
         }
       }
-    } else if (this.kind === 'car') {
-      ctx.fillStyle = 'rgba(0,0,0,0.3)';
-      ctx.fillRect(-22, -12, 44, 24);
 
-      ctx.fillStyle = this.color;
-      ctx.beginPath();
-      ctx.roundRect(-20, -14, 40, 26, 6);
-      ctx.fill();
+      draw(camX, camY) {
+        const sx = this.x - camX;
+        const sy = this.y - camY;
 
-      ctx.fillStyle = '#93c5fd';
-      ctx.fillRect(-8, -10, 16, 18);
-    } else if (this.kind === 'tree') {
-      ctx.fillStyle = 'rgba(0,0,0,0.2)';
-      ctx.beginPath();
-      ctx.arc(4, 4, this.radius, 0, Math.PI * 2);
-      ctx.fill();
+        ctx.save();
+        ctx.translate(sx, sy);
+        if (this.isFalling) ctx.scale(this.fall, this.fall);
 
-      ctx.fillStyle = '#059669';
-      ctx.beginPath();
-      ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
-      ctx.fill();
+        if (this.isTree) {
+          // Tree foliage & trunk
+          ctx.fillStyle = 'rgba(0,0,0,0.2)';
+          ctx.beginPath();
+          ctx.arc(2, 2, 14, 0, Math.PI * 2);
+          ctx.fill();
 
-      ctx.fillStyle = '#34d399';
-      ctx.beginPath();
-      ctx.arc(-4, -4, this.radius * 0.55, 0, Math.PI * 2);
-      ctx.fill();
-    } else {
-      ctx.fillStyle = this.color;
-      ctx.beginPath();
-      ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
-      ctx.fill();
+          ctx.fillStyle = '#22c55e';
+          ctx.beginPath();
+          ctx.arc(0, 0, 14, 0, Math.PI * 2);
+          ctx.fill();
+        } else {
+          // Skyscraper building with lit grid windows
+          ctx.fillStyle = 'rgba(0,0,0,0.25)';
+          ctx.fillRect(-this.w / 2 + 6, -this.h / 2 + 6, this.w, this.h);
+
+          ctx.fillStyle = '#64748b';
+          ctx.fillRect(-this.w / 2, -this.h / 2, this.w, this.h);
+
+          ctx.fillStyle = '#94a3b8';
+          ctx.fillRect(-this.w / 2, -this.h / 2, this.w, 14);
+
+          // Windows grid
+          ctx.fillStyle = '#fef08a';
+          for (let row = 18; row < this.h - 8; row += 16) {
+            for (let col = 8; col < this.w - 8; col += 14) {
+              ctx.fillRect(-this.w / 2 + col, -this.h / 2 + row, 8, 8);
+            }
+          }
+        }
+        ctx.restore();
+      }
     }
 
-    ctx.restore();
-  }
-}
+    /* City Generation */
+    function buildCity() {
+      cityProps = [];
+      vehicles = [];
+      humans = [];
 
-function populateCity() {
-  cityProps = [];
-  const kinds = ['cone', 'tree', 'car', 'building'];
-  for (let i = 0; i < 480; i++) {
-    const kind = kinds[Math.floor(Math.random() * kinds.length)];
-    const x = Math.random() * (WORLD_SIZE - 200) + 100;
-    const y = Math.random() * (WORLD_SIZE - 200) + 100;
-    cityProps.push(new CityProp(x, y, kind));
-  }
-}
+      for (let r = 0; r < WORLD_ROWS; r++) {
+        for (let c = 0; c < WORLD_COLS; c++) {
+          const bx = c * (BLOCK_SIZE + ROAD_WIDTH) + BLOCK_SIZE / 2;
+          const by = r * (BLOCK_SIZE + ROAD_WIDTH) + BLOCK_SIZE / 2;
 
-function spawnOpponents() {
-  opponents = [];
-  const roster = [
-    { name: 'ShadowOrbit', color: '#ef4444' },
-    { name: 'ApexSwallow', color: '#10b981' },
-    { name: 'TitanZone', color: '#eab308' },
-    { name: 'Vortex_99', color: '#ec4899' },
-    { name: 'DarkDrift', color: '#06b6d4' }
-  ];
+          // Building in center of block
+          cityProps.push(new CityBuilding(bx, by, 120, 100, false));
 
-  roster.forEach(item => {
-    const x = Math.random() * (WORLD_SIZE - 300) + 150;
-    const y = Math.random() * (WORLD_SIZE - 300) + 150;
-    opponents.push(new BlackHole(x, y, 22, item.color, item.name, true));
-  });
-}
-
-function spawnPointsPopup(x, y, text) {
-  const el = document.createElement('div');
-  el.className = 'float-msg';
-  el.textContent = text;
-  el.style.left = `${x}px`;
-  el.style.top = `${y}px`;
-  notificationLayer.appendChild(el);
-  setTimeout(() => el.remove(), 900);
-}
-
-window.addEventListener('mousemove', e => {
-  inputPos.x = e.clientX;
-  inputPos.y = e.clientY;
-});
-
-window.addEventListener('touchmove', e => {
-  if (e.touches.length > 0) {
-    inputPos.x = e.touches[0].clientX;
-    inputPos.y = e.touches[0].clientY;
-  }
-}, { passive: true });
-
-function updateLoop() {
-  if (!isPlaying) return;
-
-  player.update();
-  opponents.forEach(bot => bot.update());
-
-  camera.x += (player.x - screenWidth / 2 - camera.x) * 0.12;
-  camera.y += (player.y - screenHeight / 2 - camera.y) * 0.12;
-
-  const allHoles = [player, ...opponents];
-
-  for (let i = cityProps.length - 1; i >= 0; i--) {
-    const prop = cityProps[i];
-
-    if (prop.isFalling && prop.fallProgress <= 0) {
-      cityProps.splice(i, 1);
-      continue;
-    }
-
-    allHoles.forEach(hole => {
-      const dist = Math.hypot(hole.x - prop.x, hole.y - prop.y);
-      if (dist < hole.radius && hole.radius > prop.reqHoleRadius && !prop.isFalling) {
-        prop.isFalling = true;
-        hole.score += prop.points;
-        hole.targetRadius += prop.points * 0.045;
-
-        if (hole === player) {
-          spawnPointsPopup(prop.x - camera.x, prop.y - camera.y, `+${prop.points}`);
-          hudScore.textContent = player.score;
-          hudSize.textContent = (player.radius / 10).toFixed(1) + 'm';
+          // Trees around building lawn
+          cityProps.push(new CityBuilding(bx - 90, by - 90, 0, 0, true));
+          cityProps.push(new CityBuilding(bx + 90, by + 90, 0, 0, true));
         }
       }
+
+      // Spawn Cars & Buses
+      for (let i = 0; i < 45; i++) vehicles.push(new Vehicle('car'));
+      for (let i = 0; i < 18; i++) vehicles.push(new Vehicle('bus'));
+
+      // Spawn Pedestrians
+      for (let i = 0; i < 100; i++) humans.push(new Human());
+    }
+
+    function spawnBots() {
+      opponents = [];
+      const roster = ['Crimson', 'Emerald', 'Volt', 'Nova'];
+      const colors = ['#dc2626', '#16a34a', '#ca8a04', '#db2777'];
+
+      roster.forEach((name, i) => {
+        opponents.push(new BlackHole(
+          Math.random() * (WORLD_W - 400) + 200,
+          Math.random() * (WORLD_H - 400) + 200,
+          24,
+          colors[i],
+          name,
+          true
+        ));
+      });
+    }
+
+    /* Draw Exact Realistic City Map: Grass blocks, Sidewalks, Asphalt, Crosswalks */
+    function drawRealCityGround(camX, camY) {
+      // Grass backdrop
+      ctx.fillStyle = '#86a873';
+      ctx.fillRect(0, 0, screenW, screenH);
+
+              // Windows grid
+          ctx.fillStyle = '#fef08a';
+          for (let row = 18; row < this.h - 8; row += 16) {
+            for (let col = 8; col < this.w - 8; col += 14) {
+              ctx.fillRect(-this.w / 2 + col, -this.h / 2 + row, 8, 8);
+            }
+          }
+        }
+        ctx.restore();
+      }
+    }
+
+    /* City Generation */
+    function buildCity() {
+      cityProps = [];
+      vehicles = [];
+      humans = [];
+
+      for (let r = 0; r < WORLD_ROWS; r++) {
+        for (let c = 0; c < WORLD_COLS; c++) {
+          const bx = c * (BLOCK_SIZE + ROAD_WIDTH) + BLOCK_SIZE / 2;
+          const by = r * (BLOCK_SIZE + ROAD_WIDTH) + BLOCK_SIZE / 2;
+
+          // Building in center of block
+          cityProps.push(new CityBuilding(bx, by, 120, 100, false));
+
+          // Trees around building lawn
+          cityProps.push(new CityBuilding(bx - 90, by - 90, 0, 0, true));
+          cityProps.push(new CityBuilding(bx + 90, by + 90, 0, 0, true));
+        }
+      }
+
+      // Spawn Cars & Buses
+      for (let i = 0; i < 45; i++) vehicles.push(new Vehicle('car'));
+      for (let i = 0; i < 18; i++) vehicles.push(new Vehicle('bus'));
+
+      // Spawn Pedestrians
+      for (let i = 0; i < 100; i++) humans.push(new Human());
+    }
+
+    function spawnBots() {
+      opponents = [];
+      const roster = ['Crimson', 'Emerald', 'Volt', 'Nova'];
+      const colors = ['#dc2626', '#16a34a', '#ca8a04', '#db2777'];
+
+      roster.forEach((name, i) => {
+        opponents.push(new BlackHole(
+          Math.random() * (WORLD_W - 400) + 200,
+          Math.random() * (WORLD_H - 400) + 200,
+          24,
+          colors[i],
+          name,
+          true
+        ));
+      });
+    }
+
+    /* Draw Exact Realistic City Map: Grass blocks, Sidewalks, Asphalt, Crosswalks */
+    function drawRealCityGround(camX, camY) {
+      // Grass backdrop
+      ctx.fillStyle = '#86a873';
+      ctx.fillRect(0, 0, screenW, screenH);
+
+      const step = BLOCK_SIZE + ROAD_WIDTH;
+      const startCol = Math.floor(camX / step) - 1;
+      const endCol = Math.floor((camX + screenW) / step) + 1;
+      const startRow = Math.floor(camY / step) - 1;
+      const endRow = Math.floor((camY + screenH) / step) + 1;
+
+      for (let r = startRow; r <= endRow; r++) {
+        for (let c = startCol; c <= endCol; c++) {
+          const bx = c * step - camX;
+          const by = r * step - camY;
+
+          // Concrete Sidewalk Rim
+          ctx.fillStyle = '#d5dbdb';
+          ctx.fillRect(bx - 12, by - 12, BLOCK_SIZE + 24, BLOCK_SIZE + 24);
+
+          // Green Grass Block Center
+          ctx.fillStyle = '#9cb988';
+          ctx.fillRect(bx, by, BLOCK_SIZE, BLOCK_SIZE);
+
+          // Inner lawn tint
+          ctx.fillStyle = '#8eae7b';
+          ctx.fillRect(bx + 16, by + 16, BLOCK_SIZE - 32, BLOCK_SIZE - 32);
+
+          // Asphalt Road Stripes (Pedestrian Crosswalks "HHH")
+          const rx = bx + BLOCK_SIZE;
+          const ry = by + BLOCK_SIZE;
+
+          // Dashed center road lane dividers
+          ctx.fillStyle = '#ffffff';
+          // Horizontal lane divider
+          for (let i = 0; i < BLOCK_SIZE; i += 40) {
+            ctx.fillRect(bx + i, ry + ROAD_WIDTH / 2 - 2, 22, 4);
+          }
+          // Vertical lane divider
+          for (let i = 0; i < BLOCK_SIZE; i += 40) {
+            ctx.fillRect(rx + ROAD_WIDTH / 2 - 2, by + i, 4, 22);
+          }
+
+          // Crosswalk Zebra Stripes ("HHH")
+          ctx.fillStyle = '#ffffff';
+          for (let w = 0; w < 4; w++) {
+            ctx.fillRect(rx + 12 + w * 26, by + 4, 14, 26);
+            ctx.fillRect(bx + 4, ry + 12 + w * 26, 26, 14);
+          }
+        }
+      }
+    }
+
+    /* On-Screen Virtual Controller Display (From Screenshots) */
+    function drawVirtualController() {
+      if (!joystick.active) return;
+
+      ctx.save();
+      // Outer translucent base circle
+      ctx.beginPath();
+      ctx.arc(joystick.baseX, joystick.baseY, 52, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Inner movable purple stick knob
+      ctx.beginPath();
+      ctx.arc(joystick.stickX, joystick.stickY, 26, 0, Math.PI * 2);
+      ctx.fillStyle = '#a855f7';
+      ctx.fill();
+      ctx.shadowColor = '#c084fc';
+      ctx.shadowBlur = 10;
+      ctx.restore();
+    }
+
+    function showPopup(x, y, txt) {
+      const el = document.createElement('div');
+      el.className = 'float-fx';
+      el.textContent = txt;
+      el.style.left = `${x}px`;
+      el.style.top = `${y}px`;
+      document.getElementById('fxLayer').appendChild(el);
+      setTimeout(() => el.remove(), 800);
+    }
+
+    /* Main Game Physics Loop */
+    function gameLoop() {
+      if (!isPlaying) return;
+
+      player.update();
+      opponents.forEach(b => b.update());
+      vehicles.forEach(v => v.update());
+      humans.forEach(h => h.update());
+
+      // Smooth Camera tracking
+      camera.x += (player.x - screenW / 2 - camera.x) * 0.12;
+      camera.y += (player.y - screenH / 2 - camera.y) * 0.12;
+
+      const holes = [player, ...opponents];
+
+      // Swallow Vehicles
+      vehicles.forEach(v => {
+        if (v.isFalling && v.fall <= 0) v.init();
+        holes.forEach(hole => {
+          if (!v.isFalling && Math.hypot(hole.x - v.x, hole.y - v.y) < hole.radius && hole.radius > v.reqRadius) {
+            v.isFalling = true;
+            hole.score += v.points;
+            hole.targetRadius += 0.6;
+            if (hole === player) {
+              showPopup(v.x - camera.x, v.y - camera.y, `+${v.points}`);
+              hudScore.textContent = player.score;
+              hudSize.textContent = `${(player.radius / 10).toFixed(1)}m`;
+            }
+          }
+        });
+      });
+
+      // Swallow Humans
+      humans.forEach((h, idx) => {
+        if (h.isFalling && h.fall <= 0) {
+          humans.splice(idx, 1);
+          return;
+        }
+        holes.forEach(hole => {
+          if (!h.isFalling && Math.hypot(hole.x - h.x, hole.y - h.y) < hole.radius) {
+            h.isFalling = true;
+            hole.score += h.points;
+            hole.targetRadius += 0.2;
+            if (hole === player) {
+              showPopup(h.x - camera.x, h.y - camera.y, `+${h.points}`);
+              hudScore.textContent = player.score;
+            }
+          }
+        });
+      });
+
+      // Swallow Buildings & Trees
+      cityProps.forEach((p, idx) => {
+        if (p.isFalling && p.fall <= 0) {
+          cityProps.splice(idx, 1);
+          return;
+        }
+        holes.forEach(hole => {
+          if (!p.isFalling && Math.hypot(hole.x - p.x, hole.y - p.y) < hole.radius && hole.radius > p.reqRadius) {
+            p.isFalling = true;
+            hole.score += p.points;
+            hole.targetRadius += 1.8;
+            if (hole === player) {
+              showPopup(p.x - camera.x, p.y - camera.y, `+${p.points}`);
+              hudScore.textContent = player.score;
+              hudSize.textContent = `${(player.radius / 10).toFixed(1)}m`;
+            }
+          }
+        });
+      });
+
+      // Swallowing Opponents
+      opponents.forEach(bot => {
+        if (Math.hypot(player.x - bot.x, player.y - bot.y) < player.radius && player.radius > bot.radius * 1.2) {
+          player.score += bot.score + 500;
+          player.targetRadius += 6;
+          showPopup(bot.x - camera.x, bot.y - camera.y, `SWALLOWED ${bot.name}!`);
+          bot.x = Math.random() * WORLD_W;
+          bot.y = Math.random() * WORLD_H;
+          bot.radius = 24;
+          bot.targetRadius = 24;
+          bot.score = 0;
+        }
+      });
+    }
+
+    /* Render Frame */
+    function render() {
+      ctx.clearRect(0, 0, screenW, screenH);
+
+      if (isPlaying) {
+        drawRealCityGround(camera.x, camera.y);
+
+        // Draw humans and props
+        humans.forEach(h => h.draw(camera.x, camera.y));
+        vehicles.forEach(v => v.draw(camera.x, camera.y));
+        cityProps.forEach(p => p.draw(camera.x, camera.y));
+
+        // Draw Opponents & Player Holes
+        opponents.forEach(b => b.draw(camera.x, camera.y));
+        player.draw(camera.x, camera.y);
+
+        // Draw Controller
+        drawVirtualController();
+      }
+
+      requestAnimationFrame(render);
+    }
+
+    setInterval(gameLoop, 1000 / 60);
+    requestAnimationFrame(render);
+
+    /* Leaderboard Storage */
+    function saveAndGetLeaderboard(name, score) {
+      let list = JSON.parse(localStorage.getItem('hole_city_scores') || '[]');
+      if (list.length === 0) {
+        list = [
+          { name: 'FreelWarp', score: 26822 },
+          { name: 'FakeHare05', score: 26737 },
+          { name: 'F33dCcmb', score: 26135 },
+          { name: 'Aja4Top', score: 26079 },
+          { name: 'TeeHums', score: 25935 },
+          { name: 'RokeSwer', score: 25798 },
+          { name: 'MartHorn', score: 25667 },
+          { name: 'LynxScan', score: 25636 },
+          { name: 'WackFalc', score: 25597 }
+        ];
+      }
+      list.push({ name, score });
+      list.sort((a, b) => b.score - a.score);
+
+      const rank = list.findIndex(i => i.name === name && i.score === score) + 1;
+      const top10 = list.slice(0, 10);
+      localStorage.setItem('hole_city_scores', JSON.stringify(top10));
+      return { rank, top10 };
+    }
+
+    /* Match Lifecycle */
+    function startMatch() {
+      isPlaying = true;
+      matchTime = 120;
+
+      const pName = document.getElementById('playerName').value.trim() || 'You';
+      player = new BlackHole(WORLD_W / 2, WORLD_H / 2, 24, '#a855f7', pName, false);
+
+      buildCity();
+      spawnBots();
+
+      document.getElementById('hudScore').textContent = '0';
+      document.getElementById('hudTime').textContent = '120';
+      document.getElementById('hudSize').textContent = '2.4m';
+
+      document.getElementById('lobbyScreen').classList.add('hidden');
+      document.getElementById('gameOverScreen').classList.add('hidden');
+      document.getElementById('gameHUD').classList.remove('hidden');
+
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        matchTime--;
+        document.getElementById('hudTime').textContent = matchTime;
+        if (matchTime <= 0) endGame();
+      }, 1000);
+    }
+
+    function endGame() {
+      isPlaying = false;
+      clearInterval(timerInterval);
+
+      document.getElementById('gameHUD').classList.add('hidden');
+      document.getElementById('gameOverScreen').classList.remove('hidden');
+
+      document.getElementById('endScore').textContent = player.score;
+      document.getElementById('endSize').textContent = `Hole size ${(player.radius / 10).toFixed(1)}m`;
+
+      const { rank, top10 } = saveAndGetLeaderboard(player.name, player.score);
+      const listEl = document.getElementById('leaderboardList');
+      listEl.innerHTML = '';
+
+      top10.forEach((item, i) => {
+        const isUser = item.name === player.name && item.score === player.score;
+        listEl.innerHTML += `
+          <div class="lb-item ${isUser ? 'lb-active' : ''}">
+            <span>#${i + 1} ${item.name}</span>
+            <span>${item.score}</span>
+          </div>
+        `;
+      });
+
+      if (rank > 10) {
+        listEl.innerHTML += `
+          <div class="lb-item lb-active">
+            <span>#Top 10+ (${rank}) ${player.name}</span>
+            <span>${player.score}</span>
+          </div>
+        `;
+      }
+    }
+
+    /* Buttons */
+    document.getElementById('btnSolo').addEventListener('click', startMatch);
+
+    document.getElementById('btnRoom').addEventListener('click', () => {
+      const code = Math.random().toString(36).substring(2, 8).toUpperCase();
+      document.getElementById('generatedCode').textContent = code;
+      document.getElementById('roomCodeDisplay').classList.remove('hidden');
+      setTimeout(startMatch, 1600);
     });
-  }
 
-  for (let bot of opponents) {
-    const dist = Math.hypot(player.x - bot.x, player.y - bot.y);
-    if (dist < player.radius && player.radius > bot.radius * 1.25) {
-      player.score += bot.score + 600;
-      player.targetRadius += 10;
-      spawnPointsPopup(bot.x - camera.x, bot.y - camera.y, `SWALLOWED ${bot.name}!`);
+    document.getElementById('btnRestart').addEventListener('click', () => {
+      document.getElementById('gameOverScreen').classList.add('hidden');
+      document.getElementById('lobbyScreen').classList.remove('hidden');
+    });
 
-      bot.x = Math.random() * (WORLD_SIZE - 200) + 100;
-      bot.y = Math.random() * (WORLD_SIZE - 200) + 100;
-      bot.radius = 22;
-      bot.targetRadius = 22;
-      bot.score = 0;
-    }
-  }
-}
-
-function drawCityStreets(camX, camY) {
-  const block = 160;
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
-  ctx.lineWidth = 1.5;
-
-  const offsetX = -(camX % block);
-  const offsetY = -(camY % block);
-
-  for (let x = offsetX; x < screenWidth; x += block) {
-    ctx.beginPath();
-    ctx.moveTo(x, 0);
-    ctx.lineTo(x, screenHeight);
-    ctx.stroke();
-  }
-  for (let y = offsetY; y < screenHeight; y += block) {
-    ctx.beginPath();
-    ctx.moveTo(0, y);
-    ctx.lineTo(screenWidth, y);
-    ctx.stroke();
-  }
-}
-
-function renderFrame() {
-  ctx.clearRect(0, 0, screenWidth, screenHeight);
-
-  if (isPlaying) {
-    drawCityStreets(camera.x, camera.y);
-    cityProps.forEach(prop => prop.draw(camera.x, camera.y));
-    opponents.forEach(bot => bot.draw(camera.x, camera.y));
-    player.draw(camera.x, camera.y);
-  }
-
-  requestAnimationFrame(renderFrame);
-}
-
-setInterval(updateLoop, 1000 / 60);
-requestAnimationFrame(renderFrame);
-
-function startMatch(mode) {
-  gameMode = mode;
-  isPlaying = true;
-  gameTimer = 60;
-
-  const pName = document.getElementById('playerName').value.trim() || 'Player';
-  player = new BlackHole(WORLD_SIZE / 2, WORLD_SIZE / 2, 22, '#a855f7', pName, false);
-
-  populateCity();
-  spawnOpponents();
-
-  hudScore.textContent = '0';
-  hudTime.textContent = '60';
-  hudSize.textContent = '2.2m';
-
-  lobbyScreen.classList.add('hidden');
-  gameOverScreen.classList.add('hidden');
-  gameHUD.classList.remove('hidden');
-
-  clearInterval(timerInterval);
-  timerInterval = setInterval(() => {
-    gameTimer--;
-    hudTime.textContent = gameTimer;
-    if (gameTimer <= 0) {
-      endGame();
-    }
-  }, 1000);
-}
-
-function endGame() {
-  isPlaying = false;
-  clearInterval(timerInterval);
-
-  gameHUD.classList.add('hidden');
-  gameOverScreen.classList.remove('hidden');
-
-  endScore.textContent = player.score.toLocaleString();
-  endSize.textContent = `${(player.radius / 10).toFixed(1)}m`;
-
-  displayLeaderboard(player.name, player.score);
-}
-
-function makeRoomCode() {
-  return Math.random().toString(36).substring(2, 8).toUpperCase();
-}
-
-document.getElementById('btnSolo').addEventListener('click', () => {
-  startMatch('solo');
-});
-
-document.getElementById('btnCreateRoom').addEventListener('click', () => {
-  const code = makeRoomCode();
-  generatedCode.textContent = code;
-  roomCodeDisplay.classList.remove('hidden');
-
-  setTimeout(() => {
-    startMatch('room');
-  }, 1800);
-});
-
-document.getElementById('btnJoinRoom').addEventListener('click', () => {
-  const code = document.getElementById('roomCodeInput').value.trim();
-  if (code.length === 6) {
-    startMatch('room');
-  } else {
-    alert('Please enter a valid 6-digit room code.');
-  }
-});
-
-document.getElementById('btnRestart').addEventListener('click', () => {
-  gameOverScreen.classList.add('hidden');
-  lobbyScreen.classList.remove('hidden');
-});
-</script>
+    document.getElementById('backBtn').addEventListener('click', () => {
+      if (window.history.length > 1) window.history.back();
+      else window.location.href = 'index.html';
+    });
+  </script>
 </body>
 </html>
-
