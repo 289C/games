@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Hill Climb Racing - Motorcycle Edition</title>
+  <title>Hill Climb Motorcycle</title>
   <style>
     * {
       box-sizing: border-box;
@@ -18,7 +18,7 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background: #70c5ce;
+      background: #48dbfb;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 
@@ -31,7 +31,7 @@
       z-index: 1;
     }
 
-    /* --- TOP BAR (HOME + INSTAGRAM) --- */
+    /* --- TOP BAR --- */
     #top-bar {
       position: absolute;
       top: 14px;
@@ -41,32 +41,23 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      z-index: 999;
+      z-index: 100;
       pointer-events: auto;
-      animation: slideDownBar 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-
-    @keyframes slideDownBar {
-      from { transform: translateY(-50px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
     }
 
     .home-btn {
       display: flex;
       align-items: center;
-      gap: 7px;
+      gap: 6px;
       color: #ffffff;
       text-decoration: none;
-      background: rgba(20, 24, 38, 0.7);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      padding: 7px 16px;
+      background: rgba(18, 22, 34, 0.75);
+      backdrop-filter: blur(10px);
+      padding: 8px 16px;
       border-radius: 30px;
-      font-weight: 700;
-      font-size: 13.5px;
+      font-weight: 800;
+      font-size: 14px;
       border: 1px solid rgba(255, 255, 255, 0.2);
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-      transition: all 0.2s ease;
     }
 
     .home-btn:active {
@@ -78,20 +69,13 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      background: rgba(18, 20, 32, 0.75);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      background: rgba(18, 22, 34, 0.8);
+      backdrop-filter: blur(10px);
       padding: 4px 14px 4px 5px;
       border-radius: 40px;
-      border: 1px solid rgba(255, 255, 255, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       text-decoration: none;
       cursor: pointer;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
-      transition: transform 0.2s ease;
-    }
-
-    .profile-badge:active {
-      transform: scale(0.96);
     }
 
     .avatar-wrapper {
@@ -109,11 +93,10 @@
       height: 100%;
       border-radius: 50%;
       background: conic-gradient(#f09433, #e6683c, #dc2743, #cc2366, #bc1888, #f09433);
-      animation: rotateRing 3s linear infinite;
+      animation: spin 3s linear infinite;
     }
 
-    @keyframes rotateRing {
-      0% { transform: rotate(0deg); }
+    @keyframes spin {
       100% { transform: rotate(360deg); }
     }
 
@@ -123,40 +106,29 @@
       height: 27px;
       border-radius: 50%;
       object-fit: cover;
-      border: 1.5px solid #0f121d;
+      border: 1.5px solid #111;
     }
 
     .profile-name {
       font-size: 13px;
       font-weight: 800;
       color: #fff;
-      letter-spacing: 0.3px;
-      background: linear-gradient(90deg, #ffffff 0%, #ff8da1 50%, #ffffff 100%);
-      background-size: 200% auto;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: textShine 4s linear infinite;
     }
 
-    @keyframes textShine {
-      0% { background-position: 0% center; }
-      100% { background-position: 200% center; }
-    }
-
-    /* --- GAME DASHBOARD / HUD --- */
+    /* --- HUD DASHBOARD --- */
     #hud {
       position: absolute;
-      top: 66px;
+      top: 68px;
       left: 16px;
       z-index: 10;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
       pointer-events: none;
     }
 
     .stat-pill {
-      background: rgba(0, 0, 0, 0.55);
+      background: rgba(18, 22, 34, 0.75);
       backdrop-filter: blur(8px);
       padding: 6px 14px;
       border-radius: 20px;
@@ -167,12 +139,13 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
+      width: fit-content;
     }
 
-    .fuel-container {
-      width: 140px;
-      height: 14px;
-      background: rgba(0, 0, 0, 0.5);
+    .fuel-bar {
+      width: 120px;
+      height: 12px;
+      background: rgba(0, 0, 0, 0.6);
       border-radius: 10px;
       overflow: hidden;
       border: 1.5px solid #fff;
@@ -181,11 +154,11 @@
     #fuel-fill {
       width: 100%;
       height: 100%;
-      background: linear-gradient(90deg, #ff3838, #2ed573);
+      background: linear-gradient(90deg, #ff4757, #2ed573);
       transition: width 0.1s linear;
     }
 
-    /* --- PEDALS (MOBILE TOUCH) --- */
+    /* --- CONTROLS --- */
     #controls {
       position: absolute;
       bottom: 24px;
@@ -194,18 +167,17 @@
       padding: 0 24px;
       display: flex;
       justify-content: space-between;
-      z-index: 10;
+      z-index: 20;
       pointer-events: none;
     }
 
     .pedal {
-      width: 85px;
-      height: 85px;
+      width: 90px;
+      height: 90px;
       border-radius: 50%;
-      background: rgba(20, 24, 38, 0.75);
-      backdrop-filter: blur(10px);
-      border: 3px solid #fff;
-      color: #fff;
+      background: rgba(18, 22, 34, 0.85);
+      border: 3.5px solid #ffffff;
+      color: #ffffff;
       font-weight: 900;
       font-size: 15px;
       display: flex;
@@ -214,7 +186,7 @@
       justify-content: center;
       pointer-events: auto;
       box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
-      transition: transform 0.1s ease;
+      transition: transform 0.08s ease;
     }
 
     .pedal:active, .pedal.active {
@@ -233,7 +205,7 @@
       left: 0;
       width: 100vw;
       height: 100vh;
-      background: rgba(10, 12, 18, 0.85);
+      background: rgba(10, 12, 20, 0.85);
       backdrop-filter: blur(10px);
       z-index: 1000;
       display: none;
@@ -251,12 +223,11 @@
       width: 85%;
       max-width: 320px;
       color: #fff;
-      box-shadow: 0 0 35px rgba(255, 71, 87, 0.35);
     }
 
     .modal-box h2 {
       font-size: 26px;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
 
     .modal-box p {
@@ -297,17 +268,11 @@
   </header>
 
   <div id="hud">
+    <div class="stat-pill">🪙 <span id="coins-val">0</span></div>
+    <div class="stat-pill">🚩 <span id="dist-val">0 m</span></div>
     <div class="stat-pill">
-      <span>🪙</span>
-      <span id="coins-val">0</span>
-    </div>
-    <div class="stat-pill">
-      <span>🚩</span>
-      <span id="dist-val">0 m</span>
-    </div>
-    <div class="stat-pill">
-      <span>⛽ FUEL</span>
-      <div class="fuel-container">
+      ⛽
+      <div class="fuel-bar">
         <div id="fuel-fill"></div>
       </div>
     </div>
@@ -316,11 +281,11 @@
   <div id="controls">
     <div class="pedal" id="btn-brake">
       <span>BRAKE</span>
-      <span style="font-size: 11px; opacity: 0.7;">REVERSE</span>
+      <span style="font-size: 10px; opacity: 0.8;">REVERSE</span>
     </div>
     <div class="pedal gas" id="btn-gas">
       <span>GAS</span>
-      <span style="font-size: 11px; opacity: 0.7;">FORWARD</span>
+      <span style="font-size: 10px; opacity: 0.8;">FORWARD</span>
     </div>
   </div>
 
@@ -345,49 +310,26 @@
     window.addEventListener('resize', resize);
     resize();
 
-    // --- SOUND SYNTHESIS ---
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
-    let actx = null;
-
-    function initAudio() {
-      if (!actx) actx = new AudioContext();
-      if (actx.state === 'suspended') actx.resume();
-    }
-
-    function playTone(freq, duration, type='sine') {
-      try {
-        initAudio();
-        const osc = actx.createOscillator();
-        const gain = actx.createGain();
-        osc.type = type;
-        osc.frequency.setValueAtTime(freq, actx.currentTime);
-        gain.gain.setValueAtTime(0.12, actx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + duration);
-        osc.connect(gain);
-        gain.connect(actx.destination);
-        osc.start();
-        osc.stop(actx.currentTime + duration);
-      } catch (e) {}
-    }
-
-    // --- TERRAIN FUNCTION ---
+    // --- CONTINUOUS PROCEDURAL ROAD FUNCTION ---
+    // Mathematically seamless rolling asphalt road with no drops
     function getTerrainY(x) {
-      if (x < 150) return 400; // Flat initial spawn
-      return 400 + Math.sin(x * 0.004) * 85 + Math.sin(x * 0.012) * 45 + Math.cos(x * 0.0018) * 90;
+      const base = 500;
+      const wave1 = Math.sin(x * 0.003) * 75;
+      const wave2 = Math.cos(x * 0.008) * 45;
+      const wave3 = Math.sin(x * 0.001) * 60;
+      return base + wave1 + wave2 + wave3;
     }
 
-    // --- BIKE STATE & 2D PHYSICS ---
-    const car = {
+    // --- BIKE DEFINITION & CONSTANTS ---
+    const bike = {
       x: 100,
-      y: 350,
+      y: getTerrainY(100) - 40,
       vx: 0,
       vy: 0,
       angle: 0,
       angularVelocity: 0,
-      wheelBase: 70,       // Wheelbase matching motorcycle
-      wheelRadius: 17,     // Classic wheel radius
-      bodyWidth: 80,
-      bodyHeight: 28
+      wheelBase: 65,
+      wheelRadius: 18
     };
 
     let fuel = 100;
@@ -395,64 +337,60 @@
     let distance = 0;
     let isGameOver = false;
 
+    // Camera targets
+    let camX = 0;
+    let camY = 0;
+
     const input = { gas: false, brake: false };
 
-    // --- PICKUPS (Coins & Fuel Cans) ---
+    // --- ROAD COINS & FUEL CONTAINERS ---
     const pickups = [];
-    for (let x = 350; x < 25000; x += 180 + Math.random() * 120) {
+    for (let x = 400; x < 50000; x += 180 + Math.random() * 120) {
       const isFuel = Math.random() < 0.22;
       pickups.push({
         x: x,
-        y: getTerrainY(x) - 40,
+        y: getTerrainY(x) - 35,
         type: isFuel ? 'fuel' : 'coin',
         collected: false
       });
     }
 
-    // --- KEYBOARD LISTENERS ---
+    // --- CONTROLS BINDINGS ---
     window.addEventListener('keydown', (e) => {
-      initAudio();
       if (e.code === 'ArrowRight' || e.code === 'KeyD') input.gas = true;
       if (e.code === 'ArrowLeft' || e.code === 'KeyA') input.brake = true;
     });
-
     window.addEventListener('keyup', (e) => {
       if (e.code === 'ArrowRight' || e.code === 'KeyD') input.gas = false;
       if (e.code === 'ArrowLeft' || e.code === 'KeyA') input.brake = false;
     });
 
-    // --- TOUCH PEDAL CONTROLS ---
-    const btnGas = document.getElementById('btn-gas');
-    const btnBrake = document.getElementById('btn-brake');
-
-    const bindTouchPedal = (btn, key) => {
-      btn.addEventListener('pointerdown', (e) => {
+    const bindTouch = (el, key) => {
+      el.addEventListener('pointerdown', (e) => {
         e.preventDefault();
-        initAudio();
         input[key] = true;
-        btn.classList.add('active');
+        el.classList.add('active');
       });
-      const release = () => {
+      const stop = () => {
         input[key] = false;
-        btn.classList.remove('active');
+        el.classList.remove('active');
       };
-      btn.addEventListener('pointerup', release);
-      btn.addEventListener('pointercancel', release);
-      btn.addEventListener('pointerleave', release);
+      el.addEventListener('pointerup', stop);
+      el.addEventListener('pointercancel', stop);
+      el.addEventListener('pointerleave', stop);
     };
+    bindTouch(document.getElementById('btn-gas'), 'gas');
+    bindTouch(document.getElementById('btn-brake'), 'brake');
 
-    bindTouchPedal(btnGas, 'gas');
-    bindTouchPedal(btnBrake, 'brake');
-
-    // --- RESTART GAME ---
+    // --- GAME RESET ---
     window.resetGame = function() {
       document.getElementById('modal').style.display = 'none';
-      car.x = 100;
-      car.y = 350;
-      car.vx = 0;
-      car.vy = 0;
-      car.angle = 0;
-      car.angularVelocity = 0;
+      bike.x = 100;
+      bike.y = getTerrainY(100) - 40;
+      bike.vx = 0;
+      bike.vy = 0;
+      bike.angle = 0;
+      bike.angularVelocity = 0;
       fuel = 100;
       coins = 0;
       distance = 0;
@@ -463,159 +401,168 @@
     function triggerGameOver(reason) {
       if (isGameOver) return;
       isGameOver = true;
-      playTone(130, 0.4, 'sawtooth');
       document.getElementById('modal-title').innerText = reason;
       document.getElementById('modal-sub').innerText = `Distance: ${Math.floor(distance)}m | Coins: ${coins}`;
       document.getElementById('modal').style.display = 'flex';
     }
 
-    // --- PHYSICS UPDATE ---
+    // --- PHYSICS ENGINE ---
     function updatePhysics() {
       if (isGameOver) return;
 
       // Gravity
-      car.vy += 0.28;
+      bike.vy += 0.28;
 
-      const halfB = car.wheelBase / 2;
-      const cosA = Math.cos(car.angle);
-      const sinA = Math.sin(car.angle);
+      const halfB = bike.wheelBase / 2;
+      const cosA = Math.cos(bike.angle);
+      const sinA = Math.sin(bike.angle);
 
-      // Contact points of wheels
-      const rearX = car.x - halfB * cosA;
-      const rearY = car.y - halfB * sinA + 12;
-      const frontX = car.x + halfB * cosA;
-      const frontY = car.y + halfB * sinA + 12;
+      const rearX = bike.x - halfB * cosA;
+      const rearY = bike.y - halfB * sinA + 10;
+      const frontX = bike.x + halfB * cosA;
+      const frontY = bike.y + halfB * sinA + 10;
 
-      const groundRear = getTerrainY(rearX) - car.wheelRadius;
-      const groundFront = getTerrainY(frontX) - car.wheelRadius;
+      const groundRear = getTerrainY(rearX) - bike.wheelRadius;
+      const groundFront = getTerrainY(frontX) - bike.wheelRadius;
 
-      let grounded = 0;
+      let groundedWheels = 0;
 
+      // Suspension spring response
       if (rearY >= groundRear) {
-        car.vy -= (rearY - groundRear) * 0.4;
-        grounded++;
+        bike.vy -= (rearY - groundRear) * 0.45;
+        groundedWheels++;
       }
-
       if (frontY >= groundFront) {
-        car.vy -= (frontY - groundFront) * 0.4;
-        grounded++;
+        bike.vy -= (frontY - groundFront) * 0.45;
+        groundedWheels++;
       }
 
-      // Gas / Brake engine
+      // Driving force
       if (fuel > 0) {
         if (input.gas) {
-          fuel -= 0.085;
-          if (grounded > 0) {
-            car.vx += 0.40 * cosA;
-            car.vy += 0.40 * sinA;
+          fuel -= 0.08;
+          if (groundedWheels > 0) {
+            bike.vx += 0.42 * cosA;
+            bike.vy += 0.42 * sinA;
           } else {
-            // Mid-air pitch up (wheelie)
-            car.angularVelocity += 0.0035;
+            bike.angularVelocity += 0.0035; // Tilt up
           }
         }
         if (input.brake) {
           fuel -= 0.04;
-          if (grounded > 0) {
-            car.vx -= 0.28 * cosA;
-            car.vy -= 0.28 * sinA;
+          if (groundedWheels > 0) {
+            bike.vx -= 0.3 * cosA;
+            bike.vy -= 0.3 * sinA;
           } else {
-            // Mid-air pitch down (endo)
-            car.angularVelocity -= 0.0035;
+            bike.angularVelocity -= 0.0035; // Tilt down
           }
         }
-      } else if (grounded === 0 && Math.abs(car.vx) < 0.2) {
+      } else if (groundedWheels === 0 && Math.abs(bike.vx) < 0.2) {
         triggerGameOver("OUT OF FUEL! ⛽");
       }
 
-      // Update position
-      car.x += car.vx;
-      car.y += car.vy;
+      // Position update
+      bike.x += bike.vx;
+      bike.y += bike.vy;
 
-      // Angular physics & ground friction
-      const groundSlope = (groundFront - groundRear) / car.wheelBase;
+      // Slope alignment
+      const groundSlope = (groundFront - groundRear) / bike.wheelBase;
       const targetAngle = Math.atan(groundSlope);
 
-      if (grounded > 0) {
-        car.angle += (targetAngle - car.angle) * 0.25;
-        car.angularVelocity *= 0.65;
-        car.vx *= 0.985;
+      if (groundedWheels > 0) {
+        bike.angle += (targetAngle - bike.angle) * 0.25;
+        bike.angularVelocity *= 0.65;
+        bike.vx *= 0.985;
       } else {
-        car.angle += car.angularVelocity;
-        car.angularVelocity *= 0.99;
+        bike.angle += bike.angularVelocity;
+        bike.angularVelocity *= 0.99;
       }
 
-      // Driver head crash
-      const driverHeadY = car.y - Math.cos(car.angle) * 35;
-      const groundAtHead = getTerrainY(car.x);
-      if (driverHeadY > groundAtHead - 8) {
+      // Crash if head touches ground
+      const headX = bike.x - Math.sin(bike.angle) * 36;
+      const headY = bike.y - Math.cos(bike.angle) * 36;
+      if (headY > getTerrainY(headX) - 5) {
         triggerGameOver("DRIVER CRASHED! 💥");
       }
 
-      // Track distance & fuel
-      distance = Math.max(distance, (car.x - 100) / 40);
+      // Distance & HUD
+      distance = Math.max(distance, (bike.x - 100) / 40);
       document.getElementById('dist-val').innerText = Math.floor(distance) + ' m';
       document.getElementById('fuel-fill').style.width = Math.max(0, fuel) + '%';
 
-      // Pickup collisions
+      // Pickups check
       pickups.forEach(p => {
-        if (!p.collected && Math.hypot(car.x - p.x, car.y - p.y) < 45) {
+        if (!p.collected && Math.hypot(bike.x - p.x, bike.y - p.y) < 45) {
           p.collected = true;
           if (p.type === 'coin') {
             coins += 25;
             document.getElementById('coins-val').innerText = coins;
-            playTone(880, 0.12, 'square');
-          } else if (p.type === 'fuel') {
-            fuel = Math.min(100, fuel + 45);
-            playTone(440, 0.25, 'sine');
+          } else {
+            fuel = Math.min(100, fuel + 50);
           }
         }
       });
     }
 
-    // --- DRAW SCENE ---
+    // --- RENDER SCENE ---
     function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Camera Follow
+      // Smooth camera interpolation
+      const targetCamX = canvas.width * 0.35 - bike.x;
+      const targetCamY = canvas.height * 0.65 - bike.y;
+      camX += (targetCamX - camX) * 0.1;
+      camY += (targetCamY - camY) * 0.1;
+
       ctx.save();
-      const camX = canvas.width * 0.3 - car.x;
-      const camY = canvas.height * 0.62 - car.y;
       ctx.translate(camX, camY);
 
-      // 1. Terrain
-      ctx.beginPath();
-      const startX = car.x - canvas.width * 0.6;
-      const endX = car.x + canvas.width * 0.9;
+      const renderLeft = bike.x - canvas.width * 0.6;
+      const renderRight = bike.x + canvas.width * 0.8;
 
-      ctx.moveTo(startX, getTerrainY(startX));
-      for (let x = startX; x < endX; x += 15) {
+      // 1. Underground Dirt / Bedrock
+      ctx.beginPath();
+      ctx.moveTo(renderLeft, getTerrainY(renderLeft));
+      for (let x = renderLeft; x < renderRight; x += 15) {
         ctx.lineTo(x, getTerrainY(x));
       }
-      ctx.lineTo(endX, car.y + 1200);
-      ctx.lineTo(startX, car.y + 1200);
+      ctx.lineTo(renderRight, bike.y + 1200);
+      ctx.lineTo(renderLeft, bike.y + 1200);
       ctx.closePath();
-
-      ctx.fillStyle = '#6b4f2c';
+      ctx.fillStyle = '#533b24';
       ctx.fill();
 
-      // Grass Edge
-      ctx.lineWidth = 14;
+      // 2. Green Grass Shoulder
+      ctx.lineWidth = 26;
       ctx.strokeStyle = '#2ed573';
       ctx.stroke();
 
-      // 2. Pickups
+      // 3. Asphalt Road Layer
+      ctx.lineWidth = 14;
+      ctx.strokeStyle = '#2f3542';
+      ctx.stroke();
+
+      // 4. Yellow Center Road Dashes
+      ctx.save();
+      ctx.lineWidth = 2.5;
+      ctx.setLineDash([16, 16]);
+      ctx.strokeStyle = '#ffa502';
+      ctx.stroke();
+      ctx.restore();
+
+      // 5. Pickups
       pickups.forEach(p => {
-        if (!p.collected && p.x > startX && p.x < endX) {
+        if (!p.collected && p.x > renderLeft && p.x < renderRight) {
           if (p.type === 'coin') {
             ctx.beginPath();
             ctx.arc(p.x, p.y, 14, 0, Math.PI * 2);
             ctx.fillStyle = '#ffa502';
             ctx.fill();
-            ctx.lineWidth = 3;
-            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 2.5;
+            ctx.strokeStyle = '#ffffff';
             ctx.stroke();
 
-            ctx.fillStyle = '#fff';
+            ctx.fillStyle = '#ffffff';
             ctx.font = 'bold 12px sans-serif';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
@@ -632,23 +579,23 @@
         }
       });
 
-      // 3. Draw Red Classic Motorcycle
+      // 6. Draw Red Classic Motorcycle
       ctx.save();
-      ctx.translate(car.x, car.y);
-      ctx.rotate(car.angle);
+      ctx.translate(bike.x, bike.y);
+      ctx.rotate(bike.angle);
 
-      const rearWX = -car.wheelBase / 2;
-      const frontWX = car.wheelBase / 2;
-      const wheelWY = 12;
+      const rearWX = -bike.wheelBase / 2;
+      const frontWX = bike.wheelBase / 2;
+      const wheelWY = 10;
 
-      // Wheel Spoke Renderer
-      const drawChromeSpokeWheel = (wx, wy) => {
+      // Wheel Renderer
+      const drawWheel = (wx, wy) => {
         ctx.save();
         ctx.translate(wx, wy);
 
         // Tire
         ctx.beginPath();
-        ctx.arc(0, 0, car.wheelRadius, 0, Math.PI * 2);
+        ctx.arc(0, 0, bike.wheelRadius, 0, Math.PI * 2);
         ctx.fillStyle = '#111317';
         ctx.fill();
         ctx.lineWidth = 3;
@@ -657,176 +604,112 @@
 
         // Rim
         ctx.beginPath();
-        ctx.arc(0, 0, car.wheelRadius - 3.5, 0, Math.PI * 2);
-        ctx.lineWidth = 2.2;
+        ctx.arc(0, 0, bike.wheelRadius - 3.5, 0, Math.PI * 2);
+        ctx.lineWidth = 2;
         ctx.strokeStyle = '#e4e7eb';
         ctx.stroke();
 
         // Hub
         ctx.beginPath();
-        ctx.arc(0, 0, 4.5, 0, Math.PI * 2);
+        ctx.arc(0, 0, 4, 0, Math.PI * 2);
         ctx.fillStyle = '#9aa0a6';
         ctx.fill();
 
         // Rotating Spokes
-        const spin = car.x * 0.12;
-        for (let s = 0; s < 10; s++) {
-          const a = spin + (s * (Math.PI * 2 / 10));
+        const spin = bike.x * 0.12;
+        for (let s = 0; s < 8; s++) {
+          const a = spin + (s * (Math.PI * 2 / 8));
           ctx.beginPath();
           ctx.moveTo(0, 0);
-          ctx.lineTo(Math.cos(a) * (car.wheelRadius - 4), Math.sin(a) * (car.wheelRadius - 4));
+          ctx.lineTo(Math.cos(a) * (bike.wheelRadius - 4), Math.sin(a) * (bike.wheelRadius - 4));
           ctx.strokeStyle = '#f1f3f4';
           ctx.lineWidth = 1.2;
           ctx.stroke();
         }
-
         ctx.restore();
       };
 
-      drawChromeSpokeWheel(rearWX, wheelWY);
-      drawChromeSpokeWheel(frontWX, wheelWY);
+      drawWheel(rearWX, wheelWY);
+      drawWheel(frontWX, wheelWY);
 
-      // Carrier & Frame
-      ctx.lineWidth = 2.5;
+      // Frame & Exhaust
+      ctx.lineWidth = 3;
       ctx.strokeStyle = '#d2dae2';
       ctx.beginPath();
       ctx.moveTo(rearWX, wheelWY);
-      ctx.lineTo(rearWX + 8, -6);
-      ctx.lineTo(rearWX - 6, -10);
-      ctx.lineTo(-4, -10);
+      ctx.lineTo(0, 4);
+      ctx.lineTo(frontWX, wheelWY);
       ctx.stroke();
 
-      // Fenders
+      // Exhaust pipe
       ctx.lineWidth = 3.5;
-      ctx.strokeStyle = '#2f3542';
+      ctx.strokeStyle = '#ced6e0';
       ctx.beginPath();
-      ctx.arc(rearWX, wheelWY, car.wheelRadius + 2.5, -Math.PI * 0.95, -Math.PI * 0.15);
+      ctx.moveTo(6, 6);
+      ctx.lineTo(-6, 12);
+      ctx.lineTo(rearWX - 8, 12);
       ctx.stroke();
 
-      ctx.beginPath();
-      ctx.arc(frontWX, wheelWY, car.wheelRadius + 2.5, -Math.PI * 0.85, -Math.PI * 0.25);
-      ctx.stroke();
+      // Chrome Engine Block
+      ctx.fillStyle = '#747d8c';
+      ctx.fillRect(-8, -2, 18, 14);
 
-      // Chrome Exhaust Pipe
-      ctx.lineWidth = 4;
-      ctx.strokeStyle = '#f1f2f6';
-      ctx.lineCap = 'round';
-      ctx.beginPath();
-      ctx.moveTo(10, 8);
-      ctx.lineTo(-2, 14);
-      ctx.lineTo(rearWX - 10, 14);
-      ctx.stroke();
-
-      // Engine Block & Horizontal Fins
-      ctx.fillStyle = '#ced6e0';
-      ctx.beginPath();
-      ctx.roundRect(-8, -2, 22, 16, 3);
-      ctx.fill();
-      ctx.lineWidth = 1.5;
-      ctx.strokeStyle = '#747d8c';
-      ctx.stroke();
-
-      ctx.strokeStyle = '#57606f';
-      ctx.lineWidth = 1.2;
-      for (let fY = 1; fY <= 12; fY += 2.5) {
-        ctx.beginPath();
-        ctx.moveTo(-6, fY);
-        ctx.lineTo(12, fY);
-        ctx.stroke();
-      }
-
-      // Battery Panel
-      ctx.fillStyle = '#1e272e';
-      ctx.beginPath();
-      ctx.roundRect(-16, -6, 12, 12, 2);
-      ctx.fill();
-
-      // Red Classic Fuel Tank
+      // Red Fuel Tank
       ctx.fillStyle = '#e82222';
       ctx.beginPath();
-      ctx.moveTo(0, -18);
-      ctx.lineTo(18, -18);
-        ctx.quadraticCurveTo(24, -10, 16, -4);
+      ctx.moveTo(-2, -18);
+      ctx.lineTo(16, -18);
+      ctx.quadraticCurveTo(22, -10, 14, -4);
       ctx.lineTo(-4, -4);
-      ctx.quadraticCurveTo(-6, -16, 0, -18);
       ctx.closePath();
       ctx.fill();
 
-      ctx.lineWidth = 1.5;
-      ctx.strokeStyle = '#ff7675';
-      ctx.stroke();
-
-      // Fuel Tank Cap
-      ctx.fillStyle = '#dfe4ea';
-      ctx.fillRect(8, -20, 5, 2.5);
-
-      // Long Leather Bench Seat
+      // Leather Seat
       ctx.fillStyle = '#1e272e';
-      ctx.beginPath();
-      ctx.roundRect(-24, -15, 28, 8, [4, 4, 2, 2]);
-      ctx.fill();
-      ctx.strokeStyle = '#000000';
-      ctx.lineWidth = 1;
-      ctx.stroke();
+      ctx.fillRect(-22, -14, 22, 6);
 
-      // Front Fork & Handlebars
-      ctx.lineWidth = 3;
+      // Handlebars & Headlight
+      ctx.lineWidth = 2.5;
       ctx.strokeStyle = '#d2dae2';
       ctx.beginPath();
       ctx.moveTo(frontWX, wheelWY);
       ctx.lineTo(frontWX - 8, -22);
+      ctx.lineTo(frontWX - 14, -26);
       ctx.stroke();
 
-      ctx.strokeStyle = '#2f3542';
-      ctx.lineWidth = 3.5;
+      // Headlight
       ctx.beginPath();
-      ctx.moveTo(frontWX - 12, -22);
-      ctx.lineTo(frontWX - 16, -26);
-      ctx.stroke();
-
-      // Chrome Round Headlight
-      ctx.beginPath();
-      ctx.arc(frontWX + 2, -18, 5, -Math.PI / 2, Math.PI / 2);
+      ctx.arc(frontWX + 2, -18, 4.5, -Math.PI / 2, Math.PI / 2);
       ctx.fillStyle = '#fff200';
       ctx.fill();
-      ctx.lineWidth = 1.5;
-      ctx.strokeStyle = '#dfe4ea';
-      ctx.stroke();
 
       // Biker Rider
-      ctx.strokeStyle = '#2f3542';
-      ctx.lineWidth = 4.5;
+      ctx.strokeStyle = '#1e272e';
+      ctx.lineWidth = 5;
       ctx.beginPath();
       ctx.moveTo(-10, -12);
       ctx.lineTo(-2, 0);
-      ctx.lineTo(-1, 9);
+      ctx.lineTo(0, 8);
       ctx.stroke();
 
-      ctx.strokeStyle = '#1e272e';
+      // Torso
       ctx.lineWidth = 7;
       ctx.beginPath();
-      ctx.moveTo(-10, -14);
-      ctx.lineTo(2, -26);
-      ctx.stroke();
-
-      ctx.strokeStyle = '#1e272e';
-      ctx.lineWidth = 3.5;
-      ctx.beginPath();
-      ctx.moveTo(2, -24);
-      ctx.lineTo(frontWX - 15, -24);
+      ctx.moveTo(-10, -12);
+      ctx.lineTo(2, -24);
       ctx.stroke();
 
       // Helmet
       ctx.beginPath();
-      ctx.arc(5, -35, 8, 0, Math.PI * 2);
+      ctx.arc(4, -32, 7.5, 0, Math.PI * 2);
       ctx.fillStyle = '#e82222';
       ctx.fill();
 
       // Visor
       ctx.beginPath();
-      ctx.arc(8, -35, 4.5, -Math.PI / 4, Math.PI / 4);
+      ctx.arc(7, -32, 4, -Math.PI / 4, Math.PI / 4);
       ctx.strokeStyle = '#00f2fe';
-      ctx.lineWidth = 2.5;
+      ctx.lineWidth = 2;
       ctx.stroke();
 
       ctx.restore();
