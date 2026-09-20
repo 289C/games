@@ -710,7 +710,7 @@
           ctx.fillRect(bx, by, BLOCK_SIZE, BLOCK_SIZE);
 
           ctx.fillStyle = '#8eae7b';
-      ctx.fillRect(bx + 16, by + 16, BLOCK_SIZE - 32, BLOCK_SIZE - 32);
+          ctx.fillRect(bx + 16, by + 16, BLOCK_SIZE - 32, BLOCK_SIZE - 32);
 
           const rx = bx + BLOCK_SIZE;
           const ry = by + BLOCK_SIZE;
@@ -945,7 +945,6 @@
       }
     }
 
-    // Direct event bindings for mobile and desktop
     const soloBtn = document.getElementById('btnSolo');
     soloBtn.addEventListener('click', startMatch);
     soloBtn.addEventListener('touchend', (e) => {
