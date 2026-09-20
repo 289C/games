@@ -23,7 +23,7 @@
       touch-action: none;
     }
 
-    /* Top Navigation Bar */
+    /* Top Header Navigation */
     .top-nav {
       position: absolute;
       top: 0;
@@ -91,7 +91,7 @@
       100% { transform: scale(0.9); opacity: 0.7; }
     }
 
-    /* Live HUD */
+    /* In-Game Score HUD */
     .hud-container {
       position: absolute;
       top: 64px;
@@ -128,7 +128,7 @@
       display: block;
     }
 
-    /* Screen Modals */
+    /* Screen Overlays */
     .screen-overlay {
       position: absolute;
       inset: 0;
@@ -249,7 +249,7 @@
 </head>
 <body>
 
-  <!-- Top Navigation Header -->
+  <!-- Header Navigation -->
   <header class="top-nav">
     <button id="backBtn" class="nav-btn">&#128281; Back</button>
     <div class="status-badge">
@@ -281,7 +281,7 @@
   <canvas id="gameCanvas"></canvas>
   <div id="fxLayer"></div>
 
-  <!-- Start Menu Overlay -->
+  <!-- Start Menu Screen -->
   <div id="lobbyScreen" class="screen-overlay">
     <div class="card">
       <h1 class="title">HOLE.IO 2</h1>
@@ -473,12 +473,14 @@
         this.type = type;
         this.isFalling = false;
         this.fall = 1.0;
+        this.targetHole = null;
         this.init();
       }
 
       init() {
         this.isFalling = false;
         this.fall = 1.0;
+        this.targetHole = null;
         this.horizontal = Math.random() < 0.5;
 
         if (this.type === 'bus') {
@@ -514,7 +516,11 @@
 
       update() {
         if (this.isFalling) {
-          this.fall -= 0.08;
+          this.fall -= 0.05;
+          if (this.targetHole) {
+            this.x += (this.targetHole.x - this.x) * 0.15;
+            this.y += (this.targetHole.y - this.y) * 0.15;
+          }
           return;
         }
         if (this.horizontal) {
@@ -534,7 +540,7 @@
 
         ctx.save();
         ctx.translate(sx, sy);
-        if (this.isFalling) ctx.scale(this.fall, this.fall);
+        if (this.isFalling) ctx.scale(Math.max(0, this.fall), Math.max(0, this.fall));
 
         ctx.fillStyle = 'rgba(0,0,0,0.28)';
         ctx.fillRect(-this.w / 2 + 3, -this.h / 2 + 3, this.w, this.h);
@@ -564,11 +570,16 @@
         this.angle = Math.random() * Math.PI * 2;
         this.isFalling = false;
         this.fall = 1.0;
+        this.targetHole = null;
       }
 
       update() {
         if (this.isFalling) {
-          this.fall -= 0.1;
+          this.fall -= 0.08;
+          if (this.targetHole) {
+            this.x += (this.targetHole.x - this.x) * 0.18;
+            this.y += (this.targetHole.y - this.y) * 0.18;
+          }
           return;
         }
         this.x += Math.cos(this.angle) * this.speed;
@@ -581,7 +592,7 @@
         const sy = this.y - camY;
         ctx.save();
         ctx.translate(sx, sy);
-        if (this.isFalling) ctx.scale(this.fall, this.fall);
+        if (this.isFalling) ctx.scale(Math.max(0, this.fall), Math.max(0, this.fall));
         ctx.beginPath();
         ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
         ctx.fillStyle = this.color;
@@ -599,6 +610,9 @@
         this.isTree = isTree;
         this.isFalling = false;
         this.fall = 1.0;
+        this.angle = 0;
+        this.tiltSpeed = (Math.random() - 0.5) * 0.12;
+        this.targetHole = null;
 
         if (isTree) {
           this.radius = 16;
@@ -611,13 +625,28 @@
         }
       }
 
+      update() {
+        if (this.isFalling) {
+          this.fall -= 0.035; // sinking into the hole
+          this.angle += this.tiltSpeed;
+          if (this.targetHole) {
+            // Gravitational pull toward the center of the black hole
+            this.x += (this.targetHole.x - this.x) * 0.12;
+            this.y += (this.targetHole.y - this.y) * 0.12;
+          }
+        }
+      }
+
       draw(camX, camY) {
         const sx = this.x - camX;
         const sy = this.y - camY;
 
         ctx.save();
         ctx.translate(sx, sy);
-        if (this.isFalling) ctx.scale(this.fall, this.fall);
+        if (this.isFalling) {
+          ctx.rotate(this.angle);
+          ctx.scale(Math.max(0, this.fall), Math.max(0, this.fall));
+        }
 
         if (this.isTree) {
           ctx.fillStyle = 'rgba(0,0,0,0.2)';
@@ -678,7 +707,7 @@
 
       roster.forEach((name, i) => {
         opponents.push(new BlackHole(
-          Math.random() * (WORLD_W - 400) + 200,
+            Math.random() * (WORLD_W - 400) + 200,
           Math.random() * (WORLD_H - 400) + 200,
           24,
           colors[i],
@@ -767,67 +796,87 @@
 
       player.update();
       opponents.forEach(b => b.update());
-      vehicles.forEach(v => v.update());
-      humans.forEach(h => h.update());
 
       camera.x += (player.x - screenW / 2 - camera.x) * 0.12;
       camera.y += (player.y - screenH / 2 - camera.y) * 0.12;
 
       const holes = [player, ...opponents];
 
-      vehicles.forEach(v => {
-        if (v.isFalling && v.fall <= 0) v.init();
-        holes.forEach(hole => {
-          if (!v.isFalling && Math.hypot(hole.x - v.x, hole.y - v.y) < hole.radius && hole.radius > v.reqRadius) {
-            v.isFalling = true;
-            hole.score += v.points;
-            hole.targetRadius += 0.6;
-            if (hole === player) {
-              showPopup(v.x - camera.x, v.y - camera.y, `+${v.points}`);
-              document.getElementById('hudScore').textContent = player.score;
-              document.getElementById('hudSize').textContent = `${(player.radius / 10).toFixed(1)}m`;
+      // Vehicles
+      for (let i = vehicles.length - 1; i >= 0; i--) {
+        const v = vehicles[i];
+        v.update();
+        if (v.isFalling && v.fall <= 0) {
+          v.init();
+          continue;
+        }
+        if (!v.isFalling) {
+          holes.forEach(hole => {
+            if (Math.hypot(hole.x - v.x, hole.y - v.y) < hole.radius && hole.radius > v.reqRadius) {
+              v.isFalling = true;
+              v.targetHole = hole;
+              hole.score += v.points;
+              hole.targetRadius += 0.6;
+              if (hole === player) {
+                showPopup(v.x - camera.x, v.y - camera.y, `+${v.points}`);
+                document.getElementById('hudScore').textContent = player.score;
+                document.getElementById('hudSize').textContent = `${(player.radius / 10).toFixed(1)}m`;
+              }
             }
-          }
-        });
-      });
+          });
+        }
+      }
 
-      humans.forEach((h, idx) => {
+      // Humans
+      for (let i = humans.length - 1; i >= 0; i--) {
+        const h = humans[i];
+        h.update();
         if (h.isFalling && h.fall <= 0) {
           humans.splice(idx, 1);
-          return;
+          continue;
         }
-        holes.forEach(hole => {
-          if (!h.isFalling && Math.hypot(hole.x - h.x, hole.y - h.y) < hole.radius) {
-            h.isFalling = true;
-            hole.score += h.points;
-            hole.targetRadius += 0.2;
-            if (hole === player) {
-              showPopup(h.x - camera.x, h.y - camera.y, `+${h.points}`);
-              document.getElementById('hudScore').textContent = player.score;
+        if (!h.isFalling) {
+          holes.forEach(hole => {
+            if (Math.hypot(hole.x - h.x, hole.y - h.y) < hole.radius) {
+              h.isFalling = true;
+              h.targetHole = hole;
+              hole.score += h.points;
+              hole.targetRadius += 0.2;
+              if (hole === player) {
+                showPopup(h.x - camera.x, h.y - camera.y, `+${h.points}`);
+                document.getElementById('hudScore').textContent = player.score;
+              }
             }
-          }
-        });
-      });
+          });
+        }
+      }
 
-      cityProps.forEach((p, idx) => {
+      // City Buildings & Trees (Falling & Suction Physics)
+      for (let i = cityProps.length - 1; i >= 0; i--) {
+        const p = cityProps[i];
+        p.update();
         if (p.isFalling && p.fall <= 0) {
-          cityProps.splice(idx, 1);
-          return;
+          cityProps.splice(i, 1);
+          continue;
         }
-        holes.forEach(hole => {
-          if (!p.isFalling && Math.hypot(hole.x - p.x, hole.y - p.y) < hole.radius && hole.radius > p.reqRadius) {
-            p.isFalling = true;
-            hole.score += p.points;
-            hole.targetRadius += 1.8;
-            if (hole === player) {
-              showPopup(p.x - camera.x, p.y - camera.y, `+${p.points}`);
-              document.getElementById('hudScore').textContent = player.score;
-              document.getElementById('hudSize').textContent = `${(player.radius / 10).toFixed(1)}m`;
+        if (!p.isFalling) {
+          holes.forEach(hole => {
+            if (Math.hypot(hole.x - p.x, hole.y - p.y) < hole.radius && hole.radius > p.reqRadius) {
+              p.isFalling = true;
+              p.targetHole = hole;
+              hole.score += p.points;
+              hole.targetRadius += 1.8;
+              if (hole === player) {
+                showPopup(p.x - camera.x, p.y - camera.y, `+${p.points}`);
+                document.getElementById('hudScore').textContent = player.score;
+                document.getElementById('hudSize').textContent = `${(player.radius / 10).toFixed(1)}m`;
+              }
             }
-          }
-        });
-      });
+          });
+        }
+      }
 
+      // Opponents
       opponents.forEach(bot => {
         if (Math.hypot(player.x - bot.x, player.y - bot.y) < player.radius && player.radius > bot.radius * 1.2) {
           player.score += bot.score + 500;
@@ -847,11 +896,21 @@
 
       if (isPlaying) {
         drawRealCityGround(camera.x, camera.y);
-        humans.forEach(h => h.draw(camera.x, camera.y));
-        vehicles.forEach(v => v.draw(camera.x, camera.y));
-        cityProps.forEach(p => p.draw(camera.x, camera.y));
+
+        // Draw ground props (non-falling)
+        cityProps.filter(p => !p.isFalling).forEach(p => p.draw(camera.x, camera.y));
+        vehicles.filter(v => !v.isFalling).forEach(v => v.draw(camera.x, camera.y));
+        humans.filter(h => !h.isFalling).forEach(h => h.draw(camera.x, camera.y));
+
+        // Draw Black Holes
         opponents.forEach(b => b.draw(camera.x, camera.y));
         player.draw(camera.x, camera.y);
+
+        // Draw tumbling/sinking props falling INTO the hole vortex
+        cityProps.filter(p => p.isFalling).forEach(p => p.draw(camera.x, camera.y));
+        vehicles.filter(v => v.isFalling).forEach(v => v.draw(camera.x, camera.y));
+        humans.filter(h => h.isFalling).forEach(h => h.draw(camera.x, camera.y));
+
         drawVirtualController();
       }
 
@@ -865,12 +924,12 @@
       let list = JSON.parse(localStorage.getItem('hole_city_scores') || '[]');
       if (list.length === 0) {
         list = [
-          { name: 'FreelWarp', score: 26822 },
-          { name: 'FakeHare05', score: 26737 },
-          { name: 'F33dCcmb', score: 26135 },
-          { name: 'Aja4Top', score: 26079 },
-          { name: 'TeeHums', score: 25935 },
-          { name: 'RokeSwer', score: 25798 },
+          { name: 'satish', score: 26822 },
+          { name: 'ganesh', score: 26737 },
+          { name: 'nithesh', score: 26135 },
+          { name: 'kiran', score: 26079 },
+          { name: 'sai', score: 25935 },
+          { name: 'balaji', score: 25798 },
           { name: 'MartHorn', score: 25667 },
           { name: 'LynxScan', score: 25636 },
           { name: 'WackFalc', score: 25597 }
