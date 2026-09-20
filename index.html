@@ -267,6 +267,100 @@
       cursor: pointer;
       margin-top: 12px;
     }
+    /* ========================================================
+   Super Animated Games Counter Badge
+   ======================================================== */
+.super-game-counter {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  padding: 8px 20px;
+  border-radius: 30px;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45), inset 0 0 12px rgba(56, 189, 248, 0.15);
+  margin: 14px auto;
+  cursor: default;
+  overflow: hidden;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
+}
+
+/* Hover Tilt & Shimmer Boost */
+.super-game-counter:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 12px 36px rgba(56, 189, 248, 0.35), inset 0 0 18px rgba(168, 85, 247, 0.3);
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
+/* Floating Controller Animation */
+.joy-icon {
+  font-size: 18px;
+  display: inline-block;
+  animation: floatJoystick 2.4s ease-in-out infinite;
+}
+
+@keyframes floatJoystick {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-3px) rotate(-8deg); }
+}
+
+/* Glowing Neon Number Counter */
+.counter-val {
+  font-size: 19px;
+  font-weight: 900;
+  background: linear-gradient(135deg, #38bdf8, #818cf8, #c084fc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 20px rgba(56, 189, 248, 0.6);
+  letter-spacing: 0.5px;
+}
+
+/* Sub-label text */
+.counter-txt {
+  font-size: 13px;
+  font-weight: 700;
+  color: #e2e8f0;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+/* Green Live Pulse Dot */
+.pulse-dot {
+  width: 7px;
+  height: 7px;
+  background-color: #00ff88;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #00ff88;
+  animation: livePing 1.8s infinite ease-in-out;
+}
+
+@keyframes livePing {
+  0% { transform: scale(0.9); opacity: 0.5; box-shadow: 0 0 4px #00ff88; }
+  50% { transform: scale(1.35); opacity: 1; box-shadow: 0 0 12px #00ff88; }
+  100% { transform: scale(0.9); opacity: 0.5; box-shadow: 0 0 4px #00ff88; }
+}
+
+/* Moving Light Sweep / Shimmer Across the Badge */
+.super-game-counter::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 80%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+  transform: skewX(-25deg);
+  animation: shimmerSweep 4s infinite linear;
+}
+
+@keyframes shimmerSweep {
+  0% { left: -120%; }
+  35%, 100% { left: 160%; }
+}
+    
         /* ============================================== */
     /* REFLEX & MATH RUSH PRO EFFECTS                 */
     /* ============================================== */
