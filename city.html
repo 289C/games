@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- PeerJS P2P Networking -->
-  <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
-  
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>HOLE.IO 2 - City</title>
+  <title>HOLE.IO 2 - City Multiplayer</title>
+  <!-- PeerJS P2P Networking -->
+  <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
   <style>
     * {
       box-sizing: border-box;
@@ -21,34 +20,35 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background-color: #7da06d;
+      background-color: #638454;
       color: #fff;
       touch-action: none;
     }
 
-    /* Header Nav */
+    /* Top Navigation */
     .top-nav {
       position: absolute;
       top: 0;
       left: 0;
       right: 0;
-      height: 54px;
-      background: rgba(14, 16, 24, 0.85);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      height: 56px;
+      background: rgba(14, 16, 24, 0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 0 14px;
       z-index: 100;
       border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
     }
 
     .nav-btn, .insta-btn {
       background: rgba(255, 255, 255, 0.12);
       border: 1px solid rgba(255, 255, 255, 0.2);
       color: #ffffff;
-      padding: 6px 12px;
+      padding: 6px 14px;
       border-radius: 20px;
       text-decoration: none;
       font-size: 13px;
@@ -57,6 +57,11 @@
       display: inline-flex;
       align-items: center;
       gap: 7px;
+      transition: transform 0.2s ease;
+    }
+
+    .nav-btn:active, .insta-btn:active {
+      transform: scale(0.95);
     }
 
     .insta-img {
@@ -71,9 +76,10 @@
       display: flex;
       align-items: center;
       gap: 7px;
-      background: rgba(0, 0, 0, 0.5);
+      background: rgba(0, 0, 0, 0.55);
+      border: 1px solid rgba(255, 255, 255, 0.1);
       padding: 5px 12px;
-      border-radius: 12px;
+      border-radius: 14px;
       font-size: 11px;
       letter-spacing: 1.2px;
       font-weight: 800;
@@ -84,45 +90,45 @@
       height: 8px;
       background-color: #00ff88;
       border-radius: 50%;
-      box-shadow: 0 0 8px #00ff88;
-      animation: pulse 1.6s infinite;
+      box-shadow: 0 0 10px #00ff88;
+      animation: livePulse 1.6s infinite ease-in-out;
     }
 
-    @keyframes pulse {
-      0% { transform: scale(0.9); opacity: 0.7; }
-      50% { transform: scale(1.3); opacity: 1; }
-      100% { transform: scale(0.9); opacity: 0.7; }
+    @keyframes livePulse {
+      0%, 100% { transform: scale(0.9); opacity: 0.6; }
+      50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 14px #00ff88; }
     }
 
-    /* Live HUD */
+    /* In-Game HUD */
     .hud-container {
       position: absolute;
-      top: 64px;
+      top: 66px;
       left: 0;
       right: 0;
       display: flex;
       justify-content: space-between;
-      padding: 0 16px;
+      padding: 0 20px;
       z-index: 50;
       pointer-events: none;
     }
 
     .hud-col {
       text-align: center;
-      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.95);
     }
 
     .hud-lbl {
       font-size: 11px;
-      font-weight: 700;
-      color: #cbd5e1;
-      letter-spacing: 1px;
+      font-weight: 800;
+      color: #94a3b8;
+      letter-spacing: 1.5px;
     }
 
     .hud-num {
-      font-size: 26px;
+      font-size: 28px;
       font-weight: 900;
       color: #ffffff;
+      text-shadow: 0 0 15px rgba(255,255,255,0.4);
     }
 
     #gameCanvas {
@@ -131,14 +137,16 @@
       display: block;
     }
 
+    /* Modal Screens */
     .screen-overlay {
       position: absolute;
       inset: 0;
       display: flex;
       justify-content: center;
       align-items: center;
-      background: rgba(10, 12, 18, 0.88);
-      backdrop-filter: blur(8px);
+      background: radial-gradient(circle at center, rgba(15, 23, 42, 0.92) 0%, rgba(2, 6, 23, 0.97) 100%);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       z-index: 200;
     }
 
@@ -148,70 +156,91 @@
 
     .card {
       width: 90%;
-      max-width: 400px;
-      background: #181926;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 24px;
+      max-width: 390px;
+      background: rgba(24, 25, 38, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 28px;
       padding: 26px 20px;
       text-align: center;
-      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7);
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(168, 85, 247, 0.2);
+      animation: popIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0.85); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
     }
 
     .title {
       font-size: 32px;
       font-weight: 900;
       letter-spacing: 2px;
-      background: linear-gradient(135deg, #c084fc, #a855f7);
+      background: linear-gradient(135deg, #38bdf8, #a855f7, #ec4899);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     .btn {
       width: 100%;
-      padding: 14px;
-      border-radius: 12px;
+      padding: 13px;
+      border-radius: 14px;
       border: none;
       font-size: 15px;
       font-weight: 800;
       cursor: pointer;
       margin-top: 10px;
+      transition: transform 0.15s ease, filter 0.15s ease;
     }
 
     .btn:active {
-      transform: scale(0.98);
-      filter: brightness(0.9);
+      transform: scale(0.97);
     }
 
     .btn-purple {
-      background: #8b5cf6;
+      background: linear-gradient(135deg, #9333ea, #7c3aed);
       color: #fff;
+      box-shadow: 0 4px 15px rgba(147, 51, 234, 0.4);
     }
 
     .btn-gray {
       background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
       color: #fff;
+    }
+
+    .btn-green {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
     }
 
     .input-box {
       width: 100%;
       padding: 12px;
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.06);
       border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 10px;
+      border-radius: 12px;
       color: #fff;
       font-size: 15px;
-      margin: 10px 0;
+      margin: 8px 0;
       outline: none;
       text-align: center;
+      font-weight: 700;
+    }
+
+    .room-actions {
+      display: flex;
+      gap: 10px;
     }
 
     .leaderboard-box {
       max-height: 180px;
       overflow-y: auto;
-      background: rgba(0, 0, 0, 0.3);
-      border-radius: 12px;
-      padding: 6px 12px;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 6px 14px;
       margin: 12px 0;
       text-align: left;
     }
@@ -219,41 +248,42 @@
     .lb-item {
       display: flex;
       justify-content: space-between;
-      padding: 6px 0;
+      padding: 7px 0;
       font-size: 14px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     }
 
     .lb-active {
-      color: #a855f7;
+      color: #38bdf8;
       font-weight: 800;
+      text-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
     }
 
+    /* Floating Score VFX */
     .float-fx {
       position: absolute;
       font-weight: 900;
-      font-size: 20px;
-      color: #fbbf24;
-      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
+      font-size: 22px;
+      color: #facc15;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9);
       pointer-events: none;
-      animation: floatUp 0.8s ease-out forwards;
+      animation: floatUp 0.85s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
       z-index: 80;
     }
 
     @keyframes floatUp {
-      0% { opacity: 1; transform: translateY(0); }
-      100% { opacity: 0; transform: translateY(-40px); }
+      0% { opacity: 1; transform: translateY(0) scale(1); }
+      100% { opacity: 0; transform: translateY(-48px) scale(1.25); }
     }
   </style>
 </head>
 <body>
 
-  <!-- Top Header Navigation -->
   <header class="top-nav">
     <button id="backBtn" class="nav-btn">&#128281; Back</button>
     <div class="status-badge">
       <span class="online-indicator"></span>
-      <span>ONLINE</span>
+      <span id="navStatus">ONLINE</span>
     </div>
     <a href="https://www.instagram.com/_satish_official_16?stkn=MTNzNXZ2cWpkdmRtNA==" target="_blank" rel="noopener noreferrer" class="insta-btn">
       <img src="Insta.jpg" alt="Instagram" class="insta-img" onerror="this.style.display='none'" />
@@ -261,7 +291,6 @@
     </a>
   </header>
 
-  <!-- Live In-Game HUD -->
   <div id="gameHUD" class="hud-container hidden">
     <div class="hud-col">
       <div class="hud-lbl">SCORE</div>
@@ -280,44 +309,43 @@
   <canvas id="gameCanvas"></canvas>
   <div id="fxLayer"></div>
 
-  <!-- Start Menu Screen -->
+  <!-- Lobby Screen -->
   <div id="lobbyScreen" class="screen-overlay">
     <div class="card">
       <h1 class="title">HOLE.IO 2</h1>
-      <p style="color: #94a3b8; font-size: 13px; margin-bottom: 10px;">Play solo or 1v1 with friends live!</p>
+      <p style="color: #94a3b8; font-size: 13px; margin-bottom: 10px;">Swallow the city and grow larger!</p>
       
-      <input type="text" id="playerName" class="input-box" value="Player" maxlength="12" placeholder="Your Name" />
+      <input type="text" id="playerName" class="input-box" value="Satish" maxlength="12" placeholder="Your Name" />
       
       <button id="btnSolo" type="button" class="btn btn-purple">Play Solo (vs Bots)</button>
 
-      <div style="margin: 12px 0 6px 0; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;">
-        <span style="font-size: 12px; color: #cbd5e1; font-weight: 700;">PLAY WITH A FRIEND (1v1)</span>
+      <div style="margin: 12px 0 6px 0; border-top: 1px solid rgba(255,255,255,0.12); padding-top: 10px;">
+        <span style="font-size: 12px; color: #cbd5e1; font-weight: 700; letter-spacing: 0.5px;">PLAY 1v1 WITH FRIENDS</span>
       </div>
 
-      <div style="display: flex; gap: 10px;">
-        <button id="btnCreateRoom" type="button" class="btn btn-gray" style="flex: 1;">Create Room</button>
-        <button id="btnJoinRoom" type="button" class="btn" style="flex: 1; background: #10b981; color: #fff;">Join Room</button>
+      <div class="room-actions">
+        <button id="btnCreateRoom" type="button" class="btn btn-gray">Create Room</button>
+        <button id="btnJoinRoom" type="button" class="btn btn-green">Join Room</button>
       </div>
 
-      <!-- Join Box -->
       <div id="joinInputSec" class="hidden" style="margin-top: 10px;">
-        <input type="text" id="joinCodeInput" class="input-box" placeholder="Enter 6-digit Code" maxlength="6" style="text-transform: uppercase;" />
+        <input type="text" id="joinCodeInput" class="input-box" placeholder="Enter Room Code" maxlength="6" style="text-transform: uppercase;" />
         <button id="btnConnectRoom" type="button" class="btn btn-purple">Enter Match</button>
       </div>
       
-      <!-- Room Code Display -->
       <div id="roomCodeDisplay" style="margin-top: 12px; font-size: 14px; color:#d8b4fe;" class="hidden">
-        Room Code: <strong id="generatedCode" style="font-size: 22px; letter-spacing: 2px; color:#38bdf8;"></strong>
-        <div style="font-size: 12px; color: #a1a1aa; margin-top: 4px;">Waiting for your friend to enter this code...</div>
+        Room Code: <strong id="generatedCode" style="font-size: 24px; letter-spacing: 2px; color:#38bdf8;"></strong>
+        <div style="font-size: 12px; color: #a1a1aa; margin-top: 4px;">Share this code with your friend!</div>
       </div>
-
+    </div>
+  </div>
 
   <!-- Game Over Screen -->
   <div id="gameOverScreen" class="screen-overlay hidden">
     <div class="card">
-      <h2 style="font-size: 26px; font-weight: 900; margin-bottom: 6px;">TIME'S UP</h2>
-      <div style="font-size: 38px; font-weight: 900; color: #a855f7;" id="endScore">0</div>
-      <div style="font-size: 14px; color: #94a3b8; margin-bottom: 12px;" id="endSize">Hole size: 20.0m</div>
+      <h2 style="font-size: 26px; font-weight: 900; margin-bottom: 4px;">TIME'S UP!</h2>
+      <div style="font-size: 42px; font-weight: 900; color: #38bdf8;" id="endScore">0</div>
+      <div style="font-size: 14px; color: #94a3b8; margin-bottom: 12px;" id="endSize">Hole size: 2.4m</div>
 
       <div class="leaderboard-box" id="leaderboardList"></div>
 
@@ -353,6 +381,21 @@
     let vehicles = [];
     let humans = [];
     let cityProps = [];
+
+    // PeerJS Networking with STUN servers
+    let peer = null;
+    let peerConn = null;
+    let remoteFriend = null;
+
+    const peerConfig = {
+      config: {
+        iceServers: [
+          { urls: 'stun:stun.l.google.com:19302' },
+          { urls: 'stun:stun1.l.google.com:19302' },
+          { urls: 'stun:stun2.l.google.com:19302' }
+        ]
+      }
+    };
 
     let camera = { x: 0, y: 0 };
     let joystick = {
@@ -417,7 +460,7 @@
     window.addEventListener('mouseup', resetJoy);
 
     class BlackHole {
-      constructor(x, y, radius, color, name, isBot = false) {
+      constructor(x, y, radius, color, name, isBot = false, isRemote = false) {
         this.x = x;
         this.y = y;
         this.radius = radius;
@@ -425,15 +468,18 @@
         this.color = color;
         this.name = name;
         this.isBot = isBot;
+        this.isRemote = isRemote;
         this.score = 0;
         this.speed = 3.6;
         this.targetX = x;
         this.targetY = y;
+        this.vortexAngle = 0;
       }
 
       update() {
         this.radius += (this.targetRadius - this.radius) * 0.1;
-        this.speed = Math.max(1.9, 4.0 - this.radius / 150);
+        this.speed = Math.max(2.0, 4.2 - this.radius / 140);
+        this.vortexAngle += 0.05;
 
         if (this.isBot) {
           if (Math.hypot(this.targetX - this.x, this.targetY - this.y) < 50 || Math.random() < 0.02) {
@@ -443,7 +489,7 @@
           const angle = Math.atan2(this.targetY - this.y, this.targetX - this.x);
           this.x += Math.cos(angle) * (this.speed * 0.75);
           this.y += Math.sin(angle) * (this.speed * 0.75);
-        } else {
+        } else if (!this.isRemote) {
           if (joystick.dirX !== 0 || joystick.dirY !== 0) {
             this.x += joystick.dirX * this.speed;
             this.y += joystick.dirY * this.speed;
@@ -459,25 +505,40 @@
         const sy = this.y - camY;
 
         ctx.save();
+        // Neon Glow Rim
         ctx.beginPath();
         ctx.arc(sx, sy, this.radius + 6, 0, Math.PI * 2);
-        ctx.fillStyle = '#c026d3';
+        ctx.fillStyle = this.color;
+        ctx.shadowColor = this.color;
+        ctx.shadowBlur = 18;
         ctx.fill();
 
+        // Outer Vortex
         ctx.beginPath();
         ctx.arc(sx, sy, this.radius, 0, Math.PI * 2);
         ctx.fillStyle = '#260d36';
+        ctx.shadowBlur = 0;
         ctx.fill();
 
+        // Swirling Inner Depth
         ctx.beginPath();
         ctx.arc(sx, sy, this.radius * 0.72, 0, Math.PI * 2);
-        ctx.fillStyle = '#170724';
+        ctx.fillStyle = '#140520';
         ctx.fill();
 
+        // Abyss Core
         ctx.beginPath();
-        ctx.arc(sx, sy, this.radius * 0.48, 0, Math.PI * 2);
-        ctx.fillStyle = '#050209';
+        ctx.arc(sx, sy, this.radius * 0.45, 0, Math.PI * 2);
+        ctx.fillStyle = '#000000';
         ctx.fill();
+
+        // Player Tag
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 13px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.shadowColor = '#000';
+        ctx.shadowBlur = 6;
+        ctx.fillText(this.name, sx, sy - this.radius - 12);
         ctx.restore();
       }
     }
@@ -530,10 +591,10 @@
 
       update() {
         if (this.isFalling) {
-          this.fall -= 0.05;
+          this.fall -= 0.06;
           if (this.targetHole) {
-            this.x += (this.targetHole.x - this.x) * 0.15;
-            this.y += (this.targetHole.y - this.y) * 0.15;
+            this.x += (this.targetHole.x - this.x) * 0.18;
+            this.y += (this.targetHole.y - this.y) * 0.18;
           }
           return;
         }
@@ -580,7 +641,7 @@
         this.reqRadius = 14;
         this.points = 15;
         this.color = Math.random() < 0.5 ? '#f43f5e' : '#06b6d4';
-        this.speed = 0.7;
+        this.speed = 0.8;
         this.angle = Math.random() * Math.PI * 2;
         this.isFalling = false;
         this.fall = 1.0;
@@ -591,8 +652,8 @@
         if (this.isFalling) {
           this.fall -= 0.08;
           if (this.targetHole) {
-            this.x += (this.targetHole.x - this.x) * 0.18;
-            this.y += (this.targetHole.y - this.y) * 0.18;
+            this.x += (this.targetHole.x - this.x) * 0.2;
+            this.y += (this.targetHole.y - this.y) * 0.2;
           }
           return;
         }
@@ -625,7 +686,7 @@
         this.isFalling = false;
         this.fall = 1.0;
         this.angle = 0;
-        this.tiltSpeed = (Math.random() - 0.5) * 0.12;
+            this.tiltSpeed = (Math.random() - 0.5) * 0.12;
         this.targetHole = null;
 
         if (isTree) {
@@ -641,11 +702,11 @@
 
       update() {
         if (this.isFalling) {
-          this.fall -= 0.035;
+          this.fall -= 0.04;
           this.angle += this.tiltSpeed;
           if (this.targetHole) {
-            this.x += (this.targetHole.x - this.x) * 0.12;
-            this.y += (this.targetHole.y - this.y) * 0.12;
+            this.x += (this.targetHole.x - this.x) * 0.14;
+            this.y += (this.targetHole.y - this.y) * 0.14;
           }
         }
       }
@@ -715,23 +776,24 @@
 
     function spawnBots() {
       opponents = [];
-      const roster = ['Crimson', 'Emerald', 'Volt', 'Nova'];
-      const colors = ['#dc2626', '#16a34a', '#ca8a04', '#db2777'];
+      const roster = ['Ganesh', 'Durga', 'Sai', 'Nithesh', 'Balaji', 'Kiran'];
+      const colors = ['#dc2626', '#16a34a', '#ca8a04', '#db2777', '#0284c7', '#ea580c'];
 
       roster.forEach((name, i) => {
         opponents.push(new BlackHole(
           Math.random() * (WORLD_W - 400) + 200,
           Math.random() * (WORLD_H - 400) + 200,
           24,
-          colors[i],
+          colors[i % colors.length],
           name,
-          true
+          true,
+          false
         ));
       });
     }
 
-function drawRealCityGround(camX, camY) {
-      ctx.fillStyle = '#86a873';
+    function drawRealCityGround(camX, camY) {
+      ctx.fillStyle = '#7da06d';
       ctx.fillRect(0, 0, screenW, screenH);
 
       const step = BLOCK_SIZE + ROAD_WIDTH;
@@ -745,7 +807,7 @@ function drawRealCityGround(camX, camY) {
           const bx = c * step - camX;
           const by = r * step - camY;
 
-          ctx.fillStyle = '#d5dbdb';
+          ctx.fillStyle = '#d1d5db';
           ctx.fillRect(bx - 12, by - 12, BLOCK_SIZE + 24, BLOCK_SIZE + 24);
 
           ctx.fillStyle = '#9cb988';
@@ -790,7 +852,7 @@ function drawRealCityGround(camX, camY) {
       ctx.fillStyle = '#a855f7';
       ctx.fill();
       ctx.shadowColor = '#c084fc';
-      ctx.shadowBlur = 10;
+      ctx.shadowBlur = 12;
       ctx.restore();
     }
 
@@ -801,7 +863,7 @@ function drawRealCityGround(camX, camY) {
       el.style.left = `${x}px`;
       el.style.top = `${y}px`;
       document.getElementById('fxLayer').appendChild(el);
-      setTimeout(() => el.remove(), 800);
+      setTimeout(() => el.remove(), 850);
     }
 
     function gameLoop() {
@@ -810,10 +872,22 @@ function drawRealCityGround(camX, camY) {
       player.update();
       opponents.forEach(b => b.update());
 
-      camera.x += (player.x - screenW / 2 - camera.x) * 0.12;
-      camera.y += (player.y - screenH / 2 - camera.y) * 0.12;
+      camera.x += (player.x - screenW / 2 - camera.x) * 0.14;
+      camera.y += (player.y - screenH / 2 - camera.y) * 0.14;
 
       const holes = [player, ...opponents];
+
+      // Broadcast 1v1 positions
+      if (peerConn && peerConn.open) {
+        peerConn.send({
+          type: 'pos',
+          x: player.x,
+          y: player.y,
+          r: player.radius,
+          score: player.score,
+          name: player.name
+        });
+      }
 
       // Vehicles
       for (let i = vehicles.length - 1; i >= 0; i--) {
@@ -854,7 +928,7 @@ function drawRealCityGround(camX, camY) {
               h.isFalling = true;
               h.targetHole = hole;
               hole.score += h.points;
-              hole.targetRadius += 0.2;
+              hole.targetRadius += 0.25;
               if (hole === player) {
                 showPopup(h.x - camera.x, h.y - camera.y, `+${h.points}`);
                 document.getElementById('hudScore').textContent = player.score;
@@ -889,7 +963,7 @@ function drawRealCityGround(camX, camY) {
         }
       }
 
-      // Opponents
+      // Swallowing Opponents
       opponents.forEach(bot => {
         if (Math.hypot(player.x - bot.x, player.y - bot.y) < player.radius && player.radius > bot.radius * 1.2) {
           player.score += bot.score + 500;
@@ -910,16 +984,13 @@ function drawRealCityGround(camX, camY) {
       if (isPlaying && player) {
         drawRealCityGround(camera.x, camera.y);
 
-        // Ground non-falling props
         cityProps.filter(p => !p.isFalling).forEach(p => p.draw(camera.x, camera.y));
         vehicles.filter(v => !v.isFalling).forEach(v => v.draw(camera.x, camera.y));
         humans.filter(h => !h.isFalling).forEach(h => h.draw(camera.x, camera.y));
 
-        // Draw Black Holes
         opponents.forEach(b => b.draw(camera.x, camera.y));
         player.draw(camera.x, camera.y);
 
-        // Draw falling suction props inside holes
         cityProps.filter(p => p.isFalling).forEach(p => p.draw(camera.x, camera.y));
         vehicles.filter(v => v.isFalling).forEach(v => v.draw(camera.x, camera.y));
         humans.filter(h => h.isFalling).forEach(h => h.draw(camera.x, camera.y));
@@ -934,38 +1005,53 @@ function drawRealCityGround(camX, camY) {
     requestAnimationFrame(render);
 
     function saveAndGetLeaderboard(name, score) {
-      let list = JSON.parse(localStorage.getItem('hole_city_scores') || '[]');
-      if (list.length === 0) {
-        list = [
-          { name: 'satish', score: 26822 },
-          { name: 'balaji', score: 26737 },
-          { name: 'sai', score: 26135 },
-          { name: 'kiran', score: 26079 },
-          { name: 'ganesh', score: 25935 },
-          { name: 'subhash', score: 25798 },
-          { name: 'nithesh', score: 25667 },
-          { name: 'durga', score: 25636 },
-          { name: 'aditya', score: 25597 }
-        ];
+      let list = [
+        { name: 'Satish', score: 26820 },
+        { name: 'Ganesh', score: 24730 },
+        { name: 'Durga', score: 21130 },
+        { name: 'Sai', score: 18070 },
+        { name: 'Nithesh', score: 15930 },
+        { name: 'Balaji', score: 14200 },
+        { name: 'Kiran', score: 12500 }
+      ];
+
+      try {
+        const saved = localStorage.getItem('hole_city_scores');
+        if (saved) list = JSON.parse(saved);
+      } catch (e) {
+        console.warn('Storage error:', e);
       }
-      list.push({ name, score });
+
+      list.push({ name: name || 'Satish', score: score || 0 });
       list.sort((a, b) => b.score - a.score);
 
       const rank = list.findIndex(i => i.name === name && i.score === score) + 1;
-      const top10 = list.slice(0, 10);
-      localStorage.setItem('hole_city_scores', JSON.stringify(top10));
-      return { rank, top10 };
+      const topList = list.slice(0, 6);
+
+      try {
+        localStorage.setItem('hole_city_scores', JSON.stringify(topList));
+      } catch (e) {}
+
+      return { rank, topList };
     }
 
-    function startMatch() {
+    function startMatch(withBots = true) {
       isPlaying = true;
       matchTime = 120;
 
-      const pName = document.getElementById('playerName').value.trim() || 'You';
-      player = new BlackHole(WORLD_W / 2, WORLD_H / 2, 24, '#a855f7', pName, false);
+      const pName = document.getElementById('playerName').value.trim() || 'Satish';
+      player = new BlackHole(WORLD_W / 2, WORLD_H / 2, 24, '#a855f7', pName, false, false);
+
+      camera.x = player.x - screenW / 2;
+      camera.y = player.y - screenH / 2;
 
       buildCity();
-      spawnBots();
+
+      if (withBots) {
+        spawnBots();
+      } else {
+        opponents = [];
+      }
 
       document.getElementById('hudScore').textContent = '0';
       document.getElementById('hudTime').textContent = '120';
@@ -983,46 +1069,15 @@ function drawRealCityGround(camX, camY) {
       }, 1000);
     }
 
-        function saveAndGetLeaderboard(name, score) {
-      let list = [
-        { name: 'FreelWarp', score: 26820 },
-        { name: 'FakeHare05', score: 24730 },
-        { name: 'F33dCcmb', score: 21130 },
-        { name: 'Aja4Top', score: 18070 },
-        { name: 'TeeHums', score: 15930 }
-      ];
-
-      try {
-        const saved = localStorage.getItem('hole_city_scores');
-        if (saved) list = JSON.parse(saved);
-      } catch (e) {
-        console.warn('Storage error:', e);
-      }
-
-      list.push({ name: name || 'You', score: score || 0 });
-      list.sort((a, b) => b.score - a.score);
-
-      const rank = list.findIndex(i => i.name === name && i.score === score) + 1;
-      const top5 = list.slice(0, 5);
-
-      try {
-        localStorage.setItem('hole_city_scores', JSON.stringify(top5));
-      } catch (e) {}
-
-      return { rank, topList: top5 };
-    }
-
     function endGame() {
       isPlaying = false;
       clearInterval(timerInterval);
 
-      // 1. Hide HUD & Show Game Over Screen
       const hud = document.getElementById('gameHUD');
       const overScreen = document.getElementById('gameOverScreen');
       if (hud) hud.classList.add('hidden');
       if (overScreen) overScreen.classList.remove('hidden');
 
-      // 2. Set Final Score and Hole Size
       const finalScore = player ? player.score : 0;
       const finalRadius = player ? (player.radius / 10).toFixed(1) : '2.4';
 
@@ -1031,11 +1086,10 @@ function drawRealCityGround(camX, camY) {
       if (scoreEl) scoreEl.textContent = finalScore;
       if (sizeEl) sizeEl.textContent = `Hole size: ${finalRadius}m`;
 
-      // 3. Render Leaderboard List
       const listEl = document.getElementById('leaderboardList');
       if (listEl) {
         listEl.innerHTML = '';
-        const { rank, topList } = saveAndGetLeaderboard(player ? player.name : 'You', finalScore);
+        const { rank, topList } = saveAndGetLeaderboard(player ? player.name : 'Satish', finalScore);
 
         topList.forEach((item, index) => {
           const isMe = player && item.name === player.name && item.score === finalScore;
@@ -1048,30 +1102,35 @@ function drawRealCityGround(camX, camY) {
         });
       }
 
-      // 4. Close multiplayer connection cleanly
       if (peerConn) {
         try { peerConn.close(); } catch(e) {}
       }
     }
 
+    // ==========================================
+    // Real 1v1 Room Code System (PeerJS)
+    // ==========================================
+    function onConnectionEstablished() {
+      const badge = document.querySelector('.status-badge span:last-child');
+      if (badge) badge.textContent = '1v1 LIVE';
 
-        // Multiplayer Variables
-    let peer = null;
-    let peerConn = null;
-    let remoteFriend = null;
+      document.getElementById('lobbyScreen').classList.add('hidden');
+      startMatch(false);
+
+      if (!remoteFriend) {
+        remoteFriend = new BlackHole(WORLD_W / 2 + 140, WORLD_H / 2 + 140, 24, '#06b6d4', 'Friend', false, true);
+        opponents.push(remoteFriend);
+      }
+    }
 
     function setupPeerConnection(conn) {
       peerConn = conn;
 
-      peerConn.on('open', () => {
-        const badge = document.querySelector('.status-badge span:last-child');
-        if (badge) badge.textContent = '1v1 CONNECTED';
-        startMatch();
-
-        // Spawn friend hole
-        remoteFriend = new BlackHole(WORLD_W / 2 + 120, WORLD_H / 2 + 120, 24, '#06b6d4', 'Friend', false);
-        opponents.push(remoteFriend);
-      });
+      if (peerConn.open) {
+        onConnectionEstablished();
+      } else {
+        peerConn.on('open', onConnectionEstablished);
+      }
 
       peerConn.on('data', (data) => {
         if (data.type === 'pos' && remoteFriend) {
@@ -1079,74 +1138,106 @@ function drawRealCityGround(camX, camY) {
           remoteFriend.y = data.y;
           remoteFriend.radius = data.r;
           remoteFriend.score = data.score;
+          if (data.name) remoteFriend.name = data.name;
         }
       });
 
       peerConn.on('close', () => {
-        alert('Friend left the room.');
+        alert('Friend left match.');
         location.reload();
+      });
+
+      peerConn.on('error', (err) => {
+        console.error('Conn err:', err);
       });
     }
 
-    // Broadcast local player movement
-    setInterval(() => {
-      if (peerConn && peerConn.open && player) {
-        peerConn.send({
-          type: 'pos',
-          x: player.x,
-          y: player.y,
-          r: player.radius,
-          score: player.score
-        });
-      }
-    }, 45);
-
     // 1. Host creates room
-    document.getElementById('btnCreateRoom').addEventListener('click', () => {
+    function handleCreateRoom() {
       const code = Math.random().toString(36).substring(2, 8).toUpperCase();
       document.getElementById('generatedCode').textContent = code;
       document.getElementById('roomCodeDisplay').classList.remove('hidden');
       document.getElementById('joinInputSec').classList.add('hidden');
 
-      peer = new Peer('holeio2-' + code);
+      if (peer) peer.destroy();
+      peer = new Peer('hole2-' + code, peerConfig);
+
+      peer.on('open', () => {
+        const badge = document.querySelector('.status-badge span:last-child');
+        if (badge) badge.textContent = 'ROOM READY';
+      });
 
       peer.on('connection', (conn) => {
         setupPeerConnection(conn);
       });
 
       peer.on('error', (err) => {
-        console.error(err);
-        alert('Error creating room code. Please try again.');
+        console.error('Peer error:', err);
       });
+    }
+
+    document.getElementById('btnCreateRoom').addEventListener('click', handleCreateRoom);
+    document.getElementById('btnCreateRoom').addEventListener('touchend', (e) => {
+      e.preventDefault();
+      handleCreateRoom();
     });
 
-    // 2. Friend toggles join input
-    document.getElementById('btnJoinRoom').addEventListener('click', () => {
+    // 2. Friend opens join box
+    function handleJoinToggle() {
       document.getElementById('joinInputSec').classList.remove('hidden');
       document.getElementById('roomCodeDisplay').classList.add('hidden');
+    }
+    document.getElementById('btnJoinRoom').addEventListener('click', handleJoinToggle);
+    document.getElementById('btnJoinRoom').addEventListener('touchend', (e) => {
+      e.preventDefault();
+      handleJoinToggle();
     });
 
     // 3. Friend joins with code
-    document.getElementById('btnConnectRoom').addEventListener('click', () => {
-      const code = document.getElementById('joinCodeInput').value.trim().toUpperCase();
+    function handleConnectRoom() {
+      const connectBtn = document.getElementById('btnConnectRoom');
+      const input = document.getElementById('joinCodeInput');
+      const code = input.value.trim().toUpperCase();
+
       if (!code || code.length < 4) {
         alert('Please enter a valid room code.');
         return;
       }
 
-      peer = new Peer();
+      connectBtn.textContent = 'Connecting...';
+      connectBtn.disabled = true;
+
+      if (peer) peer.destroy();
+      peer = new Peer(peerConfig);
+
       peer.on('open', () => {
-        const conn = peer.connect('holeio2-' + code);
+        const conn = peer.connect('hole2-' + code, { reliable: true });
         setupPeerConnection(conn);
       });
 
       peer.on('error', (err) => {
-        console.error(err);
-        alert('Could not connect. Verify the room code and try again.');
+        console.error('Peer err:', err);
+        connectBtn.textContent = 'Enter Match';
+        connectBtn.disabled = false;
+        alert('Could not join room. Make sure both devices are opened in Google Chrome.');
       });
+    }
+
+    document.getElementById('btnConnectRoom').addEventListener('click', handleConnectRoom);
+    document.getElementById('btnConnectRoom').addEventListener('touchend', (e) => {
+      e.preventDefault();
+      handleConnectRoom();
     });
 
+    // Solo Mode Button
+    const soloBtn = document.getElementById('btnSolo');
+    soloBtn.addEventListener('click', () => startMatch(true));
+    soloBtn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      startMatch(true);
+    });
 
+    // Restart Button
     const restartBtn = document.getElementById('btnRestart');
     function handleRestart() {
       document.getElementById('gameOverScreen').classList.add('hidden');
@@ -1158,6 +1249,7 @@ function drawRealCityGround(camX, camY) {
       handleRestart();
     });
 
+    // Back to index.html Button
     document.getElementById('backBtn').addEventListener('click', () => {
       if (window.history.length > 1) window.history.back();
       else window.location.href = 'index.html';
