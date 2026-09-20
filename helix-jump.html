@@ -67,18 +67,27 @@
       background: rgba(255, 255, 255, 0.25);
     }
 
-    .profile-badge {
+        .profile-badge {
       display: flex;
       align-items: center;
       gap: 8px;
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.12);
       backdrop-filter: blur(10px);
       padding: 5px 14px 5px 6px;
       border-radius: 25px;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #ffffff;
       font-size: 13px;
       font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      pointer-events: auto;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .profile-badge:active {
+      transform: scale(0.95);
+      background: rgba(255, 255, 255, 0.25);
     }
 
     .profile-badge img {
@@ -87,7 +96,9 @@
       border-radius: 50%;
       object-fit: cover;
       border: 1.5px solid #ff416c;
+      display: block;
     }
+
 
     /* HUD */
     #hud {
@@ -235,13 +246,15 @@
 </head>
 <body>
 
+    <!-- Top Bar with Clickable Instagram Link -->
   <div id="top-bar">
     <a href="index.html" class="home-btn">⬅ Home</a>
-    <div class="profile-badge">
-      <img src="insta.jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'" alt="Satish" />
+    <a href="https://www.instagram.com/_satish_official_16?stkn=MTNzNXZ2cWpkdmRtNA==" target="_blank" rel="noopener noreferrer" class="profile-badge">
+      <img src="Insta.jpg" onerror="this.onerror=null; this.src='insta.jpg';" alt="Satish" />
       <span>@_satish_official_16</span>
-    </div>
+    </a>
   </div>
+
 
   <div id="hud">
     <div id="score-val">0</div>
