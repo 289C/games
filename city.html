@@ -1024,18 +1024,97 @@ function drawRealCityGround(camX, camY) {
       startMatch();
     });
 
-    const roomBtn = document.getElementById('btnRoom');
-    function handleRoom() {
+        // Multiplayer Variables
+    let peer = null;
+    let peerConn = null;
+    let remoteFriend = null;
+
+    function setupPeerConnection(conn) {
+      peerConn = conn;
+
+      peerConn.on('open', () => {
+        const badge = document.querySelector('.status-badge span:last-child');
+        if (badge) badge.textContent = '1v1 CONNECTED';
+        startMatch();
+
+        // Spawn friend hole
+        remoteFriend = new BlackHole(WORLD_W / 2 + 120, WORLD_H / 2 + 120, 24, '#06b6d4', 'Friend', false);
+        opponents.push(remoteFriend);
+      });
+
+      peerConn.on('data', (data) => {
+        if (data.type === 'pos' && remoteFriend) {
+          remoteFriend.x = data.x;
+          remoteFriend.y = data.y;
+          remoteFriend.radius = data.r;
+          remoteFriend.score = data.score;
+        }
+      });
+
+      peerConn.on('close', () => {
+        alert('Friend left the room.');
+        location.reload();
+      });
+    }
+
+    // Broadcast local player movement
+    setInterval(() => {
+      if (peerConn && peerConn.open && player) {
+        peerConn.send({
+          type: 'pos',
+          x: player.x,
+          y: player.y,
+          r: player.radius,
+          score: player.score
+        });
+      }
+    }, 45);
+
+    // 1. Host creates room
+    document.getElementById('btnCreateRoom').addEventListener('click', () => {
       const code = Math.random().toString(36).substring(2, 8).toUpperCase();
       document.getElementById('generatedCode').textContent = code;
       document.getElementById('roomCodeDisplay').classList.remove('hidden');
-      setTimeout(startMatch, 1600);
-    }
-    roomBtn.addEventListener('click', handleRoom);
-    roomBtn.addEventListener('touchend', (e) => {
-      e.preventDefault();
-      handleRoom();
+      document.getElementById('joinInputSec').classList.add('hidden');
+
+      peer = new Peer('holeio2-' + code);
+
+      peer.on('connection', (conn) => {
+        setupPeerConnection(conn);
+      });
+
+      peer.on('error', (err) => {
+        console.error(err);
+        alert('Error creating room code. Please try again.');
+      });
     });
+
+    // 2. Friend toggles join input
+    document.getElementById('btnJoinRoom').addEventListener('click', () => {
+      document.getElementById('joinInputSec').classList.remove('hidden');
+      document.getElementById('roomCodeDisplay').classList.add('hidden');
+    });
+
+    // 3. Friend joins with code
+    document.getElementById('btnConnectRoom').addEventListener('click', () => {
+      const code = document.getElementById('joinCodeInput').value.trim().toUpperCase();
+      if (!code || code.length < 4) {
+        alert('Please enter a valid room code.');
+        return;
+      }
+
+      peer = new Peer();
+      peer.on('open', () => {
+        const conn = peer.connect('holeio2-' + code);
+        setupPeerConnection(conn);
+      });
+
+      peer.on('error', (err) => {
+        console.error(err);
+        alert('Could not connect. Verify the room code and try again.');
+      });
+    });
+
 
     const restartBtn = document.getElementById('btnRestart');
     function handleRestart() {
