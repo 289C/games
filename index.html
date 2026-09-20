@@ -54,7 +54,32 @@
       box-shadow: 0 6px 25px rgba(0, 0, 0, 0.6);
       z-index: 10;
     }
+    
+  /* Games Counter Badge */
+  .games-counter-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.5px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    margin: 10px 0;
+  }
 
+  .games-counter-badge span {
+    color: #38bdf8;
+    font-size: 16px;
+    font-weight: 900;
+  }
+    
     .ig-profile {
       display: flex;
       align-items: center;
@@ -934,6 +959,15 @@
       renderer.render(scene, camera);
     }
     animate();
+<script>
+  window.addEventListener('DOMContentLoaded', () => {
+    // Counts all elements with the 'game-tile' class
+    const totalGames = document.querySelectorAll('.game-tile').length;
+    const counterEl = document.getElementById('totalGamesCount');
+    if (counterEl) {
+      counterEl.textContent = totalGames;
+    }
+  });
   </script>
 </body>
 </html>
