@@ -99,9 +99,189 @@
     .back-btn:hover {
       color: #fff;
     }
+    /* --- ENTRANCE ANIMATION & TOP BAR --- */
+#top-bar {
+  position: absolute;
+  top: 14px;
+  left: 0;
+  width: 100%;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 999;
+  pointer-events: auto;
+  animation: slideDownBar 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideDownBar {
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* --- HOME BUTTON WITH HOVER GLOW --- */
+.home-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #ffffff;
+  text-decoration: none;
+  background: rgba(20, 24, 38, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 7px 16px;
+  border-radius: 30px;
+  font-weight: 700;
+  font-size: 13.5px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  transition: all 0.25s ease;
+}
+
+.home-btn .btn-icon {
+  transition: transform 0.2s ease;
+}
+
+.home-btn:hover {
+  border-color: #00f2fe;
+  box-shadow: 0 0 16px rgba(0, 242, 254, 0.4);
+}
+
+.home-btn:hover .btn-icon {
+  transform: translateX(-3px);
+}
+
+.home-btn:active {
+  transform: scale(0.94);
+}
+
+/* --- ANIMATED INSTAGRAM PROFILE BADGE --- */
+.profile-badge {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(18, 20, 32, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 4px 14px 4px 5px;
+  border-radius: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  text-decoration: none;
+  cursor: pointer;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+/* Ambient glow on hover/active */
+.profile-badge:hover {
+  transform: translateY(-2px) scale(1.02);
+  border-color: rgba(253, 29, 29, 0.6);
+  box-shadow: 0 0 20px rgba(225, 48, 108, 0.45);
+}
+
+.profile-badge:active {
+  transform: scale(0.96);
+}
+
+/* --- ROTATING INSTAGRAM GRADIENT RING --- */
+.avatar-wrapper {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.insta-ring {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: conic-gradient(
+    #f09433,
+    #e6683c,
+    #dc2743,
+    #cc2366,
+    #bc1888,
+    #f09433
+  );
+  animation: rotateRing 3s linear infinite;
+}
+
+@keyframes rotateRing {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.avatar-wrapper img {
+  position: relative;
+  width: 27px;
+  height: 27px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #111;
+  border: 1.5px solid #0f121d; /* Clean gap border between photo and gradient ring */
+  display: block;
+}
+
+/* --- USERNAME WITH GLOW & SHIMMER --- */
+.profile-name {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  background: linear-gradient(90deg, #ffffff 0%, #ff8da1 50%, #ffffff 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: textShine 4s linear infinite;
+}
+
+@keyframes textShine {
+  0% { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
+/* --- SPARKLE PULSE --- */
+.verified-sparkle {
+  font-size: 12px;
+  animation: sparkleTwinkle 1.8s ease-in-out infinite alternate;
+}
+
+@keyframes sparkleTwinkle {
+  0% { transform: scale(0.85); opacity: 0.6; filter: drop-shadow(0 0 1px #ff007f); }
+  100% { transform: scale(1.15); opacity: 1; filter: drop-shadow(0 0 6px #ff758c); }
+}
+    
   </style>
 </head>
 <body>
+  
+  <!-- Animated Top Header -->
+<header id="top-bar">
+  <a href="index.html" class="home-btn">
+    <span class="btn-icon">⬅</span>
+    <span>Home</span>
+  </a>
+
+  <a href="https://www.instagram.com/_satish_official_16?stkn=MTNzNXZ2cWpkdmRtNA==" target="_blank" rel="noopener noreferrer" class="profile-badge">
+    <div class="avatar-wrapper">
+      <div class="insta-ring"></div>
+      <img src="Insta.jpg" onerror="this.onerror=null; this.src='insta.jpg';" alt="Satish" />
+    </div>
+    <span class="profile-name">@_satish_official_16</span>
+    <span class="verified-sparkle">✨</span>
+  </a>
+</header>
+  
 
   <div class="hud">
     <div class="score-box">Score: <span id="score">0</span></div>
