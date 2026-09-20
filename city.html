@@ -983,46 +983,77 @@ function drawRealCityGround(camX, camY) {
       }, 1000);
     }
 
+        function saveAndGetLeaderboard(name, score) {
+      let list = [
+        { name: 'FreelWarp', score: 26820 },
+        { name: 'FakeHare05', score: 24730 },
+        { name: 'F33dCcmb', score: 21130 },
+        { name: 'Aja4Top', score: 18070 },
+        { name: 'TeeHums', score: 15930 }
+      ];
+
+      try {
+        const saved = localStorage.getItem('hole_city_scores');
+        if (saved) list = JSON.parse(saved);
+      } catch (e) {
+        console.warn('Storage error:', e);
+      }
+
+      list.push({ name: name || 'You', score: score || 0 });
+      list.sort((a, b) => b.score - a.score);
+
+      const rank = list.findIndex(i => i.name === name && i.score === score) + 1;
+      const top5 = list.slice(0, 5);
+
+      try {
+        localStorage.setItem('hole_city_scores', JSON.stringify(top5));
+      } catch (e) {}
+
+      return { rank, topList: top5 };
+    }
+
     function endGame() {
       isPlaying = false;
       clearInterval(timerInterval);
 
-      document.getElementById('gameHUD').classList.add('hidden');
-      document.getElementById('gameOverScreen').classList.remove('hidden');
+      // 1. Hide HUD & Show Game Over Screen
+      const hud = document.getElementById('gameHUD');
+      const overScreen = document.getElementById('gameOverScreen');
+      if (hud) hud.classList.add('hidden');
+      if (overScreen) overScreen.classList.remove('hidden');
 
-      document.getElementById('endScore').textContent = player.score;
-      document.getElementById('endSize').textContent = `Hole size ${(player.radius / 10).toFixed(1)}m`;
+      // 2. Set Final Score and Hole Size
+      const finalScore = player ? player.score : 0;
+      const finalRadius = player ? (player.radius / 10).toFixed(1) : '2.4';
 
-      const { rank, top10 } = saveAndGetLeaderboard(player.name, player.score);
+      const scoreEl = document.getElementById('endScore');
+      const sizeEl = document.getElementById('endSize');
+      if (scoreEl) scoreEl.textContent = finalScore;
+      if (sizeEl) sizeEl.textContent = `Hole size: ${finalRadius}m`;
+
+      // 3. Render Leaderboard List
       const listEl = document.getElementById('leaderboardList');
-      listEl.innerHTML = '';
+      if (listEl) {
+        listEl.innerHTML = '';
+        const { rank, topList } = saveAndGetLeaderboard(player ? player.name : 'You', finalScore);
 
-      top10.forEach((item, i) => {
-        const isUser = item.name === player.name && item.score === player.score;
-        listEl.innerHTML += `
-          <div class="lb-item ${isUser ? 'lb-active' : ''}">
-            <span>#${i + 1} ${item.name}</span>
-            <span>${item.score}</span>
-          </div>
-        `;
-      });
+        topList.forEach((item, index) => {
+          const isMe = player && item.name === player.name && item.score === finalScore;
+          listEl.innerHTML += `
+            <div class="lb-item ${isMe ? 'lb-active' : ''}">
+              <span>#${index + 1} ${item.name}</span>
+              <span>${item.score}</span>
+            </div>
+          `;
+        });
+      }
 
-      if (rank > 10) {
-        listEl.innerHTML += `
-          <div class="lb-item lb-active">
-            <span>#Top 10+ (${rank}) ${player.name}</span>
-            <span>${player.score}</span>
-          </div>
-        `;
+      // 4. Close multiplayer connection cleanly
+      if (peerConn) {
+        try { peerConn.close(); } catch(e) {}
       }
     }
 
-    const soloBtn = document.getElementById('btnSolo');
-    soloBtn.addEventListener('click', startMatch);
-    soloBtn.addEventListener('touchend', (e) => {
-      e.preventDefault();
-      startMatch();
-    });
 
         // Multiplayer Variables
     let peer = null;
