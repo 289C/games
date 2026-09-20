@@ -311,7 +311,6 @@
     resize();
 
     // --- CONTINUOUS PROCEDURAL ROAD FUNCTION ---
-    // Mathematically seamless rolling asphalt road with no drops
     function getTerrainY(x) {
       const base = 500;
       const wave1 = Math.sin(x * 0.003) * 75;
@@ -410,8 +409,8 @@
     function updatePhysics() {
       if (isGameOver) return;
 
-      // Gravity
-      bike.vy += 0.28;
+      // Stronger gravity keeps tires planted on hills
+      bike.vy += 0.36;
 
       const halfB = bike.wheelBase / 2;
       const cosA = Math.cos(bike.angle);
@@ -427,13 +426,20 @@
 
       let groundedWheels = 0;
 
-      // Suspension spring response
+      // Soft suspension with shock absorption (stops jumping)
+      const springStiffness = 0.22;
+      const shockDamping = 0.55;
+
       if (rearY >= groundRear) {
-        bike.vy -= (rearY - groundRear) * 0.45;
+        const penetration = rearY - groundRear;
+        bike.vy = (bike.vy - penetration * springStiffness) * shockDamping;
+        bike.y -= penetration * 0.4;
         groundedWheels++;
       }
       if (frontY >= groundFront) {
-        bike.vy -= (frontY - groundFront) * 0.45;
+        const penetration = frontY - groundFront;
+        bike.vy = (bike.vy - penetration * springStiffness) * shockDamping;
+        bike.y -= penetration * 0.4;
         groundedWheels++;
       }
 
@@ -465,14 +471,14 @@
       bike.x += bike.vx;
       bike.y += bike.vy;
 
-      // Slope alignment
+      // Slope alignment & friction
       const groundSlope = (groundFront - groundRear) / bike.wheelBase;
       const targetAngle = Math.atan(groundSlope);
 
       if (groundedWheels > 0) {
-        bike.angle += (targetAngle - bike.angle) * 0.25;
-        bike.angularVelocity *= 0.65;
-        bike.vx *= 0.985;
+        bike.angle += (targetAngle - bike.angle) * 0.2;
+        bike.angularVelocity *= 0.5; // Stops rapid spinning
+        bike.vx *= 0.99;
       } else {
         bike.angle += bike.angularVelocity;
         bike.angularVelocity *= 0.99;
