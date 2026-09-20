@@ -30,7 +30,7 @@
       left: 0;
       right: 0;
       height: 54px;
-      background: rgba(14, 16, 24, 0.8);
+      background: rgba(14, 16, 24, 0.85);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       display: flex;
@@ -42,7 +42,7 @@
     }
 
     .nav-btn, .insta-btn {
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.12);
       border: 1px solid rgba(255, 255, 255, 0.2);
       color: #ffffff;
       padding: 6px 12px;
@@ -91,7 +91,7 @@
       100% { transform: scale(0.9); opacity: 0.7; }
     }
 
-    /* Live HUD matching Screenshots */
+    /* Live HUD */
     .hud-container {
       position: absolute;
       top: 64px;
@@ -128,7 +128,7 @@
       display: block;
     }
 
-    /* Modals & Screens */
+    /* Screen Modals */
     .screen-overlay {
       position: absolute;
       inset: 0;
@@ -153,6 +153,7 @@
       padding: 26px 20px;
       text-align: center;
       box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7);
+      pointer-events: auto;
     }
 
     .title {
@@ -167,13 +168,20 @@
 
     .btn {
       width: 100%;
-      padding: 13px;
+      padding: 14px;
       border-radius: 12px;
       border: none;
       font-size: 15px;
       font-weight: 800;
       cursor: pointer;
       margin-top: 10px;
+      pointer-events: auto;
+      touch-action: manipulation;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+      filter: brightness(0.9);
     }
 
     .btn-purple {
@@ -222,7 +230,6 @@
       font-weight: 800;
     }
 
-    /* Floating Score Popups */
     .float-fx {
       position: absolute;
       font-weight: 900;
@@ -242,7 +249,7 @@
 </head>
 <body>
 
-  <!-- Top Header Navigation -->
+  <!-- Top Navigation Header -->
   <header class="top-nav">
     <button id="backBtn" class="nav-btn">&#128281; Back</button>
     <div class="status-badge">
@@ -255,7 +262,7 @@
     </a>
   </header>
 
-  <!-- Live Top Score HUD (From Screenshot) -->
+  <!-- Live In-Game HUD -->
   <div id="gameHUD" class="hud-container hidden">
     <div class="hud-col">
       <div class="hud-lbl">SCORE</div>
@@ -274,7 +281,7 @@
   <canvas id="gameCanvas"></canvas>
   <div id="fxLayer"></div>
 
-  <!-- Start Menu -->
+  <!-- Start Menu Overlay -->
   <div id="lobbyScreen" class="screen-overlay">
     <div class="card">
       <h1 class="title">HOLE.IO 2</h1>
@@ -282,8 +289,8 @@
       
       <input type="text" id="playerName" class="input-box" value="Player" maxlength="12" placeholder="Your Name" />
       
-      <button id="btnSolo" class="btn btn-purple">Play Solo (vs Bots)</button>
-      <button id="btnRoom" class="btn btn-gray">Generate Room Code</button>
+      <button id="btnSolo" type="button" class="btn btn-purple">Play Solo (vs Bots)</button>
+      <button id="btnRoom" type="button" class="btn btn-gray">Generate Room Code</button>
       
       <div id="roomCodeDisplay" style="margin-top: 10px; font-size: 14px; color:#d8b4fe;" class="hidden">
         Room Code: <strong id="generatedCode" style="font-size: 20px; letter-spacing: 2px;"></strong>
@@ -300,7 +307,7 @@
 
       <div class="leaderboard-box" id="leaderboardList"></div>
 
-      <button id="btnRestart" class="btn btn-purple">Play Again</button>
+      <button id="btnRestart" type="button" class="btn btn-purple">Play Again</button>
     </div>
   </div>
 
@@ -316,8 +323,8 @@
       screenH = canvas.height = window.innerHeight;
     });
 
-    const BLOCK_SIZE = 340;     // City square block size
-    const ROAD_WIDTH = 130;     // Road width
+    const BLOCK_SIZE = 340;
+    const ROAD_WIDTH = 130;
     const WORLD_COLS = 12;
     const WORLD_ROWS = 12;
     const WORLD_W = WORLD_COLS * (BLOCK_SIZE + ROAD_WIDTH);
@@ -344,15 +351,15 @@
       dirY: 0
     };
 
-    /* Controls: Touch & Mouse Virtual Controller Joystick */
-    function setJoyInput(clientX, clientY) {
+    function handleJoy(cx, cy) {
+      if (!isPlaying) return;
       if (!joystick.active) {
         joystick.active = true;
-        joystick.baseX = clientX;
-        joystick.baseY = clientY;
+        joystick.baseX = cx;
+        joystick.baseY = cy;
       }
-      const dx = clientX - joystick.baseX;
-      const dy = clientY - joystick.baseY;
+      const dx = cx - joystick.baseX;
+      const dy = cy - joystick.baseY;
       const dist = Math.hypot(dx, dy);
       const maxR = 48;
 
@@ -360,8 +367,8 @@
         joystick.stickX = joystick.baseX + (dx / dist) * maxR;
         joystick.stickY = joystick.baseY + (dy / dist) * maxR;
       } else {
-        joystick.stickX = clientX;
-        joystick.stickY = clientY;
+        joystick.stickX = cx;
+        joystick.stickY = cy;
       }
 
       if (dist > 5) {
@@ -373,27 +380,28 @@
       }
     }
 
-    window.addEventListener('touchstart', e => {
-      if (e.touches.length > 0) setJoyInput(e.touches[0].clientX, e.touches[0].clientY);
-    });
-    window.addEventListener('touchmove', e => {
-      if (e.touches.length > 0) setJoyInput(e.touches[0].clientX, e.touches[0].clientY);
-    });
-    window.addEventListener('touchend', () => {
+    function resetJoy() {
       joystick.active = false;
       joystick.dirX = 0;
       joystick.dirY = 0;
-    });
+    }
 
-    window.addEventListener('mousedown', e => setJoyInput(e.clientX, e.clientY));
-    window.addEventListener('mousemove', e => { if (joystick.active) setJoyInput(e.clientX, e.clientY); });
-    window.addEventListener('mouseup', () => {
-      joystick.active = false;
-      joystick.dirX = 0;
-      joystick.dirY = 0;
-    });
+    canvas.addEventListener('touchstart', e => {
+      if (e.touches.length > 0) handleJoy(e.touches[0].clientX, e.touches[0].clientY);
+    }, { passive: false });
 
-    /* Black Hole Class */
+    canvas.addEventListener('touchmove', e => {
+      e.preventDefault();
+      if (e.touches.length > 0) handleJoy(e.touches[0].clientX, e.touches[0].clientY);
+    }, { passive: false });
+
+    canvas.addEventListener('touchend', resetJoy);
+    canvas.addEventListener('touchcancel', resetJoy);
+
+    canvas.addEventListener('mousedown', e => handleJoy(e.clientX, e.clientY));
+    window.addEventListener('mousemove', e => { if (joystick.active) handleJoy(e.clientX, e.clientY); });
+    window.addEventListener('mouseup', resetJoy);
+
     class BlackHole {
       constructor(x, y, radius, color, name, isBot = false) {
         this.x = x;
@@ -437,38 +445,32 @@
         const sy = this.y - camY;
 
         ctx.save();
-        // Concentric outer magenta/purple glow
         ctx.beginPath();
         ctx.arc(sx, sy, this.radius + 6, 0, Math.PI * 2);
         ctx.fillStyle = '#c026d3';
         ctx.fill();
 
-        // Dark concentric ring
         ctx.beginPath();
         ctx.arc(sx, sy, this.radius, 0, Math.PI * 2);
         ctx.fillStyle = '#260d36';
         ctx.fill();
 
-        // Segmented inner vortex pattern
         ctx.beginPath();
         ctx.arc(sx, sy, this.radius * 0.72, 0, Math.PI * 2);
         ctx.fillStyle = '#170724';
         ctx.fill();
 
-        // Void deep center
         ctx.beginPath();
         ctx.arc(sx, sy, this.radius * 0.48, 0, Math.PI * 2);
         ctx.fillStyle = '#050209';
         ctx.fill();
-
         ctx.restore();
       }
     }
 
-    /* Vehicles: Real Running Cars & Buses */
     class Vehicle {
       constructor(type) {
-        this.type = type; // 'car' or 'bus'
+        this.type = type;
         this.isFalling = false;
         this.fall = 1.0;
         this.init();
@@ -482,7 +484,7 @@
         if (this.type === 'bus') {
           this.w = 70;
           this.h = 24;
-          this.color = '#eab308'; // Yellow bus
+          this.color = '#eab308';
           this.reqRadius = 46;
           this.points = 120;
           this.speed = (Math.random() * 0.8 + 1.2) * (Math.random() < 0.5 ? 1 : -1);
@@ -504,7 +506,6 @@
           const col = Math.floor(Math.random() * WORLD_COLS);
           this.x = col * (BLOCK_SIZE + ROAD_WIDTH) + BLOCK_SIZE + ROAD_WIDTH / 2;
           this.y = Math.random() * WORLD_H;
-          // swap width/height for vertical driving
           const temp = this.w;
           this.w = this.h;
           this.h = temp;
@@ -516,7 +517,6 @@
           this.fall -= 0.08;
           return;
         }
-
         if (this.horizontal) {
           this.x += this.speed;
           if (this.x < 0) this.x = WORLD_W;
@@ -536,15 +536,12 @@
         ctx.translate(sx, sy);
         if (this.isFalling) ctx.scale(this.fall, this.fall);
 
-        // Vehicle shadow
         ctx.fillStyle = 'rgba(0,0,0,0.28)';
         ctx.fillRect(-this.w / 2 + 3, -this.h / 2 + 3, this.w, this.h);
 
-        // Vehicle body
         ctx.fillStyle = this.color;
         ctx.fillRect(-this.w / 2, -this.h / 2, this.w, this.h);
 
-        // Windows
         ctx.fillStyle = '#bae6fd';
         if (this.w > this.h) {
           ctx.fillRect(-this.w / 2 + 4, -this.h / 2 + 3, this.w - 8, this.h - 6);
@@ -555,7 +552,6 @@
       }
     }
 
-    /* Humans / Pedestrians */
     class Human {
       constructor() {
         this.x = Math.random() * WORLD_W;
@@ -586,7 +582,6 @@
         ctx.save();
         ctx.translate(sx, sy);
         if (this.isFalling) ctx.scale(this.fall, this.fall);
-
         ctx.beginPath();
         ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
         ctx.fillStyle = this.color;
@@ -595,7 +590,6 @@
       }
     }
 
-    /* Static City Buildings & Trees */
     class CityBuilding {
       constructor(x, y, w, h, isTree = false) {
         this.x = x;
@@ -626,7 +620,6 @@
         if (this.isFalling) ctx.scale(this.fall, this.fall);
 
         if (this.isTree) {
-          // Tree foliage & trunk
           ctx.fillStyle = 'rgba(0,0,0,0.2)';
           ctx.beginPath();
           ctx.arc(2, 2, 14, 0, Math.PI * 2);
@@ -637,7 +630,6 @@
           ctx.arc(0, 0, 14, 0, Math.PI * 2);
           ctx.fill();
         } else {
-          // Skyscraper building with lit grid windows
           ctx.fillStyle = 'rgba(0,0,0,0.25)';
           ctx.fillRect(-this.w / 2 + 6, -this.h / 2 + 6, this.w, this.h);
 
@@ -647,7 +639,6 @@
           ctx.fillStyle = '#94a3b8';
           ctx.fillRect(-this.w / 2, -this.h / 2, this.w, 14);
 
-          // Windows grid
           ctx.fillStyle = '#fef08a';
           for (let row = 18; row < this.h - 8; row += 16) {
             for (let col = 8; col < this.w - 8; col += 14) {
@@ -659,7 +650,6 @@
       }
     }
 
-    /* City Generation */
     function buildCity() {
       cityProps = [];
       vehicles = [];
@@ -670,20 +660,14 @@
           const bx = c * (BLOCK_SIZE + ROAD_WIDTH) + BLOCK_SIZE / 2;
           const by = r * (BLOCK_SIZE + ROAD_WIDTH) + BLOCK_SIZE / 2;
 
-          // Building in center of block
           cityProps.push(new CityBuilding(bx, by, 120, 100, false));
-
-          // Trees around building lawn
           cityProps.push(new CityBuilding(bx - 90, by - 90, 0, 0, true));
           cityProps.push(new CityBuilding(bx + 90, by + 90, 0, 0, true));
         }
       }
 
-      // Spawn Cars & Buses
       for (let i = 0; i < 45; i++) vehicles.push(new Vehicle('car'));
       for (let i = 0; i < 18; i++) vehicles.push(new Vehicle('bus'));
-
-      // Spawn Pedestrians
       for (let i = 0; i < 100; i++) humans.push(new Human());
     }
 
@@ -704,72 +688,7 @@
       });
     }
 
-    /* Draw Exact Realistic City Map: Grass blocks, Sidewalks, Asphalt, Crosswalks */
     function drawRealCityGround(camX, camY) {
-      // Grass backdrop
-      ctx.fillStyle = '#86a873';
-      ctx.fillRect(0, 0, screenW, screenH);
-
-              // Windows grid
-          ctx.fillStyle = '#fef08a';
-          for (let row = 18; row < this.h - 8; row += 16) {
-            for (let col = 8; col < this.w - 8; col += 14) {
-              ctx.fillRect(-this.w / 2 + col, -this.h / 2 + row, 8, 8);
-            }
-          }
-        }
-        ctx.restore();
-      }
-    }
-
-    /* City Generation */
-    function buildCity() {
-      cityProps = [];
-      vehicles = [];
-      humans = [];
-
-      for (let r = 0; r < WORLD_ROWS; r++) {
-        for (let c = 0; c < WORLD_COLS; c++) {
-          const bx = c * (BLOCK_SIZE + ROAD_WIDTH) + BLOCK_SIZE / 2;
-          const by = r * (BLOCK_SIZE + ROAD_WIDTH) + BLOCK_SIZE / 2;
-
-          // Building in center of block
-          cityProps.push(new CityBuilding(bx, by, 120, 100, false));
-
-          // Trees around building lawn
-          cityProps.push(new CityBuilding(bx - 90, by - 90, 0, 0, true));
-          cityProps.push(new CityBuilding(bx + 90, by + 90, 0, 0, true));
-        }
-      }
-
-      // Spawn Cars & Buses
-      for (let i = 0; i < 45; i++) vehicles.push(new Vehicle('car'));
-      for (let i = 0; i < 18; i++) vehicles.push(new Vehicle('bus'));
-
-      // Spawn Pedestrians
-      for (let i = 0; i < 100; i++) humans.push(new Human());
-    }
-
-    function spawnBots() {
-      opponents = [];
-      const roster = ['Crimson', 'Emerald', 'Volt', 'Nova'];
-      const colors = ['#dc2626', '#16a34a', '#ca8a04', '#db2777'];
-
-      roster.forEach((name, i) => {
-        opponents.push(new BlackHole(
-          Math.random() * (WORLD_W - 400) + 200,
-          Math.random() * (WORLD_H - 400) + 200,
-          24,
-          colors[i],
-          name,
-          true
-        ));
-      });
-    }
-
-    /* Draw Exact Realistic City Map: Grass blocks, Sidewalks, Asphalt, Crosswalks */
-    function drawRealCityGround(camX, camY) {
-      // Grass backdrop
       ctx.fillStyle = '#86a873';
       ctx.fillRect(0, 0, screenW, screenH);
 
@@ -784,35 +703,26 @@
           const bx = c * step - camX;
           const by = r * step - camY;
 
-          // Concrete Sidewalk Rim
           ctx.fillStyle = '#d5dbdb';
           ctx.fillRect(bx - 12, by - 12, BLOCK_SIZE + 24, BLOCK_SIZE + 24);
 
-          // Green Grass Block Center
           ctx.fillStyle = '#9cb988';
           ctx.fillRect(bx, by, BLOCK_SIZE, BLOCK_SIZE);
 
-          // Inner lawn tint
           ctx.fillStyle = '#8eae7b';
-          ctx.fillRect(bx + 16, by + 16, BLOCK_SIZE - 32, BLOCK_SIZE - 32);
+      ctx.fillRect(bx + 16, by + 16, BLOCK_SIZE - 32, BLOCK_SIZE - 32);
 
-          // Asphalt Road Stripes (Pedestrian Crosswalks "HHH")
           const rx = bx + BLOCK_SIZE;
           const ry = by + BLOCK_SIZE;
 
-          // Dashed center road lane dividers
           ctx.fillStyle = '#ffffff';
-          // Horizontal lane divider
           for (let i = 0; i < BLOCK_SIZE; i += 40) {
             ctx.fillRect(bx + i, ry + ROAD_WIDTH / 2 - 2, 22, 4);
           }
-          // Vertical lane divider
           for (let i = 0; i < BLOCK_SIZE; i += 40) {
             ctx.fillRect(rx + ROAD_WIDTH / 2 - 2, by + i, 4, 22);
           }
 
-          // Crosswalk Zebra Stripes ("HHH")
-          ctx.fillStyle = '#ffffff';
           for (let w = 0; w < 4; w++) {
             ctx.fillRect(rx + 12 + w * 26, by + 4, 14, 26);
             ctx.fillRect(bx + 4, ry + 12 + w * 26, 26, 14);
@@ -821,12 +731,10 @@
       }
     }
 
-    /* On-Screen Virtual Controller Display (From Screenshots) */
     function drawVirtualController() {
       if (!joystick.active) return;
 
       ctx.save();
-      // Outer translucent base circle
       ctx.beginPath();
       ctx.arc(joystick.baseX, joystick.baseY, 52, 0, Math.PI * 2);
       ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
@@ -835,7 +743,6 @@
       ctx.lineWidth = 2;
       ctx.stroke();
 
-      // Inner movable purple stick knob
       ctx.beginPath();
       ctx.arc(joystick.stickX, joystick.stickY, 26, 0, Math.PI * 2);
       ctx.fillStyle = '#a855f7';
@@ -855,7 +762,6 @@
       setTimeout(() => el.remove(), 800);
     }
 
-    /* Main Game Physics Loop */
     function gameLoop() {
       if (!isPlaying) return;
 
@@ -864,13 +770,11 @@
       vehicles.forEach(v => v.update());
       humans.forEach(h => h.update());
 
-      // Smooth Camera tracking
       camera.x += (player.x - screenW / 2 - camera.x) * 0.12;
       camera.y += (player.y - screenH / 2 - camera.y) * 0.12;
 
       const holes = [player, ...opponents];
 
-      // Swallow Vehicles
       vehicles.forEach(v => {
         if (v.isFalling && v.fall <= 0) v.init();
         holes.forEach(hole => {
@@ -880,14 +784,13 @@
             hole.targetRadius += 0.6;
             if (hole === player) {
               showPopup(v.x - camera.x, v.y - camera.y, `+${v.points}`);
-              hudScore.textContent = player.score;
-              hudSize.textContent = `${(player.radius / 10).toFixed(1)}m`;
+              document.getElementById('hudScore').textContent = player.score;
+              document.getElementById('hudSize').textContent = `${(player.radius / 10).toFixed(1)}m`;
             }
           }
         });
       });
 
-      // Swallow Humans
       humans.forEach((h, idx) => {
         if (h.isFalling && h.fall <= 0) {
           humans.splice(idx, 1);
@@ -900,13 +803,12 @@
             hole.targetRadius += 0.2;
             if (hole === player) {
               showPopup(h.x - camera.x, h.y - camera.y, `+${h.points}`);
-              hudScore.textContent = player.score;
+              document.getElementById('hudScore').textContent = player.score;
             }
           }
         });
       });
 
-      // Swallow Buildings & Trees
       cityProps.forEach((p, idx) => {
         if (p.isFalling && p.fall <= 0) {
           cityProps.splice(idx, 1);
@@ -919,14 +821,13 @@
             hole.targetRadius += 1.8;
             if (hole === player) {
               showPopup(p.x - camera.x, p.y - camera.y, `+${p.points}`);
-              hudScore.textContent = player.score;
-              hudSize.textContent = `${(player.radius / 10).toFixed(1)}m`;
+              document.getElementById('hudScore').textContent = player.score;
+              document.getElementById('hudSize').textContent = `${(player.radius / 10).toFixed(1)}m`;
             }
           }
         });
       });
 
-      // Swallowing Opponents
       opponents.forEach(bot => {
         if (Math.hypot(player.x - bot.x, player.y - bot.y) < player.radius && player.radius > bot.radius * 1.2) {
           player.score += bot.score + 500;
@@ -941,23 +842,16 @@
       });
     }
 
-    /* Render Frame */
     function render() {
       ctx.clearRect(0, 0, screenW, screenH);
 
       if (isPlaying) {
         drawRealCityGround(camera.x, camera.y);
-
-        // Draw humans and props
         humans.forEach(h => h.draw(camera.x, camera.y));
         vehicles.forEach(v => v.draw(camera.x, camera.y));
         cityProps.forEach(p => p.draw(camera.x, camera.y));
-
-        // Draw Opponents & Player Holes
         opponents.forEach(b => b.draw(camera.x, camera.y));
         player.draw(camera.x, camera.y);
-
-        // Draw Controller
         drawVirtualController();
       }
 
@@ -967,7 +861,6 @@
     setInterval(gameLoop, 1000 / 60);
     requestAnimationFrame(render);
 
-    /* Leaderboard Storage */
     function saveAndGetLeaderboard(name, score) {
       let list = JSON.parse(localStorage.getItem('hole_city_scores') || '[]');
       if (list.length === 0) {
@@ -992,7 +885,6 @@
       return { rank, top10 };
     }
 
-    /* Match Lifecycle */
     function startMatch() {
       isPlaying = true;
       matchTime = 120;
@@ -1053,19 +945,36 @@
       }
     }
 
-    /* Buttons */
-    document.getElementById('btnSolo').addEventListener('click', startMatch);
+    // Direct event bindings for mobile and desktop
+    const soloBtn = document.getElementById('btnSolo');
+    soloBtn.addEventListener('click', startMatch);
+    soloBtn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      startMatch();
+    });
 
-    document.getElementById('btnRoom').addEventListener('click', () => {
+    const roomBtn = document.getElementById('btnRoom');
+    function handleRoom() {
       const code = Math.random().toString(36).substring(2, 8).toUpperCase();
       document.getElementById('generatedCode').textContent = code;
       document.getElementById('roomCodeDisplay').classList.remove('hidden');
       setTimeout(startMatch, 1600);
+    }
+    roomBtn.addEventListener('click', handleRoom);
+    roomBtn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      handleRoom();
     });
 
-    document.getElementById('btnRestart').addEventListener('click', () => {
+    const restartBtn = document.getElementById('btnRestart');
+    function handleRestart() {
       document.getElementById('gameOverScreen').classList.add('hidden');
       document.getElementById('lobbyScreen').classList.remove('hidden');
+    }
+    restartBtn.addEventListener('click', handleRestart);
+    restartBtn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      handleRestart();
     });
 
     document.getElementById('backBtn').addEventListener('click', () => {
