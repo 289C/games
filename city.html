@@ -23,7 +23,7 @@
       touch-action: none;
     }
 
-    /* Top Header Navigation */
+    /* Header Nav */
     .top-nav {
       position: absolute;
       top: 0;
@@ -91,7 +91,7 @@
       100% { transform: scale(0.9); opacity: 0.7; }
     }
 
-    /* In-Game Score HUD */
+    /* Live HUD */
     .hud-container {
       position: absolute;
       top: 64px;
@@ -128,7 +128,6 @@
       display: block;
     }
 
-    /* Screen Overlays */
     .screen-overlay {
       position: absolute;
       inset: 0;
@@ -153,7 +152,6 @@
       padding: 26px 20px;
       text-align: center;
       box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7);
-      pointer-events: auto;
     }
 
     .title {
@@ -175,8 +173,6 @@
       font-weight: 800;
       cursor: pointer;
       margin-top: 10px;
-      pointer-events: auto;
-      touch-action: manipulation;
     }
 
     .btn:active {
@@ -249,7 +245,7 @@
 </head>
 <body>
 
-  <!-- Header Navigation -->
+  <!-- Top Header Navigation -->
   <header class="top-nav">
     <button id="backBtn" class="nav-btn">&#128281; Back</button>
     <div class="status-badge">
@@ -334,7 +330,7 @@
     let matchTime = 120;
     let timerInterval = null;
 
-    let player;
+    let player = null;
     let opponents = [];
     let vehicles = [];
     let humans = [];
@@ -627,10 +623,9 @@
 
       update() {
         if (this.isFalling) {
-          this.fall -= 0.035; // sinking into the hole
+          this.fall -= 0.035;
           this.angle += this.tiltSpeed;
           if (this.targetHole) {
-            // Gravitational pull toward the center of the black hole
             this.x += (this.targetHole.x - this.x) * 0.12;
             this.y += (this.targetHole.y - this.y) * 0.12;
           }
@@ -707,7 +702,7 @@
 
       roster.forEach((name, i) => {
         opponents.push(new BlackHole(
-            Math.random() * (WORLD_W - 400) + 200,
+          Math.random() * (WORLD_W - 400) + 200,
           Math.random() * (WORLD_H - 400) + 200,
           24,
           colors[i],
@@ -717,7 +712,7 @@
       });
     }
 
-    function drawRealCityGround(camX, camY) {
+function drawRealCityGround(camX, camY) {
       ctx.fillStyle = '#86a873';
       ctx.fillRect(0, 0, screenW, screenH);
 
@@ -792,7 +787,7 @@
     }
 
     function gameLoop() {
-      if (!isPlaying) return;
+      if (!isPlaying || !player) return;
 
       player.update();
       opponents.forEach(b => b.update());
@@ -832,7 +827,7 @@
         const h = humans[i];
         h.update();
         if (h.isFalling && h.fall <= 0) {
-          humans.splice(idx, 1);
+          humans.splice(i, 1);
           continue;
         }
         if (!h.isFalling) {
@@ -851,7 +846,7 @@
         }
       }
 
-      // City Buildings & Trees (Falling & Suction Physics)
+      // City Buildings & Trees
       for (let i = cityProps.length - 1; i >= 0; i--) {
         const p = cityProps[i];
         p.update();
@@ -894,57 +889,42 @@
     function render() {
       ctx.clearRect(0, 0, screenW, screenH);
 
-      if (isPlaying) {
-        // 1. Draw city ground, roads, sidewalks
+      if (isPlaying && player) {
         drawRealCityGround(camera.x, camera.y);
 
-        // 2. Draw ground objects that are NOT falling yet
+        // Ground non-falling props
         cityProps.filter(p => !p.isFalling).forEach(p => p.draw(camera.x, camera.y));
         vehicles.filter(v => !v.isFalling).forEach(v => v.draw(camera.x, camera.y));
         humans.filter(h => !h.isFalling).forEach(h => h.draw(camera.x, camera.y));
 
-        // 3. Draw black holes (outer ring & background)
+        // Draw Black Holes
         opponents.forEach(b => b.draw(camera.x, camera.y));
         player.draw(camera.x, camera.y);
 
-        // 4. Clip falling objects INSIDE the black hole boundary so they fall into the void
-        const allHoles = [player, ...opponents];
-        allHoles.forEach(hole => {
-          const sx = hole.x - camera.x;
-          const sy = hole.y - camera.y;
+        // Draw falling suction props inside holes
+        cityProps.filter(p => p.isFalling).forEach(p => p.draw(camera.x, camera.y));
+        vehicles.filter(v => v.isFalling).forEach(v => v.draw(camera.x, camera.y));
+        humans.filter(h => h.isFalling).forEach(h => h.draw(camera.x, camera.y));
 
-          ctx.save();
-          // Create clipping mask matching the black hole opening
-          ctx.beginPath();
-          ctx.arc(sx, sy, hole.radius, 0, Math.PI * 2);
-          ctx.clip();
-
-          // Draw falling tumbling objects masked inside the hole
-          cityProps.filter(p => p.isFalling && p.targetHole === hole).forEach(p => p.draw(camera.x, camera.y));
-          vehicles.filter(v => v.isFalling && v.targetHole === hole).forEach(v => v.draw(camera.x, camera.y));
-          humans.filter(h => h.isFalling && h.targetHole === hole).forEach(h => h.draw(camera.x, camera.y));
-
-          ctx.restore();
-        });
-
-        // 5. Draw on-screen virtual joystick
         drawVirtualController();
       }
 
       requestAnimationFrame(render);
     }
 
+    setInterval(gameLoop, 1000 / 60);
+    requestAnimationFrame(render);
 
     function saveAndGetLeaderboard(name, score) {
       let list = JSON.parse(localStorage.getItem('hole_city_scores') || '[]');
       if (list.length === 0) {
         list = [
-          { name: 'satish', score: 26822 },
-          { name: 'ganesh', score: 26737 },
-          { name: 'nithesh', score: 26135 },
-          { name: 'kiran', score: 26079 },
-          { name: 'sai', score: 25935 },
-          { name: 'balaji', score: 25798 },
+          { name: 'FreelWarp', score: 26822 },
+          { name: 'FakeHare05', score: 26737 },
+          { name: 'F33dCcmb', score: 26135 },
+          { name: 'Aja4Top', score: 26079 },
+          { name: 'TeeHums', score: 25935 },
+          { name: 'RokeSwer', score: 25798 },
           { name: 'MartHorn', score: 25667 },
           { name: 'LynxScan', score: 25636 },
           { name: 'WackFalc', score: 25597 }
