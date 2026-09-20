@@ -968,6 +968,20 @@
       counterEl.textContent = totalGames;
     }
   });
+    <script>
+  function updateGamesCounter() {
+    // Looks for all game cards on your page
+    const cards = document.querySelectorAll('.game-tile, [data-cat], .game-card');
+    const counter = document.getElementById('totalGamesCount');
+    if (counter && cards.length > 0) {
+      counter.textContent = cards.length;
+    }
+  }
+
+  // Run on multiple lifecycle hooks to prevent race conditions
+  document.addEventListener('DOMContentLoaded', updateGamesCounter);
+  window.addEventListener('load', updateGamesCounter);
+  setTimeout(updateGamesCounter, 500);
   </script>
 </body>
 </html>
