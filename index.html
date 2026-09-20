@@ -960,28 +960,46 @@
     }
     animate();
 <script>
-  window.addEventListener('DOMContentLoaded', () => {
-    // Counts all elements with the 'game-tile' class
-    const totalGames = document.querySelectorAll('.game-tile').length;
-    const counterEl = document.getElementById('totalGamesCount');
-    if (counterEl) {
-      counterEl.textContent = totalGames;
-    }
-  });
-    <script>
-  function updateGamesCounter() {
-    // Looks for all game cards on your page
-    const cards = document.querySelectorAll('.game-tile, [data-cat], .game-card');
-    const counter = document.getElementById('totalGamesCount');
-    if (counter && cards.length > 0) {
-      counter.textContent = cards.length;
+  function autoCalculateGames() {
+    // Collect all links/divs that represent game tiles
+    const tiles = document.querySelectorAll('.game-tile, [data-cat]');
+    
+    // Use a Set to make sure we count each game only once
+    const uniqueGames = new Set();
+    
+    tiles.forEach(tile => {
+      // Get the title or the link destination
+      const title = tile.querySelector('.tile-title')?.textContent?.trim() || tile.getAttribute('href') || tile.innerText.trim();
+      if (title && title.length > 0) {
+        uniqueGames.add(title);
+      }
+    });
+
+    const count = uniqueGames.size > 0 ? uniqueGames.size : tiles.length;
+    const counterElement = document.getElementById('totalGamesCount');
+    
+    if (counterElement && count > 0) {
+      counterElement.textContent = count;
     }
   }
 
-  // Run on multiple lifecycle hooks to prevent race conditions
-  document.addEventListener('DOMContentLoaded', updateGamesCounter);
-  window.addEventListener('load', updateGamesCounter);
-  setTimeout(updateGamesCounter, 500);
+  // Run on page ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', autoCalculateGames);
+  } else {
+    autoCalculateGames();
+  }
+
+  // Backup trigger after images and styling finish loading
+  window.addEventListener('load', autoCalculateGames);
+
+  // Safety interval for dynamic tabs/filtering
+  let retries = 0;
+  const timer = setInterval(() => {
+    autoCalculateGames();
+    retries++;
+    if (retries > 5) clearInterval(timer);
+  }, 400);
   </script>
 </body>
 </html>
