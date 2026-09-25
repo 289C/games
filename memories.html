@@ -93,7 +93,7 @@
       border: 1px solid rgba(255, 255, 255, 0.2);
       border-radius: 20px;
       padding: 30px 20px;
-      max-width: 520px;
+      max-width: 540px;
       width: 100%;
       box-shadow: 0 10px 35px rgba(0, 0, 0, 0.6);
     }
@@ -174,7 +174,7 @@
     /* Screen 4: Tap to Reveal Mystery Grid */
     .reveal-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(95px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
       gap: 10px;
       width: 100%;
       max-height: 380px;
@@ -186,7 +186,7 @@
     .photo-slot {
       position: relative;
       width: 100%;
-      height: 120px;
+      height: 110px;
       border-radius: 12px;
       overflow: hidden;
       cursor: pointer;
@@ -226,7 +226,7 @@
       align-items: center;
       gap: 4px;
       color: #f7d070;
-      font-size: 0.8rem;
+      font-size: 0.82rem;
       font-weight: 600;
     }
 
@@ -278,6 +278,45 @@
       pointer-events: auto;
     }
 
+    /* HD Normal Preview Overlay after 3D Click */
+    .hd-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 1200;
+      background: rgba(0, 0, 0, 0.88);
+      backdrop-filter: blur(12px);
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      animation: fadeIn 0.35s ease;
+    }
+
+    .hd-modal.active {
+      display: flex;
+    }
+
+    .hd-modal img {
+      max-width: 90vw;
+      max-height: 75vh;
+      border-radius: 14px;
+      border: 3px solid #f7d070;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9);
+      object-fit: contain;
+    }
+
+    .hd-modal-close {
+      margin-top: 15px;
+      background: #f7d070;
+      color: #111;
+      border: none;
+      padding: 8px 24px;
+      border-radius: 50px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
     /* Screen 6: Formspree Review Form */
     .review-form {
       display: flex;
@@ -315,7 +354,7 @@
 </head>
 <body>
 
-  <!-- Audio Player (Aa Rojulu Malli Raavu) -->
+  <!-- Background Audio Pill -->
   <div class="audio-bar">
     <button id="musicToggle" class="audio-btn">▶</button>
     <span class="audio-text">🎵 Aa Rojulu Malli Raavu</span>
@@ -324,6 +363,12 @@
   <audio id="bgSong" loop preload="auto">
     <source src="assets/song.mp3" type="audio/mpeg" />
   </audio>
+
+  <!-- HD Normal Photo Modal Popup (after 3D click) -->
+  <div class="hd-modal" id="hdModal" onclick="closeHdModal()">
+    <img id="hdModalImg" src="" alt="Full Memory" />
+    <button class="hd-modal-close" onclick="closeHdModal()">✕ Close Photo</button>
+  </div>
 
   <!-- ==================== SCREEN 1: PASSWORD ==================== -->
   <section class="screen active" id="screen-1">
@@ -356,26 +401,25 @@
     </div>
   </section>
 
-  <!-- ==================== SCREEN 3: 10TH MEMORIES PORTAL ==================== -->
+  <!-- ==================== SCREEN 3: PORTAL ==================== -->
   <section class="screen" id="screen-3">
     <div class="glass-card">
       <h1 class="title-gold">10th Memories ✨</h1>
       <p class="desc-text">
-        Tap below to reveal our 13 precious school photos one by one!
+        Tap below to reveal our 25 precious school memories one by one!
       </p>
       <button class="btn-main" onclick="goToScreen(4)">Reveal Photos 📸</button>
     </div>
   </section>
 
-  <!-- ==================== SCREEN 4: 13 REVEALABLE MEMORY PHOTOS ==================== -->
+  <!-- ==================== SCREEN 4: 25 TAP-TO-REVEAL PHOTOS ==================== -->
   <section class="screen" id="screen-4">
-    <div class="glass-card" style="max-width: 580px;">
+    <div class="glass-card">
       <h2 class="title-gold">Tap to Reveal 📷</h2>
-      <div id="revealCounter" class="reveal-status">Revealed: 0 / 13</div>
+      <div id="revealCounter" class="reveal-status">Revealed: 0 / 25</div>
       
-      <div class="reveal-grid" id="revealGrid">
-        <!-- Generates 13 tap-to-reveal boxes -->
-      </div>
+      <!-- 25 Tap items with 'Tap' label only -->
+      <div class="reveal-grid" id="revealGrid"></div>
 
       <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
         <button class="btn-main" style="background: rgba(255,255,255,0.15); color: #fff;" onclick="revealAllPhotos()">Reveal All 🪄</button>
@@ -384,18 +428,18 @@
     </div>
   </section>
 
-  <!-- ==================== SCREEN 5: 3D ANIMATED REEL ==================== -->
+  <!-- ==================== SCREEN 5: CLEAR 3D REEL WITH ZOOM EFFECTS ==================== -->
   <section class="screen" id="screen-5">
     <canvas id="webgl-canvas"></canvas>
 
     <div class="scene-overlay">
       <div style="text-shadow: 0 4px 14px rgba(0,0,0,0.8);">
         <h2 class="title-gold" style="font-size: 1.5rem; margin-bottom: 2px;">3D Nostalgia Reel 🎥</h2>
-        <p style="font-size: 0.82rem; color: #ffebaa;">Tap anywhere to switch the photo</p>
+        <p style="font-size: 0.82rem; color: #ffebaa;">Tap center photo to open in HD • Tap sides to cycle</p>
       </div>
 
       <div class="pointer-active" style="display:flex; flex-direction:column; align-items:center; gap: 8px;">
-        <span id="carouselCounter" style="color: #f7d070; font-weight: bold; font-size: 1.1rem;">1 / 13</span>
+        <span id="carouselCounter" style="color: #f7d070; font-weight: bold; font-size: 1.1rem;">1 / 25</span>
         <button class="btn-main" onclick="goToScreen(6)">Leave a Review ✍️</button>
       </div>
     </div>
@@ -422,22 +466,11 @@
   </section>
 
   <script>
-    // --- 1. 13 PHOTOS LIST ---
-    const photos = [
-      'assets/mem1.jpg',
-      'assets/mem2.jpg',
-      'assets/mem3.jpg',
-      'assets/mem4.jpg',
-      'assets/mem5.jpg',
-      'assets/mem6.jpg',
-      'assets/mem7.jpg',
-      'assets/mem8.jpg',
-      'assets/mem9.jpg',
-      'assets/mem10.jpg',
-      'assets/mem11.jpg',
-      'assets/mem12.jpg',
-      'assets/mem13.jpg'
-    ];
+    // --- 1. FULL 25 PHOTOS LIST (mem1.jpg to mem25.jpg) ---
+    const photos = [];
+    for (let i = 1; i <= 25; i++) {
+      photos.push(`assets/mem${i}.jpg`);
+    }
 
     // --- 2. AUDIO LOGIC ---
     const bgSong = document.getElementById('bgSong');
@@ -495,26 +528,26 @@
 
       if (pass === '@swamy') {
         err.style.display = 'none';
-        startSong(); // Song automatically plays right after correct password
+        startSong(); // Song plays after entering password
         goToScreen(2);
       } else {
         err.style.display = 'block';
       }
     }
 
-    // --- 5. SCREEN 4: TAP TO REVEAL SETUP ---
+    // --- 5. SCREEN 4: TAP TO REVEAL (JUST "TAP", NO NUMBERS) ---
     const revealGrid = document.getElementById('revealGrid');
     let revealedCount = 0;
 
-    photos.forEach((src, idx) => {
+    photos.forEach((src) => {
       const slot = document.createElement('div');
       slot.className = 'photo-slot';
       slot.innerHTML = `
         <div class="cover-box">
-          <span>🎁</span>
-          <span>#${idx + 1} Tap</span>
+          <span style="font-size: 1.2rem;">🎁</span>
+          <span>Tap</span>
         </div>
-        <img src="${src}" alt="Memory ${idx + 1}" />
+        <img src="${src}" alt="Memory" />
       `;
 
       slot.addEventListener('click', () => {
@@ -533,42 +566,42 @@
     }
 
     function revealAllPhotos() {
-      document.querySelectorAll('.photo-slot').forEach(slot => {
-        if (!slot.classList.contains('revealed')) {
-          slot.classList.add('revealed');
-        }
-      });
+      document.querySelectorAll('.photo-slot').forEach(slot => slot.classList.add('revealed'));
       revealedCount = photos.length;
       updateRevealCounter();
     }
 
-    // --- 6. SCREEN 5: THREE.JS 3D CAROUSEL ---
+    // --- 6. SCREEN 5: THREE.JS 3D CAROUSEL & INTERACTIVE OPEN ---
     let scene3dInitialized = false;
     let carouselGroup, cards = [], currentIndex = 0;
+    let raycaster, mouse, camera, renderer, scene;
 
     function init3DScene() {
       if (scene3dInitialized) return;
       scene3dInitialized = true;
 
       const canvas = document.getElementById('webgl-canvas');
-      const scene = new THREE.Scene();
-      scene.fog = new THREE.FogExp2(0x08090d, 0.035);
+      scene = new THREE.Scene();
+      scene.fog = new THREE.FogExp2(0x08090d, 0.02);
 
-      const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 100);
-      camera.position.set(0, 0, 7.8);
+      camera = new THREE.PerspectiveCamera(48, window.innerWidth / window.innerHeight, 0.1, 100);
+      camera.position.set(0, 0, 8.2);
 
-      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+      renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      renderer.outputEncoding = THREE.sRGBEncoding; // Restores vivid photo colors
+      renderer.outputEncoding = THREE.sRGBEncoding;
 
-      // Carousel
+      raycaster = new THREE.Raycaster();
+      mouse = new THREE.Vector2();
+
       carouselGroup = new THREE.Group();
       scene.add(carouselGroup);
 
-      const radius = 6.2;
-      const cardGeometry = new THREE.PlaneGeometry(2.6, 3.6);
-      const borderGeometry = new THREE.PlaneGeometry(2.72, 3.72);
+      // Expanded radius for 25 photos
+      const radius = 9.8;
+      const cardGeometry = new THREE.PlaneGeometry(2.7, 3.7);
+      const borderGeometry = new THREE.PlaneGeometry(2.82, 3.82);
       const textureLoader = new THREE.TextureLoader();
 
       photos.forEach((url, i) => {
@@ -576,15 +609,15 @@
         const texture = textureLoader.load(url);
         texture.encoding = THREE.sRGBEncoding;
 
-        // MeshBasicMaterial keeps the image crisp without light flare
         const material = new THREE.MeshBasicMaterial({
           map: texture,
           side: THREE.DoubleSide
         });
 
         const mesh = new THREE.Mesh(cardGeometry, material);
+        mesh.userData = { index: i, url: url };
 
-        // Polaroid Frame backing
+        // Clean white photo border for clear definition
         const frameMat = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide });
         const frameMesh = new THREE.Mesh(borderGeometry, frameMat);
         frameMesh.position.z = -0.01;
@@ -601,20 +634,51 @@
       carouselGroup.position.z = -radius;
 
       // Golden Dust Particles
-      const pCount = 180;
+      const pCount = 200;
       const pGeo = new THREE.BufferGeometry();
       const pPos = new Float32Array(pCount * 3);
       for (let i = 0; i < pCount * 3; i += 3) {
-        pPos[i] = (Math.random() - 0.5) * 18;
-        pPos[i + 1] = (Math.random() - 0.5) * 12;
-        pPos[i + 2] = (Math.random() - 0.5) * 18;
+        pPos[i] = (Math.random() - 0.5) * 24;
+        pPos[i + 1] = (Math.random() - 0.5) * 16;
+        pPos[i + 2] = (Math.random() - 0.5) * 24;
       }
       pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
       const pMat = new THREE.PointsMaterial({ color: 0xffe899, size: 0.05, transparent: true, opacity: 0.75 });
       const particles = new THREE.Points(pGeo, pMat);
       scene.add(particles);
 
-      // Rotate Next on Tap
+      // Click / Tap Handler: Check if center card was clicked or background was tapped
+      document.getElementById('screen-5').addEventListener('pointerup', (e) => {
+        if (e.target.closest('.pointer-active') || e.target.closest('.audio-bar')) return;
+
+        mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+        raycaster.setFromCamera(mouse, camera);
+
+        const intersects = raycaster.intersectObjects(cards);
+
+        if (intersects.length > 0) {
+          const clickedMesh = intersects[0].object;
+          if (clickedMesh.userData.index === currentIndex) {
+            // Animate card forward in 3D then open normal view
+            gsap.to(clickedMesh.position, {
+              z: clickedMesh.position.z + 1.2,
+              duration: 0.35,
+              yoyo: true,
+              repeat: 1,
+              ease: "power2.out",
+              onComplete: () => {
+                openHdModal(clickedMesh.userData.url);
+              }
+            });
+            return;
+          }
+        }
+
+        // Tap outside rotates to the next card
+        rotateNext();
+      });
+
       function rotateNext() {
         currentIndex = (currentIndex + 1) % photos.length;
         document.getElementById('carouselCounter').innerText = `${currentIndex + 1} / ${photos.length}`;
@@ -622,15 +686,10 @@
         const targetY = -currentIndex * ((Math.PI * 2) / photos.length);
         gsap.to(carouselGroup.rotation, {
           y: targetY,
-          duration: 1.1,
+          duration: 1.0,
           ease: 'power3.out'
         });
       }
-
-      document.getElementById('screen-5').addEventListener('pointerdown', (e) => {
-        if (e.target.closest('.pointer-active') || e.target.closest('.audio-bar')) return;
-        rotateNext();
-      });
 
       window.addEventListener('resize', () => {
         camera.aspect = window.innerWidth / window.innerHeight;
@@ -651,6 +710,18 @@
         renderer.render(scene, camera);
       }
       renderLoop();
+    }
+
+    // --- 7. NORMAL HD PREVIEW POPUP ---
+    function openHdModal(url) {
+      const modal = document.getElementById('hdModal');
+      const img = document.getElementById('hdModalImg');
+      img.src = url;
+      modal.classList.add('active');
+    }
+
+    function closeHdModal() {
+      document.getElementById('hdModal').classList.remove('active');
     }
   </script>
 </body>
