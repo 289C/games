@@ -179,7 +179,7 @@
       display: inline-block;
     }
 
-    /* 3D Cake */
+    /* 3D Cake Box */
     .cake-box {
       width: 150px;
       height: 110px;
@@ -241,7 +241,7 @@
       100% { transform: scale(1.2) rotate(3deg); }
     }
 
-    /* ================= BALLOON MINI GAME ================= */
+    /* Balloon Game Styling */
     .balloon-cluster {
       display: flex;
       justify-content: center;
@@ -292,33 +292,39 @@
       transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
+    /* Sequential Sentence Slots */
     .revealed-sentence-box {
-      min-height: 48px;
-      background: rgba(255, 255, 255, 0.15);
-      border-radius: 16px;
-      padding: 10px 14px;
+      min-height: 54px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px dashed rgba(255, 255, 255, 0.35);
+      border-radius: 18px;
+      padding: 12px;
       display: flex;
       justify-content: center;
       align-items: center;
       gap: 6px;
       flex-wrap: wrap;
-      margin-bottom: 20px;
+      margin: 18px 0;
     }
 
-    .revealed-word {
-      background: #ffffff;
-      color: #7209b7;
+    .word-slot {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px dashed rgba(255, 255, 255, 0.4);
+      color: transparent;
       font-weight: 700;
       font-size: 13px;
-      padding: 4px 10px;
+      padding: 6px 12px;
       border-radius: 20px;
-      animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      min-width: 45px;
+      transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
-    @keyframes popIn {
-      0% { transform: scale(0); opacity: 0; }
-      100% { transform: scale(1); opacity: 1; }
+    .word-slot.filled {
+      background: #ffffff;
+      color: #7209b7;
+      border: 1px solid #ffffff;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      transform: scale(1.05);
     }
 
     /* Photo Grid */
@@ -475,24 +481,26 @@
     </button>
   </div>
 
-  <!-- STAGE 3.5: BALLOON POPPING MINI-GAME (IDEA 2) -->
+  <!-- STAGE 3.5: SEQUENTIAL BALLOON MINI-GAME -->
   <div id="stage-balloons" class="page-stage hidden">
     <div class="badge-icon">🎈</div>
     <h2 class="stage-title">Pop All 5 Balloons!</h2>
-    <p class="stage-desc" style="margin-bottom: 12px;">Tap each floating balloon to reveal a secret phrase</p>
+    <p class="stage-desc" style="margin-bottom: 12px;">Pop every balloon to unlock your secret message!</p>
 
-    <!-- FLOATING BALLOONS CLUSTER -->
     <div class="balloon-cluster">
-      <div class="balloon-item" onclick="popBalloon(this, 'YOU')">🎈</div>
-      <div class="balloon-item" onclick="popBalloon(this, 'ARE')">🎈</div>
-      <div class="balloon-item" onclick="popBalloon(this, 'THE')">🎈</div>
-      <div class="balloon-item" onclick="popBalloon(this, 'MOST')">🎈</div>
-      <div class="balloon-item" onclick="popBalloon(this, 'SPECIAL! 💖')">🎈</div>
+      <div class="balloon-item" onclick="popBalloon(this, 'slot-1')">🎈</div>
+      <div class="balloon-item" onclick="popBalloon(this, 'slot-2')">🎈</div>
+      <div class="balloon-item" onclick="popBalloon(this, 'slot-3')">🎈</div>
+      <div class="balloon-item" onclick="popBalloon(this, 'slot-4')">🎈</div>
+      <div class="balloon-item" onclick="popBalloon(this, 'slot-5')">🎈</div>
     </div>
 
-    <!-- WORDS ASSEMBLED HERE -->
-    <div class="revealed-sentence-box" id="sentence-box">
-      <span style="color: rgba(255,255,255,0.6); font-size: 12px;" id="hint-text">Pop balloons above...</span>
+    <div class="revealed-sentence-box">
+      <span class="word-slot" id="slot-1">YOU</span>
+      <span class="word-slot" id="slot-2">ARE</span>
+      <span class="word-slot" id="slot-3">THE</span>
+      <span class="word-slot" id="slot-4">MOST</span>
+      <span class="word-slot" id="slot-5">SPECIAL! 💖</span>
     </div>
 
     <button class="gradient-btn hidden" id="balloon-next-btn" onclick="toStage4()">
@@ -645,30 +653,25 @@
       spawnHearts(['🎈', '✨']);
     }
 
-    function popBalloon(element, word) {
+    function popBalloon(element, slotId) {
       if (element.classList.contains('popped')) return;
 
       element.classList.add('popped');
       poppedCount++;
 
-      // Small confetti burst on pop
+      if (navigator.vibrate) navigator.vibrate(40);
+
       confetti({
-        particleCount: 20,
+        particleCount: 22,
         spread: 45,
         origin: { y: 0.55 }
       });
 
-      // Remove placeholder text if first pop
-      const hint = document.getElementById('hint-text');
-      if (hint) hint.remove();
+      const targetSlot = document.getElementById(slotId);
+      if (targetSlot) {
+        targetSlot.classList.add('filled');
+      }
 
-      // Add the revealed word
-      const wordSpan = document.createElement('span');
-      wordSpan.className = 'revealed-word';
-      wordSpan.textContent = word;
-      document.getElementById('sentence-box').appendChild(wordSpan);
-
-      // If all 5 balloons are popped, unlock the Next button!
       if (poppedCount >= 5) {
         setTimeout(() => {
           document.getElementById('balloon-next-btn').classList.remove('hidden');
