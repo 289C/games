@@ -6,7 +6,7 @@
   <title>Sweet Birthday Surprise 🎉</title>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Pacifico&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   
-  <!-- Confetti Fireworks -->
+  <!-- Fireworks Confetti -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <style>
@@ -28,7 +28,6 @@
       transition: background 1.2s ease;
     }
 
-    /* Ambient background glowing orbs */
     .orb {
       position: fixed;
       border-radius: 50%;
@@ -40,7 +39,6 @@
     .orb-1 { width: 320px; height: 320px; background: #ffca28; top: 10%; left: 10%; opacity: 0.45; }
     .orb-2 { width: 280px; height: 280px; background: #ff4081; bottom: 10%; right: 10%; opacity: 0.4; }
 
-    /* Glassmorphism Card */
     .glass-card {
       position: relative;
       z-index: 2;
@@ -105,7 +103,6 @@
       box-shadow: 0 4px 14px rgba(0,0,0,0.08);
       transition: 0.2s;
     }
-
     .sweet-input:focus {
       background: #fff;
       transform: scale(1.02);
@@ -135,7 +132,6 @@
       box-shadow: 0 8px 20px rgba(255, 179, 0, 0.45);
       transition: all 0.2s;
     }
-
     .glow-btn:hover {
       transform: translateY(-2px) scale(1.02);
       box-shadow: 0 12px 25px rgba(255, 179, 0, 0.6);
@@ -220,7 +216,7 @@
       line-height: 1.3;
     }
 
-    /* STEP 4: REVEAL PHOTO CARDS (Flip Cards) */
+    /* STEP 4: REVEAL PHOTO CARDS */
     .photos-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -244,7 +240,6 @@
       transform-style: preserve-3d;
     }
 
-    /* Card flipped state when tapped */
     .flip-card.revealed .flip-inner {
       transform: rotateY(180deg);
     }
@@ -310,7 +305,63 @@
       margin-top: 6px;
     }
 
-    /* Floating Heart Sprinkles */
+    /* DIRECT NOTE BOX STYLING */
+    .reply-card {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 20px;
+      padding: 18px;
+      margin-top: 25px;
+      backdrop-filter: blur(10px);
+    }
+
+    .reply-name {
+      width: 100%;
+      padding: 10px 16px;
+      background: rgba(255, 255, 255, 0.95);
+      border: none;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 13px;
+      color: #333;
+      outline: none;
+      margin-bottom: 10px;
+    }
+
+    .reply-textarea {
+      width: 100%;
+      height: 85px;
+      background: rgba(255, 255, 255, 0.95);
+      border: none;
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-family: inherit;
+      font-size: 13px;
+      color: #333;
+      outline: none;
+      resize: none;
+      margin-bottom: 12px;
+    }
+
+    .send-note-btn {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #00b894, #00cec9);
+      color: #fff;
+      font-family: 'Fredoka One', cursive;
+      font-size: 15px;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 6px 18px rgba(0, 184, 148, 0.4);
+      transition: all 0.2s;
+    }
+
+    .send-note-btn:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 10px 24px rgba(0, 184, 148, 0.6);
+    }
+
     .heart-float {
       position: fixed;
       font-size: 22px;
@@ -381,7 +432,7 @@
     </button>
   </div>
 
-  <!-- STAGE 4: TAP TO REVEAL PHOTOS -->
+  <!-- STAGE 4: REVEAL PHOTOS + DIRECT NOTE -->
   <div id="stage-4" class="glass-card hidden" style="max-width: 480px; background: rgba(35, 15, 45, 0.5);">
     <div class="card-topper">🎁</div>
     <h2 class="title" style="font-size: 22px;">Tap Each Box to Reveal! 💝</h2>
@@ -389,8 +440,6 @@
 
     <!-- PHOTO REVEAL GRID -->
     <div class="photos-grid">
-
-      <!-- Photo 1: Change image URL and caption as needed -->
       <div class="flip-card" onclick="revealPhoto(this)">
         <div class="flip-inner">
           <div class="card-front">
@@ -404,7 +453,6 @@
         </div>
       </div>
 
-      <!-- Photo 2 -->
       <div class="flip-card" onclick="revealPhoto(this)">
         <div class="flip-inner">
           <div class="card-front">
@@ -418,7 +466,6 @@
         </div>
       </div>
 
-      <!-- Photo 3 -->
       <div class="flip-card" onclick="revealPhoto(this)">
         <div class="flip-inner">
           <div class="card-front">
@@ -432,7 +479,6 @@
         </div>
       </div>
 
-      <!-- Photo 4 -->
       <div class="flip-card" onclick="revealPhoto(this)">
         <div class="flip-inner">
           <div class="card-front">
@@ -445,20 +491,32 @@
           </div>
         </div>
       </div>
-
     </div>
 
-    <button class="glow-btn" style="background: linear-gradient(135deg, #12cbc4, #00cec9); color: #fff; margin-top: 10px;" onclick="replayCelebration()">
-      🎆 Blast Fireworks Again! 🎆
-    </button>
+    <!-- DIRECT REPLY NOTE (CONNECTED TO YOUR FORMSPREE) -->
+    <div class="reply-card">
+      <h3 style="color: #fff; font-family: 'Fredoka One', cursive; font-size: 16px; margin-bottom: 6px;">Leave a Personal Note 💬</h3>
+      <p style="color: rgba(255,255,255,0.8); font-size: 11px; margin-bottom: 12px;">Type your note here and it will be delivered directly!</p>
+      
+      <input type="text" id="sender-name" class="reply-name" placeholder="Your Name / Nickname">
+      <textarea id="reply-text" class="reply-textarea" placeholder="Write your birthday reply message here... ❤️"></textarea>
+      
+      <button class="send-note-btn" id="send-btn" onclick="sendDirectNote()">
+        💌 Send Note Now
+      </button>
+      <p id="reply-status" style="font-size: 12px; margin-top: 8px; display: none;"></p>
+    </div>
 
-    <p onclick="location.reload()" style="color: rgba(255,255,255,0.7); font-size: 12px; margin-top: 20px; cursor: pointer; text-decoration: underline;">
+    <p onclick="location.reload()" style="color: rgba(255,255,255,0.7); font-size: 12px; margin-top: 24px; cursor: pointer; text-decoration: underline;">
       Lock & Replay from Beginning
     </p>
   </div>
 
   <script>
     const ADMIN_PASSWORD = "@breakup";
+
+    // Formspree endpoint connected
+    const FORMSPREE_URL = "https://formspree.io/f/mbglkqep"; 
 
     function togglePass() {
       const p = document.getElementById('admin-pass');
@@ -484,7 +542,6 @@
       }
     }
 
-    // Step 1: Emerald Surprise Intro
     function toStage1() {
       document.body.style.background = "radial-gradient(circle at 50% 20%, #00b894 0%, #00cec9 40%, #0984e3 80%, #2d3436 100%)";
       document.getElementById('orb-1').style.background = "#55efc4";
@@ -493,14 +550,12 @@
       spawnHearts();
     }
 
-    // Step 2: Birthday Cake
     function toStage2() {
       document.getElementById('stage-1').classList.add('hidden');
       document.body.style.background = "radial-gradient(circle at 50% 20%, #6c5ce7 0%, #a29bfe 40%, #fd79a8 80%, #1e1e2f 100%)";
       document.getElementById('stage-2').classList.remove('hidden');
     }
 
-    // Step 3: Grand Fireworks Celebration
     function toStage3() {
       document.getElementById('stage-2').classList.add('hidden');
       document.body.style.background = "radial-gradient(circle at 50% 20%, #180527 0%, #0c0214 70%, #000000 100%)";
@@ -508,7 +563,6 @@
       triggerFireworks(4500);
     }
 
-    // Step 4: Photo Reveal Experience
     function toStage4() {
       document.getElementById('stage-3').classList.add('hidden');
       document.body.style.background = "radial-gradient(circle at 50% 20%, #ff758c 0%, #ff7eb3 40%, #880e4f 80%, #1a001a 100%)";
@@ -516,11 +570,9 @@
       triggerFireworks(2000);
     }
 
-    // Tap to Flip & Reveal Card
     function revealPhoto(cardElement) {
       if (!cardElement.classList.contains('revealed')) {
         cardElement.classList.add('revealed');
-        // Confetti pop on reveal
         confetti({
           particleCount: 25,
           spread: 40,
@@ -529,29 +581,57 @@
       }
     }
 
-    function replayCelebration() {
-      triggerFireworks(3000);
+    // Direct background sending to your Formspree
+    function sendDirectNote() {
+      const name = document.getElementById('sender-name').value.trim() || "Someone Special";
+      const message = document.getElementById('reply-text').value.trim();
+      const status = document.getElementById('reply-status');
+      const btn = document.getElementById('send-btn');
+
+      if (!message) {
+        alert("Please write a small note first! 💬");
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerText = "Sending your note...";
+      status.style.display = "block";
+      status.style.color = "#ffeaa7";
+      status.innerText = "Delivering...";
+
+      fetch(FORMSPREE_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify({ name: name, message: message })
+      })
+      .then(response => {
+        if (response.ok) {
+          status.style.color = "#55efc4";
+          status.innerText = "✨ Your note has been sent directly! 💖";
+          document.getElementById('reply-text').value = "";
+          btn.innerText = "Sent Successfully! 🎉";
+          confetti({ particleCount: 40, spread: 60 });
+        } else {
+          status.style.color = "#ff7675";
+          status.innerText = "Failed to send. Please check your form settings.";
+          btn.disabled = false;
+          btn.innerText = "Try Again";
+        }
+      })
+      .catch(error => {
+        status.style.color = "#ff7675";
+        status.innerText = "Error sending message. Check connection.";
+        btn.disabled = false;
+        btn.innerText = "Try Again";
+      });
     }
 
     function triggerFireworks(durationMs) {
       const end = Date.now() + durationMs;
       (function frame() {
-        confetti({
-          particleCount: 5,
-          angle: 60,
-          spread: 55,
-          origin: { x: 0 }
-        });
-        confetti({
-          particleCount: 5,
-          angle: 120,
-          spread: 55,
-          origin: { x: 1 }
-        });
-
-        if (Date.now() < end) {
-          requestAnimationFrame(frame);
-        }
+        confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 } });
+        confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 } });
+        if (Date.now() < end) requestAnimationFrame(frame);
       }());
     }
 
