@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sweet Birthday Surprise 🎉</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>3D Birthday Experience 🎉</title>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Pacifico&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   
-  <!-- Fireworks Confetti -->
+  <!-- Canvas Confetti Library -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <style>
@@ -14,6 +14,7 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      -webkit-tap-highlight-color: transparent;
     }
 
     body {
@@ -21,359 +22,405 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      background: radial-gradient(circle at 50% 20%, #ff8a65 0%, #ff5252 40%, #e91e63 70%, #880e4f 100%);
+      background: #0f111a;
       font-family: 'Poppins', sans-serif;
       padding: 20px;
       overflow-x: hidden;
+      perspective: 1200px;
       transition: background 1.2s ease;
     }
 
+    /* Ambient Background Lights */
     .orb {
       position: fixed;
       border-radius: 50%;
-      filter: blur(65px);
+      filter: blur(75px);
       z-index: 0;
       pointer-events: none;
-      transition: all 1s ease;
+      transition: all 1.2s ease;
     }
-    .orb-1 { width: 320px; height: 320px; background: #ffca28; top: 10%; left: 10%; opacity: 0.45; }
-    .orb-2 { width: 280px; height: 280px; background: #ff4081; bottom: 10%; right: 10%; opacity: 0.4; }
+    .orb-1 { width: 350px; height: 350px; background: #ff7675; top: 5%; left: 5%; opacity: 0.35; }
+    .orb-2 { width: 300px; height: 300px; background: #74b9ff; bottom: 5%; right: 5%; opacity: 0.35; }
 
-    .glass-card {
+    /* ================= NORMAL LOGIN BOX (NO 3D EFFECT) ================= */
+    .standard-login-card {
       position: relative;
-      z-index: 2;
+      z-index: 10;
       width: 100%;
-      max-width: 440px;
-      background: rgba(255, 255, 255, 0.18);
-      backdrop-filter: blur(25px);
-      -webkit-backdrop-filter: blur(25px);
-      border: 2px solid rgba(255, 255, 255, 0.35);
-      border-radius: 28px;
-      padding: 40px 24px 34px 24px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+      max-width: 380px;
+      background: #1a1d26;
+      border: 1px solid #2d3345;
+      border-radius: 16px;
+      padding: 35px 25px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
       text-align: center;
-      animation: popIn 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
-    @keyframes popIn {
-      from { transform: translateY(30px) scale(0.92); opacity: 0; }
-      to { transform: translateY(0) scale(1); opacity: 1; }
+    .standard-login-card h2 {
+      font-size: 22px;
+      color: #fff;
+      margin-bottom: 20px;
+      font-weight: 600;
     }
 
-    .card-topper {
-      position: absolute;
-      top: -24px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 48px;
-      height: 48px;
-      background: #ffffff;
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 24px;
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-    }
-
-    h2.title {
-      font-family: 'Fredoka One', cursive;
-      color: #ffffff;
-      font-size: 26px;
-      margin-bottom: 18px;
-      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    }
-
-    .input-wrapper {
+    .std-input-wrapper {
       position: relative;
-      margin-bottom: 16px;
+      margin-bottom: 18px;
     }
 
-    .sweet-input {
+    .std-input {
       width: 100%;
-      padding: 14px 20px;
-      padding-right: 48px;
-      background: rgba(255, 255, 255, 0.9);
-      border: none;
-      border-radius: 50px;
+      padding: 13px 45px 13px 18px;
+      background: #242938;
+      border: 1px solid #3b435b;
+      border-radius: 10px;
+      color: #fff;
       font-size: 14px;
-      font-family: inherit;
-      color: #333;
       outline: none;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.08);
-      transition: 0.2s;
+      transition: border-color 0.2s;
     }
-    .sweet-input:focus {
-      background: #fff;
-      transform: scale(1.02);
+    .std-input:focus {
+      border-color: #ff7675;
     }
 
-    .eye-toggle {
+    .std-eye {
       position: absolute;
-      right: 18px;
+      right: 14px;
       top: 50%;
       transform: translateY(-50%);
       cursor: pointer;
       font-size: 18px;
       user-select: none;
-      opacity: 0.6;
+      opacity: 0.7;
     }
 
-    .glow-btn {
+    .std-btn {
       width: 100%;
-      padding: 14px;
-      background: linear-gradient(135deg, #ffe082 0%, #ffb300 100%);
-      color: #5d4037;
-      font-family: 'Fredoka One', cursive;
-      font-size: 16px;
-      border: none;
-      border-radius: 50px;
-      cursor: pointer;
-      box-shadow: 0 8px 20px rgba(255, 179, 0, 0.45);
-      transition: all 0.2s;
-    }
-    .glow-btn:hover {
-      transform: translateY(-2px) scale(1.02);
-      box-shadow: 0 12px 25px rgba(255, 179, 0, 0.6);
-    }
-
-    .hidden { display: none !important; }
-
-    /* STEP 1: Surprise Waiting */
-    .surprise-card {
-      background: rgba(18, 203, 196, 0.25) !important;
-      border-color: rgba(18, 203, 196, 0.6) !important;
-    }
-    .surprise-tag {
-      background: rgba(255, 255, 255, 0.25);
-      padding: 6px 14px;
-      border-radius: 20px;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 13px;
-      color: #fff;
-      margin-bottom: 20px;
-    }
-
-    /* STEP 2: Cake Display */
-    .cake-container {
-      margin: 25px auto;
-      position: relative;
-      width: 140px;
-      height: 100px;
-    }
-    .cake-base {
-      position: absolute;
-      bottom: 0;
-      width: 140px;
-      height: 60px;
-      background: linear-gradient(135deg, #ff758c, #ff7eb3);
-      border-radius: 14px 14px 8px 8px;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.25);
-    }
-    .cake-icing {
-      position: absolute;
-      top: 32px;
-      width: 140px;
-      height: 16px;
-      background: #ffffff;
-      border-radius: 12px;
-    }
-    .candle {
-      position: absolute;
-      top: 10px;
-      left: 62px;
-      width: 14px;
-      height: 30px;
-      background: repeating-linear-gradient(45deg, #ffeaa7, #ffeaa7 4px, #fdcb6e 4px, #fdcb6e 8px);
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    .flame {
-      position: absolute;
-      top: -14px;
-      left: 1px;
-      width: 12px;
-      height: 16px;
+      padding: 13px;
       background: #ff7675;
-      border-radius: 50% 50% 20% 20%;
-      box-shadow: 0 0 14px #ffeaa7, 0 0 24px #fdcb6e;
-      animation: flicker 0.6s infinite alternate;
-    }
-    @keyframes flicker {
-      0% { transform: scale(1) rotate(-2deg); }
-      100% { transform: scale(1.15) rotate(2deg); }
-    }
-
-    /* STEP 3: Grand Celebration */
-    .bday-script {
-      font-family: 'Pacifico', cursive;
-      font-size: 34px;
-      color: #fff;
-      text-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 30px #ff2d55;
-      margin: 15px 0;
-      line-height: 1.3;
-    }
-
-    /* STEP 4: REVEAL PHOTO CARDS */
-    .photos-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-      margin: 20px 0;
-    }
-
-    .flip-card {
-      background-color: transparent;
-      height: 175px;
-      perspective: 1000px;
+      color: white;
+      font-size: 15px;
+      font-weight: 600;
+      border: none;
+      border-radius: 10px;
       cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+    .std-btn:hover { background: #e84393; }
+    .std-btn:active { transform: scale(0.98); }
+
+    .err-tag {
+      color: #ff6b6b;
+      font-size: 13px;
+      margin-top: 10px;
+      display: none;
     }
 
-    .flip-inner {
+    /* ================= 3D INTERACTIVE ENGINE & CARDS ================= */
+    .stage-wrapper {
+      position: relative;
+      z-index: 5;
+      width: 100%;
+      max-width: 440px;
+      transform-style: preserve-3d;
+      perspective: 1000px;
+    }
+
+    .card-3d {
       position: relative;
       width: 100%;
-      height: 100%;
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 32px;
+      padding: 40px 24px;
       text-align: center;
-      transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 35px 70px rgba(0,0,0,0.5), inset 0 2px 3px rgba(255,255,255,0.4);
+      transform-style: preserve-3d;
+      transition: transform 0.15s ease-out, box-shadow 0.3s ease;
+      cursor: grab;
+      will-change: transform;
+    }
+
+    .card-3d:active {
+      cursor: grabbing;
+    }
+
+    /* Dynamic Glare Reflection Overlay */
+    .card-glare {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      border-radius: 32px;
+      pointer-events: none;
+      background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 70%);
+      opacity: 0;
+      mix-blend-mode: overlay;
+      transition: opacity 0.25s ease;
+      z-index: 10;
+    }
+
+    /* 3D Elevated Depth Layers */
+    .elevate-3d-sm {
+      transform: translateZ(35px);
+      transform-style: preserve-3d;
+    }
+    .elevate-3d-md {
+      transform: translateZ(55px);
+      transform-style: preserve-3d;
+    }
+    .elevate-3d-lg {
+      transform: translateZ(85px);
       transform-style: preserve-3d;
     }
 
-    .flip-card.revealed .flip-inner {
-      transform: rotateY(180deg);
+    .badge-3d {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 15px auto;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 32px;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.35);
+      animation: floatBadge 3s ease-in-out infinite;
     }
 
-    .card-front, .card-back {
+    @keyframes floatBadge {
+      0%, 100% { transform: translateZ(60px) translateY(0px) rotate(0deg); }
+      50% { transform: translateZ(75px) translateY(-10px) rotate(8deg); }
+    }
+
+    h2.title-3d {
+      font-family: 'Fredoka One', cursive;
+      color: #ffffff;
+      font-size: 26px;
+      margin-bottom: 12px;
+      text-shadow: 0 10px 20px rgba(0,0,0,0.4);
+    }
+
+    p.desc-3d {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 14px;
+      margin-bottom: 25px;
+      line-height: 1.5;
+    }
+
+    /* 3D Tactile Push Button */
+    .button-3d {
+      display: inline-block;
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 50px;
+      background: linear-gradient(135deg, #ffd32a 0%, #ff9f1a 100%);
+      color: #3d2200;
+      font-family: 'Fredoka One', cursive;
+      font-size: 16px;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      box-shadow: 0 10px 0 #cc7700, 0 18px 25px rgba(0,0,0,0.4);
+      transform: translateZ(50px);
+      transition: all 0.15s ease;
+    }
+
+    .button-3d:active {
+      transform: translateZ(25px) translateY(7px) !important;
+      box-shadow: 0 3px 0 #cc7700, 0 8px 15px rgba(0,0,0,0.3) !important;
+    }
+
+    /* 3D CAKE ANIMATION */
+    .cake-3d-box {
+      width: 160px;
+      height: 120px;
+      margin: 25px auto;
+      position: relative;
+      transform-style: preserve-3d;
+      transform: translateZ(50px) rotateX(15deg);
+      animation: floatCake 3.5s ease-in-out infinite;
+    }
+
+    @keyframes floatCake {
+      0%, 100% { transform: translateZ(50px) rotateX(15deg) translateY(0); }
+      50% { transform: translateZ(70px) rotateX(20deg) translateY(-12px); }
+    }
+
+    .cake-tier {
+      position: absolute;
+      bottom: 0;
+      width: 160px;
+      height: 70px;
+      background: linear-gradient(135deg, #ff7675, #d63031);
+      border-radius: 20px;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.4), inset 0 6px 0 rgba(255,255,255,0.4);
+    }
+
+    .cake-icing {
+      position: absolute;
+      top: -12px;
+      left: 0;
+      width: 100%;
+      height: 25px;
+      background: #ffffff;
+      border-radius: 20px 20px 12px 12px;
+    }
+
+    .candle-3d {
+      position: absolute;
+      top: -35px;
+      left: 72px;
+      width: 16px;
+      height: 40px;
+      background: repeating-linear-gradient(45deg, #ffeaa7, #ffeaa7 5px, #fdcb6e 5px, #fdcb6e 10px);
+      border-radius: 6px;
+      cursor: pointer;
+      box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+    }
+
+    .flame-3d {
+      position: absolute;
+      top: -18px;
+      left: 1px;
+      width: 14px;
+      height: 20px;
+      background: #ff7675;
+      border-radius: 50% 50% 20% 20%;
+      box-shadow: 0 0 20px #ffeaa7, 0 0 35px #fdcb6e, 0 0 50px #ff7675;
+      animation: flamePulse 0.5s infinite alternate;
+    }
+
+    @keyframes flamePulse {
+      0% { transform: scale(1) rotate(-3deg); }
+      100% { transform: scale(1.25) rotate(3deg); }
+    }
+
+    /* 3D FLIP PHOTO TILES */
+    .photo-grid-3d {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 20px 0;
+      transform-style: preserve-3d;
+      transform: translateZ(40px);
+    }
+
+    .cube-card {
+      height: 170px;
+      perspective: 1200px;
+      cursor: pointer;
+    }
+
+    .cube-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      transition: transform 0.9s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      border-radius: 20px;
+    }
+
+    .cube-card.unfolded .cube-inner {
+      transform: rotateY(180deg) scale(1.04);
+    }
+
+    .cube-face {
       position: absolute;
       width: 100%;
       height: 100%;
-      border-radius: 18px;
+      border-radius: 20px;
       -webkit-backface-visibility: hidden;
       backface-visibility: hidden;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      padding: 12px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      padding: 10px;
+      box-shadow: 0 12px 25px rgba(0,0,0,0.3);
     }
 
-    .card-front {
-      background: linear-gradient(135deg, #ff758c, #ff7eb3);
-      color: white;
+    .cube-front {
+      background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
       border: 2px dashed rgba(255,255,255,0.7);
+      color: white;
     }
 
-    .card-front .gift-emoji {
-      font-size: 34px;
-      margin-bottom: 6px;
-      animation: pulseEmoji 1.5s infinite;
-    }
-
-    @keyframes pulseEmoji {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.15); }
-    }
-
-    .card-front span {
-      font-size: 12px;
+    .cube-front span {
+      font-size: 13px;
       font-weight: 600;
-      letter-spacing: 0.5px;
-    }
-
-    .card-back {
-      background: #ffffff;
-      color: #333;
-      transform: rotateY(180deg);
-      border: 3px solid #ff758c;
-      overflow: hidden;
-      padding: 6px;
-    }
-
-    .card-back img {
-      width: 100%;
-      height: 120px;
-      object-fit: cover;
-      border-radius: 12px;
-    }
-
-    .card-back p {
-      font-size: 11px;
-      font-weight: bold;
-      color: #e91e63;
       margin-top: 6px;
     }
 
-    /* DIRECT NOTE BOX STYLING */
-    .reply-card {
-      background: rgba(255, 255, 255, 0.12);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      border-radius: 20px;
-      padding: 18px;
-      margin-top: 25px;
-      backdrop-filter: blur(10px);
-    }
-
-    .reply-name {
-      width: 100%;
-      padding: 10px 16px;
-      background: rgba(255, 255, 255, 0.95);
-      border: none;
-      border-radius: 12px;
-      font-family: inherit;
-      font-size: 13px;
+    .cube-back {
+      background: #ffffff;
       color: #333;
-      outline: none;
-      margin-bottom: 10px;
+      transform: rotateY(180deg);
+      border: 3px solid #6c5ce7;
+      overflow: hidden;
     }
 
-    .reply-textarea {
+    .cube-back img {
       width: 100%;
-      height: 85px;
-      background: rgba(255, 255, 255, 0.95);
-      border: none;
+      height: 110px;
+      object-fit: cover;
       border-radius: 12px;
-      padding: 12px 14px;
-      font-family: inherit;
-      font-size: 13px;
-      color: #333;
-      outline: none;
-      resize: none;
-      margin-bottom: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
     }
 
-    .send-note-btn {
-      width: 100%;
-      padding: 12px;
-      background: linear-gradient(135deg, #00b894, #00cec9);
-      color: #fff;
-      font-family: 'Fredoka One', cursive;
-      font-size: 15px;
-      border: none;
-      border-radius: 50px;
-      cursor: pointer;
-      box-shadow: 0 6px 18px rgba(0, 184, 148, 0.4);
-      transition: all 0.2s;
+    .cube-back p {
+      font-size: 11px;
+      font-weight: bold;
+      color: #6c5ce7;
+      margin-top: 6px;
     }
 
-    .send-note-btn:hover {
-      transform: translateY(-2px) scale(1.02);
-      box-shadow: 0 10px 24px rgba(0, 184, 148, 0.6);
-    }
-
-    .heart-float {
+    /* 3D FLOATING BALLOONS & HEARTS */
+    .particle-3d {
       position: fixed;
-      font-size: 22px;
-      animation: floatUp 3.5s linear infinite;
-      z-index: 1;
+      font-size: 26px;
       pointer-events: none;
+      z-index: 100;
+      animation: floatUp3D 4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+      filter: drop-shadow(0 10px 15px rgba(0,0,0,0.3));
     }
-    @keyframes floatUp {
-      0% { transform: translateY(100vh) scale(0.6); opacity: 0; }
-      50% { opacity: 0.9; }
-      100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+
+    @keyframes floatUp3D {
+      0% { transform: translateY(110vh) translateZ(0px) rotate(0deg) scale(0.6); opacity: 0; }
+      20% { opacity: 1; }
+      80% { opacity: 0.9; }
+      100% { transform: translateY(-15vh) translateZ(120px) rotate(360deg) scale(1.3); opacity: 0; }
     }
+
+    /* DEDICATED 3D REPLY PAGE INPUTS */
+    .input-3d-box {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.95);
+      border: 2px solid transparent;
+      border-radius: 16px;
+      padding: 14px 18px;
+      font-family: inherit;
+      font-size: 14px;
+      color: #2d3436;
+      outline: none;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.15), inset 0 2px 4px rgba(0,0,0,0.05);
+      transform: translateZ(40px);
+      transition: all 0.2s ease;
+      margin-bottom: 14px;
+    }
+
+    .input-3d-box:focus {
+      border-color: #00cec9;
+      transform: translateZ(55px) scale(1.02);
+      box-shadow: 0 12px 25px rgba(0, 206, 201, 0.25);
+    }
+
+    .textarea-3d {
+      height: 120px;
+      resize: none;
+    }
+
+    .hidden { display: none !important; }
   </style>
 </head>
 <body>
@@ -381,143 +428,170 @@
   <div class="orb orb-1" id="orb-1"></div>
   <div class="orb orb-2" id="orb-2"></div>
 
-  <!-- STAGE 0: LOGIN CARD -->
-  <div id="login-box" class="glass-card">
-    <div class="card-topper">🍓</div>
-    <h2 class="title">Sweet Login</h2>
-    <div class="input-wrapper">
-      <input type="password" id="admin-pass" class="sweet-input" placeholder="Owner Password">
-      <span class="eye-toggle" id="eye-icon" onclick="togglePass()">👁️</span>
+  <!-- ================= 0. NORMAL LOGIN CARD (FLAT & CLEAN) ================= -->
+  <div id="login-box" class="standard-login-card">
+    <h2>Owner Verification</h2>
+    <div class="std-input-wrapper">
+      <input type="password" id="admin-pass" class="std-input" placeholder="Enter Password">
+      <span class="std-eye" id="eye-icon" onclick="togglePass()">👁️</span>
     </div>
-    <button class="glow-btn" onclick="checkLogin()">LET'S GO!</button>
-    <p id="err" style="color: #fff; background: rgba(255,0,50,0.5); border-radius: 20px; margin-top: 10px; font-size: 12px; padding: 4px;" class="hidden"></p>
+    <button class="std-btn" onclick="checkLogin()">Enter</button>
+    <p id="err" class="err-tag"></p>
   </div>
 
-  <!-- STAGE 1: SURPRISE WAITING -->
-  <div id="stage-1" class="glass-card surprise-card hidden">
-    <div class="card-topper">✨</div>
-    <div class="surprise-tag">💖 A special surprise is waiting!</div>
-    <h2 class="title" style="font-size: 22px;">Happy Birthday! 🎉</h2>
-    <p style="color: rgba(255,255,255,0.9); font-size: 14px; margin-bottom: 24px;">Someone prepared a whole journey just for you!</p>
-    <button class="glow-btn" style="background: linear-gradient(135deg, #12cbc4, #0652dd); color: #fff;" onclick="toStage2()">
-      ✨ OPEN YOUR SURPRISE 🎁
-    </button>
-  </div>
+  <!-- ================= 3D CONTAINER FOR SURPRISE STAGES ================= -->
+  <div class="stage-wrapper">
 
-  <!-- STAGE 2: MAGICAL CAKE -->
-  <div id="stage-2" class="glass-card hidden" style="background: rgba(30, 20, 50, 0.45);">
-    <div class="card-topper">🎂</div>
-    <h2 class="title">Magical Cake Time! ✨</h2>
-    <p style="color: #eee; font-size: 13px;">Tap the candle to light up the celebration!</p>
-    
-    <div class="cake-container">
-      <div class="candle" onclick="toStage3()">
-        <div class="flame"></div>
+    <!-- 1. 3D SURPRISE WAITING -->
+    <div id="stage-1" class="card-3d hidden">
+      <div class="card-glare"></div>
+      <div class="badge-3d">✨</div>
+      <div class="elevate-3d-md">
+        <h2 class="title-3d">A Special Surprise Awaits!</h2>
+        <p class="desc-3d">Step into an interactive 3D dimension created just for you!</p>
       </div>
-      <div class="cake-icing"></div>
-      <div class="cake-base"></div>
-    </div>
-
-    <button class="glow-btn" onclick="toStage3()">BEGIN MAGIC ✨</button>
-  </div>
-
-  <!-- STAGE 3: GRAND FIREWORKS & CELEBRATION -->
-  <div id="stage-3" class="glass-card hidden" style="background: rgba(10, 10, 25, 0.55); border-color: rgba(255, 75, 150, 0.5);">
-    <div class="card-topper">👑</div>
-    <div class="bday-script">Happy Birthday! 🎂💖</div>
-    <p style="color: #ffb8d9; font-size: 14px; margin-bottom: 22px;">Wishing you endless joy, smiles, and dreams come true!</p>
-    
-    <button class="glow-btn" style="background: linear-gradient(135deg, #ff758c, #ff7eb3); color: #fff;" onclick="toStage4()">
-      ✨ Reveal Surprise Memories 📸
-    </button>
-  </div>
-
-  <!-- STAGE 4: REVEAL PHOTOS + DIRECT NOTE -->
-  <div id="stage-4" class="glass-card hidden" style="max-width: 480px; background: rgba(35, 15, 45, 0.5);">
-    <div class="card-topper">🎁</div>
-    <h2 class="title" style="font-size: 22px;">Tap Each Box to Reveal! 💝</h2>
-    <p style="color: #ffd1dc; font-size: 12px; margin-bottom: 10px;">Touch the gift boxes below to uncover special memories</p>
-
-    <!-- PHOTO REVEAL GRID -->
-    <div class="photos-grid">
-      <div class="flip-card" onclick="revealPhoto(this)">
-        <div class="flip-inner">
-          <div class="card-front">
-            <div class="gift-emoji">🎁</div>
-            <span>Tap to open!</span>
-          </div>
-          <div class="card-back">
-            <img src="insta.jpg" alt="Memory 1" onerror="this.src='https://picsum.photos/300/300?random=1'">
-            <p>Best Smiles ✨</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="flip-card" onclick="revealPhoto(this)">
-        <div class="flip-inner">
-          <div class="card-front">
-            <div class="gift-emoji">💌</div>
-            <span>Tap to open!</span>
-          </div>
-          <div class="card-back">
-            <img src="https://picsum.photos/300/300?random=2" alt="Memory 2">
-            <p>Unforgettable Day 🌸</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="flip-card" onclick="revealPhoto(this)">
-        <div class="flip-inner">
-          <div class="card-front">
-            <div class="gift-emoji">🎉</div>
-            <span>Tap to open!</span>
-          </div>
-          <div class="card-back">
-            <img src="https://picsum.photos/300/300?random=3" alt="Memory 3">
-            <p>Always Shining 💫</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="flip-card" onclick="revealPhoto(this)">
-        <div class="flip-inner">
-          <div class="card-front">
-            <div class="gift-emoji">💖</div>
-            <span>Tap to open!</span>
-          </div>
-          <div class="card-back">
-            <img src="https://picsum.photos/300/300?random=4" alt="Memory 4">
-            <p>Stay Blessed Forever! 🎂</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- DIRECT REPLY NOTE (CONNECTED TO YOUR FORMSPREE) -->
-    <div class="reply-card">
-      <h3 style="color: #fff; font-family: 'Fredoka One', cursive; font-size: 16px; margin-bottom: 6px;">Leave a Personal Note 💬</h3>
-      <p style="color: rgba(255,255,255,0.8); font-size: 11px; margin-bottom: 12px;">Type your note here and it will be delivered directly!</p>
-      
-      <input type="text" id="sender-name" class="reply-name" placeholder="Your Name / Nickname">
-      <textarea id="reply-text" class="reply-textarea" placeholder="Write your birthday reply message here... ❤️"></textarea>
-      
-      <button class="send-note-btn" id="send-btn" onclick="sendDirectNote()">
-        💌 Send Note Now
+      <button class="button-3d" style="background: linear-gradient(135deg, #00cec9 0%, #0984e3 100%); color: #fff; box-shadow: 0 10px 0 #075cb3;" onclick="toStage2()">
+        🎁 OPEN YOUR SURPRISE
       </button>
-      <p id="reply-status" style="font-size: 12px; margin-top: 8px; display: none;"></p>
     </div>
 
-    <p onclick="location.reload()" style="color: rgba(255,255,255,0.7); font-size: 12px; margin-top: 24px; cursor: pointer; text-decoration: underline;">
-      Lock & Replay from Beginning
-    </p>
+    <!-- 2. 3D MAGICAL CAKE -->
+    <div id="stage-2" class="card-3d hidden">
+      <div class="card-glare"></div>
+      <div class="badge-3d">🎂</div>
+      <div class="elevate-3d-md">
+        <h2 class="title-3d">Magical Cake Time!</h2>
+        <p class="desc-3d">Touch and tilt your phone to look around, then tap the flame to blow out the candle!</p>
+      </div>
+
+      <div class="cake-3d-box">
+        <div class="candle-3d" onclick="toStage3()">
+          <div class="flame-3d"></div>
+        </div>
+        <div class="cake-tier">
+          <div class="cake-icing"></div>
+        </div>
+      </div>
+
+      <button class="button-3d" style="margin-top: 15px;" onclick="toStage3()">
+        ✨ MAKE A WISH & BLOW ✨
+      </button>
+    </div>
+
+    <!-- 3. 3D GRAND FIREWORKS CELEBRATION -->
+    <div id="stage-3" class="card-3d hidden">
+      <div class="card-glare"></div>
+      <div class="badge-3d">👑</div>
+      <div class="elevate-3d-lg">
+        <div style="font-family: 'Pacifico', cursive; font-size: 32px; color: #fff; text-shadow: 0 10px 25px #fd79a8; margin-bottom: 10px;">
+          Happy Birthday! 🎉
+        </div>
+        <p class="desc-3d">May this year bring unlimited happiness, peace, and dreams fulfilled!</p>
+      </div>
+      <button class="button-3d" style="background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%); color: #fff; box-shadow: 0 10px 0 #b82b71;" onclick="toStage4()">
+        📸 Reveal Surprise Memories ➡️
+      </button>
+    </div>
+
+    <!-- 4. 3D REVEAL PHOTO TILES -->
+    <div id="stage-4" class="card-3d hidden">
+      <div class="card-glare"></div>
+      <div class="badge-3d">🎁</div>
+      <div class="elevate-3d-md">
+        <h2 class="title-3d" style="font-size: 22px;">Tap Gift Cubes to Unfold!</h2>
+        <p class="desc-3d" style="font-size: 12px; margin-bottom: 12px;">Touch each box to flip and unlock the 3D photos</p>
+      </div>
+
+      <div class="photo-grid-3d">
+        <div class="cube-card" onclick="unfoldCube(this)">
+          <div class="cube-inner">
+            <div class="cube-face cube-front">
+              <div style="font-size: 38px;">🎁</div>
+              <span>Tap to Open</span>
+            </div>
+            <div class="cube-face cube-back">
+              <img src="insta.jpg" onerror="this.src='https://picsum.photos/300/300?random=11'" alt="Pic 1">
+              <p>Best Smiles ✨</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="cube-card" onclick="unfoldCube(this)">
+          <div class="cube-inner">
+            <div class="cube-face cube-front">
+              <div style="font-size: 38px;">💌</div>
+              <span>Tap to Open</span>
+            </div>
+            <div class="cube-face cube-back">
+              <img src="https://picsum.photos/300/300?random=12" alt="Pic 2">
+              <p>Special Moments 🌸</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="cube-card" onclick="unfoldCube(this)">
+          <div class="cube-inner">
+            <div class="cube-face cube-front">
+              <div style="font-size: 38px;">🎉</div>
+              <span>Tap to Open</span>
+            </div>
+            <div class="cube-face cube-back">
+              <img src="https://picsum.photos/300/300?random=13" alt="Pic 3">
+              <p>Always Shining 💫</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="cube-card" onclick="unfoldCube(this)">
+          <div class="cube-inner">
+            <div class="cube-face cube-front">
+              <div style="font-size: 38px;">💖</div>
+              <span>Tap to Open</span>
+            </div>
+            <div class="cube-face cube-back">
+              <img src="https://picsum.photos/300/300?random=14" alt="Pic 4">
+              <p>Stay Blessed! 🎂</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button class="button-3d" style="background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%); color: #fff; box-shadow: 0 10px 0 #4834d4;" onclick="toStage5()">
+        💌 Write a Reply Note ➡️
+      </button>
+    </div>
+
+    <!-- 5. 3D SEPARATE REPLY PAGE -->
+    <div id="stage-5" class="card-3d hidden">
+      <div class="card-glare"></div>
+      <div class="badge-3d">💌</div>
+      <div class="elevate-3d-md">
+        <h2 class="title-3d">Leave Your Note 💬</h2>
+        <p class="desc-3d">Your note is delivered straight to Satish's inbox!</p>
+      </div>
+
+      <input type="text" id="sender-name" class="input-3d-box" placeholder="Your Name / Nickname">
+      <textarea id="reply-text" class="input-3d-box textarea-3d" placeholder="Type your special birthday message here... ❤️"></textarea>
+
+      <button class="button-3d" id="send-btn" style="background: linear-gradient(135deg, #00cec9 0%, #0984e3 100%); color: #fff; box-shadow: 0 10px 0 #075cb3;" onclick="sendDirectNote()">
+        ✨ Send Note Directly ✨
+      </button>
+
+      <p id="reply-status" style="font-size: 13px; margin-top: 14px; font-weight: 600; display: none;"></p>
+
+      <div style="margin-top: 25px; display: flex; justify-content: space-around;" class="elevate-3d-sm">
+        <span onclick="toStage4()" style="color: rgba(255,255,255,0.7); font-size: 12px; cursor: pointer; text-decoration: underline;">⬅️ View Memories</span>
+        <span onclick="location.reload()" style="color: rgba(255,255,255,0.7); font-size: 12px; cursor: pointer; text-decoration: underline;">🔒 Lock Page</span>
+      </div>
+    </div>
+
   </div>
 
   <script>
     const ADMIN_PASSWORD = "@breakup";
+    const FORMSPREE_URL = "https://formspree.io/f/mbglkqep";
 
-    // Formspree endpoint connected
-    const FORMSPREE_URL = "https://formspree.io/f/mbglkqep"; 
-
+    /* Normal Password Visibility Toggle */
     function togglePass() {
       const p = document.getElementById('admin-pass');
       const eye = document.getElementById('eye-icon');
@@ -530,58 +604,119 @@
       }
     }
 
+    /* Standard Login Check */
     function checkLogin() {
       const val = document.getElementById('admin-pass').value;
       const err = document.getElementById('err');
       if (val === ADMIN_PASSWORD) {
         document.getElementById('login-box').classList.add('hidden');
+        init3DEngine();
         toStage1();
       } else {
         err.textContent = "Incorrect password! Try again.";
-        err.classList.remove('hidden');
+        err.style.display = "block";
       }
     }
 
+    /* ================= 3D TOUCH & GYROSCOPE PHYSICS ENGINE ================= */
+    function init3DEngine() {
+      const cards = document.querySelectorAll('.card-3d');
+
+      cards.forEach(card => {
+        const glare = card.querySelector('.card-glare');
+
+        function handleMove(clientX, clientY) {
+          const rect = card.getBoundingClientRect();
+          const x = clientX - rect.left;
+          const y = clientY - rect.top;
+          
+          const centerX = rect.width / 2;
+          const centerY = rect.height / 2;
+
+          // Compute 3D rotation angle (up to 18 degrees)
+          const rotateX = ((y - centerY) / centerY) * -16;
+          const rotateY = ((x - centerX) / centerX) * 16;
+
+          card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+
+          // Glare spotlight position
+          if (glare) {
+            glare.style.opacity = '1';
+            glare.style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 65%)`;
+          }
+        }
+
+        function handleReset() {
+          card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+          if (glare) glare.style.opacity = '0';
+        }
+
+        // Mouse Listeners
+        card.addEventListener('mousemove', e => handleMove(e.clientX, e.clientY));
+        card.addEventListener('mouseleave', handleReset);
+
+        // Touch Listeners (Mobile 3D tilt interaction)
+        card.addEventListener('touchmove', e => {
+          if (e.touches.length > 0) {
+            handleMove(e.touches[0].clientX, e.touches[0].clientY);
+          }
+        }, { passive: true });
+        card.addEventListener('touchend', handleReset);
+      });
+    }
+
+    /* ================= STAGE PROGRESSION ================= */
     function toStage1() {
-      document.body.style.background = "radial-gradient(circle at 50% 20%, #00b894 0%, #00cec9 40%, #0984e3 80%, #2d3436 100%)";
+      document.body.style.background = "radial-gradient(circle at 50% 20%, #00b894 0%, #0984e3 80%, #0b1426 100%)";
       document.getElementById('orb-1').style.background = "#55efc4";
-      document.getElementById('orb-2').style.background = "#81ecec";
+      document.getElementById('orb-2').style.background = "#74b9ff";
       document.getElementById('stage-1').classList.remove('hidden');
-      spawnHearts();
+      spawn3DParticles(['✨', '💖', '🎈']);
     }
 
     function toStage2() {
       document.getElementById('stage-1').classList.add('hidden');
-      document.body.style.background = "radial-gradient(circle at 50% 20%, #6c5ce7 0%, #a29bfe 40%, #fd79a8 80%, #1e1e2f 100%)";
+      document.body.style.background = "radial-gradient(circle at 50% 20%, #6c5ce7 0%, #a29bfe 50%, #1e1e2f 100%)";
       document.getElementById('stage-2').classList.remove('hidden');
+      spawn3DParticles(['🍰', '🎉', '🌸']);
     }
 
     function toStage3() {
       document.getElementById('stage-2').classList.add('hidden');
-      document.body.style.background = "radial-gradient(circle at 50% 20%, #180527 0%, #0c0214 70%, #000000 100%)";
+      document.body.style.background = "radial-gradient(circle at 50% 20%, #2d3436 0%, #090a0f 80%, #000000 100%)";
       document.getElementById('stage-3').classList.remove('hidden');
       triggerFireworks(4500);
+      spawn3DParticles(['👑', '💖', '🎂', '✨']);
     }
 
     function toStage4() {
       document.getElementById('stage-3').classList.add('hidden');
-      document.body.style.background = "radial-gradient(circle at 50% 20%, #ff758c 0%, #ff7eb3 40%, #880e4f 80%, #1a001a 100%)";
+      document.getElementById('stage-5').classList.add('hidden');
+      document.body.style.background = "radial-gradient(circle at 50% 20%, #d63031 0%, #e84393 50%, #190310 100%)";
       document.getElementById('stage-4').classList.remove('hidden');
       triggerFireworks(2000);
     }
 
-    function revealPhoto(cardElement) {
-      if (!cardElement.classList.contains('revealed')) {
-        cardElement.classList.add('revealed');
+    function toStage5() {
+      document.getElementById('stage-4').classList.add('hidden');
+      document.body.style.background = "radial-gradient(circle at 50% 20%, #6c5ce7 0%, #00cec9 60%, #0b1426 100%)";
+      document.getElementById('stage-5').classList.remove('hidden');
+      spawn3DParticles(['💌', '💖', '✨']);
+    }
+
+    /* Unfold 3D Photo Tiles */
+    function unfoldCube(element) {
+      if (!element.classList.contains('unfolded')) {
+        element.classList.add('unfolded');
         confetti({
           particleCount: 25,
-          spread: 40,
+          spread: 50,
           origin: { y: 0.6 }
         });
       }
     }
 
-    // Direct background sending to your Formspree
+    /* Submit Note Directly to Formspree */
     function sendDirectNote() {
       const name = document.getElementById('sender-name').value.trim() || "Someone Special";
       const message = document.getElementById('reply-text').value.trim();
@@ -607,18 +742,18 @@
       .then(response => {
         if (response.ok) {
           status.style.color = "#55efc4";
-          status.innerText = "✨ Your note has been sent directly! 💖";
+          status.innerText = "✨ Your note was sent straight to Satish! 💖";
           document.getElementById('reply-text').value = "";
           btn.innerText = "Sent Successfully! 🎉";
-          confetti({ particleCount: 40, spread: 60 });
+          confetti({ particleCount: 50, spread: 80 });
         } else {
           status.style.color = "#ff7675";
-          status.innerText = "Failed to send. Please check your form settings.";
+          status.innerText = "Failed to deliver. Please check connection.";
           btn.disabled = false;
           btn.innerText = "Try Again";
         }
       })
-      .catch(error => {
+      .catch(() => {
         status.style.color = "#ff7675";
         status.innerText = "Error sending message. Check connection.";
         btn.disabled = false;
@@ -626,26 +761,28 @@
       });
     }
 
+    /* 3D Confetti Cannon */
     function triggerFireworks(durationMs) {
       const end = Date.now() + durationMs;
       (function frame() {
-        confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 } });
-        confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 } });
+        confetti({ particleCount: 6, angle: 60, spread: 65, origin: { x: 0 } });
+        confetti({ particleCount: 6, angle: 120, spread: 65, origin: { x: 1 } });
         if (Date.now() < end) requestAnimationFrame(frame);
       }());
     }
 
-    function spawnHearts() {
+    /* 3D Floating Particle Depth Generator */
+    function spawn3DParticles(icons) {
       for (let i = 0; i < 18; i++) {
         setTimeout(() => {
-          const heart = document.createElement('div');
-          heart.className = 'heart-float';
-          heart.textContent = ['💖', '✨', '🌸', '🎈', '🍰'][Math.floor(Math.random() * 5)];
-          heart.style.left = Math.random() * 95 + 'vw';
-          heart.style.animationDuration = (2.5 + Math.random() * 2) + 's';
-          document.body.appendChild(heart);
-          setTimeout(() => heart.remove(), 4000);
-        }, i * 300);
+          const p = document.createElement('div');
+          p.className = 'particle-3d';
+          p.textContent = icons[Math.floor(Math.random() * icons.length)];
+          p.style.left = (Math.random() * 90 + 5) + 'vw';
+          p.style.animationDuration = (3 + Math.random() * 2) + 's';
+          document.body.appendChild(p);
+          setTimeout(() => p.remove(), 5000);
+        }, i * 220);
       }
     }
   </script>
