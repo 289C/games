@@ -26,7 +26,7 @@
       overflow-y: auto;
     }
 
-    /* Background Audio Controller */
+    /* Background Audio Floating Pill */
     .audio-bar {
       position: fixed;
       top: 15px;
@@ -85,7 +85,7 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Glass Card */
+    /* Glass Cards */
     .glass-card {
       background: rgba(255, 255, 255, 0.08);
       backdrop-filter: blur(16px);
@@ -93,7 +93,7 @@
       border: 1px solid rgba(255, 255, 255, 0.2);
       border-radius: 20px;
       padding: 30px 20px;
-      max-width: 500px;
+      max-width: 520px;
       width: 100%;
       box-shadow: 0 10px 35px rgba(0, 0, 0, 0.6);
     }
@@ -130,18 +130,38 @@
       transform: scale(0.96);
     }
 
-    /* Screen 1: Password Input */
+    /* Screen 1: Password & View/Hide Toggle */
+    .pass-container {
+      position: relative;
+      width: 100%;
+      margin-bottom: 16px;
+    }
+
     .pass-input {
       width: 100%;
-      padding: 12px 18px;
+      padding: 12px 46px 12px 18px;
       border-radius: 12px;
       background: rgba(255, 255, 255, 0.15);
       border: 1px solid rgba(255, 255, 255, 0.3);
       color: #fff;
-      font-size: 1rem;
+      font-size: 1.05rem;
       text-align: center;
-      margin-bottom: 16px;
       outline: none;
+      letter-spacing: 2px;
+    }
+
+    .toggle-pass-btn {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      font-size: 1.25rem;
+      cursor: pointer;
+      color: #f7d070;
+      display: grid;
+      place-items: center;
     }
 
     .err-msg {
@@ -151,8 +171,8 @@
       display: none;
     }
 
-    /* Screen 4: 13 Photos Grid */
-    .grid-gallery {
+    /* Screen 4: Tap to Reveal Mystery Grid */
+    .reveal-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(95px, 1fr));
       gap: 10px;
@@ -160,20 +180,70 @@
       max-height: 380px;
       overflow-y: auto;
       padding-right: 4px;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
     }
 
-    .gallery-img {
+    .photo-slot {
+      position: relative;
       width: 100%;
-      height: 110px;
-      object-fit: cover;
-      border-radius: 10px;
-      border: 2px solid rgba(247, 208, 112, 0.6);
-      transition: transform 0.2s;
+      height: 120px;
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      border: 2px solid rgba(247, 208, 112, 0.3);
+      background: #1a2233;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+      transition: transform 0.2s, border-color 0.3s;
     }
 
-    .gallery-img:active {
-      transform: scale(0.95);
+    .photo-slot:active {
+      transform: scale(0.96);
+    }
+
+    .photo-slot.revealed {
+      border-color: #f7d070;
+    }
+
+    .photo-slot img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+
+    .photo-slot.revealed img {
+      display: block;
+      animation: popIn 0.4s ease-out;
+    }
+
+    .cover-box {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, #242f44, #121724);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 4px;
+      color: #f7d070;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .photo-slot.revealed .cover-box {
+      display: none;
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0.7); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .reveal-status {
+      font-size: 0.9rem;
+      color: #f7d070;
+      font-weight: 600;
+      margin-bottom: 14px;
     }
 
     /* Screen 5: 3D Scene Viewport */
@@ -208,7 +278,7 @@
       pointer-events: auto;
     }
 
-    /* Screen 6: Review Form */
+    /* Screen 6: Formspree Review Form */
     .review-form {
       display: flex;
       flex-direction: column;
@@ -262,7 +332,10 @@
       <p class="desc-text">Enter the secret batch password to unlock our 10th memories!</p>
       
       <form id="passForm" onsubmit="event.preventDefault(); verifyPassword();">
-        <input type="password" id="passCode" class="pass-input" placeholder="Enter Password..." autocomplete="off" />
+        <div class="pass-container">
+          <input type="password" id="passCode" class="pass-input" placeholder="Enter password..." autocomplete="off" />
+          <button type="button" id="togglePassBtn" class="toggle-pass-btn" onclick="togglePasswordVisibility()" title="Show/Hide Password">👁️</button>
+        </div>
         <button type="submit" class="btn-main">Unlock Memories 🔑</button>
       </form>
       <p id="passErr" class="err-msg">Incorrect password! Try again 💔</p>
@@ -288,36 +361,26 @@
     <div class="glass-card">
       <h1 class="title-gold">10th Memories ✨</h1>
       <p class="desc-text">
-        Tap below to step inside our school archive and travel back in time.
+        Tap below to reveal our 13 precious school photos one by one!
       </p>
-      <button class="btn-main" onclick="goToScreen(4)">View Our 13 Memories 📸</button>
+      <button class="btn-main" onclick="goToScreen(4)">Reveal Photos 📸</button>
     </div>
   </section>
 
-  <!-- ==================== SCREEN 4: 13 MEMORY PHOTOS ==================== -->
+  <!-- ==================== SCREEN 4: 13 REVEALABLE MEMORY PHOTOS ==================== -->
   <section class="screen" id="screen-4">
     <div class="glass-card" style="max-width: 580px;">
-      <h2 class="title-gold">Our Precious Clicks 📷</h2>
-      <p class="desc-text" style="margin-bottom: 14px;">13 moments frozen in time ❤️</p>
+      <h2 class="title-gold">Tap to Reveal 📷</h2>
+      <div id="revealCounter" class="reveal-status">Revealed: 0 / 13</div>
       
-      <!-- 13 Photos Grid -->
-      <div class="grid-gallery">
-        <img src="assets/mem1.jpg" class="gallery-img" alt="Memory 1" />
-        <img src="assets/mem2.jpg" class="gallery-img" alt="Memory 2" />
-        <img src="assets/mem3.jpg" class="gallery-img" alt="Memory 3" />
-        <img src="assets/mem4.jpg" class="gallery-img" alt="Memory 4" />
-        <img src="assets/mem5.jpg" class="gallery-img" alt="Memory 5" />
-        <img src="assets/mem6.jpg" class="gallery-img" alt="Memory 6" />
-        <img src="assets/mem7.jpg" class="gallery-img" alt="Memory 7" />
-        <img src="assets/mem8.jpg" class="gallery-img" alt="Memory 8" />
-        <img src="assets/mem9.jpg" class="gallery-img" alt="Memory 9" />
-        <img src="assets/mem10.jpg" class="gallery-img" alt="Memory 10" />
-        <img src="assets/mem11.jpg" class="gallery-img" alt="Memory 11" />
-        <img src="assets/mem12.jpg" class="gallery-img" alt="Memory 12" />
-        <img src="assets/mem13.jpg" class="gallery-img" alt="Memory 13" />
+      <div class="reveal-grid" id="revealGrid">
+        <!-- Generates 13 tap-to-reveal boxes -->
       </div>
 
-      <button class="btn-main" onclick="goToScreen(5)">Watch 3D Animated Reel 🎬</button>
+      <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+        <button class="btn-main" style="background: rgba(255,255,255,0.15); color: #fff;" onclick="revealAllPhotos()">Reveal All 🪄</button>
+        <button class="btn-main" onclick="goToScreen(5)">Watch 3D Reel 🎬</button>
+      </div>
     </div>
   </section>
 
@@ -328,7 +391,7 @@
     <div class="scene-overlay">
       <div style="text-shadow: 0 4px 14px rgba(0,0,0,0.8);">
         <h2 class="title-gold" style="font-size: 1.5rem; margin-bottom: 2px;">3D Nostalgia Reel 🎥</h2>
-        <p style="font-size: 0.82rem; color: #ffebaa;">Tap anywhere to cycle through the 13 memories</p>
+        <p style="font-size: 0.82rem; color: #ffebaa;">Tap anywhere to switch the photo</p>
       </div>
 
       <div class="pointer-active" style="display:flex; flex-direction:column; align-items:center; gap: 8px;">
@@ -347,7 +410,7 @@
       <form action="https://formspree.io/f/mqpalnqw" method="POST" class="review-form">
         <div>
           <label>Your Name</label>
-          <input type="text" name="name" class="review-input" placeholder="e.g. Satish / Benchmate" required />
+          <input type="text" name="name" class="review-input" placeholder="Your name..." required />
         </div>
         <div>
           <label>Your Message / Thoughts</label>
@@ -359,12 +422,29 @@
   </section>
 
   <script>
-    // --- 1. BACKGROUND AUDIO LOGIC ---
+    // --- 1. 13 PHOTOS LIST ---
+    const photos = [
+      'assets/mem1.jpg',
+      'assets/mem2.jpg',
+      'assets/mem3.jpg',
+      'assets/mem4.jpg',
+      'assets/mem5.jpg',
+      'assets/mem6.jpg',
+      'assets/mem7.jpg',
+      'assets/mem8.jpg',
+      'assets/mem9.jpg',
+      'assets/mem10.jpg',
+      'assets/mem11.jpg',
+      'assets/mem12.jpg',
+      'assets/mem13.jpg'
+    ];
+
+    // --- 2. AUDIO LOGIC ---
     const bgSong = document.getElementById('bgSong');
     const musicToggle = document.getElementById('musicToggle');
     let userPaused = false;
 
-    function playSong() {
+    function startSong() {
       if (bgSong.paused && !userPaused) {
         bgSong.play().then(() => {
           musicToggle.innerText = '⏸';
@@ -385,13 +465,24 @@
       }
     });
 
-    // --- 2. MULTI-SCREEN NAVIGATION & PASSWORD ---
+    // --- 3. PASSWORD VISIBILITY TOGGLE ---
+    function togglePasswordVisibility() {
+      const passInput = document.getElementById('passCode');
+      const toggleBtn = document.getElementById('togglePassBtn');
+      if (passInput.type === 'password') {
+        passInput.type = 'text';
+        toggleBtn.innerText = '🙈';
+      } else {
+        passInput.type = 'password';
+        toggleBtn.innerText = '👁️';
+      }
+    }
+
+    // --- 4. NAVIGATION & PASSWORD VERIFICATION ---
     function goToScreen(screenNumber) {
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-      const next = document.getElementById(`screen-${screenNumber}`);
-      if (next) next.classList.add('active');
-
-      playSong();
+      const target = document.getElementById(`screen-${screenNumber}`);
+      if (target) target.classList.add('active');
 
       if (screenNumber === 5) {
         init3DScene();
@@ -404,29 +495,54 @@
 
       if (pass === '@swamy') {
         err.style.display = 'none';
+        startSong(); // Song automatically plays right after correct password
         goToScreen(2);
       } else {
         err.style.display = 'block';
       }
     }
 
-    // --- 3. THREE.JS 3D CAROUSEL (FOR 13 PHOTOS) ---
-    const photos = [
-      'assets/mem1.jpg',
-      'assets/mem2.jpg',
-      'assets/mem3.jpg',
-      'assets/mem4.jpg',
-      'assets/mem5.jpg',
-      'assets/mem6.jpg',
-      'assets/mem7.jpg',
-      'assets/mem8.jpg',
-      'assets/mem9.jpg',
-      'assets/mem10.jpg',
-      'assets/mem11.jpg',
-      'assets/mem12.jpg',
-      'assets/mem13.jpg'
-    ];
+    // --- 5. SCREEN 4: TAP TO REVEAL SETUP ---
+    const revealGrid = document.getElementById('revealGrid');
+    let revealedCount = 0;
 
+    photos.forEach((src, idx) => {
+      const slot = document.createElement('div');
+      slot.className = 'photo-slot';
+      slot.innerHTML = `
+        <div class="cover-box">
+          <span>🎁</span>
+          <span>#${idx + 1} Tap</span>
+        </div>
+        <img src="${src}" alt="Memory ${idx + 1}" />
+      `;
+
+      slot.addEventListener('click', () => {
+        if (!slot.classList.contains('revealed')) {
+          slot.classList.add('revealed');
+          revealedCount++;
+          updateRevealCounter();
+        }
+      });
+
+      revealGrid.appendChild(slot);
+    });
+
+    function updateRevealCounter() {
+      document.getElementById('revealCounter').innerText = `Revealed: ${revealedCount} / ${photos.length}`;
+    }
+
+    function revealAllPhotos() {
+      document.querySelectorAll('.photo-slot').forEach(slot => {
+        if (!slot.classList.contains('revealed')) {
+          slot.classList.add('revealed');
+        }
+      });
+      revealedCount = photos.length;
+      updateRevealCounter();
+    }
+
+    // --- 6. SCREEN 5: THREE.JS 3D CAROUSEL ---
     let scene3dInitialized = false;
     let carouselGroup, cards = [], currentIndex = 0;
 
@@ -444,36 +560,36 @@
       const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.outputEncoding = THREE.sRGBEncoding; // Restores vivid photo colors
 
-      // Lighting
-      const ambientLight = new THREE.AmbientLight(0xffffff, 1.4);
-      scene.add(ambientLight);
-
-      const pointLight = new THREE.PointLight(0xffdf88, 2, 25);
-      pointLight.position.set(0, 2, 5);
-      scene.add(pointLight);
-
-      // Carousel Group
+      // Carousel
       carouselGroup = new THREE.Group();
       scene.add(carouselGroup);
 
-      // Expanded radius for 13 images
-      const radius = 6.0;
-      const cardGeometry = new THREE.PlaneGeometry(2.3, 3.1);
+      const radius = 6.2;
+      const cardGeometry = new THREE.PlaneGeometry(2.6, 3.6);
+      const borderGeometry = new THREE.PlaneGeometry(2.72, 3.72);
       const textureLoader = new THREE.TextureLoader();
 
       photos.forEach((url, i) => {
         const angle = (i / photos.length) * Math.PI * 2;
         const texture = textureLoader.load(url);
+        texture.encoding = THREE.sRGBEncoding;
 
-        const material = new THREE.MeshStandardMaterial({
+        // MeshBasicMaterial keeps the image crisp without light flare
+        const material = new THREE.MeshBasicMaterial({
           map: texture,
-          side: THREE.DoubleSide,
-          roughness: 0.35,
-          metalness: 0.1
+          side: THREE.DoubleSide
         });
 
         const mesh = new THREE.Mesh(cardGeometry, material);
+
+        // Polaroid Frame backing
+        const frameMat = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide });
+        const frameMesh = new THREE.Mesh(borderGeometry, frameMat);
+        frameMesh.position.z = -0.01;
+        mesh.add(frameMesh);
+
         mesh.position.x = Math.sin(angle) * radius;
         mesh.position.z = Math.cos(angle) * radius;
         mesh.rotation.y = angle;
@@ -498,7 +614,7 @@
       const particles = new THREE.Points(pGeo, pMat);
       scene.add(particles);
 
-      // Tap / Click to advance memory
+      // Rotate Next on Tap
       function rotateNext() {
         currentIndex = (currentIndex + 1) % photos.length;
         document.getElementById('carouselCounter').innerText = `${currentIndex + 1} / ${photos.length}`;
