@@ -130,7 +130,7 @@
       transform: scale(0.96);
     }
 
-    /* Screen 1: Password & View/Hide Toggle */
+    /* Screen 1: Password */
     .pass-container {
       position: relative;
       width: 100%;
@@ -171,7 +171,7 @@
       display: none;
     }
 
-    /* Screen 4: 2 IMAGES PER ROW (1fr 1fr) */
+    /* Screen 4: 2 Items Per Row Grid */
     .reveal-grid-2col {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -204,16 +204,32 @@
       border-color: #f7d070;
     }
 
-    .photo-slot img {
+    .photo-slot img, .photo-slot video {
       width: 100%;
       height: 100%;
       object-fit: cover;
       display: none;
     }
 
-    .photo-slot.revealed img {
+    .photo-slot.revealed img, .photo-slot.revealed video {
       display: block;
       animation: popIn 0.4s ease-out;
+    }
+
+    .video-badge {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      background: rgba(0, 0, 0, 0.75);
+      color: #f7d070;
+      padding: 3px 8px;
+      border-radius: 8px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      z-index: 2;
     }
 
     .cover-box {
@@ -278,7 +294,7 @@
       pointer-events: auto;
     }
 
-    /* Fullscreen HD Modal with Download Button */
+    /* Fullscreen HD Modal (Photos & Video) */
     .hd-modal {
       position: fixed;
       inset: 0;
@@ -297,7 +313,7 @@
       display: flex;
     }
 
-    .hd-modal img {
+    .hd-modal img, .hd-modal video {
       max-width: 92vw;
       max-height: 72vh;
       border-radius: 14px;
@@ -337,7 +353,7 @@
       cursor: pointer;
     }
 
-    /* Screen 6: Formspree Review */
+    /* Screen 6: Formspree Review Form */
     .review-form {
       display: flex;
       flex-direction: column;
@@ -384,11 +400,16 @@
     <source src="assets/song.mp3" type="audio/mpeg" />
   </audio>
 
-  <!-- HD Fullscreen Modal with Download Option -->
+  <!-- Hidden Video Element for 3D Video Texture -->
+  <video id="webglVideoTexture" src="assets/video.mp4" loop muted playsinline crossOrigin="anonymous" style="display:none;"></video>
+
+  <!-- Fullscreen Modal for HD Photos & Video -->
   <div class="hd-modal" id="hdModal">
-    <img id="hdModalImg" src="" alt="Full Memory" />
+    <img id="hdModalImg" src="" alt="Full Memory" style="display:none;" />
+    <video id="hdModalVideo" src="" controls playsinline style="display:none;"></video>
+
     <div class="modal-actions">
-      <a id="downloadBtn" href="" download class="btn-download">⬇️ Download Photo</a>
+      <a id="downloadBtn" href="" download class="btn-download">⬇️ Download</a>
       <button class="btn-close" onclick="closeHdModal()">✕ Close</button>
     </div>
   </div>
@@ -429,19 +450,18 @@
     <div class="glass-card">
       <h1 class="title-gold">10th Memories ✨</h1>
       <p class="desc-text">
-        Tap below to reveal our 25 precious school memories one by one!
+        Tap below to reveal our 25 precious school memories (photos & video) one by one!
       </p>
-      <button class="btn-main" onclick="goToScreen(4)">Reveal Photos 📸</button>
+      <button class="btn-main" onclick="goToScreen(4)">Reveal Moments 📸</button>
     </div>
   </section>
 
-  <!-- ==================== SCREEN 4: 2 IMAGES PER ROW TAP-TO-REVEAL ==================== -->
+  <!-- ==================== SCREEN 4: 2 PER ROW TAP-TO-REVEAL ==================== -->
   <section class="screen" id="screen-4">
     <div class="glass-card">
       <h2 class="title-gold">Tap to Reveal 📷</h2>
       <div id="revealCounter" class="reveal-status">Revealed: 0 / 25</div>
       
-      <!-- Exact 2 Images per Row Grid -->
       <div class="reveal-grid-2col" id="revealGrid"></div>
 
       <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
@@ -458,7 +478,7 @@
     <div class="scene-overlay">
       <div style="text-shadow: 0 4px 14px rgba(0,0,0,0.8);">
         <h2 class="title-gold" style="font-size: 1.5rem; margin-bottom: 2px;">3D Nostalgia Reel 🎥</h2>
-        <p style="font-size: 0.82rem; color: #ffebaa;">Tap center photo to open in HD • Tap sides to cycle</p>
+        <p style="font-size: 0.82rem; color: #ffebaa;">Tap center memory to open • Tap sides to cycle</p>
       </div>
 
       <div class="pointer-active" style="display:flex; flex-direction:column; align-items:center; gap: 8px;">
@@ -489,15 +509,21 @@
   </section>
 
   <script>
-    // --- 1. PHOTOS LIST (mem1.jpg to mem25.jpg) ---
-    const photos = [];
+    // --- 1. MEDIA LIST: 24 PHOTOS + SLOT #18 IS THE VIDEO ---
+    const memories = [];
     for (let i = 1; i <= 25; i++) {
-      photos.push(`assets/mem${i}.jpg`);
+      if (i === 18) {
+        // Slot #18 is the Video!
+        memories.push({ type: 'video', src: 'assets/video.mp4', label: '🎬 Video' });
+      } else {
+        memories.push({ type: 'image', src: `assets/mem${i}.jpg`, label: '🎁 Tap' });
+      }
     }
 
     // --- 2. AUDIO LOGIC ---
     const bgSong = document.getElementById('bgSong');
     const musicToggle = document.getElementById('musicToggle');
+    const modalVideo = document.getElementById('hdModalVideo');
     let userPaused = false;
 
     function startSong() {
@@ -518,6 +544,23 @@
         bgSong.pause();
         musicToggle.innerText = '▶';
         userPaused = true;
+      }
+    });
+
+    // Auto-pause song when video is playing
+    modalVideo.addEventListener('play', () => {
+      if (!bgSong.paused) {
+        bgSong.pause();
+        musicToggle.innerText = '▶';
+      }
+    });
+
+    // Resume song when video stops
+    modalVideo.addEventListener('pause', () => {
+      if (!userPaused) {
+        bgSong.play().then(() => {
+          musicToggle.innerText = '⏸';
+        }).catch(() => {});
       }
     });
 
@@ -558,30 +601,40 @@
       }
     }
 
-    // --- 5. SCREEN 4: 2 IMAGES PER ROW & TAP TO OPEN / FULLSCREEN ---
+    // --- 5. SCREEN 4: 2 COLUMNS REVEAL (PHOTOS & VIDEO) ---
     const revealGrid = document.getElementById('revealGrid');
     let revealedCount = 0;
 
-    photos.forEach((src) => {
+    memories.forEach((item, index) => {
       const slot = document.createElement('div');
       slot.className = 'photo-slot';
-      slot.innerHTML = `
-        <div class="cover-box">
-          <span style="font-size: 1.4rem;">🎁</span>
-          <span>Tap</span>
-        </div>
-        <img src="${src}" alt="Memory" onerror="this.src='https://placehold.co/400x500/222/f7d070?text=Photo'" />
-      `;
+
+      if (item.type === 'video') {
+        slot.innerHTML = `
+          <div class="cover-box">
+            <span style="font-size: 1.4rem;">🎬</span>
+            <span>Video Tap</span>
+          </div>
+          <video src="${item.src}" muted playsinline></video>
+          <div class="video-badge">▶ Video</div>
+        `;
+      } else {
+        slot.innerHTML = `
+          <div class="cover-box">
+            <span style="font-size: 1.4rem;">🎁</span>
+            <span>Tap</span>
+          </div>
+          <img src="${item.src}" alt="Memory" onerror="this.src='https://placehold.co/400x500/222/f7d070?text=Photo'" />
+        `;
+      }
 
       slot.addEventListener('click', () => {
-        // If not revealed yet: reveal it
         if (!slot.classList.contains('revealed')) {
           slot.classList.add('revealed');
           revealedCount++;
           updateRevealCounter();
         } else {
-          // If already revealed: open in fullscreen with download button
-          openHdModal(src);
+          openHdModal(item);
         }
       });
 
@@ -589,33 +642,55 @@
     });
 
     function updateRevealCounter() {
-      document.getElementById('revealCounter').innerText = `Revealed: ${revealedCount} / ${photos.length}`;
+      document.getElementById('revealCounter').innerText = `Revealed: ${revealedCount} / ${memories.length}`;
     }
 
     function revealAllPhotos() {
       document.querySelectorAll('.photo-slot').forEach(slot => slot.classList.add('revealed'));
-      revealedCount = photos.length;
+      revealedCount = memories.length;
       updateRevealCounter();
     }
 
-    // --- 6. FULLSCREEN HD MODAL & DOWNLOAD ---
-    function openHdModal(url) {
+    // --- 6. FULLSCREEN HD MODAL (PHOTO OR VIDEO) ---
+    function openHdModal(item) {
       const modal = document.getElementById('hdModal');
       const img = document.getElementById('hdModalImg');
+      const vid = document.getElementById('hdModalVideo');
       const dl = document.getElementById('downloadBtn');
-      img.src = url;
-      dl.href = url;
+
+      dl.href = item.src;
+
+      if (item.type === 'video') {
+        img.style.display = 'none';
+        vid.style.display = 'block';
+        vid.src = item.src;
+        vid.play().catch(() => {});
+        dl.innerText = '⬇️ Download Video';
+      } else {
+        vid.pause();
+        vid.style.display = 'none';
+        img.style.display = 'block';
+        img.src = item.src;
+        dl.innerText = '⬇️ Download Photo';
+      }
+
       modal.classList.add('active');
     }
 
     function closeHdModal() {
-      document.getElementById('hdModal').classList.remove('active');
+      const modal = document.getElementById('hdModal');
+      const vid = document.getElementById('hdModalVideo');
+      if (!vid.paused) {
+        vid.pause();
+      }
+      modal.classList.remove('active');
     }
 
     // --- 7. SCREEN 5: THREE.JS 3D CAROUSEL ---
     let scene3dInitialized = false;
     let carouselGroup, cards = [], currentIndex = 0;
     let raycaster, mouse, camera, renderer, scene;
+    let videoTexture;
 
     function init3DScene() {
       if (scene3dInitialized) return;
@@ -644,20 +719,36 @@
       const borderGeometry = new THREE.PlaneGeometry(2.82, 3.82);
       const textureLoader = new THREE.TextureLoader();
 
-      photos.forEach((url, i) => {
-        const angle = (i / photos.length) * Math.PI * 2;
-        const texture = textureLoader.load(url);
-        texture.encoding = THREE.sRGBEncoding;
+      // Video texture for the 3D card
+      const videoEl = document.getElementById('webglVideoTexture');
+      videoEl.play().catch(() => {});
+      videoTexture = new THREE.VideoTexture(videoEl);
+      videoTexture.encoding = THREE.sRGBEncoding;
 
-        const material = new THREE.MeshBasicMaterial({
-          map: texture,
-          side: THREE.DoubleSide
-        });
+      memories.forEach((item, i) => {
+        const angle = (i / memories.length) * Math.PI * 2;
+        let material;
+
+        if (item.type === 'video') {
+          material = new THREE.MeshBasicMaterial({
+            map: videoTexture,
+            side: THREE.DoubleSide
+          });
+        } else {
+          const texture = textureLoader.load(item.src);
+          texture.encoding = THREE.sRGBEncoding;
+          material = new THREE.MeshBasicMaterial({
+            map: texture,
+            side: THREE.DoubleSide
+          });
+        }
 
         const mesh = new THREE.Mesh(cardGeometry, material);
-        mesh.userData = { index: i, url: url };
+        mesh.userData = { index: i, item: item };
 
-        const frameMat = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide });
+        // Frame backing (Gold border for video, white border for photos)
+        const frameColor = item.type === 'video' ? 0xf7d070 : 0xffffff;
+        const frameMat = new THREE.MeshBasicMaterial({ color: frameColor, side: THREE.DoubleSide });
         const frameMesh = new THREE.Mesh(borderGeometry, frameMat);
         frameMesh.position.z = -0.01;
         mesh.add(frameMesh);
@@ -706,7 +797,7 @@
               repeat: 1,
               ease: "power2.out",
               onComplete: () => {
-                openHdModal(clickedMesh.userData.url);
+                openHdModal(clickedMesh.userData.item);
               }
             });
             return;
@@ -717,10 +808,10 @@
       });
 
       function rotateNext() {
-        currentIndex = (currentIndex + 1) % photos.length;
-        document.getElementById('carouselCounter').innerText = `${currentIndex + 1} / ${photos.length}`;
+        currentIndex = (currentIndex + 1) % memories.length;
+        document.getElementById('carouselCounter').innerText = `${currentIndex + 1} / ${memories.length}`;
 
-        const targetY = -currentIndex * ((Math.PI * 2) / photos.length);
+        const targetY = -currentIndex * ((Math.PI * 2) / memories.length);
         gsap.to(carouselGroup.rotation, {
           y: targetY,
           duration: 1.0,
