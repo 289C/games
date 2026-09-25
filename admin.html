@@ -3,8 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sweet Login • Admin Portal</title>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <title>Sweet Birthday Surprise & Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Pacifico&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Canvas Confetti for Grand Fireworks -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <!-- Firebase v8 SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
   <style>
     * {
       box-sizing: border-box;
@@ -17,47 +25,47 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      /* Warm sunset candy gradient matching video */
       background: radial-gradient(circle at 50% 20%, #ff8a65 0%, #ff5252 40%, #e91e63 70%, #880e4f 100%);
       font-family: 'Poppins', sans-serif;
       padding: 20px;
       overflow-x: hidden;
+      transition: background 1.2s ease;
     }
 
-    /* Ambient background glowing orbs */
+    /* Ambient background orbs */
     .orb {
       position: fixed;
       border-radius: 50%;
-      filter: blur(60px);
+      filter: blur(65px);
       z-index: 0;
       pointer-events: none;
+      transition: all 1s ease;
     }
-    .orb-1 { width: 320px; height: 320px; background: #ffca28; top: 10%; left: 15%; opacity: 0.5; }
-    .orb-2 { width: 280px; height: 280px; background: #ff4081; bottom: 10%; right: 15%; opacity: 0.4; }
+    .orb-1 { width: 320px; height: 320px; background: #ffca28; top: 10%; left: 10%; opacity: 0.45; }
+    .orb-2 { width: 280px; height: 280px; background: #ff4081; bottom: 10%; right: 10%; opacity: 0.4; }
 
-    /* Sweet Login Card */
-    .sweet-card {
+    /* Base Glassmorphism Card */
+    .glass-card {
       position: relative;
-      z-index: 1;
+      z-index: 2;
       width: 100%;
-      max-width: 380px;
+      max-width: 420px;
       background: rgba(255, 255, 255, 0.18);
       backdrop-filter: blur(25px);
       -webkit-backdrop-filter: blur(25px);
       border: 2px solid rgba(255, 255, 255, 0.35);
       border-radius: 28px;
-      padding: 45px 30px 35px 30px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+      padding: 40px 28px 32px 28px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4);
       text-align: center;
-      animation: floatIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      animation: popIn 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
-    @keyframes floatIn {
-      from { transform: translateY(40px) scale(0.9); opacity: 0; }
+    @keyframes popIn {
+      from { transform: translateY(30px) scale(0.92); opacity: 0; }
       to { transform: translateY(0) scale(1); opacity: 1; }
     }
 
-    /* Floating Strawberry icon at top center */
     .card-topper {
       position: absolute;
       top: -24px;
@@ -74,16 +82,14 @@
       box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
     }
 
-    h2.sweet-title {
+    h2.title {
       font-family: 'Fredoka One', cursive;
       color: #ffffff;
       font-size: 26px;
-      letter-spacing: 0.5px;
-      margin-bottom: 22px;
+      margin-bottom: 20px;
       text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     }
 
-    /* Soft pill inputs */
     .input-wrapper {
       position: relative;
       margin-bottom: 16px;
@@ -92,26 +98,19 @@
     .sweet-input {
       width: 100%;
       padding: 14px 20px;
-      padding-right: 48px;
-      background: rgba(255, 255, 255, 0.85);
+      background: rgba(255, 255, 255, 0.9);
       border: none;
       border-radius: 50px;
       font-size: 14px;
       font-family: inherit;
       color: #333;
       outline: none;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
-      transition: all 0.25s ease;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+      transition: 0.2s;
     }
-
     .sweet-input:focus {
-      background: #ffffff;
+      background: #fff;
       transform: scale(1.02);
-      box-shadow: 0 6px 20px rgba(255, 255, 255, 0.4);
-    }
-
-    .sweet-input::placeholder {
-      color: #999;
     }
 
     .eye-toggle {
@@ -123,53 +122,120 @@
       font-size: 18px;
       user-select: none;
       opacity: 0.6;
-      transition: opacity 0.2s;
     }
-    .eye-toggle:hover { opacity: 1; }
 
-    /* Yellow/Gold Gradient Button ("LET'S GO!") */
-    .sweet-btn {
+    .glow-btn {
       width: 100%;
       padding: 14px;
-      margin-top: 8px;
       background: linear-gradient(135deg, #ffe082 0%, #ffb300 100%);
       color: #5d4037;
       font-family: 'Fredoka One', cursive;
       font-size: 16px;
-      letter-spacing: 1px;
       border: none;
       border-radius: 50px;
       cursor: pointer;
-      box-shadow: 0 8px 20px rgba(255, 179, 0, 0.4);
-      transition: all 0.2s ease;
+      box-shadow: 0 8px 20px rgba(255, 179, 0, 0.45);
+      transition: all 0.2s;
     }
-
-    .sweet-btn:hover {
+    .glow-btn:hover {
       transform: translateY(-2px) scale(1.02);
-      box-shadow: 0 10px 25px rgba(255, 179, 0, 0.55);
+      box-shadow: 0 12px 25px rgba(255, 179, 0, 0.6);
     }
 
-    .sweet-btn:active {
-      transform: translateY(1px);
-    }
-
-    .err-text {
-      color: #fff;
-      background: rgba(220, 20, 60, 0.5);
-      border-radius: 20px;
-      font-size: 12px;
-      margin-top: 10px;
-      padding: 4px 10px;
-      display: inline-block;
-    }
-
-    /* DASHBOARD SECTION */
     .hidden { display: none !important; }
 
-    .dash-box {
-      text-align: left;
+    /* STEP 1: Surprise Waiting Box (Emerald Tone) */
+    .surprise-card {
+      background: rgba(18, 203, 196, 0.25) !important;
+      border-color: rgba(18, 203, 196, 0.6) !important;
+    }
+    .surprise-tag {
+      background: rgba(255, 255, 255, 0.25);
+      padding: 6px 14px;
+      border-radius: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: #fff;
+      margin-bottom: 20px;
     }
 
+    /* STEP 2: Cake Display */
+    .cake-container {
+      margin: 25px auto;
+      position: relative;
+      width: 140px;
+      height: 100px;
+    }
+    .cake-base {
+      position: absolute;
+      bottom: 0;
+      width: 140px;
+      height: 60px;
+      background: linear-gradient(135deg, #ff758c, #ff7eb3);
+      border-radius: 14px 14px 8px 8px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+    }
+    .cake-icing {
+      position: absolute;
+      top: 32px;
+      width: 140px;
+      height: 16px;
+      background: #ffffff;
+      border-radius: 12px;
+    }
+    .candle {
+      position: absolute;
+      top: 10px;
+      left: 62px;
+      width: 14px;
+      height: 30px;
+      background: repeating-linear-gradient(45deg, #ffeaa7, #ffeaa7 4px, #fdcb6e 4px, #fdcb6e 8px);
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .flame {
+      position: absolute;
+      top: -14px;
+      left: 1px;
+      width: 12px;
+      height: 16px;
+      background: #ff7675;
+      border-radius: 50% 50% 20% 20%;
+      box-shadow: 0 0 14px #ffeaa7, 0 0 24px #fdcb6e;
+      animation: flicker 0.6s infinite alternate;
+    }
+    @keyframes flicker {
+      0% { transform: scale(1) rotate(-2deg); }
+      100% { transform: scale(1.15) rotate(2deg); }
+    }
+
+    /* STEP 3: Grand Birthday Text */
+    .bday-script {
+      font-family: 'Pacifico', cursive;
+      font-size: 34px;
+      color: #fff;
+      text-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 30px #ff2d55;
+      margin: 15px 0;
+      line-height: 1.3;
+    }
+
+    /* Floating hearts generator */
+    .heart-float {
+      position: fixed;
+      font-size: 20px;
+      animation: floatUp 3.5s linear infinite;
+      z-index: 1;
+      pointer-events: none;
+    }
+    @keyframes floatUp {
+      0% { transform: translateY(100vh) scale(0.6); opacity: 0; }
+      50% { opacity: 0.9; }
+      100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+    }
+
+    /* Dashboard Video List */
     .video-item {
       display: flex;
       justify-content: space-between;
@@ -180,15 +246,8 @@
       margin-top: 8px;
       font-size: 13px;
       color: white;
+      text-align: left;
     }
-
-    .video-item span {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      max-width: 220px;
-    }
-
     .del-btn {
       background: #ff4757;
       color: #fff;
@@ -199,62 +258,86 @@
       font-size: 11px;
       font-weight: bold;
     }
-
-    .logout-link {
-      display: block;
-      margin-top: 20px;
-      color: rgba(255, 255, 255, 0.8);
-      font-size: 13px;
-      text-decoration: underline;
-      cursor: pointer;
-      text-align: center;
-    }
   </style>
-
-  <!-- Firebase v8 SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body>
 
-  <div class="orb orb-1"></div>
-  <div class="orb orb-2"></div>
+  <div class="orb orb-1" id="orb-1"></div>
+  <div class="orb orb-2" id="orb-2"></div>
 
-  <!-- 1. SWEET LOGIN CARD -->
-  <div id="login-box" class="sweet-card">
+  <!-- STAGE 0: LOGIN CARD -->
+  <div id="login-box" class="glass-card">
     <div class="card-topper">🍓</div>
-    <h2 class="sweet-title">Sweet Login</h2>
-    
+    <h2 class="title">Sweet Login</h2>
     <div class="input-wrapper">
-      <input type="password" id="admin-pass" class="sweet-input" placeholder="Owner Password">
-      <span class="eye-toggle" id="eye-icon" onclick="togglePassword()">👁️</span>
+      <input type="password" id="admin-pass" class="sweet-input" placeholder="Owner Password" style="padding-right: 48px;">
+      <span class="eye-toggle" id="eye-icon" onclick="togglePass()">👁️</span>
     </div>
-
-    <button class="sweet-btn" onclick="login()">LET'S GO!</button>
-    <div id="err" class="err-text hidden"></div>
+    <button class="glow-btn" onclick="checkLogin()">LET'S GO!</button>
+    <p id="err" style="color: #fff; background: rgba(255,0,50,0.4); border-radius: 20px; margin-top: 10px; font-size: 12px; padding: 4px;" class="hidden"></p>
   </div>
 
-  <!-- 2. DASHBOARD VIEW (AFTER SUCCESSFUL LOGIN) -->
-  <div id="dash-box" class="sweet-card dash-box hidden">
+  <!-- STAGE 1: SURPRISE WAITING -->
+  <div id="stage-1" class="glass-card surprise-card hidden">
+    <div class="card-topper">✨</div>
+    <div class="surprise-tag">💖 There's a surprise waiting for you!</div>
+    <h2 class="title" style="font-size: 22px;">Happy Birthday, Special One! 🎉</h2>
+    <p style="color: rgba(255,255,255,0.9); font-size: 14px; margin-bottom: 24px;">Someone made something magical just for this day!</p>
+    <button class="glow-btn" style="background: linear-gradient(135deg, #12cbc4, #0652dd); color: #fff;" onclick="toStage2()">
+      ✨ CLICK HERE TO SEE YOUR SURPRISE! 🎁
+    </button>
+  </div>
+
+  <!-- STAGE 2: MAGICAL CAKE TIME -->
+  <div id="stage-2" class="glass-card hidden" style="background: rgba(30, 20, 50, 0.45);">
+    <div class="card-topper">🎂</div>
+    <h2 class="title">Magical Cake Time! ✨</h2>
+    <p style="color: #eee; font-size: 13px;">Tap the candle to light the magical wish!</p>
+    
+    <div class="cake-container">
+      <div class="candle" onclick="toStage3()">
+        <div class="flame"></div>
+      </div>
+      <div class="cake-icing"></div>
+      <div class="cake-base"></div>
+    </div>
+
+    <button class="glow-btn" onclick="toStage3()">BEGIN MAGIC ✨</button>
+  </div>
+
+  <!-- STAGE 3: GRAND FIREWORKS & CELEBRATION -->
+  <div id="stage-3" class="glass-card hidden" style="background: rgba(10, 10, 25, 0.55); border-color: rgba(255, 75, 150, 0.5);">
+    <div class="card-topper">👑</div>
+    <div class="bday-script">Happy Birthday! 🎂💖</div>
+    <p style="color: #ffb8d9; font-size: 14px; margin-bottom: 20px;">May all your wishes turn into reality today and forever!</p>
+    
+    <button class="glow-btn" style="background: linear-gradient(135deg, #ff758c, #ff7eb3); color: #fff;" onclick="toDashboard()">
+      Enter Admin Video Portal ➡️
+    </button>
+  </div>
+
+  <!-- STAGE 4: ACTUAL ADMIN DASHBOARD (POST / MANAGE VIDEOS) -->
+  <div id="dash-box" class="glass-card hidden" style="text-align: left;">
     <div class="card-topper">🎮</div>
-    <h2 class="sweet-title" style="text-align:center;">Add Video</h2>
+    <h2 class="title" style="text-align: center;">Add Website Video</h2>
 
     <div class="input-wrapper">
-      <input type="text" id="v-title" class="sweet-input" style="padding-right:20px;" placeholder="Video Title">
+      <input type="text" id="v-title" class="sweet-input" placeholder="Video Title">
     </div>
-
     <div class="input-wrapper">
-      <input type="url" id="v-url" class="sweet-input" style="padding-right:20px;" placeholder="YouTube Link (e.g. youtu.be/...)">
+      <input type="url" id="v-url" class="sweet-input" placeholder="YouTube Link (youtu.be/...)">
     </div>
 
-    <button class="sweet-btn" onclick="addVideo()">PUBLISH TO SITE</button>
+    <button class="glow-btn" onclick="addVideo()">PUBLISH TO SITE</button>
 
     <h3 style="color: #fff; font-size: 15px; margin: 24px 0 8px 0; font-family: 'Fredoka One', cursive;">Published Videos</h3>
     <div id="video-list"></div>
 
-    <span class="logout-link" onclick="logout()">Log out of Portal</span>
+    <p onclick="logout()" style="color: rgba(255,255,255,0.7); text-align: center; text-decoration: underline; margin-top: 24px; cursor: pointer; font-size: 13px;">
+      Log out / Replay Wishes
+    </p>
   </div>
-  
+
   <script>
     // Firebase Config
     const firebaseConfig = {
@@ -273,38 +356,104 @@
 
     const ADMIN_PASSWORD = "@breakup";
 
-    function togglePassword() {
-      const field = document.getElementById('admin-pass');
+    function togglePass() {
+      const p = document.getElementById('admin-pass');
       const eye = document.getElementById('eye-icon');
-      if (field.type === 'password') {
-        field.type = 'text';
+      if (p.type === 'password') {
+        p.type = 'text';
         eye.textContent = '🙈';
       } else {
-        field.type = 'password';
+        p.type = 'password';
         eye.textContent = '👁️';
       }
     }
 
-    function login() {
+    function checkLogin() {
       const val = document.getElementById('admin-pass').value;
       const err = document.getElementById('err');
       if (val === ADMIN_PASSWORD) {
-        sessionStorage.setItem('isOwner', 'true');
-        showDash();
+        document.getElementById('login-box').classList.add('hidden');
+        // Launch into Stage 1
+        toStage1();
       } else {
-        err.textContent = "Oops! Wrong password";
+        err.textContent = "Incorrect password! Try again.";
         err.classList.remove('hidden');
       }
     }
 
-    function showDash() {
-      document.getElementById('login-box').classList.add('hidden');
+    // Stage 1 Transition
+    function toStage1() {
+      document.body.style.background = "radial-gradient(circle at 50% 20%, #00b894 0%, #00cec9 40%, #0984e3 80%, #2d3436 100%)";
+      document.getElementById('orb-1').style.background = "#55efc4";
+      document.getElementById('orb-2').style.background = "#81ecec";
+      document.getElementById('stage-1').classList.remove('hidden');
+      spawnHearts();
+    }
+
+    // Stage 2 Transition
+    function toStage2() {
+      document.getElementById('stage-1').classList.add('hidden');
+      document.body.style.background = "radial-gradient(circle at 50% 20%, #6c5ce7 0%, #a29bfe 40%, #fd79a8 80%, #1e1e2f 100%)";
+      document.getElementById('stage-2').classList.remove('hidden');
+    }
+
+    // Stage 3 Transition (Fireworks Celebration)
+    function toStage3() {
+      document.getElementById('stage-2').classList.add('hidden');
+      document.body.style.background = "radial-gradient(circle at 50% 20%, #180527 0%, #0c0214 70%, #000000 100%)";
+      document.getElementById('stage-3').classList.remove('hidden');
+      
+      // Continuous Fireworks bursts
+      triggerFireworks();
+    }
+
+    function triggerFireworks() {
+      const duration = 4.5 * 1000;
+      const end = Date.now() + duration;
+
+      (function frame() {
+        confetti({
+          particleCount: 5,
+          angle: 60,
+          spread: 55,
+          origin: { x: 0 }
+        });
+        confetti({
+          particleCount: 5,
+          angle: 120,
+          spread: 55,
+          origin: { x: 1 }
+        });
+
+        if (Date.now() < end) {
+          requestAnimationFrame(frame);
+        }
+      }());
+    }
+
+    function spawnHearts() {
+      for (let i = 0; i < 15; i++) {
+        setTimeout(() => {
+          const heart = document.createElement('div');
+          heart.className = 'heart-float';
+          heart.textContent = ['💖', '✨', '🌸', '🎈'][Math.floor(Math.random() * 4)];
+          heart.style.left = Math.random() * 95 + 'vw';
+          heart.style.animationDuration = (2.5 + Math.random() * 2) + 's';
+          document.body.appendChild(heart);
+          setTimeout(() => heart.remove(), 4000);
+        }, i * 350);
+      }
+    }
+
+    // Stage 4: Show Admin Video Controls
+    function toDashboard() {
+      document.getElementById('stage-3').classList.add('hidden');
+      document.body.style.background = "radial-gradient(circle at 50% 20%, #ff8a65 0%, #ff5252 40%, #e91e63 70%, #880e4f 100%)";
       document.getElementById('dash-box').classList.remove('hidden');
       loadVideos();
     }
 
     function logout() {
-      sessionStorage.removeItem('isOwner');
       location.reload();
     }
 
@@ -324,19 +473,17 @@
       const rawUrl = document.getElementById('v-url').value.trim();
 
       if (!title || !rawUrl) {
-        alert('Please fill out both fields');
+        alert('Please provide both video title and link');
         return;
       }
 
-      const embedUrl = convertYouTubeUrl(rawUrl);
-
       db.ref('videos').push({
         title: title,
-        url: embedUrl,
+        url: convertYouTubeUrl(rawUrl),
         timestamp: Date.now()
       })
       .then(() => {
-        alert('Video successfully published!');
+        alert('Video published to homepage!');
         document.getElementById('v-title').value = '';
         document.getElementById('v-url').value = '';
       })
@@ -364,17 +511,11 @@
           `;
           list.appendChild(row);
         });
-      }, err => {
-        alert('Database read error: ' + err.message);
       });
     }
 
     function deleteVideo(key) {
       db.ref('videos/' + key).remove();
-    }
-
-    if (sessionStorage.getItem('isOwner') === 'true') {
-      showDash();
     }
   </script>
 </body>
