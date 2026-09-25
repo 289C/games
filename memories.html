@@ -268,7 +268,7 @@
       margin-bottom: 14px;
     }
 
-    /* Screen 5: Tap to Reveal Batch Titles */
+    /* Screen 5: Batch Titles (Superlatives) Styling */
     .titles-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -317,7 +317,6 @@
       margin-bottom: 10px;
     }
 
-    /* Mystery Lock Cover before tap */
     .title-mystery {
       display: flex;
       flex-direction: column;
@@ -341,7 +340,6 @@
       border: 1px dashed rgba(247, 208, 112, 0.4);
     }
 
-    /* Revealed Content inside Title Card */
     .title-content {
       display: none;
       flex-direction: column;
@@ -376,6 +374,12 @@
       border: 2px solid #f7d070;
       box-shadow: 0 4px 10px rgba(0,0,0,0.6);
       flex-shrink: 0;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .title-avatar:active {
+      transform: scale(1.1);
     }
 
     .title-avatar img {
@@ -570,18 +574,18 @@
     </div>
   </section>
 
-  <!-- ==================== SCREEN 5: BATCH TITLES (CUSTOMIZED) ==================== -->
+  <!-- ==================== SCREEN 5: BATCH TITLES (CUSTOM NAMES & MULTI-AVATAR PREVIEW) ==================== -->
   <section class="screen" id="screen-5">
     <div class="glass-card" style="max-width: 560px;">
       <h2 class="title-gold">🏆 Batch Titles 🎖️</h2>
       <p class="desc-text" style="margin-bottom: 14px;">
-        Tap any title below to reveal who won that batch award!
+        Tap a title to reveal, then tap any photo to view full size!
       </p>
 
       <div class="titles-grid">
         
         <!-- 1. The Toppers (guru.jpg & trinesh.jpg) -->
-        <div class="title-card" onclick="revealTitle(this)">
+        <div class="title-card" onclick="handleTitleClick(event, this)">
           <div class="badge-tag">📚 THE TOPPERS</div>
           <div class="title-mystery">
             <span class="lock-icon">❓</span>
@@ -589,10 +593,10 @@
           </div>
           <div class="title-content">
             <div class="title-avatars-row">
-              <div class="title-avatar">
+              <div class="title-avatar" onclick="openHdModal({ type: 'image', src: 'assets/guru.jpg' })">
                 <img src="assets/guru.jpg" alt="Guru" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Guru'" />
               </div>
-              <div class="title-avatar">
+              <div class="title-avatar" onclick="openHdModal({ type: 'image', src: 'assets/trinesh.jpg' })">
                 <img src="assets/trinesh.jpg" alt="Trinesh" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Trinesh'" />
               </div>
             </div>
@@ -602,7 +606,7 @@
         </div>
 
         <!-- 2. The Editors (Insta.jpg & shanker.jpg) -->
-        <div class="title-card" onclick="revealTitle(this)">
+        <div class="title-card" onclick="handleTitleClick(event, this)">
           <div class="badge-tag">🎬 THE EDITORS</div>
           <div class="title-mystery">
             <span class="lock-icon">❓</span>
@@ -610,10 +614,10 @@
           </div>
           <div class="title-content">
             <div class="title-avatars-row">
-              <div class="title-avatar">
-                <img src="Insta.jpg" alt="Satish" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Satish'" />
+              <div class="title-avatar" onclick="openHdModal({ type: 'image', src: 'assets/Insta.jpg' })">
+                <img src="assets/Insta.jpg" alt="Satish" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Satish'" />
               </div>
-              <div class="title-avatar">
+              <div class="title-avatar" onclick="openHdModal({ type: 'image', src: 'assets/shanker.jpg' })">
                 <img src="assets/shanker.jpg" alt="Shanker" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Shanker'" />
               </div>
             </div>
@@ -623,7 +627,7 @@
         </div>
 
         <!-- 3. The Cheaters (vyomesh.jpg & yeshwant.jpg) -->
-        <div class="title-card" onclick="revealTitle(this)">
+        <div class="title-card" onclick="handleTitleClick(event, this)">
           <div class="badge-tag">🤫 THE CHEATERS</div>
           <div class="title-mystery">
             <span class="lock-icon">❓</span>
@@ -631,10 +635,10 @@
           </div>
           <div class="title-content">
             <div class="title-avatars-row">
-              <div class="title-avatar">
+              <div class="title-avatar" onclick="openHdModal({ type: 'image', src: 'assets/vyomesh.jpg' })">
                 <img src="assets/vyomesh.jpg" alt="Vyomesh" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Vyomesh'" />
               </div>
-              <div class="title-avatar">
+              <div class="title-avatar" onclick="openHdModal({ type: 'image', src: 'assets/yeshwant.jpg' })">
                 <img src="assets/yeshwant.jpg" alt="Yeshwant" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Yeshwant'" />
               </div>
             </div>
@@ -644,7 +648,7 @@
         </div>
 
         <!-- 4. Backbench Gang (Insta.jpg, balaji.jpg & bhanu.jpg) -->
-        <div class="title-card" onclick="revealTitle(this)">
+        <div class="title-card" onclick="handleTitleClick(event, this)">
           <div class="badge-tag">👑 BACKBENCH GANG</div>
           <div class="title-mystery">
             <span class="lock-icon">❓</span>
@@ -652,13 +656,13 @@
           </div>
           <div class="title-content">
             <div class="title-avatars-row">
-              <div class="title-avatar">
+              <div class="title-avatar" onclick="openHdModal({ type: 'image', src: 'assets/Insta.jpg' })">
                 <img src="assets/Insta.jpg" alt="Satish" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Satish'" />
               </div>
-              <div class="title-avatar">
+              <div class="title-avatar" onclick="openHdModal({ type: 'image', src: 'assets/balaji.jpg' })">
                 <img src="assets/balaji.jpg" alt="Balaji" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Balaji'" />
               </div>
-              <div class="title-avatar">
+              <div class="title-avatar" onclick="openHdModal({ type: 'image', src: 'assets/bhanu.jpg' })">
                 <img src="assets/bhanu.jpg" alt="Bhanu" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Bhanu'" />
               </div>
             </div>
@@ -668,7 +672,7 @@
         </div>
 
         <!-- 5. Lunch Robbers (trinesh.jpg & raja.jpg) -->
-        <div class="title-card" onclick="revealTitle(this)">
+        <div class="title-card" onclick="handleTitleClick(event, this)">
           <div class="badge-tag">🍱 LUNCH ROBBERS</div>
           <div class="title-mystery">
             <span class="lock-icon">❓</span>
@@ -676,10 +680,10 @@
           </div>
           <div class="title-content">
             <div class="title-avatars-row">
-              <div class="title-avatar">
+              <div class="title-avatar" onclick="openHdModal({ type: 'image', src: 'assets/trinesh.jpg' })">
                 <img src="assets/trinesh.jpg" alt="Trinesh" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Trinesh'" />
               </div>
-              <div class="title-avatar">
+              <div class="title-avatar" onclick="openHdModal({ type: 'image', src: 'assets/raja.jpg' })">
                 <img src="assets/raja.jpg" alt="Raja" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Raja'" />
               </div>
             </div>
@@ -689,7 +693,7 @@
         </div>
 
         <!-- 6. Silent Killers (bhanu.jpg & gani.jpg) -->
-        <div class="title-card" onclick="revealTitle(this)">
+        <div class="title-card" onclick="handleTitleClick(event, this)">
           <div class="badge-tag">😈 SILENT KILLERS</div>
           <div class="title-mystery">
             <span class="lock-icon">❓</span>
@@ -697,10 +701,10 @@
           </div>
           <div class="title-content">
             <div class="title-avatars-row">
-              <div class="title-avatar">
+              <div class="title-avatar" onclick="openHdModal({ type: 'image', src: 'assets/bhanu.jpg' })">
                 <img src="assets/bhanu.jpg" alt="Bhanu" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Bhanu'" />
               </div>
-              <div class="title-avatar">
+              <div class="title-avatar" onclick="openHdModal({ type: 'image', src: 'assets/gani.jpg' })">
                 <img src="assets/gani.jpg" alt="Gani" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Gani'" />
               </div>
             </div>
@@ -717,7 +721,7 @@
       </div>
     </div>
   </section>
-                
+
   <!-- ==================== SCREEN 6: FORMSPREE REVIEW ==================== -->
   <section class="screen" id="screen-6">
     <div class="glass-card">
@@ -874,10 +878,16 @@
       updateRevealCounter();
     }
 
-    // --- 6. SCREEN 5: TAP TO REVEAL BATCH TITLES ---
-    function revealTitle(card) {
+    // --- 6. SCREEN 5: TAP TO REVEAL OR OPEN TITLES ---
+    function handleTitleClick(e, card) {
       if (!card.classList.contains('revealed')) {
         card.classList.add('revealed');
+      } else {
+        if (e.target.closest('.title-avatar')) return;
+        const firstImg = card.querySelector('.title-avatar img');
+        if (firstImg) {
+          openHdModal({ type: 'image', src: firstImg.getAttribute('src') });
+        }
       }
     }
 
