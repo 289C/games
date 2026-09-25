@@ -171,13 +171,13 @@
       display: none;
     }
 
-    /* Screen 4: 2-Column Gallery Grid */
+    /* Screen 4: 2-Col Gallery Grid */
     .reveal-grid-2col {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
       width: 100%;
-      max-height: 480px;
+      max-height: 460px;
       overflow-y: auto;
       padding: 4px;
       margin-bottom: 20px;
@@ -206,7 +206,6 @@
       box-shadow: 0 6px 18px rgba(247, 208, 112, 0.25);
     }
 
-    /* Clear Image Rendering */
     .photo-slot img, .photo-slot video {
       width: 100%;
       height: 100%;
@@ -267,6 +266,125 @@
       color: #f7d070;
       font-weight: 600;
       margin-bottom: 14px;
+    }
+
+    /* Screen 5: Tap to Reveal Batch Titles */
+    .titles-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      max-height: 460px;
+      overflow-y: auto;
+      padding: 4px;
+      scrollbar-width: thin;
+      margin-bottom: 18px;
+    }
+
+    .title-card {
+      background: linear-gradient(145deg, #182232, #0d121a);
+      border: 1.5px solid rgba(247, 208, 112, 0.35);
+      border-radius: 14px;
+      padding: 12px 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.2s, border-color 0.25s;
+      min-height: 195px;
+      justify-content: center;
+    }
+
+    .title-card:active {
+      transform: scale(0.97);
+    }
+
+    .title-card.revealed {
+      border-color: #f7d070;
+      box-shadow: 0 4px 15px rgba(247, 208, 112, 0.3);
+    }
+
+    .badge-tag {
+      background: linear-gradient(135deg, #f7d070, #cfa030);
+      color: #111;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 12px;
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+    }
+
+    /* Mystery Lock Cover before tap */
+    .title-mystery {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px 0;
+    }
+
+    .title-mystery .lock-icon {
+      font-size: 1.8rem;
+    }
+
+    .title-mystery .tap-hint {
+      font-size: 0.75rem;
+      color: #f7d070;
+      font-weight: 600;
+      background: rgba(247, 208, 112, 0.12);
+      padding: 2px 8px;
+      border-radius: 10px;
+      border: 1px dashed rgba(247, 208, 112, 0.4);
+    }
+
+    /* Revealed Content inside Title Card */
+    .title-content {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      animation: popIn 0.35s ease-out forwards;
+    }
+
+    .title-card.revealed .title-mystery {
+      display: none;
+    }
+
+    .title-card.revealed .title-content {
+      display: flex;
+    }
+
+    .title-avatar {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 2px solid #f7d070;
+      margin-bottom: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+    }
+
+    .title-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .title-name {
+      color: #fff;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .title-quote {
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 0.72rem;
+      line-height: 1.35;
+      font-style: italic;
     }
 
     /* Fullscreen HD Modal */
@@ -330,7 +448,7 @@
       cursor: pointer;
     }
 
-    /* Screen 5: Review Form */
+    /* Screen 6: Formspree Review Form */
     .review-form {
       display: flex;
       flex-direction: column;
@@ -373,7 +491,7 @@
     <source src="assets/song.mp3" type="audio/mpeg" />
   </audio>
 
-  <!-- Fullscreen Modal for HD Photos & Video -->
+  <!-- Fullscreen Modal for Crystal-Clear HD Photos & Video -->
   <div class="hd-modal" id="hdModal">
     <img id="hdModalImg" src="" alt="Full Resolution Memory" style="display:none;" />
     <video id="hdModalVideo" src="" controls playsinline style="display:none;"></video>
@@ -436,14 +554,128 @@
 
       <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
         <button class="btn-main" style="background: rgba(255,255,255,0.15); color: #fff;" onclick="revealAllPhotos()">Reveal All 🪄</button>
-        <!-- Clicking here takes them directly to review -->
-        <button class="btn-main" onclick="goToScreen(5)">Leave a Review ✍️</button>
+        <button class="btn-main" onclick="goToScreen(5)">Batch Titles 🏆</button>
       </div>
     </div>
   </section>
 
-  <!-- ==================== SCREEN 5: FORMSPREE REVIEW ==================== -->
+  <!-- ==================== SCREEN 5: TAP TO REVEAL BATCH TITLES ==================== -->
   <section class="screen" id="screen-5">
+    <div class="glass-card" style="max-width: 560px;">
+      <h2 class="title-gold">🏆 Batch Titles 🎖️</h2>
+      <p class="desc-text" style="margin-bottom: 14px;">
+        Tap any title below to reveal who won that batch award!
+      </p>
+
+      <div class="titles-grid">
+        
+        <!-- 1. The Topper -->
+        <div class="title-card" onclick="revealTitle(this)">
+          <div class="badge-tag">📚 THE TOPPER</div>
+          <div class="title-mystery">
+            <span class="lock-icon">❓</span>
+            <span class="tap-hint">Tap to Reveal</span>
+          </div>
+          <div class="title-content">
+            <div class="title-avatar">
+              <img src="assets/mem1.jpg" alt="The Topper" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Topper'" />
+            </div>
+            <h4 class="title-name">Class Topper</h4>
+            <p class="title-quote">"Bro, I didn't study anything!" *Scores 98%* 🤦‍♂️</p>
+          </div>
+        </div>
+
+        <!-- 2. The Editor -->
+        <div class="title-card" onclick="revealTitle(this)">
+          <div class="badge-tag">🎬 THE EDITOR</div>
+          <div class="title-mystery">
+            <span class="lock-icon">❓</span>
+            <span class="tap-hint">Tap to Reveal</span>
+          </div>
+          <div class="title-content">
+            <div class="title-avatar">
+              <img src="assets/mem2.jpg" alt="The Editor" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Editor'" />
+            </div>
+            <h4 class="title-name">Satish (The Editor)</h4>
+            <p class="title-quote">Reels, edits, and aesthetic nostalgia creator ⚡</p>
+          </div>
+        </div>
+
+        <!-- 3. The Cheater -->
+        <div class="title-card" onclick="revealTitle(this)">
+          <div class="badge-tag">🤫 THE CHEATER</div>
+          <div class="title-mystery">
+            <span class="lock-icon">❓</span>
+            <span class="tap-hint">Tap to Reveal</span>
+          </div>
+          <div class="title-content">
+            <div class="title-avatar">
+              <img src="assets/mem3.jpg" alt="The Cheater" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Cheater'" />
+            </div>
+            <h4 class="title-name">Exam Hacker</h4>
+            <p class="title-quote">Micro-chits & sign language master in exams 🤝</p>
+          </div>
+        </div>
+
+        <!-- 4. The Backbencher -->
+        <div class="title-card" onclick="revealTitle(this)">
+          <div class="badge-tag">👑 BACKBENCHER</div>
+          <div class="title-mystery">
+            <span class="lock-icon">❓</span>
+            <span class="tap-hint">Tap to Reveal</span>
+          </div>
+          <div class="title-content">
+            <div class="title-avatar">
+              <img src="assets/mem4.jpg" alt="The Backbencher" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Backbencher'" />
+            </div>
+            <h4 class="title-name">Bench President</h4>
+            <p class="title-quote">Last bench entertainment & unlimited comedy 😂</p>
+          </div>
+        </div>
+
+        <!-- 5. The Food Stealer -->
+        <div class="title-card" onclick="revealTitle(this)">
+          <div class="badge-tag">🍱 LUNCH ROBBER</div>
+          <div class="title-mystery">
+            <span class="lock-icon">❓</span>
+            <span class="tap-hint">Tap to Reveal</span>
+          </div>
+          <div class="title-content">
+            <div class="title-avatar">
+              <img src="assets/mem5.jpg" alt="Lunch Robber" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Foodie'" />
+            </div>
+            <h4 class="title-name">Tiffin Finisher</h4>
+            <p class="title-quote">Box empty before 12:30 PM lunch bell rings 🤤</p>
+          </div>
+        </div>
+
+        <!-- 6. The Silent Killer -->
+        <div class="title-card" onclick="revealTitle(this)">
+          <div class="badge-tag">😈 SILENT KILLER</div>
+          <div class="title-mystery">
+            <span class="lock-icon">❓</span>
+            <span class="tap-hint">Tap to Reveal</span>
+          </div>
+          <div class="title-content">
+            <div class="title-avatar">
+              <img src="assets/mem6.jpg" alt="Silent Killer" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Silent'" />
+            </div>
+            <h4 class="title-name">Undercover Legend</h4>
+            <p class="title-quote">Looks innocent in class, wildest outside 🤫</p>
+          </div>
+        </div>
+
+      </div>
+
+      <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+        <button class="btn-main" style="background: rgba(255,255,255,0.15); color: #fff;" onclick="revealAllTitles()">Reveal All Titles 🪄</button>
+        <button class="btn-main" onclick="goToScreen(6)">Leave a Review ✍️</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== SCREEN 6: FORMSPREE REVIEW ==================== -->
+  <section class="screen" id="screen-6">
     <div class="glass-card">
       <h2 class="title-gold">Batch Review 💌</h2>
       <p class="desc-text">How did you feel seeing these memories? Share your message below!</p>
@@ -463,7 +695,7 @@
   </section>
 
   <script>
-    // --- 1. MEDIA LIST: 24 PHOTOS + SLOT #18 IS VIDEO ---
+    // --- 1. MEDIA LIST: 24 PHOTOS + SLOT #18 IS THE VIDEO ---
     const memories = [];
     for (let i = 1; i <= 25; i++) {
       if (i === 18) {
@@ -500,7 +732,6 @@
       }
     });
 
-    // Auto-pause song when video is playing
     modalVideo.addEventListener('play', () => {
       if (!bgSong.paused) {
         bgSong.pause();
@@ -508,7 +739,6 @@
       }
     });
 
-    // Resume song when video stops
     modalVideo.addEventListener('pause', () => {
       if (!userPaused) {
         bgSong.play().then(() => {
@@ -550,7 +780,7 @@
       }
     }
 
-    // --- 5. SCREEN 4: TAP TO REVEAL & OPEN FULLSCREEN ---
+    // --- 5. SCREEN 4: TAP TO REVEAL PHOTOS ---
     const revealGrid = document.getElementById('revealGrid');
     let revealedCount = 0;
 
@@ -600,7 +830,18 @@
       updateRevealCounter();
     }
 
-    // --- 6. FULLSCREEN HD MODAL (PHOTO OR VIDEO) ---
+    // --- 6. SCREEN 5: TAP TO REVEAL BATCH TITLES ---
+    function revealTitle(card) {
+      if (!card.classList.contains('revealed')) {
+        card.classList.add('revealed');
+      }
+    }
+
+    function revealAllTitles() {
+      document.querySelectorAll('.title-card').forEach(card => card.classList.add('revealed'));
+    }
+
+    // --- 7. FULLSCREEN HD MODAL ---
     function openHdModal(item) {
       const modal = document.getElementById('hdModal');
       const img = document.getElementById('hdModalImg');
