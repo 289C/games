@@ -254,7 +254,7 @@
 
     <span class="logout-link" onclick="logout()">Log out of Portal</span>
   </div>
-
+  
   <script>
     // Firebase Config
     const firebaseConfig = {
@@ -271,7 +271,6 @@
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // Password configured to your request
     const ADMIN_PASSWORD = "@breakup";
 
     function togglePassword() {
@@ -310,12 +309,12 @@
     }
 
     function convertYouTubeUrl(url) {
-      if (url.includes('watch?v=')) {
-        const id = url.split('v=')[1]?.split('&')[0];
-        return `https://www.youtube.com/embed/${id}`;
-      } else if (url.includes('youtu.be/')) {
-        const id = url.split('youtu.be/')[1]?.split('?')[0];
-        return `https://www.youtube.com/embed/${id}`;
+      if (url.includes('youtu.be/')) {
+        const id = url.split('youtu.be/')[1].split('?')[0].split('&')[0];
+        return 'https://www.youtube.com/embed/' + id;
+      } else if (url.includes('watch?v=')) {
+        const id = url.split('v=')[1].split('&')[0];
+        return 'https://www.youtube.com/embed/' + id;
       }
       return url;
     }
@@ -329,13 +328,20 @@
         return;
       }
 
+      const embedUrl = convertYouTubeUrl(rawUrl);
+
       db.ref('videos').push({
         title: title,
-        url: convertYouTubeUrl(rawUrl),
+        url: embedUrl,
         timestamp: Date.now()
-      }).then(() => {
+      })
+      .then(() => {
+        alert('Video successfully published!');
         document.getElementById('v-title').value = '';
         document.getElementById('v-url').value = '';
+      })
+      .catch((error) => {
+        alert('Firebase Error: ' + error.message);
       });
     }
 
@@ -358,6 +364,8 @@
           `;
           list.appendChild(row);
         });
+      }, err => {
+        alert('Database read error: ' + err.message);
       });
     }
 
