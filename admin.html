@@ -42,7 +42,6 @@
       100% { background-position: 0% 50%; }
     }
 
-    /* Ambient floating glow spheres */
     .glow-orb {
       position: fixed;
       border-radius: 50%;
@@ -59,7 +58,6 @@
       100% { transform: translateY(40px) scale(1.15); }
     }
 
-    /* Center-Locked Card Engine */
     .page-stage {
       position: relative;
       z-index: 5;
@@ -113,7 +111,6 @@
       line-height: 1.5;
     }
 
-    /* Input fields */
     .input-wrapper {
       position: relative;
       width: 100%;
@@ -150,7 +147,6 @@
       user-select: none;
     }
 
-    /* Action Buttons */
     .gradient-btn {
       width: 100%;
       padding: 14px;
@@ -183,7 +179,7 @@
       display: inline-block;
     }
 
-    /* 3D Cake Display */
+    /* 3D Cake */
     .cake-box {
       width: 150px;
       height: 110px;
@@ -245,7 +241,87 @@
       100% { transform: scale(1.2) rotate(3deg); }
     }
 
-    /* Flip Cards Gallery */
+    /* ================= BALLOON MINI GAME ================= */
+    .balloon-cluster {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin: 25px 0 15px 0;
+      flex-wrap: wrap;
+    }
+
+    .balloon-item {
+      width: 58px;
+      height: 72px;
+      border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+      position: relative;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 20px;
+      box-shadow: inset -5px -5px 12px rgba(0,0,0,0.25), 0 8px 16px rgba(0,0,0,0.3);
+      animation: floatBobble 3s ease-in-out infinite alternate;
+      transition: transform 0.15s ease;
+    }
+
+    .balloon-item::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      width: 2px;
+      height: 14px;
+      background: rgba(255, 255, 255, 0.7);
+    }
+
+    .balloon-item:nth-child(1) { background: #ff4757; animation-delay: 0s; }
+    .balloon-item:nth-child(2) { background: #2ed573; animation-delay: 0.4s; }
+    .balloon-item:nth-child(3) { background: #ffa502; animation-delay: 0.8s; }
+    .balloon-item:nth-child(4) { background: #1e90ff; animation-delay: 1.2s; }
+    .balloon-item:nth-child(5) { background: #ff6b81; animation-delay: 1.6s; }
+
+    @keyframes floatBobble {
+      0% { transform: translateY(0) rotate(-3deg); }
+      100% { transform: translateY(-12px) rotate(4deg); }
+    }
+
+    .balloon-item.popped {
+      transform: scale(0) !important;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .revealed-sentence-box {
+      min-height: 48px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 16px;
+      padding: 10px 14px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .revealed-word {
+      background: #ffffff;
+      color: #7209b7;
+      font-weight: 700;
+      font-size: 13px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* Photo Grid */
     .photo-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -320,7 +396,6 @@
       margin-top: 4px;
     }
 
-    /* Floating Heart Sprinkles */
     .floating-heart {
       position: fixed;
       font-size: 22px;
@@ -395,7 +470,32 @@
       Happy Birthday! 🎉
     </div>
     <p class="stage-desc">Wishing you endless joy, bright smiles, and all your dreams fulfilled!</p>
-    <button class="gradient-btn" onclick="toStage4()">
+    <button class="gradient-btn" onclick="toBalloonStage()">
+      Pop the Birthday Balloons 🎈 ➡️
+    </button>
+  </div>
+
+  <!-- STAGE 3.5: BALLOON POPPING MINI-GAME (IDEA 2) -->
+  <div id="stage-balloons" class="page-stage hidden">
+    <div class="badge-icon">🎈</div>
+    <h2 class="stage-title">Pop All 5 Balloons!</h2>
+    <p class="stage-desc" style="margin-bottom: 12px;">Tap each floating balloon to reveal a secret phrase</p>
+
+    <!-- FLOATING BALLOONS CLUSTER -->
+    <div class="balloon-cluster">
+      <div class="balloon-item" onclick="popBalloon(this, 'YOU')">🎈</div>
+      <div class="balloon-item" onclick="popBalloon(this, 'ARE')">🎈</div>
+      <div class="balloon-item" onclick="popBalloon(this, 'THE')">🎈</div>
+      <div class="balloon-item" onclick="popBalloon(this, 'MOST')">🎈</div>
+      <div class="balloon-item" onclick="popBalloon(this, 'SPECIAL! 💖')">🎈</div>
+    </div>
+
+    <!-- WORDS ASSEMBLED HERE -->
+    <div class="revealed-sentence-box" id="sentence-box">
+      <span style="color: rgba(255,255,255,0.6); font-size: 12px;" id="hint-text">Pop balloons above...</span>
+    </div>
+
+    <button class="gradient-btn hidden" id="balloon-next-btn" onclick="toStage4()">
       Reveal Photo Memories 📸 ➡️
     </button>
   </div>
@@ -495,6 +595,8 @@
     const ADMIN_PASSWORD = "@breakup";
     const FORMSPREE_URL = "https://formspree.io/f/mbglkqep";
 
+    let poppedCount = 0;
+
     function togglePass() {
       const p = document.getElementById('admin-pass');
       const eye = document.getElementById('eye-icon');
@@ -537,8 +639,46 @@
       spawnHearts(['👑', '💖', '🎂', '✨']);
     }
 
-    function toStage4() {
+    function toBalloonStage() {
       document.getElementById('stage-3').classList.add('hidden');
+      document.getElementById('stage-balloons').classList.remove('hidden');
+      spawnHearts(['🎈', '✨']);
+    }
+
+    function popBalloon(element, word) {
+      if (element.classList.contains('popped')) return;
+
+      element.classList.add('popped');
+      poppedCount++;
+
+      // Small confetti burst on pop
+      confetti({
+        particleCount: 20,
+        spread: 45,
+        origin: { y: 0.55 }
+      });
+
+      // Remove placeholder text if first pop
+      const hint = document.getElementById('hint-text');
+      if (hint) hint.remove();
+
+      // Add the revealed word
+      const wordSpan = document.createElement('span');
+      wordSpan.className = 'revealed-word';
+      wordSpan.textContent = word;
+      document.getElementById('sentence-box').appendChild(wordSpan);
+
+      // If all 5 balloons are popped, unlock the Next button!
+      if (poppedCount >= 5) {
+        setTimeout(() => {
+          document.getElementById('balloon-next-btn').classList.remove('hidden');
+          triggerFireworks(2000);
+        }, 400);
+      }
+    }
+
+    function toStage4() {
+      document.getElementById('stage-balloons').classList.add('hidden');
       document.getElementById('stage-5').classList.add('hidden');
       document.getElementById('stage-4').classList.remove('hidden');
       triggerFireworks(2000);
