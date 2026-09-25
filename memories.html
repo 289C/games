@@ -68,12 +68,12 @@
       display: none;
       min-height: 100vh;
       width: 100%;
-      padding: 30px 20px;
+      padding: 30px 16px;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       text-align: center;
-      animation: fadeIn 0.6s ease-in-out forwards;
+      animation: fadeIn 0.4s ease-in-out forwards;
     }
 
     .screen.active {
@@ -81,7 +81,7 @@
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(12px); }
+      from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
@@ -92,8 +92,8 @@
       -webkit-backdrop-filter: blur(16px);
       border: 1px solid rgba(255, 255, 255, 0.2);
       border-radius: 20px;
-      padding: 30px 20px;
-      max-width: 500px;
+      padding: 26px 16px;
+      max-width: 520px;
       width: 100%;
       box-shadow: 0 10px 35px rgba(0, 0, 0, 0.6);
     }
@@ -171,29 +171,30 @@
       display: none;
     }
 
-    /* Screen 4: 2 Items Per Row Grid */
+    /* Screen 4: Crystal Clear 2-Col Gallery Grid */
     .reveal-grid-2col {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 14px;
+      gap: 12px;
       width: 100%;
-      max-height: 420px;
+      max-height: 480px;
       overflow-y: auto;
       padding: 4px;
       margin-bottom: 20px;
+      scrollbar-width: thin;
     }
 
     .photo-slot {
       position: relative;
       width: 100%;
-      height: 160px;
-      border-radius: 16px;
+      height: 185px;
+      border-radius: 14px;
       overflow: hidden;
       cursor: pointer;
       border: 2px solid rgba(247, 208, 112, 0.3);
-      background: #141b29;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.5);
-      transition: transform 0.2s, border-color 0.3s;
+      background: #111622;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.5);
+      transition: transform 0.2s, border-color 0.25s, box-shadow 0.25s;
     }
 
     .photo-slot:active {
@@ -202,40 +203,48 @@
 
     .photo-slot.revealed {
       border-color: #f7d070;
+      box-shadow: 0 6px 18px rgba(247, 208, 112, 0.25);
     }
 
+    /* ULTRA CLEAR IMAGE RENDERING */
     .photo-slot img, .photo-slot video {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      object-position: center top;
       display: none;
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: crisp-edges;
+      transform: translateZ(0);
+      backface-visibility: hidden;
     }
 
     .photo-slot.revealed img, .photo-slot.revealed video {
       display: block;
-      animation: popIn 0.4s ease-out;
+      animation: popIn 0.3s ease-out;
     }
 
     .video-badge {
       position: absolute;
       bottom: 8px;
       right: 8px;
-      background: rgba(0, 0, 0, 0.75);
+      background: rgba(0, 0, 0, 0.8);
       color: #f7d070;
-      padding: 3px 8px;
-      border-radius: 8px;
+      padding: 4px 8px;
+      border-radius: 6px;
       font-size: 0.72rem;
       font-weight: 700;
       display: flex;
       align-items: center;
       gap: 4px;
       z-index: 2;
+      border: 1px solid rgba(247, 208, 112, 0.5);
     }
 
     .cover-box {
       position: absolute;
       inset: 0;
-      background: linear-gradient(145deg, #1c2638, #0e131d);
+      background: linear-gradient(145deg, #1b2434, #0c1017);
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -251,7 +260,7 @@
     }
 
     @keyframes popIn {
-      from { transform: scale(0.85); opacity: 0; }
+      from { transform: scale(0.88); opacity: 0; }
       to { transform: scale(1); opacity: 1; }
     }
 
@@ -262,51 +271,20 @@
       margin-bottom: 14px;
     }
 
-    /* Screen 5: 3D Scene Viewport */
-    #screen-5 {
-      padding: 0;
-      position: relative;
-      overflow: hidden;
-    }
-
-    #webgl-canvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 1;
-    }
-
-    .scene-overlay {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      z-index: 2;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      align-items: center;
-      padding: 30px 16px 20px;
-    }
-
-    .pointer-active {
-      pointer-events: auto;
-    }
-
-    /* Fullscreen HD Modal (Photos & Video) */
+    /* FULLSCREEN ULTRA HD MODAL */
     .hd-modal {
       position: fixed;
       inset: 0;
       z-index: 2000;
-      background: rgba(0, 0, 0, 0.92);
+      background: rgba(0, 0, 0, 0.95);
       backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
       display: none;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      padding: 20px;
-      animation: fadeIn 0.3s ease;
+      padding: 16px;
+      animation: fadeIn 0.25s ease;
     }
 
     .hd-modal.active {
@@ -314,18 +292,19 @@
     }
 
     .hd-modal img, .hd-modal video {
-      max-width: 92vw;
-      max-height: 72vh;
-      border-radius: 14px;
+      max-width: 95vw;
+      max-height: 75vh;
+      border-radius: 12px;
       border: 2px solid #f7d070;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.95);
       object-fit: contain;
+      image-rendering: -webkit-optimize-contrast;
     }
 
     .modal-actions {
       display: flex;
       gap: 12px;
-      margin-top: 18px;
+      margin-top: 16px;
     }
 
     .btn-download {
@@ -353,7 +332,7 @@
       cursor: pointer;
     }
 
-    /* Screen 6: Formspree Review Form */
+    /* Screen 5: Formspree Review Form */
     .review-form {
       display: flex;
       flex-direction: column;
@@ -383,10 +362,6 @@
       min-height: 90px;
     }
   </style>
-
-  <!-- Three.js & GSAP -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 </head>
 <body>
 
@@ -400,12 +375,9 @@
     <source src="assets/song.mp3" type="audio/mpeg" />
   </audio>
 
-  <!-- Hidden Video Element for 3D Video Texture -->
-  <video id="webglVideoTexture" src="assets/video.mp4" loop muted playsinline crossOrigin="anonymous" style="display:none;"></video>
-
-  <!-- Fullscreen Modal for HD Photos & Video -->
+  <!-- Fullscreen Modal for Crystal-Clear HD Photos & Video -->
   <div class="hd-modal" id="hdModal">
-    <img id="hdModalImg" src="" alt="Full Memory" style="display:none;" />
+    <img id="hdModalImg" src="" alt="Full Resolution Memory" style="display:none;" />
     <video id="hdModalVideo" src="" controls playsinline style="display:none;"></video>
 
     <div class="modal-actions">
@@ -466,30 +438,13 @@
 
       <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
         <button class="btn-main" style="background: rgba(255,255,255,0.15); color: #fff;" onclick="revealAllPhotos()">Reveal All 🪄</button>
-        <button class="btn-main" onclick="goToScreen(5)">Watch 3D Reel 🎬</button>
+        <button class="btn-main" onclick="goToScreen(5)">Leave a Review ✍️</button>
       </div>
     </div>
   </section>
 
-  <!-- ==================== SCREEN 5: CLEAR 3D REEL ==================== -->
+  <!-- ==================== SCREEN 5: FORMSPREE REVIEW ==================== -->
   <section class="screen" id="screen-5">
-    <canvas id="webgl-canvas"></canvas>
-
-    <div class="scene-overlay">
-      <div style="text-shadow: 0 4px 14px rgba(0,0,0,0.8);">
-        <h2 class="title-gold" style="font-size: 1.5rem; margin-bottom: 2px;">3D Nostalgia Reel 🎥</h2>
-        <p style="font-size: 0.82rem; color: #ffebaa;">Tap center memory to open • Tap sides to cycle</p>
-      </div>
-
-      <div class="pointer-active" style="display:flex; flex-direction:column; align-items:center; gap: 8px;">
-        <span id="carouselCounter" style="color: #f7d070; font-weight: bold; font-size: 1.1rem;">1 / 25</span>
-        <button class="btn-main" onclick="goToScreen(6)">Leave a Review ✍️</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- ==================== SCREEN 6: FORMSPREE REVIEW ==================== -->
-  <section class="screen" id="screen-6">
     <div class="glass-card">
       <h2 class="title-gold">Batch Review 💌</h2>
       <p class="desc-text">How did you feel seeing these memories? Share your message below!</p>
@@ -513,7 +468,6 @@
     const memories = [];
     for (let i = 1; i <= 25; i++) {
       if (i === 18) {
-        // Slot #18 is the Video!
         memories.push({ type: 'video', src: 'assets/video.mp4', label: '🎬 Video' });
       } else {
         memories.push({ type: 'image', src: `assets/mem${i}.jpg`, label: '🎁 Tap' });
@@ -582,10 +536,6 @@
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       const target = document.getElementById(`screen-${screenNumber}`);
       if (target) target.classList.add('active');
-
-      if (screenNumber === 5) {
-        init3DScene();
-      }
     }
 
     function verifyPassword() {
@@ -601,7 +551,7 @@
       }
     }
 
-    // --- 5. SCREEN 4: 2 COLUMNS REVEAL (PHOTOS & VIDEO) ---
+    // --- 5. SCREEN 4: TAP TO REVEAL & OPEN ULTRA CLEAR ---
     const revealGrid = document.getElementById('revealGrid');
     let revealedCount = 0;
 
@@ -624,7 +574,7 @@
             <span style="font-size: 1.4rem;">🎁</span>
             <span>Tap</span>
           </div>
-          <img src="${item.src}" alt="Memory" onerror="this.src='https://placehold.co/400x500/222/f7d070?text=Photo'" />
+          <img src="${item.src}" loading="lazy" alt="Memory" onerror="this.src='https://placehold.co/400x500/222/f7d070?text=Photo'" />
         `;
       }
 
@@ -684,160 +634,6 @@
         vid.pause();
       }
       modal.classList.remove('active');
-    }
-
-    // --- 7. SCREEN 5: THREE.JS 3D CAROUSEL ---
-    let scene3dInitialized = false;
-    let carouselGroup, cards = [], currentIndex = 0;
-    let raycaster, mouse, camera, renderer, scene;
-    let videoTexture;
-
-    function init3DScene() {
-      if (scene3dInitialized) return;
-      scene3dInitialized = true;
-
-      const canvas = document.getElementById('webgl-canvas');
-      scene = new THREE.Scene();
-      scene.fog = new THREE.FogExp2(0x08090d, 0.02);
-
-      camera = new THREE.PerspectiveCamera(48, window.innerWidth / window.innerHeight, 0.1, 100);
-      camera.position.set(0, 0, 8.2);
-
-      renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      renderer.outputEncoding = THREE.sRGBEncoding;
-
-      raycaster = new THREE.Raycaster();
-      mouse = new THREE.Vector2();
-
-      carouselGroup = new THREE.Group();
-      scene.add(carouselGroup);
-
-      const radius = 9.8;
-      const cardGeometry = new THREE.PlaneGeometry(2.7, 3.7);
-      const borderGeometry = new THREE.PlaneGeometry(2.82, 3.82);
-      const textureLoader = new THREE.TextureLoader();
-
-      // Video texture for the 3D card
-      const videoEl = document.getElementById('webglVideoTexture');
-      videoEl.play().catch(() => {});
-      videoTexture = new THREE.VideoTexture(videoEl);
-      videoTexture.encoding = THREE.sRGBEncoding;
-
-      memories.forEach((item, i) => {
-        const angle = (i / memories.length) * Math.PI * 2;
-        let material;
-
-        if (item.type === 'video') {
-          material = new THREE.MeshBasicMaterial({
-            map: videoTexture,
-            side: THREE.DoubleSide
-          });
-        } else {
-          const texture = textureLoader.load(item.src);
-          texture.encoding = THREE.sRGBEncoding;
-          material = new THREE.MeshBasicMaterial({
-            map: texture,
-            side: THREE.DoubleSide
-          });
-        }
-
-        const mesh = new THREE.Mesh(cardGeometry, material);
-        mesh.userData = { index: i, item: item };
-
-        // Frame backing (Gold border for video, white border for photos)
-        const frameColor = item.type === 'video' ? 0xf7d070 : 0xffffff;
-        const frameMat = new THREE.MeshBasicMaterial({ color: frameColor, side: THREE.DoubleSide });
-        const frameMesh = new THREE.Mesh(borderGeometry, frameMat);
-        frameMesh.position.z = -0.01;
-        mesh.add(frameMesh);
-
-        mesh.position.x = Math.sin(angle) * radius;
-        mesh.position.z = Math.cos(angle) * radius;
-        mesh.rotation.y = angle;
-
-        carouselGroup.add(mesh);
-        cards.push(mesh);
-      });
-
-      carouselGroup.position.z = -radius;
-
-      // Golden Dust Particles
-      const pCount = 200;
-      const pGeo = new THREE.BufferGeometry();
-      const pPos = new Float32Array(pCount * 3);
-      for (let i = 0; i < pCount * 3; i += 3) {
-        pPos[i] = (Math.random() - 0.5) * 24;
-        pPos[i + 1] = (Math.random() - 0.5) * 16;
-        pPos[i + 2] = (Math.random() - 0.5) * 24;
-      }
-      pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
-      const pMat = new THREE.PointsMaterial({ color: 0xffe899, size: 0.05, transparent: true, opacity: 0.75 });
-      const particles = new THREE.Points(pGeo, pMat);
-      scene.add(particles);
-
-      // Tap / Click Handler
-      document.getElementById('screen-5').addEventListener('pointerup', (e) => {
-        if (e.target.closest('.pointer-active') || e.target.closest('.audio-bar')) return;
-
-        mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
-        mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
-        raycaster.setFromCamera(mouse, camera);
-
-        const intersects = raycaster.intersectObjects(cards);
-
-        if (intersects.length > 0) {
-          const clickedMesh = intersects[0].object;
-          if (clickedMesh.userData.index === currentIndex) {
-            gsap.to(clickedMesh.position, {
-              z: clickedMesh.position.z + 1.2,
-              duration: 0.35,
-              yoyo: true,
-              repeat: 1,
-              ease: "power2.out",
-              onComplete: () => {
-                openHdModal(clickedMesh.userData.item);
-              }
-            });
-            return;
-          }
-        }
-
-        rotateNext();
-      });
-
-      function rotateNext() {
-        currentIndex = (currentIndex + 1) % memories.length;
-        document.getElementById('carouselCounter').innerText = `${currentIndex + 1} / ${memories.length}`;
-
-        const targetY = -currentIndex * ((Math.PI * 2) / memories.length);
-        gsap.to(carouselGroup.rotation, {
-          y: targetY,
-          duration: 1.0,
-          ease: 'power3.out'
-        });
-      }
-
-      window.addEventListener('resize', () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-      });
-
-      const clock = new THREE.Clock();
-      function renderLoop() {
-        requestAnimationFrame(renderLoop);
-        const t = clock.getElapsedTime();
-
-        cards.forEach((card, idx) => {
-          card.position.y = Math.sin(t * 1.5 + idx) * 0.08;
-        });
-
-        particles.rotation.y = t * 0.02;
-        renderer.render(scene, camera);
-      }
-      renderLoop();
     }
   </script>
 </body>
