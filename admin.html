@@ -3,10 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>3D Birthday Experience 🎉</title>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Pacifico&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <title>Birthday Surprise 🎉</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Pacifico&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   
-  <!-- Canvas Confetti Library -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <style>
@@ -22,108 +21,118 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      background: #0f111a;
+      background: #11141c;
       font-family: 'Poppins', sans-serif;
       padding: 20px;
       overflow-x: hidden;
       perspective: 1200px;
-      transition: background 1.2s ease;
+      transition: background 1s ease;
     }
 
-    /* Ambient Background Lights */
+    /* Ambient background glows */
     .orb {
       position: fixed;
       border-radius: 50%;
-      filter: blur(75px);
+      filter: blur(80px);
       z-index: 0;
       pointer-events: none;
-      transition: all 1.2s ease;
+      transition: all 1s ease;
     }
-    .orb-1 { width: 350px; height: 350px; background: #ff7675; top: 5%; left: 5%; opacity: 0.35; }
-    .orb-2 { width: 300px; height: 300px; background: #74b9ff; bottom: 5%; right: 5%; opacity: 0.35; }
+    .orb-1 { width: 320px; height: 320px; background: #ff7675; top: 10%; left: 10%; opacity: 0.25; }
+    .orb-2 { width: 300px; height: 300px; background: #74b9ff; bottom: 10%; right: 10%; opacity: 0.25; }
 
-    /* ================= NORMAL LOGIN BOX (NO 3D EFFECT) ================= */
-    .standard-login-card {
+    /* ================= CENTERED LOGIN CARD ================= */
+    .login-container {
       position: relative;
       z-index: 10;
       width: 100%;
-      max-width: 380px;
-      background: #1a1d26;
-      border: 1px solid #2d3345;
-      border-radius: 16px;
-      padding: 35px 25px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      max-width: 360px;
+      background: #1c202b;
+      border: 1px solid #2e3547;
+      border-radius: 24px;
+      padding: 38px 26px;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6);
       text-align: center;
+      animation: fadeIn 0.4s ease-out;
     }
 
-    .standard-login-card h2 {
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.96); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .login-container h2 {
       font-size: 22px;
-      color: #fff;
-      margin-bottom: 20px;
       font-weight: 600;
+      color: #ffffff;
+      margin-bottom: 22px;
+      letter-spacing: 0.3px;
     }
 
-    .std-input-wrapper {
+    .input-wrapper {
       position: relative;
+      width: 100%;
       margin-bottom: 18px;
     }
 
-    .std-input {
+    .login-input {
       width: 100%;
-      padding: 13px 45px 13px 18px;
-      background: #242938;
-      border: 1px solid #3b435b;
-      border-radius: 10px;
+      padding: 14px 48px 14px 18px;
+      background: #272d3d;
+      border: 1px solid #3d465e;
+      border-radius: 12px;
       color: #fff;
       font-size: 14px;
+      font-family: inherit;
       outline: none;
-      transition: border-color 0.2s;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
-    .std-input:focus {
+    .login-input:focus {
       border-color: #ff7675;
+      box-shadow: 0 0 0 3px rgba(255, 118, 117, 0.15);
     }
 
-    .std-eye {
+    .eye-icon {
       position: absolute;
-      right: 14px;
+      right: 15px;
       top: 50%;
       transform: translateY(-50%);
       cursor: pointer;
       font-size: 18px;
       user-select: none;
-      opacity: 0.7;
+      opacity: 0.65;
     }
 
-    .std-btn {
+    .login-btn {
       width: 100%;
-      padding: 13px;
+      padding: 14px;
       background: #ff7675;
-      color: white;
+      color: #fff;
       font-size: 15px;
       font-weight: 600;
       border: none;
-      border-radius: 10px;
+      border-radius: 12px;
       cursor: pointer;
       transition: background 0.2s, transform 0.1s;
+      box-shadow: 0 8px 20px rgba(255, 118, 117, 0.3);
     }
-    .std-btn:hover { background: #e84393; }
-    .std-btn:active { transform: scale(0.98); }
+    .login-btn:hover { background: #e84393; }
+    .login-btn:active { transform: scale(0.98); }
 
     .err-tag {
-      color: #ff6b6b;
+      color: #ff7675;
       font-size: 13px;
-      margin-top: 10px;
+      margin-top: 12px;
       display: none;
     }
 
-    /* ================= 3D INTERACTIVE ENGINE & CARDS ================= */
+    /* ================= 3D STAGES ENGINE ================= */
     .stage-wrapper {
       position: relative;
       z-index: 5;
       width: 100%;
       max-width: 440px;
       transform-style: preserve-3d;
-      perspective: 1000px;
     }
 
     .card-3d {
@@ -138,16 +147,10 @@
       text-align: center;
       box-shadow: 0 35px 70px rgba(0,0,0,0.5), inset 0 2px 3px rgba(255,255,255,0.4);
       transform-style: preserve-3d;
-      transition: transform 0.15s ease-out, box-shadow 0.3s ease;
-      cursor: grab;
+      transition: transform 0.15s ease-out;
       will-change: transform;
     }
 
-    .card-3d:active {
-      cursor: grabbing;
-    }
-
-    /* Dynamic Glare Reflection Overlay */
     .card-glare {
       position: absolute;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -158,20 +161,6 @@
       mix-blend-mode: overlay;
       transition: opacity 0.25s ease;
       z-index: 10;
-    }
-
-    /* 3D Elevated Depth Layers */
-    .elevate-3d-sm {
-      transform: translateZ(35px);
-      transform-style: preserve-3d;
-    }
-    .elevate-3d-md {
-      transform: translateZ(55px);
-      transform-style: preserve-3d;
-    }
-    .elevate-3d-lg {
-      transform: translateZ(85px);
-      transform-style: preserve-3d;
     }
 
     .badge-3d {
@@ -185,12 +174,7 @@
       align-items: center;
       font-size: 32px;
       box-shadow: 0 15px 30px rgba(0,0,0,0.35);
-      animation: floatBadge 3s ease-in-out infinite;
-    }
-
-    @keyframes floatBadge {
-      0%, 100% { transform: translateZ(60px) translateY(0px) rotate(0deg); }
-      50% { transform: translateZ(75px) translateY(-10px) rotate(8deg); }
+      transform: translateZ(60px);
     }
 
     h2.title-3d {
@@ -208,7 +192,6 @@
       line-height: 1.5;
     }
 
-    /* 3D Tactile Push Button */
     .button-3d {
       display: inline-block;
       width: 100%;
@@ -219,19 +202,17 @@
       color: #3d2200;
       font-family: 'Fredoka One', cursive;
       font-size: 16px;
-      letter-spacing: 0.5px;
       cursor: pointer;
       box-shadow: 0 10px 0 #cc7700, 0 18px 25px rgba(0,0,0,0.4);
       transform: translateZ(50px);
       transition: all 0.15s ease;
     }
-
     .button-3d:active {
       transform: translateZ(25px) translateY(7px) !important;
       box-shadow: 0 3px 0 #cc7700, 0 8px 15px rgba(0,0,0,0.3) !important;
     }
 
-    /* 3D CAKE ANIMATION */
+    /* 3D CAKE */
     .cake-3d-box {
       width: 160px;
       height: 120px;
@@ -276,7 +257,6 @@
       background: repeating-linear-gradient(45deg, #ffeaa7, #ffeaa7 5px, #fdcb6e 5px, #fdcb6e 10px);
       border-radius: 6px;
       cursor: pointer;
-      box-shadow: 0 5px 10px rgba(0,0,0,0.2);
     }
 
     .flame-3d {
@@ -287,7 +267,7 @@
       height: 20px;
       background: #ff7675;
       border-radius: 50% 50% 20% 20%;
-      box-shadow: 0 0 20px #ffeaa7, 0 0 35px #fdcb6e, 0 0 50px #ff7675;
+      box-shadow: 0 0 20px #ffeaa7, 0 0 35px #fdcb6e;
       animation: flamePulse 0.5s infinite alternate;
     }
 
@@ -296,14 +276,14 @@
       100% { transform: scale(1.25) rotate(3deg); }
     }
 
-    /* 3D FLIP PHOTO TILES */
+    /* 3D REVEAL PHOTO TILES */
     .photo-grid-3d {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 16px;
       margin: 20px 0;
-      transform-style: preserve-3d;
       transform: translateZ(40px);
+      transform-style: preserve-3d;
     }
 
     .cube-card {
@@ -317,7 +297,7 @@
       width: 100%;
       height: 100%;
       transform-style: preserve-3d;
-      transition: transform 0.9s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       border-radius: 20px;
     }
 
@@ -365,7 +345,6 @@
       height: 110px;
       object-fit: cover;
       border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
     }
 
     .cube-back p {
@@ -375,24 +354,23 @@
       margin-top: 6px;
     }
 
-    /* 3D FLOATING BALLOONS & HEARTS */
+    /* 3D FLOATING PARTICLES */
     .particle-3d {
       position: fixed;
       font-size: 26px;
       pointer-events: none;
       z-index: 100;
       animation: floatUp3D 4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-      filter: drop-shadow(0 10px 15px rgba(0,0,0,0.3));
     }
 
     @keyframes floatUp3D {
-      0% { transform: translateY(110vh) translateZ(0px) rotate(0deg) scale(0.6); opacity: 0; }
+      0% { transform: translateY(110vh) scale(0.6); opacity: 0; }
       20% { opacity: 1; }
       80% { opacity: 0.9; }
-      100% { transform: translateY(-15vh) translateZ(120px) rotate(360deg) scale(1.3); opacity: 0; }
+      100% { transform: translateY(-15vh) scale(1.3); opacity: 0; }
     }
 
-    /* DEDICATED 3D REPLY PAGE INPUTS */
+    /* 3D INPUTS FOR REPLY PAGE */
     .input-3d-box {
       width: 100%;
       background: rgba(255, 255, 255, 0.95);
@@ -403,16 +381,9 @@
       font-size: 14px;
       color: #2d3436;
       outline: none;
-      box-shadow: 0 8px 18px rgba(0,0,0,0.15), inset 0 2px 4px rgba(0,0,0,0.05);
+      box-shadow: 0 8px 18px rgba(0,0,0,0.15);
       transform: translateZ(40px);
-      transition: all 0.2s ease;
       margin-bottom: 14px;
-    }
-
-    .input-3d-box:focus {
-      border-color: #00cec9;
-      transform: translateZ(55px) scale(1.02);
-      box-shadow: 0 12px 25px rgba(0, 206, 201, 0.25);
     }
 
     .textarea-3d {
@@ -428,28 +399,26 @@
   <div class="orb orb-1" id="orb-1"></div>
   <div class="orb orb-2" id="orb-2"></div>
 
-  <!-- ================= 0. NORMAL LOGIN CARD (FLAT & CLEAN) ================= -->
-  <div id="login-box" class="standard-login-card">
+  <!-- ================= 0. NORMAL CENTERED LOGIN BOX ================= -->
+  <div id="login-box" class="login-container">
     <h2>Owner Verification</h2>
-    <div class="std-input-wrapper">
-      <input type="password" id="admin-pass" class="std-input" placeholder="Enter Password">
-      <span class="std-eye" id="eye-icon" onclick="togglePass()">👁️</span>
+    <div class="input-wrapper">
+      <input type="password" id="admin-pass" class="login-input" placeholder="Enter Password">
+      <span class="eye-icon" id="eye-icon" onclick="togglePass()">👁️</span>
     </div>
-    <button class="std-btn" onclick="checkLogin()">Enter</button>
+    <button class="login-btn" onclick="checkLogin()">Enter</button>
     <p id="err" class="err-tag"></p>
   </div>
 
-  <!-- ================= 3D CONTAINER FOR SURPRISE STAGES ================= -->
+  <!-- ================= 3D SURPRISE CONTAINER ================= -->
   <div class="stage-wrapper">
 
     <!-- 1. 3D SURPRISE WAITING -->
     <div id="stage-1" class="card-3d hidden">
       <div class="card-glare"></div>
       <div class="badge-3d">✨</div>
-      <div class="elevate-3d-md">
-        <h2 class="title-3d">A Special Surprise Awaits!</h2>
-        <p class="desc-3d">Step into an interactive 3D dimension created just for you!</p>
-      </div>
+      <h2 class="title-3d">A Surprise Awaits!</h2>
+      <p class="desc-3d">A special 3D interactive surprise created just for you!</p>
       <button class="button-3d" style="background: linear-gradient(135deg, #00cec9 0%, #0984e3 100%); color: #fff; box-shadow: 0 10px 0 #075cb3;" onclick="toStage2()">
         🎁 OPEN YOUR SURPRISE
       </button>
@@ -459,10 +428,8 @@
     <div id="stage-2" class="card-3d hidden">
       <div class="card-glare"></div>
       <div class="badge-3d">🎂</div>
-      <div class="elevate-3d-md">
-        <h2 class="title-3d">Magical Cake Time!</h2>
-        <p class="desc-3d">Touch and tilt your phone to look around, then tap the flame to blow out the candle!</p>
-      </div>
+      <h2 class="title-3d">Magical Cake Time!</h2>
+      <p class="desc-3d">Touch and tilt the card to explore, then tap the candle flame!</p>
 
       <div class="cake-3d-box">
         <div class="candle-3d" onclick="toStage3()">
@@ -478,16 +445,14 @@
       </button>
     </div>
 
-    <!-- 3. 3D GRAND FIREWORKS CELEBRATION -->
+    <!-- 3. 3D GRAND CELEBRATION -->
     <div id="stage-3" class="card-3d hidden">
       <div class="card-glare"></div>
       <div class="badge-3d">👑</div>
-      <div class="elevate-3d-lg">
-        <div style="font-family: 'Pacifico', cursive; font-size: 32px; color: #fff; text-shadow: 0 10px 25px #fd79a8; margin-bottom: 10px;">
-          Happy Birthday! 🎉
-        </div>
-        <p class="desc-3d">May this year bring unlimited happiness, peace, and dreams fulfilled!</p>
+      <div style="font-family: 'Pacifico', cursive; font-size: 32px; color: #fff; text-shadow: 0 10px 25px #fd79a8; margin-bottom: 10px; transform: translateZ(50px);">
+        Happy Birthday! 🎉
       </div>
+      <p class="desc-3d">May this year bring unlimited happiness and joy into your life!</p>
       <button class="button-3d" style="background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%); color: #fff; box-shadow: 0 10px 0 #b82b71;" onclick="toStage4()">
         📸 Reveal Surprise Memories ➡️
       </button>
@@ -497,10 +462,8 @@
     <div id="stage-4" class="card-3d hidden">
       <div class="card-glare"></div>
       <div class="badge-3d">🎁</div>
-      <div class="elevate-3d-md">
-        <h2 class="title-3d" style="font-size: 22px;">Tap Gift Cubes to Unfold!</h2>
-        <p class="desc-3d" style="font-size: 12px; margin-bottom: 12px;">Touch each box to flip and unlock the 3D photos</p>
-      </div>
+      <h2 class="title-3d" style="font-size: 22px;">Tap Gift Cubes to Unfold!</h2>
+      <p class="desc-3d" style="font-size: 12px; margin-bottom: 12px;">Touch each box to reveal hidden memories</p>
 
       <div class="photo-grid-3d">
         <div class="cube-card" onclick="unfoldCube(this)">
@@ -565,10 +528,8 @@
     <div id="stage-5" class="card-3d hidden">
       <div class="card-glare"></div>
       <div class="badge-3d">💌</div>
-      <div class="elevate-3d-md">
-        <h2 class="title-3d">Leave Your Note 💬</h2>
-        <p class="desc-3d">Your note is delivered straight to Satish's inbox!</p>
-      </div>
+      <h2 class="title-3d">Leave Your Note 💬</h2>
+      <p class="desc-3d">Your note is delivered straight to Satish's inbox!</p>
 
       <input type="text" id="sender-name" class="input-3d-box" placeholder="Your Name / Nickname">
       <textarea id="reply-text" class="input-3d-box textarea-3d" placeholder="Type your special birthday message here... ❤️"></textarea>
@@ -579,7 +540,7 @@
 
       <p id="reply-status" style="font-size: 13px; margin-top: 14px; font-weight: 600; display: none;"></p>
 
-      <div style="margin-top: 25px; display: flex; justify-content: space-around;" class="elevate-3d-sm">
+      <div style="margin-top: 25px; display: flex; justify-content: space-around; transform: translateZ(40px);">
         <span onclick="toStage4()" style="color: rgba(255,255,255,0.7); font-size: 12px; cursor: pointer; text-decoration: underline;">⬅️ View Memories</span>
         <span onclick="location.reload()" style="color: rgba(255,255,255,0.7); font-size: 12px; cursor: pointer; text-decoration: underline;">🔒 Lock Page</span>
       </div>
@@ -591,7 +552,6 @@
     const ADMIN_PASSWORD = "@breakup";
     const FORMSPREE_URL = "https://formspree.io/f/mbglkqep";
 
-    /* Normal Password Visibility Toggle */
     function togglePass() {
       const p = document.getElementById('admin-pass');
       const eye = document.getElementById('eye-icon');
@@ -604,7 +564,6 @@
       }
     }
 
-    /* Standard Login Check */
     function checkLogin() {
       const val = document.getElementById('admin-pass').value;
       const err = document.getElementById('err');
@@ -618,7 +577,7 @@
       }
     }
 
-    /* ================= 3D TOUCH & GYROSCOPE PHYSICS ENGINE ================= */
+    /* 3D Touch and Drag Interaction */
     function init3DEngine() {
       const cards = document.querySelectorAll('.card-3d');
 
@@ -633,13 +592,11 @@
           const centerX = rect.width / 2;
           const centerY = rect.height / 2;
 
-          // Compute 3D rotation angle (up to 18 degrees)
           const rotateX = ((y - centerY) / centerY) * -16;
           const rotateY = ((x - centerX) / centerX) * 16;
 
           card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
 
-          // Glare spotlight position
           if (glare) {
             glare.style.opacity = '1';
             glare.style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 65%)`;
@@ -651,11 +608,9 @@
           if (glare) glare.style.opacity = '0';
         }
 
-        // Mouse Listeners
         card.addEventListener('mousemove', e => handleMove(e.clientX, e.clientY));
         card.addEventListener('mouseleave', handleReset);
 
-        // Touch Listeners (Mobile 3D tilt interaction)
         card.addEventListener('touchmove', e => {
           if (e.touches.length > 0) {
             handleMove(e.touches[0].clientX, e.touches[0].clientY);
@@ -665,7 +620,6 @@
       });
     }
 
-    /* ================= STAGE PROGRESSION ================= */
     function toStage1() {
       document.body.style.background = "radial-gradient(circle at 50% 20%, #00b894 0%, #0984e3 80%, #0b1426 100%)";
       document.getElementById('orb-1').style.background = "#55efc4";
@@ -704,7 +658,6 @@
       spawn3DParticles(['💌', '💖', '✨']);
     }
 
-    /* Unfold 3D Photo Tiles */
     function unfoldCube(element) {
       if (!element.classList.contains('unfolded')) {
         element.classList.add('unfolded');
@@ -716,7 +669,6 @@
       }
     }
 
-    /* Submit Note Directly to Formspree */
     function sendDirectNote() {
       const name = document.getElementById('sender-name').value.trim() || "Someone Special";
       const message = document.getElementById('reply-text').value.trim();
@@ -761,7 +713,6 @@
       });
     }
 
-    /* 3D Confetti Cannon */
     function triggerFireworks(durationMs) {
       const end = Date.now() + durationMs;
       (function frame() {
@@ -771,7 +722,6 @@
       }());
     }
 
-    /* 3D Floating Particle Depth Generator */
     function spawn3DParticles(icons) {
       for (let i = 0; i < 18; i++) {
         setTimeout(() => {
