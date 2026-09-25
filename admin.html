@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0f1115; color: #fff; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 15px; }
+    .box { background: #1a1d24; padding: 25px; border-radius: 12px; width: 100%; max-width: 420px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); border: 1px solid #2a2e39; }
+    h2 { margin: 0 0 15px 0; font-size: 20px; }
+    input, button { width: 100%; padding: 12px; margin: 8px 0; border-radius: 6px; font-size: 14px; }
+    input { background: #262a35; border: 1px solid #3b4252; color: #fff; outline: none; }
+    input:focus { border-color: #ff4757; }
+    button { background: #ff4757; color: white; border: none; font-weight: bold; cursor: pointer; }
+    button:hover { background: #e84118; }
+    .hidden { display: none !important; }
+    .item { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #2a2e39; padding: 10px 0; font-size: 14px; }
+    .item span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 250px; }
+    .del-btn { background: #3b4252; color: #ff6b6b; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; width: auto; font-size: 12px; margin: 0; }
+    .del-btn:hover { background: #c0392b; color: white; }
+    .logout-btn { background: #262a35; color: #bbb; border: 1px solid #3b4252; margin-top: 20px; }
+    .logout-btn:hover { background: #3b4252; color: #fff; }
+  </style>
+
+  <!-- Firebase v8 SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+</head>
+<body>
+
+  <!-- LOGIN BOX -->
+  <div id="login-box" class="box">
+    <h2>Owner Verification</h2>
+    <input type="password" id="admin-pass" placeholder="Enter Owner Password">
+    <button onclick="login()">Enter Dashboard</button>
+    <p id="err" style="color: #ff6b6b; font-size: 13px; margin: 5px 0 0 0;"></p>
+  </div>
+
+  <!-- DASHBOARD BOX -->
+  <div id="dash-box" class="box hidden">
+    <h2>Add New Video</h2>
+    <input type="text" id="v-title" placeholder="Game Title / Video Name">
+    <input type="url" id="v-url" placeholder="YouTube URL (watch?v=... or youtu.be/)">
+    <button onclick="addVideo()">Post to Website</button>
+
+    <h3 style="margin-top: 25px; font-size: 16px; border-bottom: 1px solid #2a2e39; padding-bottom: 6px;">Manage Videos</h3>
+    <div id="video-list"></div>
+
+    <button class="logout-btn" onclick="logout()">Log Out</button>
+  </div>
+
+  <script>
+    // Config with your credentials
+    const firebaseConfig = {
+      apiKey: "AIzaSyBzLchy5M2fLne4c7Ghw1KNN8wVrlZdd8M",
+      authDomain: "friendsgame-872f5.firebaseapp.com",
+      databaseURL: "https://friendsgame-872f5-default-rtdb.firebaseio.com",
+      projectId: "friendsgame-872f5",
+      storageBucket: "friendsgame-872f5.firebasestorage.app",
+      messagingSenderId: "522534013233",
+      appId: "1:522534013233:web:f5faa6e6795023d0420810",
+      measurementId: "G-PW5H3G97QR"
+    };
+
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    const db = firebase.database();
+
+    // Your Admin Password (change to whatever you like)
+    const ADMIN_PASSWORD = "adminPassword123";
+
+    function login() {
+      const pass = document.getElementById('admin-pass').value;
+      if (pass === ADMIN_PASSWORD) {
+        sessionStorage.setItem('isOwner', 'true');
+        showDash();
+      } else {
+        document.getElementById('err').innerText = 'Incorrect password';
+      }
+    }
+
+    function showDash() {
+      document.getElementById('login-box').classList.add('hidden');
+      document.getElementById('dash-box').classList.remove('hidden');
+      loadVideos();
+    }
+
+    function logout() {
+      sessionStorage.removeItem('isOwner');
+      location.reload();
+    }
+
+    function convertYouTubeUrl(url) {
+      if (url.includes('watch?v=')) {
+        const id = url.split('v=')[1].split('&')[0];
+        return `https://www.youtube.com/embed/${id}`;
+      } else if (url.includes('youtu.be/')) {
+        const id = url.split('youtu.be/')[1].split('?')[0];
+        return `https://www.youtube.com/embed/${id}`;
+      }
+      return url;
+    }
+
+    function addVideo() {
+      const title = document.getElementById('v-title').value.trim();
+      const rawUrl = document.getElementById('v-url').value.trim();
+
+      if (!title || !rawUrl) {
+        alert('Please provide both title and video link');
+        return;
+      }
+
+      const embedUrl = convertYouTubeUrl(rawUrl);
+
+      db.ref('videos').push({
+        title: title,
+        url: embedUrl,
+        timestamp: Date.now()
+      }).then(() => {
+        document.getElementById('v-title').value = '';
+        document.getElementById('v-url').value = '';
+      });
+    }
+
+    function loadVideos() {
+      db.ref('videos').on('value', snapshot => {
+        const list = document.getElementById('video-list');
+        list.innerHTML = '';
+
+        if (!snapshot.exists()) {
+          list.innerHTML = '<p style="color:#777; font-size:13px;">No videos added yet.</p>';
+          return;
+        }
+
+        snapshot.forEach(child => {
+          const item = child.val();
+          const key = child.key;
+
+          const row = document.createElement('div');
+          row.className = 'item';
+          row.innerHTML = `
+            <span>${item.title}</span>
+            <button class="del-btn" onclick="deleteVideo('${key}')">Delete</button>
+          `;
+          list.appendChild(row);
+        });
+      });
+    }
+
+    function deleteVideo(key) {
+      db.ref('videos/' + key).remove();
+    }
+
+    if (sessionStorage.getItem('isOwner') === 'true') {
+      showDash();
+    }
+  </script>
+</body>
+</html>
