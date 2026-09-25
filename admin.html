@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Dashboard</title>
+  <title>Admin Video Upload</title>
   <style>
     * { box-sizing: border-box; }
     body {
@@ -34,13 +34,19 @@
       border-radius: 6px;
       font-size: 14px;
     }
-    input {
+    input[type="text"], input[type="password"] {
       background: #262a35;
       border: 1px solid #3b4252;
       color: #fff;
       outline: none;
     }
-    input:focus { border-color: #ff4757; }
+    input[type="file"] {
+      background: #262a35;
+      border: 1px dashed #4f5869;
+      color: #aaa;
+      padding: 10px;
+      cursor: pointer;
+    }
     button {
       background: #ff4757;
       color: white;
@@ -48,7 +54,7 @@
       font-weight: bold;
       cursor: pointer;
     }
-    button:hover { background: #e84118; }
+    button:disabled { background: #555; cursor: not-allowed; }
     .hidden { display: none !important; }
     .item {
       display: flex;
@@ -58,12 +64,7 @@
       padding: 10px 0;
       font-size: 14px;
     }
-    .item span {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      max-width: 250px;
-    }
+    .item span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 250px; }
     .del-btn {
       background: #3b4252;
       color: #ff6b6b;
@@ -75,64 +76,59 @@
       font-size: 12px;
       margin: 0;
     }
-    .del-btn:hover { background: #c0392b; color: white; }
-    .logout-btn {
-      background: #262a35;
-      color: #bbb;
-      border: 1px solid #3b4252;
-      margin-top: 20px;
-    }
-    .logout-btn:hover { background: #3b4252; color: #fff; }
-    .password-container {
-      position: relative;
+    .progress-bar {
       width: 100%;
+      height: 8px;
+      background: #262a35;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 8px;
     }
-    .password-container input {
-      padding-right: 42px;
-    }
-    .eye-btn {
-      position: absolute;
-      right: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      cursor: pointer;
-      font-size: 18px;
-      user-select: none;
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: #2ed573;
+      transition: width 0.2s;
     }
   </style>
 
-  <!-- Firebase v8 SDKs -->
+  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
 </head>
 <body>
 
-  <!-- LOGIN BOX -->
+  <!-- LOGIN -->
   <div id="login-box" class="box">
     <h2>Owner Verification</h2>
-    <div class="password-container">
-      <input type="password" id="admin-pass" placeholder="Enter Owner Password">
-      <span class="eye-btn" id="eye-icon" onclick="togglePasswordVisibility()">👁️</span>
-    </div>
+    <input type="password" id="admin-pass" placeholder="Enter Owner Password">
     <button onclick="login()">Enter Dashboard</button>
     <p id="err" style="color: #ff6b6b; font-size: 13px; margin: 6px 0 0 0;"></p>
   </div>
 
-  <!-- DASHBOARD BOX -->
+  <!-- DASHBOARD -->
   <div id="dash-box" class="box hidden">
-    <h2>Add New Video</h2>
-    <input type="text" id="v-title" placeholder="Game Title / Video Name">
-    <input type="url" id="v-url" placeholder="YouTube URL (watch?v=... or youtu.be/)">
-    <button onclick="addVideo()">Post to Website</button>
+    <h2>Upload Video File</h2>
+    <input type="text" id="v-title" placeholder="Video Title">
+    <input type="file" id="v-file" accept="video/mp4,video/webm,video/ogg,video/*">
+    
+    <div id="progress-container" class="hidden">
+      <div class="progress-bar">
+        <div id="progress-fill" class="progress-fill"></div>
+      </div>
+      <p id="progress-status" style="font-size: 12px; color: #aaa; margin: 4px 0;">Uploading: 0%</p>
+    </div>
+
+    <button id="upload-btn" onclick="uploadVideoFile()">Upload to Website</button>
 
     <h3 style="margin-top: 25px; font-size: 16px; border-bottom: 1px solid #2a2e39; padding-bottom: 6px;">Manage Videos</h3>
     <div id="video-list"></div>
 
-    <button class="logout-btn" onclick="logout()">Log Out</button>
+    <button onclick="logout()" style="background: #262a35; color: #bbb; border: 1px solid #3b4252; margin-top: 20px;">Log Out</button>
   </div>
 
   <script>
-    // Firebase Database configuration
     const firebaseConfig = {
       apiKey: "AIzaSyBzLchy5M2fLne4c7Ghw1KNN8wVrlZdd8M",
       authDomain: "friendsgame-872f5.firebaseapp.com",
@@ -144,29 +140,14 @@
       measurementId: "G-PW5H3G97QR"
     };
 
-    if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
-    }
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
+    const storage = firebase.storage();
 
-    // Your set password
     const ADMIN_PASSWORD = "@breakup";
 
-    function togglePasswordVisibility() {
-      const passField = document.getElementById('admin-pass');
-      const eyeIcon = document.getElementById('eye-icon');
-      if (passField.type === 'password') {
-        passField.type = 'text';
-        eyeIcon.textContent = '🙈';
-      } else {
-        passField.type = 'password';
-        eyeIcon.textContent = '👁️';
-      }
-    }
-
     function login() {
-      const pass = document.getElementById('admin-pass').value;
-      if (pass === ADMIN_PASSWORD) {
+      if (document.getElementById('admin-pass').value === ADMIN_PASSWORD) {
         sessionStorage.setItem('isOwner', 'true');
         showDash();
       } else {
@@ -185,64 +166,83 @@
       location.reload();
     }
 
-    function convertYouTubeUrl(url) {
-      if (url.includes('watch?v=')) {
-        const id = url.split('v=')[1].split('&')[0];
-        return `https://www.youtube.com/embed/${id}`;
-      } else if (url.includes('youtu.be/')) {
-        const id = url.split('youtu.be/')[1].split('?')[0];
-        return `https://www.youtube.com/embed/${id}`;
-      }
-      return url;
-    }
-
-    function addVideo() {
+    function uploadVideoFile() {
       const title = document.getElementById('v-title').value.trim();
-      const rawUrl = document.getElementById('v-url').value.trim();
+      const fileInput = document.getElementById('v-file');
+      const file = fileInput.files[0];
 
-      if (!title || !rawUrl) {
-        alert('Please provide both title and video link');
+      if (!title || !file) {
+        alert("Please enter a title and select a video file.");
         return;
       }
 
-      const embedUrl = convertYouTubeUrl(rawUrl);
+      const uploadBtn = document.getElementById('upload-btn');
+      const progressContainer = document.getElementById('progress-container');
+      const progressFill = document.getElementById('progress-fill');
+      const progressStatus = document.getElementById('progress-status');
 
-      db.ref('videos').push({
-        title: title,
-        url: embedUrl,
-        timestamp: Date.now()
-      }).then(() => {
-        document.getElementById('v-title').value = '';
-        document.getElementById('v-url').value = '';
-      });
+      uploadBtn.disabled = true;
+      progressContainer.classList.remove('hidden');
+
+      const storageRef = storage.ref('videos/' + Date.now() + '_' + file.name);
+      const uploadTask = storageRef.put(file);
+
+      uploadTask.on('state_changed', 
+        (snapshot) => {
+          const percent = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+          progressFill.style.width = percent + '%';
+          progressStatus.innerText = `Uploading: ${percent}%`;
+        }, 
+        (error) => {
+          alert("Upload failed: " + error.message);
+          uploadBtn.disabled = false;
+        }, 
+        () => {
+          uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+            db.ref('videos').push({
+              title: title,
+              url: downloadURL,
+              storagePath: storageRef.fullPath,
+              timestamp: Date.now()
+            }).then(() => {
+              document.getElementById('v-title').value = '';
+              fileInput.value = '';
+              progressContainer.classList.add('hidden');
+              progressFill.style.width = '0%';
+              uploadBtn.disabled = false;
+            });
+          });
+        }
+      );
     }
 
     function loadVideos() {
       db.ref('videos').on('value', snapshot => {
         const list = document.getElementById('video-list');
         list.innerHTML = '';
-
         if (!snapshot.exists()) {
-          list.innerHTML = '<p style="color:#777; font-size:13px;">No videos added yet.</p>';
+          list.innerHTML = '<p style="color:#777; font-size:13px;">No videos uploaded yet.</p>';
           return;
         }
 
         snapshot.forEach(child => {
           const item = child.val();
           const key = child.key;
-
           const row = document.createElement('div');
           row.className = 'item';
           row.innerHTML = `
             <span>${item.title}</span>
-            <button class="del-btn" onclick="deleteVideo('${key}')">Delete</button>
+            <button class="del-btn" onclick="deleteVideo('${key}', '${item.storagePath || ''}')">Delete</button>
           `;
           list.appendChild(row);
         });
       });
     }
 
-    function deleteVideo(key) {
+    function deleteVideo(key, path) {
+      if (path) {
+        storage.ref(path).delete().catch(() => {});
+      }
       db.ref('videos/' + key).remove();
     }
 
