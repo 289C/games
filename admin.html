@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Birthday Surprise 🎉</title>
+  <title>Sweet Birthday Surprise 🎉</title>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Pacifico&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-  
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <style>
@@ -16,379 +15,324 @@
       -webkit-tap-highlight-color: transparent;
     }
 
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow-x: hidden;
+    }
+
     body {
       min-height: 100vh;
+      min-height: 100dvh;
       display: flex;
       justify-content: center;
       align-items: center;
-      background: #11141c;
+      background: linear-gradient(135deg, #1b0a2a 0%, #3a0ca3 40%, #7209b7 70%, #f72585 100%);
+      background-size: 300% 300%;
+      animation: auroraGlow 12s ease infinite;
       font-family: 'Poppins', sans-serif;
-      padding: 20px;
-      overflow-x: hidden;
+      padding: 16px;
       perspective: 1200px;
-      transition: background 1s ease;
+      position: relative;
     }
 
-    /* Ambient background glows */
-    .orb {
+    @keyframes auroraGlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Ambient floating glow spheres */
+    .glow-orb {
       position: fixed;
       border-radius: 50%;
       filter: blur(80px);
-      z-index: 0;
+      z-index: 1;
       pointer-events: none;
-      transition: all 1s ease;
+      animation: driftOrb 10s ease-in-out infinite alternate;
     }
-    .orb-1 { width: 320px; height: 320px; background: #ff7675; top: 10%; left: 10%; opacity: 0.25; }
-    .orb-2 { width: 300px; height: 300px; background: #74b9ff; bottom: 10%; right: 10%; opacity: 0.25; }
+    .orb-1 { width: 340px; height: 340px; background: #4cc9f0; top: 5%; left: -10%; opacity: 0.45; }
+    .orb-2 { width: 320px; height: 320px; background: #f72585; bottom: 5%; right: -10%; opacity: 0.45; animation-delay: -5s; }
 
-    /* ================= CENTERED LOGIN CARD ================= */
-    .login-container {
-      position: relative;
-      z-index: 10;
-      width: 100%;
-      max-width: 360px;
-      background: #1c202b;
-      border: 1px solid #2e3547;
-      border-radius: 24px;
-      padding: 38px 26px;
-      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6);
-      text-align: center;
-      animation: fadeIn 0.4s ease-out;
+    @keyframes driftOrb {
+      0% { transform: translateY(0px) scale(1); }
+      100% { transform: translateY(40px) scale(1.15); }
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.96); }
-      to { opacity: 1; transform: scale(1); }
-    }
-
-    .login-container h2 {
-      font-size: 22px;
-      font-weight: 600;
-      color: #ffffff;
-      margin-bottom: 22px;
-      letter-spacing: 0.3px;
-    }
-
-    .input-wrapper {
-      position: relative;
-      width: 100%;
-      margin-bottom: 18px;
-    }
-
-    .login-input {
-      width: 100%;
-      padding: 14px 48px 14px 18px;
-      background: #272d3d;
-      border: 1px solid #3d465e;
-      border-radius: 12px;
-      color: #fff;
-      font-size: 14px;
-      font-family: inherit;
-      outline: none;
-      transition: border-color 0.2s, box-shadow 0.2s;
-    }
-    .login-input:focus {
-      border-color: #ff7675;
-      box-shadow: 0 0 0 3px rgba(255, 118, 117, 0.15);
-    }
-
-    .eye-icon {
-      position: absolute;
-      right: 15px;
-      top: 50%;
-      transform: translateY(-50%);
-      cursor: pointer;
-      font-size: 18px;
-      user-select: none;
-      opacity: 0.65;
-    }
-
-    .login-btn {
-      width: 100%;
-      padding: 14px;
-      background: #ff7675;
-      color: #fff;
-      font-size: 15px;
-      font-weight: 600;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: background 0.2s, transform 0.1s;
-      box-shadow: 0 8px 20px rgba(255, 118, 117, 0.3);
-    }
-    .login-btn:hover { background: #e84393; }
-    .login-btn:active { transform: scale(0.98); }
-
-    .err-tag {
-      color: #ff7675;
-      font-size: 13px;
-      margin-top: 12px;
-      display: none;
-    }
-
-    /* ================= 3D STAGES ENGINE ================= */
-    .stage-wrapper {
+    /* Center-Locked Card Engine */
+    .page-stage {
       position: relative;
       z-index: 5;
       width: 100%;
-      max-width: 440px;
-      transform-style: preserve-3d;
-    }
-
-    .card-3d {
-      position: relative;
-      width: 100%;
-      background: rgba(255, 255, 255, 0.12);
-      backdrop-filter: blur(28px);
-      -webkit-backdrop-filter: blur(28px);
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      border-radius: 32px;
-      padding: 40px 24px;
+      max-width: 380px;
+      background: rgba(255, 255, 255, 0.14);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border: 1.5px solid rgba(255, 255, 255, 0.35);
+      border-radius: 28px;
+      padding: 38px 24px;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.45), inset 0 1px 2px rgba(255, 255, 255, 0.4);
       text-align: center;
-      box-shadow: 0 35px 70px rgba(0,0,0,0.5), inset 0 2px 3px rgba(255,255,255,0.4);
       transform-style: preserve-3d;
-      transition: transform 0.15s ease-out;
-      will-change: transform;
+      transition: transform 0.2s ease-out, opacity 0.4s ease;
+      margin: auto;
     }
 
-    .card-glare {
-      position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
-      border-radius: 32px;
-      pointer-events: none;
-      background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 70%);
-      opacity: 0;
-      mix-blend-mode: overlay;
-      transition: opacity 0.25s ease;
-      z-index: 10;
-    }
-
-    .badge-3d {
-      width: 64px;
-      height: 64px;
-      margin: 0 auto 15px auto;
+    .badge-icon {
+      width: 58px;
+      height: 58px;
+      margin: 0 auto 16px auto;
       background: rgba(255, 255, 255, 0.95);
       border-radius: 50%;
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 32px;
-      box-shadow: 0 15px 30px rgba(0,0,0,0.35);
-      transform: translateZ(60px);
+      font-size: 28px;
+      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
+      animation: bobble 3s ease-in-out infinite;
     }
 
-    h2.title-3d {
+    @keyframes bobble {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    h2.stage-title {
       font-family: 'Fredoka One', cursive;
       color: #ffffff;
-      font-size: 26px;
+      font-size: 24px;
       margin-bottom: 12px;
-      text-shadow: 0 10px 20px rgba(0,0,0,0.4);
+      letter-spacing: 0.5px;
+      text-shadow: 0 3px 12px rgba(0, 0, 0, 0.3);
     }
 
-    p.desc-3d {
-      color: rgba(255, 255, 255, 0.9);
-      font-size: 14px;
-      margin-bottom: 25px;
+    p.stage-desc {
+      color: rgba(255, 255, 255, 0.88);
+      font-size: 13px;
+      margin-bottom: 24px;
       line-height: 1.5;
     }
 
-    .button-3d {
-      display: inline-block;
+    /* Input fields */
+    .input-wrapper {
+      position: relative;
       width: 100%;
-      padding: 16px;
-      border: none;
-      border-radius: 50px;
-      background: linear-gradient(135deg, #ffd32a 0%, #ff9f1a 100%);
-      color: #3d2200;
-      font-family: 'Fredoka One', cursive;
-      font-size: 16px;
-      cursor: pointer;
-      box-shadow: 0 10px 0 #cc7700, 0 18px 25px rgba(0,0,0,0.4);
-      transform: translateZ(50px);
-      transition: all 0.15s ease;
-    }
-    .button-3d:active {
-      transform: translateZ(25px) translateY(7px) !important;
-      box-shadow: 0 3px 0 #cc7700, 0 8px 15px rgba(0,0,0,0.3) !important;
+      margin-bottom: 16px;
     }
 
-    /* 3D CAKE */
-    .cake-3d-box {
-      width: 160px;
-      height: 120px;
-      margin: 25px auto;
+    .custom-input {
+      width: 100%;
+      padding: 14px 48px 14px 18px;
+      background: rgba(255, 255, 255, 0.92);
+      border: 2px solid transparent;
+      border-radius: 50px;
+      font-family: inherit;
+      font-size: 14px;
+      color: #222;
+      outline: none;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+      transition: all 0.2s ease;
+    }
+    .custom-input:focus {
+      background: #ffffff;
+      border-color: #f72585;
+      transform: scale(1.02);
+    }
+
+    .eye-icon {
+      position: absolute;
+      right: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      font-size: 18px;
+      opacity: 0.65;
+      user-select: none;
+    }
+
+    /* Action Buttons */
+    .gradient-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #ffd166 0%, #f72585 100%);
+      color: #ffffff;
+      font-family: 'Fredoka One', cursive;
+      font-size: 16px;
+      letter-spacing: 0.5px;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 10px 25px rgba(247, 37, 133, 0.45);
+      transition: all 0.2s ease;
+    }
+    .gradient-btn:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 14px 30px rgba(247, 37, 133, 0.6);
+    }
+    .gradient-btn:active {
+      transform: translateY(1px);
+    }
+
+    .err-tag {
+      color: #ffffff;
+      background: rgba(220, 20, 60, 0.6);
+      border-radius: 20px;
+      font-size: 12px;
+      margin-top: 10px;
+      padding: 5px 12px;
+      display: inline-block;
+    }
+
+    /* 3D Cake Display */
+    .cake-box {
+      width: 150px;
+      height: 110px;
+      margin: 20px auto;
       position: relative;
       transform-style: preserve-3d;
-      transform: translateZ(50px) rotateX(15deg);
       animation: floatCake 3.5s ease-in-out infinite;
     }
 
     @keyframes floatCake {
-      0%, 100% { transform: translateZ(50px) rotateX(15deg) translateY(0); }
-      50% { transform: translateZ(70px) rotateX(20deg) translateY(-12px); }
+      0%, 100% { transform: translateY(0) rotateX(12deg); }
+      50% { transform: translateY(-10px) rotateX(18deg); }
     }
 
-    .cake-tier {
+    .cake-base {
       position: absolute;
       bottom: 0;
-      width: 160px;
-      height: 70px;
-      background: linear-gradient(135deg, #ff7675, #d63031);
-      border-radius: 20px;
-      box-shadow: 0 15px 30px rgba(0,0,0,0.4), inset 0 6px 0 rgba(255,255,255,0.4);
+      width: 150px;
+      height: 65px;
+      background: linear-gradient(135deg, #ff4d6d, #c9184a);
+      border-radius: 18px;
+      box-shadow: 0 12px 25px rgba(0,0,0,0.35);
     }
 
-    .cake-icing {
+    .cake-frosting {
       position: absolute;
-      top: -12px;
-      left: 0;
+      top: -10px;
       width: 100%;
-      height: 25px;
+      height: 22px;
       background: #ffffff;
-      border-radius: 20px 20px 12px 12px;
+      border-radius: 18px 18px 10px 10px;
     }
 
-    .candle-3d {
+    .candle {
       position: absolute;
-      top: -35px;
-      left: 72px;
-      width: 16px;
-      height: 40px;
-      background: repeating-linear-gradient(45deg, #ffeaa7, #ffeaa7 5px, #fdcb6e 5px, #fdcb6e 10px);
-      border-radius: 6px;
+      top: -30px;
+      left: 68px;
+      width: 14px;
+      height: 35px;
+      background: repeating-linear-gradient(45deg, #ffeaa7, #ffeaa7 4px, #fdcb6e 4px, #fdcb6e 8px);
+      border-radius: 4px;
       cursor: pointer;
     }
 
-    .flame-3d {
+    .flame {
       position: absolute;
-      top: -18px;
+      top: -16px;
       left: 1px;
-      width: 14px;
-      height: 20px;
+      width: 12px;
+      height: 18px;
       background: #ff7675;
       border-radius: 50% 50% 20% 20%;
-      box-shadow: 0 0 20px #ffeaa7, 0 0 35px #fdcb6e;
-      animation: flamePulse 0.5s infinite alternate;
+      box-shadow: 0 0 15px #ffeaa7, 0 0 30px #fdcb6e;
+      animation: flameFlicker 0.6s infinite alternate;
     }
 
-    @keyframes flamePulse {
+    @keyframes flameFlicker {
       0% { transform: scale(1) rotate(-3deg); }
-      100% { transform: scale(1.25) rotate(3deg); }
+      100% { transform: scale(1.2) rotate(3deg); }
     }
 
-    /* 3D REVEAL PHOTO TILES */
-    .photo-grid-3d {
+    /* Flip Cards Gallery */
+    .photo-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      margin: 20px 0;
-      transform: translateZ(40px);
-      transform-style: preserve-3d;
+      gap: 14px;
+      margin: 18px 0;
     }
 
-    .cube-card {
-      height: 170px;
-      perspective: 1200px;
+    .flip-tile {
+      height: 160px;
+      perspective: 1000px;
       cursor: pointer;
     }
 
-    .cube-inner {
+    .tile-inner {
       position: relative;
       width: 100%;
       height: 100%;
       transform-style: preserve-3d;
       transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      border-radius: 20px;
+      border-radius: 18px;
     }
 
-    .cube-card.unfolded .cube-inner {
-      transform: rotateY(180deg) scale(1.04);
+    .flip-tile.revealed .tile-inner {
+      transform: rotateY(180deg);
     }
 
-    .cube-face {
+    .tile-face {
       position: absolute;
       width: 100%;
       height: 100%;
-      border-radius: 20px;
+      border-radius: 18px;
       -webkit-backface-visibility: hidden;
       backface-visibility: hidden;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      padding: 10px;
-      box-shadow: 0 12px 25px rgba(0,0,0,0.3);
+      padding: 8px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.25);
     }
 
-    .cube-front {
-      background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
+    .tile-front {
+      background: linear-gradient(135deg, #7209b7, #f72585);
       border: 2px dashed rgba(255,255,255,0.7);
       color: white;
     }
 
-    .cube-front span {
-      font-size: 13px;
+    .tile-front span {
+      font-size: 12px;
       font-weight: 600;
       margin-top: 6px;
     }
 
-    .cube-back {
+    .tile-back {
       background: #ffffff;
-      color: #333;
       transform: rotateY(180deg);
-      border: 3px solid #6c5ce7;
+      border: 2px solid #f72585;
       overflow: hidden;
     }
 
-    .cube-back img {
+    .tile-back img {
       width: 100%;
       height: 110px;
       object-fit: cover;
       border-radius: 12px;
     }
 
-    .cube-back p {
+    .tile-back p {
       font-size: 11px;
-      font-weight: bold;
-      color: #6c5ce7;
-      margin-top: 6px;
+      font-weight: 700;
+      color: #7209b7;
+      margin-top: 4px;
     }
 
-    /* 3D FLOATING PARTICLES */
-    .particle-3d {
+    /* Floating Heart Sprinkles */
+    .floating-heart {
       position: fixed;
-      font-size: 26px;
+      font-size: 22px;
       pointer-events: none;
-      z-index: 100;
-      animation: floatUp3D 4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+      z-index: 10;
+      animation: floatHeart 3.5s linear forwards;
     }
 
-    @keyframes floatUp3D {
-      0% { transform: translateY(110vh) scale(0.6); opacity: 0; }
+    @keyframes floatHeart {
+      0% { transform: translateY(105vh) scale(0.6); opacity: 0; }
       20% { opacity: 1; }
-      80% { opacity: 0.9; }
-      100% { transform: translateY(-15vh) scale(1.3); opacity: 0; }
-    }
-
-    /* 3D INPUTS FOR REPLY PAGE */
-    .input-3d-box {
-      width: 100%;
-      background: rgba(255, 255, 255, 0.95);
-      border: 2px solid transparent;
-      border-radius: 16px;
-      padding: 14px 18px;
-      font-family: inherit;
-      font-size: 14px;
-      color: #2d3436;
-      outline: none;
-      box-shadow: 0 8px 18px rgba(0,0,0,0.15);
-      transform: translateZ(40px);
-      margin-bottom: 14px;
-    }
-
-    .textarea-3d {
-      height: 120px;
-      resize: none;
+      100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
     }
 
     .hidden { display: none !important; }
@@ -396,156 +340,155 @@
 </head>
 <body>
 
-  <div class="orb orb-1" id="orb-1"></div>
-  <div class="orb orb-2" id="orb-2"></div>
+  <div class="glow-orb orb-1"></div>
+  <div class="glow-orb orb-2"></div>
 
-  <!-- ================= 0. NORMAL CENTERED LOGIN BOX ================= -->
-  <div id="login-box" class="login-container">
-    <h2>Owner Verification</h2>
+  <!-- STAGE 0: LOGIN CARD -->
+  <div id="login-box" class="page-stage">
+    <div class="badge-icon">🍓</div>
+    <h2 class="stage-title">Sweet Login</h2>
+    <p class="stage-desc">Enter the secret key to unlock your surprise!</p>
+
     <div class="input-wrapper">
-      <input type="password" id="admin-pass" class="login-input" placeholder="Enter Password">
+      <input type="password" id="admin-pass" class="custom-input" placeholder="Enter password">
       <span class="eye-icon" id="eye-icon" onclick="togglePass()">👁️</span>
     </div>
-    <button class="login-btn" onclick="checkLogin()">Enter</button>
-    <p id="err" class="err-tag"></p>
+
+    <button class="gradient-btn" onclick="checkLogin()">LET'S GO! ✨</button>
+    <div id="err" class="err-tag hidden"></div>
   </div>
 
-  <!-- ================= 3D SURPRISE CONTAINER ================= -->
-  <div class="stage-wrapper">
+  <!-- STAGE 1: SURPRISE WAITING -->
+  <div id="stage-1" class="page-stage hidden">
+    <div class="badge-icon">🎁</div>
+    <h2 class="stage-title">A Surprise Awaits!</h2>
+    <p class="stage-desc">A handcrafted interactive birthday journey created specially for you!</p>
+    <button class="gradient-btn" style="background: linear-gradient(135deg, #4cc9f0, #4361ee);" onclick="toStage2()">
+      OPEN THE SURPRISE 💖
+    </button>
+  </div>
 
-    <!-- 1. 3D SURPRISE WAITING -->
-    <div id="stage-1" class="card-3d hidden">
-      <div class="card-glare"></div>
-      <div class="badge-3d">✨</div>
-      <h2 class="title-3d">A Surprise Awaits!</h2>
-      <p class="desc-3d">A special 3D interactive surprise created just for you!</p>
-      <button class="button-3d" style="background: linear-gradient(135deg, #00cec9 0%, #0984e3 100%); color: #fff; box-shadow: 0 10px 0 #075cb3;" onclick="toStage2()">
-        🎁 OPEN YOUR SURPRISE
-      </button>
-    </div>
+  <!-- STAGE 2: MAGICAL CAKE -->
+  <div id="stage-2" class="page-stage hidden">
+    <div class="badge-icon">🎂</div>
+    <h2 class="stage-title">Magical Cake Time!</h2>
+    <p class="stage-desc">Tap the candle flame to make a birthday wish!</p>
 
-    <!-- 2. 3D MAGICAL CAKE -->
-    <div id="stage-2" class="card-3d hidden">
-      <div class="card-glare"></div>
-      <div class="badge-3d">🎂</div>
-      <h2 class="title-3d">Magical Cake Time!</h2>
-      <p class="desc-3d">Touch and tilt the card to explore, then tap the candle flame!</p>
-
-      <div class="cake-3d-box">
-        <div class="candle-3d" onclick="toStage3()">
-          <div class="flame-3d"></div>
-        </div>
-        <div class="cake-tier">
-          <div class="cake-icing"></div>
-        </div>
+    <div class="cake-box">
+      <div class="candle" onclick="toStage3()">
+        <div class="flame"></div>
       </div>
-
-      <button class="button-3d" style="margin-top: 15px;" onclick="toStage3()">
-        ✨ MAKE A WISH & BLOW ✨
-      </button>
-    </div>
-
-    <!-- 3. 3D GRAND CELEBRATION -->
-    <div id="stage-3" class="card-3d hidden">
-      <div class="card-glare"></div>
-      <div class="badge-3d">👑</div>
-      <div style="font-family: 'Pacifico', cursive; font-size: 32px; color: #fff; text-shadow: 0 10px 25px #fd79a8; margin-bottom: 10px; transform: translateZ(50px);">
-        Happy Birthday! 🎉
+      <div class="cake-base">
+        <div class="cake-frosting"></div>
       </div>
-      <p class="desc-3d">May this year bring unlimited happiness and joy into your life!</p>
-      <button class="button-3d" style="background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%); color: #fff; box-shadow: 0 10px 0 #b82b71;" onclick="toStage4()">
-        📸 Reveal Surprise Memories ➡️
-      </button>
     </div>
 
-    <!-- 4. 3D REVEAL PHOTO TILES -->
-    <div id="stage-4" class="card-3d hidden">
-      <div class="card-glare"></div>
-      <div class="badge-3d">🎁</div>
-      <h2 class="title-3d" style="font-size: 22px;">Tap Gift Cubes to Unfold!</h2>
-      <p class="desc-3d" style="font-size: 12px; margin-bottom: 12px;">Touch each box to reveal hidden memories</p>
+    <button class="gradient-btn" style="margin-top: 15px;" onclick="toStage3()">
+      MAKE A WISH & BLOW ✨
+    </button>
+  </div>
 
-      <div class="photo-grid-3d">
-        <div class="cube-card" onclick="unfoldCube(this)">
-          <div class="cube-inner">
-            <div class="cube-face cube-front">
-              <div style="font-size: 38px;">🎁</div>
-              <span>Tap to Open</span>
-            </div>
-            <div class="cube-face cube-back">
-              <img src="insta.jpg" onerror="this.src='https://picsum.photos/300/300?random=11'" alt="Pic 1">
-              <p>Best Smiles ✨</p>
-            </div>
+  <!-- STAGE 3: GRAND CELEBRATION -->
+  <div id="stage-3" class="page-stage hidden">
+    <div class="badge-icon">👑</div>
+    <div style="font-family: 'Pacifico', cursive; font-size: 32px; color: #fff; text-shadow: 0 4px 20px #f72585; margin: 12px 0;">
+      Happy Birthday! 🎉
+    </div>
+    <p class="stage-desc">Wishing you endless joy, bright smiles, and all your dreams fulfilled!</p>
+    <button class="gradient-btn" onclick="toStage4()">
+      Reveal Photo Memories 📸 ➡️
+    </button>
+  </div>
+
+  <!-- STAGE 4: PHOTO TILES -->
+  <div id="stage-4" class="page-stage hidden" style="max-width: 440px;">
+    <div class="badge-icon">📸</div>
+    <h2 class="stage-title">Tap to Reveal Memories!</h2>
+    <p class="stage-desc" style="margin-bottom: 12px;">Touch each gift box to reveal memories inside</p>
+
+    <div class="photo-grid">
+      <div class="flip-tile" onclick="revealTile(this)">
+        <div class="tile-inner">
+          <div class="tile-face tile-front">
+            <div style="font-size: 32px;">🎁</div>
+            <span>Tap to open</span>
           </div>
-        </div>
-
-        <div class="cube-card" onclick="unfoldCube(this)">
-          <div class="cube-inner">
-            <div class="cube-face cube-front">
-              <div style="font-size: 38px;">💌</div>
-              <span>Tap to Open</span>
-            </div>
-            <div class="cube-face cube-back">
-              <img src="https://picsum.photos/300/300?random=12" alt="Pic 2">
-              <p>Special Moments 🌸</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="cube-card" onclick="unfoldCube(this)">
-          <div class="cube-inner">
-            <div class="cube-face cube-front">
-              <div style="font-size: 38px;">🎉</div>
-              <span>Tap to Open</span>
-            </div>
-            <div class="cube-face cube-back">
-              <img src="https://picsum.photos/300/300?random=13" alt="Pic 3">
-              <p>Always Shining 💫</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="cube-card" onclick="unfoldCube(this)">
-          <div class="cube-inner">
-            <div class="cube-face cube-front">
-              <div style="font-size: 38px;">💖</div>
-              <span>Tap to Open</span>
-            </div>
-            <div class="cube-face cube-back">
-              <img src="https://picsum.photos/300/300?random=14" alt="Pic 4">
-              <p>Stay Blessed! 🎂</p>
-            </div>
+          <div class="tile-back">
+            <img src="insta.jpg" onerror="this.src='https://picsum.photos/300/300?random=11'" alt="Pic 1">
+            <p>Best Smiles ✨</p>
           </div>
         </div>
       </div>
 
-      <button class="button-3d" style="background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%); color: #fff; box-shadow: 0 10px 0 #4834d4;" onclick="toStage5()">
-        💌 Write a Reply Note ➡️
-      </button>
-    </div>
+      <div class="flip-tile" onclick="revealTile(this)">
+        <div class="tile-inner">
+          <div class="tile-face tile-front">
+            <div style="font-size: 32px;">💌</div>
+            <span>Tap to open</span>
+          </div>
+          <div class="tile-back">
+            <img src="https://picsum.photos/300/300?random=12" alt="Pic 2">
+            <p>Cherished Moments 🌸</p>
+          </div>
+        </div>
+      </div>
 
-    <!-- 5. 3D SEPARATE REPLY PAGE -->
-    <div id="stage-5" class="card-3d hidden">
-      <div class="card-glare"></div>
-      <div class="badge-3d">💌</div>
-      <h2 class="title-3d">Leave Your Note 💬</h2>
-      <p class="desc-3d">Your note is delivered straight to Satish's inbox!</p>
+      <div class="flip-tile" onclick="revealTile(this)">
+        <div class="tile-inner">
+          <div class="tile-face tile-front">
+            <div style="font-size: 32px;">🎉</div>
+            <span>Tap to open</span>
+          </div>
+          <div class="tile-back">
+            <img src="https://picsum.photos/300/300?random=13" alt="Pic 3">
+            <p>Always Shining 💫</p>
+          </div>
+        </div>
+      </div>
 
-      <input type="text" id="sender-name" class="input-3d-box" placeholder="Your Name / Nickname">
-      <textarea id="reply-text" class="input-3d-box textarea-3d" placeholder="Type your special birthday message here... ❤️"></textarea>
-
-      <button class="button-3d" id="send-btn" style="background: linear-gradient(135deg, #00cec9 0%, #0984e3 100%); color: #fff; box-shadow: 0 10px 0 #075cb3;" onclick="sendDirectNote()">
-        ✨ Send Note Directly ✨
-      </button>
-
-      <p id="reply-status" style="font-size: 13px; margin-top: 14px; font-weight: 600; display: none;"></p>
-
-      <div style="margin-top: 25px; display: flex; justify-content: space-around; transform: translateZ(40px);">
-        <span onclick="toStage4()" style="color: rgba(255,255,255,0.7); font-size: 12px; cursor: pointer; text-decoration: underline;">⬅️ View Memories</span>
-        <span onclick="location.reload()" style="color: rgba(255,255,255,0.7); font-size: 12px; cursor: pointer; text-decoration: underline;">🔒 Lock Page</span>
+      <div class="flip-tile" onclick="revealTile(this)">
+        <div class="tile-inner">
+          <div class="tile-face tile-front">
+            <div style="font-size: 32px;">💖</div>
+            <span>Tap to open</span>
+          </div>
+          <div class="tile-back">
+            <img src="https://picsum.photos/300/300?random=14" alt="Pic 4">
+            <p>Stay Blessed! 🎂</p>
+          </div>
+        </div>
       </div>
     </div>
 
+    <button class="gradient-btn" style="margin-top: 10px;" onclick="toStage5()">
+      Write a Reply Note 💌 ➡️
+    </button>
+  </div>
+
+  <!-- STAGE 5: DEDICATED REPLY NOTE PAGE -->
+  <div id="stage-5" class="page-stage hidden">
+    <div class="badge-icon">💌</div>
+    <h2 class="stage-title">Send Your Note 💬</h2>
+    <p class="stage-desc">Your message will be sent straight to Satish!</p>
+
+    <div class="input-wrapper">
+      <input type="text" id="sender-name" class="custom-input" style="padding-right: 18px;" placeholder="Your Name / Nickname">
+    </div>
+
+    <div class="input-wrapper">
+      <textarea id="reply-text" class="custom-input" style="padding-right: 18px; border-radius: 18px; height: 110px; resize: none;" placeholder="Write your heartfelt note here... ❤️"></textarea>
+    </div>
+
+    <button class="gradient-btn" id="send-btn" style="background: linear-gradient(135deg, #06d6a0, #118ab2);" onclick="sendDirectNote()">
+      Send Note Directly ✨
+    </button>
+
+    <p id="reply-status" style="font-size: 13px; margin-top: 14px; font-weight: 600; display: none;"></p>
+
+    <div style="margin-top: 24px; display: flex; justify-content: space-around;">
+      <span onclick="toStage4()" style="color: rgba(255,255,255,0.75); font-size: 12px; cursor: pointer; text-decoration: underline;">⬅️ View Memories</span>
+      <span onclick="location.reload()" style="color: rgba(255,255,255,0.75); font-size: 12px; cursor: pointer; text-decoration: underline;">🔒 Lock Page</span>
+    </div>
   </div>
 
   <script>
@@ -569,101 +512,50 @@
       const err = document.getElementById('err');
       if (val === ADMIN_PASSWORD) {
         document.getElementById('login-box').classList.add('hidden');
-        init3DEngine();
         toStage1();
       } else {
         err.textContent = "Incorrect password! Try again.";
-        err.style.display = "block";
+        err.classList.remove('hidden');
       }
     }
 
-    /* 3D Touch and Drag Interaction */
-    function init3DEngine() {
-      const cards = document.querySelectorAll('.card-3d');
-
-      cards.forEach(card => {
-        const glare = card.querySelector('.card-glare');
-
-        function handleMove(clientX, clientY) {
-          const rect = card.getBoundingClientRect();
-          const x = clientX - rect.left;
-          const y = clientY - rect.top;
-          
-          const centerX = rect.width / 2;
-          const centerY = rect.height / 2;
-
-          const rotateX = ((y - centerY) / centerY) * -16;
-          const rotateY = ((x - centerX) / centerX) * 16;
-
-          card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
-
-          if (glare) {
-            glare.style.opacity = '1';
-            glare.style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 65%)`;
-          }
-        }
-
-        function handleReset() {
-          card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
-          if (glare) glare.style.opacity = '0';
-        }
-
-        card.addEventListener('mousemove', e => handleMove(e.clientX, e.clientY));
-        card.addEventListener('mouseleave', handleReset);
-
-        card.addEventListener('touchmove', e => {
-          if (e.touches.length > 0) {
-            handleMove(e.touches[0].clientX, e.touches[0].clientY);
-          }
-        }, { passive: true });
-        card.addEventListener('touchend', handleReset);
-      });
-    }
-
     function toStage1() {
-      document.body.style.background = "radial-gradient(circle at 50% 20%, #00b894 0%, #0984e3 80%, #0b1426 100%)";
-      document.getElementById('orb-1').style.background = "#55efc4";
-      document.getElementById('orb-2').style.background = "#74b9ff";
       document.getElementById('stage-1').classList.remove('hidden');
-      spawn3DParticles(['✨', '💖', '🎈']);
+      spawnHearts(['✨', '💖', '🎈']);
     }
 
     function toStage2() {
       document.getElementById('stage-1').classList.add('hidden');
-      document.body.style.background = "radial-gradient(circle at 50% 20%, #6c5ce7 0%, #a29bfe 50%, #1e1e2f 100%)";
       document.getElementById('stage-2').classList.remove('hidden');
-      spawn3DParticles(['🍰', '🎉', '🌸']);
+      spawnHearts(['🍰', '🎉', '🌸']);
     }
 
     function toStage3() {
       document.getElementById('stage-2').classList.add('hidden');
-      document.body.style.background = "radial-gradient(circle at 50% 20%, #2d3436 0%, #090a0f 80%, #000000 100%)";
       document.getElementById('stage-3').classList.remove('hidden');
-      triggerFireworks(4500);
-      spawn3DParticles(['👑', '💖', '🎂', '✨']);
+      triggerFireworks(4000);
+      spawnHearts(['👑', '💖', '🎂', '✨']);
     }
 
     function toStage4() {
       document.getElementById('stage-3').classList.add('hidden');
       document.getElementById('stage-5').classList.add('hidden');
-      document.body.style.background = "radial-gradient(circle at 50% 20%, #d63031 0%, #e84393 50%, #190310 100%)";
       document.getElementById('stage-4').classList.remove('hidden');
       triggerFireworks(2000);
     }
 
     function toStage5() {
       document.getElementById('stage-4').classList.add('hidden');
-      document.body.style.background = "radial-gradient(circle at 50% 20%, #6c5ce7 0%, #00cec9 60%, #0b1426 100%)";
       document.getElementById('stage-5').classList.remove('hidden');
-      spawn3DParticles(['💌', '💖', '✨']);
+      spawnHearts(['💌', '💖', '✨']);
     }
 
-    function unfoldCube(element) {
-      if (!element.classList.contains('unfolded')) {
-        element.classList.add('unfolded');
+    function revealTile(element) {
+      if (!element.classList.contains('revealed')) {
+        element.classList.add('revealed');
         confetti({
           particleCount: 25,
-          spread: 50,
+          spread: 45,
           origin: { y: 0.6 }
         });
       }
@@ -683,7 +575,7 @@
       btn.disabled = true;
       btn.innerText = "Sending your note...";
       status.style.display = "block";
-      status.style.color = "#ffeaa7";
+      status.style.color = "#ffd166";
       status.innerText = "Delivering...";
 
       fetch(FORMSPREE_URL, {
@@ -693,20 +585,20 @@
       })
       .then(response => {
         if (response.ok) {
-          status.style.color = "#55efc4";
+          status.style.color = "#06d6a0";
           status.innerText = "✨ Your note was sent straight to Satish! 💖";
           document.getElementById('reply-text').value = "";
           btn.innerText = "Sent Successfully! 🎉";
           confetti({ particleCount: 50, spread: 80 });
         } else {
-          status.style.color = "#ff7675";
+          status.style.color = "#ff4d6d";
           status.innerText = "Failed to deliver. Please check connection.";
           btn.disabled = false;
           btn.innerText = "Try Again";
         }
       })
       .catch(() => {
-        status.style.color = "#ff7675";
+        status.style.color = "#ff4d6d";
         status.innerText = "Error sending message. Check connection.";
         btn.disabled = false;
         btn.innerText = "Try Again";
@@ -722,17 +614,17 @@
       }());
     }
 
-    function spawn3DParticles(icons) {
-      for (let i = 0; i < 18; i++) {
+    function spawnHearts(icons) {
+      for (let i = 0; i < 16; i++) {
         setTimeout(() => {
           const p = document.createElement('div');
-          p.className = 'particle-3d';
+          p.className = 'floating-heart';
           p.textContent = icons[Math.floor(Math.random() * icons.length)];
-          p.style.left = (Math.random() * 90 + 5) + 'vw';
+          p.style.left = (Math.random() * 88 + 6) + 'vw';
           p.style.animationDuration = (3 + Math.random() * 2) + 's';
           document.body.appendChild(p);
-          setTimeout(() => p.remove(), 5000);
-        }, i * 220);
+          setTimeout(() => p.remove(), 4500);
+        }, i * 200);
       }
     }
   </script>
