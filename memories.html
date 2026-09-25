@@ -860,7 +860,9 @@
     for (let i = 1; i <= 30; i++) {
       if (i === 18) {
         memories.push({ type: 'video', src: 'assets/video.mp4', label: '🎬 Video' });
-      } else {
+      } else if (i === 27) {
+        memories.push({ type: 'video', src: 'assets/video1.mp4', label: '🎬 Video 2' });
+      } else  {
         memories.push({ type: 'image', src: `assets/mem${i}.jpg`, label: '🎁 Tap' });
       }
     }
