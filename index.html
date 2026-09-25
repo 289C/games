@@ -1034,5 +1034,59 @@
     }
     animate();
   </script>
+  <!-- ================= START: BOTTOM VIDEOS SECTION ================= -->
+<section id="site-videos-wrapper" style="padding: 40px 15px; max-width: 1200px; margin: 40px auto 0 auto; border-top: 1px solid #2a2e39;">
+  <h2 style="color: #fff; text-align: center; font-family: sans-serif; font-size: 22px; margin-bottom: 25px;">Featured Videos</h2>
+  <div id="website-video-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;"></div>
+</section>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyBzLchy5M2fLne4c7Ghw1KNN8wVrlZdd8M",
+    authDomain: "friendsgame-872f5.firebaseapp.com",
+    databaseURL: "https://friendsgame-872f5-default-rtdb.firebaseio.com",
+    projectId: "friendsgame-872f5",
+    storageBucket: "friendsgame-872f5.firebasestorage.app",
+    messagingSenderId: "522534013233",
+    appId: "1:522534013233:web:f5faa6e6795023d0420810",
+    measurementId: "G-PW5H3G97QR"
+  };
+
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
+  const db = firebase.database();
+
+  // Load and listen to videos in real-time
+  db.ref('videos').on('value', snapshot => {
+    const grid = document.getElementById('website-video-grid');
+    grid.innerHTML = '';
+
+    if (!snapshot.exists()) {
+      grid.innerHTML = '<p style="color: #777; text-align: center; grid-column: 1/-1;">No videos posted yet.</p>';
+      return;
+    }
+
+    const videoItems = [];
+    snapshot.forEach(child => {
+      videoItems.unshift(child.val()); // newest first
+    });
+
+    videoItems.forEach(item => {
+      const card = document.createElement('div');
+      card.style = "background: #1a1d24; padding: 12px; border-radius: 8px; border: 1px solid #2a2e39;";
+      card.innerHTML = `
+        <iframe src="${item.url}" style="width: 100%; height: 180px; border: none; border-radius: 6px;" allowfullscreen></iframe>
+        <h4 style="color: #fff; margin: 10px 0 0 0; font-family: sans-serif; font-size: 15px;">${item.title}</h4>
+      `;
+      grid.appendChild(card);
+    });
+  });
+</script>
+<!-- ================= END: BOTTOM VIDEOS SECTION ================= -->
 </body>
 </html>
