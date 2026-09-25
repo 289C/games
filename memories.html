@@ -402,6 +402,65 @@
       font-style: italic;
     }
 
+    /* Screen 5.5: Quiz Styles */
+    .quiz-question-box {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1.5px solid rgba(247, 208, 112, 0.3);
+      border-radius: 14px;
+      padding: 16px;
+      text-align: left;
+    }
+
+    .quiz-step {
+      font-size: 0.75rem;
+      color: #f7d070;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .quiz-prompt {
+      font-size: 1rem;
+      color: #fff;
+      margin: 8px 0 14px;
+      line-height: 1.4;
+    }
+
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .quiz-opt-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      padding: 10px 14px;
+      color: #eaeaea;
+      font-size: 0.88rem;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .quiz-opt-btn:active {
+      transform: scale(0.98);
+    }
+
+    .quiz-opt-btn.correct {
+      background: rgba(46, 204, 113, 0.3) !important;
+      border-color: #2ecc71 !important;
+      color: #2ecc71 !important;
+      font-weight: 700;
+    }
+
+    .quiz-opt-btn.wrong {
+      background: rgba(231, 76, 60, 0.3) !important;
+      border-color: #e74c3c !important;
+      color: #e74c3c !important;
+    }
+
     /* Fullscreen HD Modal */
     .hd-modal {
       position: fixed;
@@ -615,7 +674,7 @@
           <div class="title-content">
             <div class="title-avatars-row">
               <div class="title-avatar" onclick="openHdModal({ type: 'image', src: 'assets/Insta.jpg' })">
-                <img src="Insta.jpg" alt="Satish" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Satish'" />
+                <img src="assets/Insta.jpg" alt="Satish" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Satish'" />
               </div>
               <div class="title-avatar" onclick="openHdModal({ type: 'image', src: 'assets/shanker.jpg' })">
                 <img src="assets/shanker.jpg" alt="Shanker" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Shanker'" />
@@ -657,7 +716,7 @@
           <div class="title-content">
             <div class="title-avatars-row">
               <div class="title-avatar" onclick="openHdModal({ type: 'image', src: 'assets/Insta.jpg' })">
-                <img src="Insta.jpg" alt="Satish" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Satish'" />
+                <img src="assets/Insta.jpg" alt="Satish" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Satish'" />
               </div>
               <div class="title-avatar" onclick="openHdModal({ type: 'image', src: 'assets/balaji.jpg' })">
                 <img src="assets/balaji.jpg" alt="Balaji" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Balaji'" />
@@ -712,7 +771,7 @@
             <p class="title-quote">Looks innocent in class, wildest outside 🤫</p>
           </div>
         </div>
-        
+
         <!-- 7. The Entertainers (trinesh.jpg, ganesh.jpg & shankar.jpg) -->
         <div class="title-card" onclick="handleTitleClick(event, this)">
           <div class="badge-tag">🎭 THE ENTERTAINERS</div>
@@ -729,20 +788,48 @@
                 <img src="assets/ganesh.jpg" alt="Ganesh" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Ganesh'" />
               </div>
               <div class="title-avatar" onclick="openHdModal({ type: 'image', src: 'assets/shankar.jpg' })">
-                <img src="assets/shanker.jpg" alt="Shankar" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Shankar'" />
+                <img src="assets/shankar.jpg" alt="Shankar" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Shankar'" />
               </div>
             </div>
             <h4 class="title-name">Trinesh, Ganesh & Shankar</h4>
             <p class="title-quote">Non-stop comedy, dialogues, and full classroom entertainment 😂🔥</p>
           </div>
         </div>
-        
 
       </div>
 
       <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
         <button class="btn-main" style="background: rgba(255,255,255,0.15); color: #fff;" onclick="revealAllTitles()">Reveal All Titles 🪄</button>
-        <button class="btn-main" onclick="goToScreen(6)">Leave a Review ✍️</button>
+        <button class="btn-main" onclick="goToScreen('quiz')">Take the Quiz 🧠</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== SCREEN 5.5: BACKBENCH SURVIVAL QUIZ ==================== -->
+  <section class="screen" id="screen-quiz">
+    <div class="glass-card" style="max-width: 520px;">
+      <h2 class="title-gold">🧠 Backbench Quiz</h2>
+      <p class="desc-text" style="margin-bottom: 14px;">
+        Only true 10th class legends can score 4/4! Test your survival skills:
+      </p>
+
+      <div id="quizContainer">
+        <div class="quiz-question-box">
+          <span class="quiz-step" id="quizStep">Question 1 of 4</span>
+          <h3 id="quizQuestion" class="quiz-prompt">Loading question...</h3>
+          <div class="quiz-options" id="quizOptions"></div>
+        </div>
+      </div>
+
+      <div id="quizResultBox" style="display: none; text-align: center;">
+        <div style="font-size: 3rem; margin-bottom: 8px;">🎓</div>
+        <h3 id="quizScoreTitle" class="title-gold" style="font-size: 1.5rem;">Score: 4 / 4</h3>
+        <p id="quizScoreDesc" class="desc-text" style="margin-bottom: 20px; font-weight: 500;"></p>
+        <button class="btn-main" onclick="goToScreen(6)">Leave Your Review 💌</button>
+      </div>
+
+      <div id="quizNavRow" style="margin-top: 16px; display: flex; gap: 10px; justify-content: center;">
+        <button class="btn-main" style="background: rgba(255,255,255,0.15); color: #fff;" onclick="goToScreen(5)">Back to Titles 🏆</button>
       </div>
     </div>
   </section>
@@ -834,10 +921,14 @@
     }
 
     // --- 4. NAVIGATION & PASSWORD VERIFICATION ---
-    function goToScreen(screenNumber) {
+    function goToScreen(screenIdentifier) {
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-      const target = document.getElementById(`screen-${screenNumber}`);
-      if (target) target.classList.add('active');
+      const targetId = typeof screenIdentifier === 'number' ? `screen-${screenIdentifier}` : `screen-${screenIdentifier}`;
+      const target = document.getElementById(targetId);
+      if (target) {
+        target.classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     }
 
     function verifyPassword() {
@@ -920,7 +1011,113 @@
       document.querySelectorAll('.title-card').forEach(card => card.classList.add('revealed'));
     }
 
-    // --- 7. FULLSCREEN HD MODAL ---
+    // --- 7. SCREEN 5.5: BACKBENCH QUIZ LOGIC ---
+    const quizQuestions = [
+      {
+        q: "What is the universal response when teacher asks: 'Where is your homework?'",
+        options: [
+          "Sir, I forgot my notebook at home on the table",
+          "Dog tore my notebook",
+          "Sir, fever yesterday night",
+          "Stare blankly at bench partner and pray"
+        ],
+        answer: 0
+      },
+      {
+        q: "When does lunch break actually begin?",
+        options: [
+          "At the official 12:30 PM bell",
+          "As soon as the 4th period teacher faces the blackboard",
+          "During the 11:00 AM short break itself",
+          "Whenever the box smell is too tempting"
+        ],
+        answer: 1
+      },
+      {
+        q: "What happens when someone brings a new Reynolds pen to class?",
+        options: [
+          "They take it back home safely",
+          "Cap vanishes in 10 mins, pen vanishes by lunch bell",
+          "Teacher borrows it and never returns",
+          "It gets converted into a pen-fight missile"
+        ],
+        answer: 1
+      },
+      {
+        q: "What is your exam hall strategy for Section-B 1-mark bits?",
+        options: [
+          "Strict independent study",
+          "Eye contact, finger codes, and whispering 🤫",
+          "Random toss of eraser",
+          "Look at the ceiling and wait for divine inspiration"
+        ],
+        answer: 1
+      }
+    ];
+
+    let currentQIdx = 0;
+    let quizScore = 0;
+
+    function renderQuestion() {
+      const q = quizQuestions[currentQIdx];
+      document.getElementById('quizStep').innerText = `Question ${currentQIdx + 1} of ${quizQuestions.length}`;
+      document.getElementById('quizQuestion').innerText = q.q;
+
+      const optsContainer = document.getElementById('quizOptions');
+      optsContainer.innerHTML = '';
+
+      q.options.forEach((optText, optIdx) => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-opt-btn';
+        btn.innerText = optText;
+        btn.onclick = () => selectQuizAnswer(btn, optIdx, q.answer);
+        optsContainer.appendChild(btn);
+      });
+    }
+
+    function selectQuizAnswer(btn, chosenIdx, correctIdx) {
+      const allBtns = document.querySelectorAll('.quiz-opt-btn');
+      allBtns.forEach(b => b.disabled = true);
+
+      if (chosenIdx === correctIdx) {
+        btn.classList.add('correct');
+        quizScore++;
+      } else {
+        btn.classList.add('wrong');
+        allBtns[correctIdx].classList.add('correct');
+      }
+
+      setTimeout(() => {
+        currentQIdx++;
+        if (currentQIdx < quizQuestions.length) {
+          renderQuestion();
+        } else {
+          showQuizResults();
+        }
+      }, 1000);
+    }
+
+    function showQuizResults() {
+      document.getElementById('quizContainer').style.display = 'none';
+      document.getElementById('quizNavRow').style.display = 'none';
+      const resultBox = document.getElementById('quizResultBox');
+      resultBox.style.display = 'block';
+
+      document.getElementById('quizScoreTitle').innerText = `Your Score: ${quizScore} / ${quizQuestions.length}`;
+      const desc = document.getElementById('quizScoreDesc');
+
+      if (quizScore === 4) {
+        desc.innerText = "👑 Certified Last Bench Legend! You survived 10th class with 100% comedy and zero regrets!";
+      } else if (quizScore >= 2) {
+        desc.innerText = "😎 Solid School Survivor! You definitely pulled off some wild stunts in class!";
+      } else {
+        desc.innerText = "😇 Innocent Front Bencher spotted! Time to re-learn classroom hacks from our batch!";
+      }
+    }
+
+    renderQuestion();
+
+    // --- 8. FULLSCREEN HD MODAL ---
     function openHdModal(item) {
       const modal = document.getElementById('hdModal');
       const img = document.getElementById('hdModalImg');
