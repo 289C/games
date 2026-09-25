@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>10th Class Memories 🥺❤️</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: radial-gradient(ellipse at bottom, #161e2e 0%, #08090d 100%);
+      color: #fff;
+      min-height: 100vh;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+
+    /* Background Audio Controller */
+    .audio-bar {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 6px 14px;
+      border-radius: 50px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+
+    .audio-btn {
+      background: #f7d070;
+      border: none;
+      color: #111;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: bold;
+      display: grid;
+      place-items: center;
+    }
+
+    .audio-text {
+      font-size: 0.72rem;
+      color: #eaeaea;
+    }
+
+    /* Screen Management */
+    .screen {
+      display: none;
+      min-height: 100vh;
+      width: 100%;
+      padding: 30px 20px;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      animation: fadeIn 0.6s ease-in-out forwards;
+    }
+
+    .screen.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Common Card Styling */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      padding: 32px 24px;
+      max-width: 480px;
+      width: 100%;
+      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.6);
+    }
+
+    .title-gold {
+      font-family: 'Cinzel', serif;
+      color: #f7d070;
+      font-size: clamp(1.5rem, 5vw, 2.2rem);
+      margin-bottom: 12px;
+      letter-spacing: 1px;
+    }
+
+    .desc-text {
+      font-size: 0.95rem;
+      color: #e2e2e2;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .btn-main {
+      background: linear-gradient(135deg, #f7d070, #cfa030);
+      color: #0b0c10;
+      border: none;
+      padding: 12px 28px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(247, 208, 112, 0.35);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-main:active {
+      transform: scale(0.96);
+    }
+
+    /* Screen 1: Password */
+    .pass-input {
+      width: 100%;
+      padding: 12px 18px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: #fff;
+      font-size: 1rem;
+      text-align: center;
+      margin-bottom: 16px;
+      outline: none;
+    }
+
+    .pass-input::placeholder {
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .err-msg {
+      color: #ff6b6b;
+      font-size: 0.85rem;
+      margin-top: 8px;
+      display: none;
+    }
+
+    /* Screen 4: 2D Photo Gallery */
+    .grid-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+      width: 100%;
+      max-width: 520px;
+      margin-bottom: 24px;
+    }
+
+    .gallery-img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 14px;
+      border: 2px solid rgba(247, 208, 112, 0.6);
+      transition: transform 0.3s;
+    }
+
+    .gallery-img:hover {
+      transform: scale(1.05);
+    }
+
+    /* Screen 5: 3D Scene Viewport */
+    #screen-5 {
+      padding: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #webgl-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    .scene-overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: 30px 16px 20px;
+    }
+
+    .pointer-active {
+      pointer-events: auto;
+    }
+
+    /* Screen 6: Formspree Feedback Form */
+    .review-form {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      text-align: left;
+    }
+
+    .review-form label {
+      font-size: 0.85rem;
+      color: #f7d070;
+      font-weight: 600;
+    }
+
+    .review-input, .review-textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      background: rgba(0, 0, 0, 0.35);
+      color: #fff;
+      font-size: 0.95rem;
+      outline: none;
+    }
+
+    .review-textarea {
+      resize: vertical;
+      min-height: 90px;
+    }
+  </style>
+
+  <!-- Three.js & GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+</head>
+<body>
+
+  <!-- Audio Player (Aa Rojulu Malli Raavu) -->
+  <div class="audio-bar">
+    <button id="musicToggle" class="audio-btn">▶</button>
+    <span class="audio-text">🎵 Aa Rojulu Malli Raavu</span>
+  </div>
+
+  <audio id="bgSong" loop preload="auto">
+    <source src="song.mp3" type="audio/mpeg" />
+  </audio>
+
+  <!-- ==================== SCREEN 1: PASSWORD ==================== -->
+  <section class="screen active" id="screen-1">
+    <div class="glass-card">
+      <h2 class="title-gold">🔒 Secret Vault</h2>
+      <p class="desc-text">Enter the secret batch password to unlock our 10th memories!</p>
+      
+      <form id="passForm" onsubmit="event.preventDefault(); verifyPassword();">
+        <input type="password" id="passCode" class="pass-input" placeholder="Enter Password..." autocomplete="off" />
+        <button type="submit" class="btn-main">Unlock Memories 🔑</button>
+      </form>
+      <p id="passErr" class="err-msg">Incorrect password! Try again 💔</p>
+    </div>
+  </section>
+
+  <!-- ==================== SCREEN 2: EMOTIONAL MESSAGE ==================== -->
+  <section class="screen" id="screen-2">
+    <div class="glass-card">
+      <h2 class="title-gold">Hi guys 🥹🫂</h2>
+      <h3 style="color: #ffb8b8; margin-bottom: 12px;">I am missing you allot 😔</h3>
+      <p class="desc-text">
+        School days were truly the most precious days of our lives. Morning assemblies, sharing lunch boxes, classroom benches, last-minute exam tension, laughing together, and all those silly fights...
+        <br><br>
+        <strong>ఆ రోజులు మళ్ళీ రావు...</strong> Those golden days remain locked in our hearts forever.
+      </p>
+      <button class="btn-main" onclick="goToScreen(3)">Next ➔</button>
+    </div>
+  </section>
+
+  <!-- ==================== SCREEN 3: 10TH MEMORIES PORTAL ==================== -->
+  <section class="screen" id="screen-3">
+    <div class="glass-card">
+      <h1 class="title-gold">10th Memories ✨</h1>
+      <p class="desc-text">
+        Tap below to step inside our school archive and travel back in time.
+      </p>
+      <button class="btn-main" onclick="goToScreen(4)">View Our Photos 📸</button>
+    </div>
+  </section>
+
+  <!-- ==================== SCREEN 4: MEMORY PHOTOS ==================== -->
+  <section class="screen" id="screen-4">
+    <div class="glass-card" style="max-width: 600px;">
+      <h2 class="title-gold">Our Precious Clicks 📷</h2>
+      <p class="desc-text">Unforgettable memories with unforgettable people ❤️</p>
+      
+      <div class="grid-gallery">
+        <img src="mem1.jpg" onerror="this.src='https://placehold.co/400x500/222/f7d070?text=Photo+1'" class="gallery-img" alt="Memory 1" />
+        <img src="mem2.jpg" onerror="this.src='https://placehold.co/400x500/222/f7d070?text=Photo+2'" class="gallery-img" alt="Memory 2" />
+        <img src="mem3.jpg" onerror="this.src='https://placehold.co/400x500/222/f7d070?text=Photo+3'" class="gallery-img" alt="Memory 3" />
+        <img src="mem4.jpg" onerror="this.src='https://placehold.co/400x500/222/f7d070?text=Photo+4'" class="gallery-img" alt="Memory 4" />
+        <img src="mem5.jpg" onerror="this.src='https://placehold.co/400x500/222/f7d070?text=Photo+5'" class="gallery-img" alt="Memory 5" />
+      </div>
+
+      <button class="btn-main" onclick="goToScreen(5)">Watch 3D Animated Reel 🎬</button>
+    </div>
+  </section>
+
+  <!-- ==================== SCREEN 5: 3D ANIMATED REEL ==================== -->
+  <section class="screen" id="screen-5">
+    <canvas id="webgl-canvas"></canvas>
+
+    <div class="scene-overlay">
+      <div style="text-shadow: 0 4px 14px rgba(0,0,0,0.8);">
+        <h2 class="title-gold" style="font-size: 1.5rem; margin-bottom: 2px;">3D Nostalgia Reel 🎥</h2>
+        <p style="font-size: 0.85rem; color: #ffebaa;">Tap anywhere to switch the photo in 3D</p>
+      </div>
+
+      <div class="pointer-active" style="display:flex; flex-direction:column; align-items:center; gap: 8px;">
+        <span id="carouselCounter" style="color: #f7d070; font-weight: bold; font-size: 1.1rem;">1 / 5</span>
+        <button class="btn-main" onclick="goToScreen(6)">Leave a Review ✍️</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== SCREEN 6: FORMSPREE REVIEW ==================== -->
+  <section class="screen" id="screen-6">
+    <div class="glass-card">
+      <h2 class="title-gold">Batch Review 💌</h2>
+      <p class="desc-text">How did you feel seeing these memories? Share your message below!</p>
+
+      <form action="https://formspree.io/f/mqpalnqw" method="POST" class="review-form">
+        <div>
+          <label>Your Name</label>
+          <input type="text" name="name" class="review-input" placeholder="e.g. Satish / Benchmate" required />
+        </div>
+        <div>
+          <label>Your Message / Thoughts</label>
+          <textarea name="message" class="review-textarea" placeholder="Say something about our 10th class..." required></textarea>
+        </div>
+        <button type="submit" class="btn-main" style="margin-top: 6px;">Send Review 🚀</button>
+      </form>
+    </div>
+  </section>
+
+  <script>
+    // --- 1. BACKGROUND AUDIO LOGIC ---
+    const bgSong = document.getElementById('bgSong');
+    const musicToggle = document.getElementById('musicToggle');
+    let userPaused = false;
+
+    function playSong() {
+      if (bgSong.paused && !userPaused) {
+        bgSong.play().then(() => {
+          musicToggle.innerText = '⏸';
+        }).catch(() => {});
+      }
+    }
+
+    musicToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (bgSong.paused) {
+        bgSong.play();
+        musicToggle.innerText = '⏸';
+        userPaused = false;
+      } else {
+        bgSong.pause();
+        musicToggle.innerText = '▶';
+        userPaused = true;
+      }
+    });
+
+    // --- 2. MULTI-SCREEN NAVIGATION & PASSWORD ---
+    function goToScreen(screenNumber) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      const next = document.getElementById(`screen-${screenNumber}`);
+      if (next) next.classList.add('active');
+
+      playSong(); // Autoplay music upon interaction
+
+      if (screenNumber === 5) {
+        init3DScene();
+      }
+    }
+
+    function verifyPassword() {
+      const pass = document.getElementById('passCode').value.trim();
+      const err = document.getElementById('passErr');
+
+      if (pass === '@swamy') {
+        err.style.display = 'none';
+        goToScreen(2);
+      } else {
+        err.style.display = 'block';
+      }
+    }
+
+    // --- 3. THREE.JS 3D ANIMATED REEL (SCREEN 5) ---
+    const photos = ['mem1.jpg', 'mem2.jpg', 'mem3.jpg', 'mem4.jpg', 'mem5.jpg'];
+    let scene3dInitialized = false;
+    let carouselGroup, cards = [], currentIndex = 0;
+
+    function init3DScene() {
+      if (scene3dInitialized) return;
+      scene3dInitialized = true;
+
+      const canvas = document.getElementById('webgl-canvas');
+      const scene = new THREE.Scene();
+      scene.fog = new THREE.FogExp2(0x08090d, 0.04);
+
+      const camera = new THREE.PerspectiveCamera(52, window.innerWidth / window.innerHeight, 0.1, 100);
+      camera.position.set(0, 0, 6.2);
+
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+      // Lighting
+      const ambientLight = new THREE.AmbientLight(0xffffff, 1.4);
+      scene.add(ambientLight);
+
+      const pointLight = new THREE.PointLight(0xffdf88, 2, 20);
+      pointLight.position.set(0, 2, 4);
+      scene.add(pointLight);
+
+      // Carousel group
+      carouselGroup = new THREE.Group();
+      scene.add(carouselGroup);
+
+      const radius = 4.2;
+      const cardGeometry = new THREE.PlaneGeometry(2.3, 3.1);
+      const textureLoader = new THREE.TextureLoader();
+
+      photos.forEach((url, i) => {
+        const angle = (i / photos.length) * Math.PI * 2;
+        const texture = textureLoader.load(url);
+
+        const material = new THREE.MeshStandardMaterial({
+          map: texture,
+          side: THREE.DoubleSide,
+          roughness: 0.35,
+          metalness: 0.1
+        });
+
+        const mesh = new THREE.Mesh(cardGeometry, material);
+        mesh.position.x = Math.sin(angle) * radius;
+        mesh.position.z = Math.cos(angle) * radius;
+        mesh.rotation.y = angle;
+
+        carouselGroup.add(mesh);
+        cards.push(mesh);
+      });
+
+      carouselGroup.position.z = -radius;
+
+      // Particles
+      const pCount = 150;
+      const pGeo = new THREE.BufferGeometry();
+      const pPos = new Float32Array(pCount * 3);
+      for (let i = 0; i < pCount * 3; i += 3) {
+        pPos[i] = (Math.random() - 0.5) * 15;
+        pPos[i + 1] = (Math.random() - 0.5) * 10;
+        pPos[i + 2] = (Math.random() - 0.5) * 15;
+      }
+      pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+      const pMat = new THREE.PointsMaterial({ color: 0xffe899, size: 0.05, transparent: true, opacity: 0.75 });
+      const particles = new THREE.Points(pGeo, pMat);
+      scene.add(particles);
+
+      // Tap anywhere in Screen 5 to rotate next
+      function rotateNext() {
+        currentIndex = (currentIndex + 1) % photos.length;
+        document.getElementById('carouselCounter').innerText = `${currentIndex + 1} / ${photos.length}`;
+
+        const targetY = -currentIndex * ((Math.PI * 2) / photos.length);
+        gsap.to(carouselGroup.rotation, {
+          y: targetY,
+          duration: 1.1,
+          ease: 'power3.out'
+        });
+      }
+
+      document.getElementById('screen-5').addEventListener('pointerdown', (e) => {
+        if (e.target.closest('.pointer-active') || e.target.closest('.audio-bar')) return;
+        rotateNext();
+      });
+
+      window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+
+      const clock = new THREE.Clock();
+      function renderLoop() {
+        requestAnimationFrame(renderLoop);
+        const t = clock.getElapsedTime();
+
+        cards.forEach((card, idx) => {
+          card.position.y = Math.sin(t * 1.5 + idx) * 0.08;
+        });
+
+        particles.rotation.y = t * 0.02;
+        renderer.render(scene, camera);
+      }
+      renderLoop();
+    }
+  </script>
+</body>
+</html>
