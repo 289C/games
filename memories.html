@@ -171,7 +171,7 @@
       display: none;
     }
 
-    /* Screen 4: Crystal Clear 2-Col Gallery Grid */
+    /* Screen 4: 2-Column Gallery Grid */
     .reveal-grid-2col {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -206,7 +206,7 @@
       box-shadow: 0 6px 18px rgba(247, 208, 112, 0.25);
     }
 
-    /* ULTRA CLEAR IMAGE RENDERING */
+    /* Clear Image Rendering */
     .photo-slot img, .photo-slot video {
       width: 100%;
       height: 100%;
@@ -215,8 +215,6 @@
       display: none;
       image-rendering: -webkit-optimize-contrast;
       image-rendering: crisp-edges;
-      transform: translateZ(0);
-      backface-visibility: hidden;
     }
 
     .photo-slot.revealed img, .photo-slot.revealed video {
@@ -271,7 +269,7 @@
       margin-bottom: 14px;
     }
 
-    /* FULLSCREEN ULTRA HD MODAL */
+    /* Fullscreen HD Modal */
     .hd-modal {
       position: fixed;
       inset: 0;
@@ -332,7 +330,7 @@
       cursor: pointer;
     }
 
-    /* Screen 5: Formspree Review Form */
+    /* Screen 5: Review Form */
     .review-form {
       display: flex;
       flex-direction: column;
@@ -375,7 +373,7 @@
     <source src="assets/song.mp3" type="audio/mpeg" />
   </audio>
 
-  <!-- Fullscreen Modal for Crystal-Clear HD Photos & Video -->
+  <!-- Fullscreen Modal for HD Photos & Video -->
   <div class="hd-modal" id="hdModal">
     <img id="hdModalImg" src="" alt="Full Resolution Memory" style="display:none;" />
     <video id="hdModalVideo" src="" controls playsinline style="display:none;"></video>
@@ -438,6 +436,7 @@
 
       <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
         <button class="btn-main" style="background: rgba(255,255,255,0.15); color: #fff;" onclick="revealAllPhotos()">Reveal All 🪄</button>
+        <!-- Clicking here takes them directly to review -->
         <button class="btn-main" onclick="goToScreen(5)">Leave a Review ✍️</button>
       </div>
     </div>
@@ -464,7 +463,7 @@
   </section>
 
   <script>
-    // --- 1. MEDIA LIST: 24 PHOTOS + SLOT #18 IS THE VIDEO ---
+    // --- 1. MEDIA LIST: 24 PHOTOS + SLOT #18 IS VIDEO ---
     const memories = [];
     for (let i = 1; i <= 25; i++) {
       if (i === 18) {
@@ -551,7 +550,7 @@
       }
     }
 
-    // --- 5. SCREEN 4: TAP TO REVEAL & OPEN ULTRA CLEAR ---
+    // --- 5. SCREEN 4: TAP TO REVEAL & OPEN FULLSCREEN ---
     const revealGrid = document.getElementById('revealGrid');
     let revealedCount = 0;
 
