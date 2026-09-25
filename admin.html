@@ -3,132 +3,260 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Video Upload</title>
+  <title>Sweet Login • Admin Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: #0f1115;
-      color: #fff;
+      min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
-      margin: 0;
-      padding: 15px;
+      /* Warm sunset candy gradient matching video */
+      background: radial-gradient(circle at 50% 20%, #ff8a65 0%, #ff5252 40%, #e91e63 70%, #880e4f 100%);
+      font-family: 'Poppins', sans-serif;
+      padding: 20px;
+      overflow-x: hidden;
     }
-    .box {
-      background: #1a1d24;
-      padding: 25px;
-      border-radius: 12px;
+
+    /* Ambient background glowing orbs */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(60px);
+      z-index: 0;
+      pointer-events: none;
+    }
+    .orb-1 { width: 320px; height: 320px; background: #ffca28; top: 10%; left: 15%; opacity: 0.5; }
+    .orb-2 { width: 280px; height: 280px; background: #ff4081; bottom: 10%; right: 15%; opacity: 0.4; }
+
+    /* Sweet Login Card */
+    .sweet-card {
+      position: relative;
+      z-index: 1;
       width: 100%;
-      max-width: 420px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-      border: 1px solid #2a2e39;
+      max-width: 380px;
+      background: rgba(255, 255, 255, 0.18);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border: 2px solid rgba(255, 255, 255, 0.35);
+      border-radius: 28px;
+      padding: 45px 30px 35px 30px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+      text-align: center;
+      animation: floatIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
-    h2 { margin: 0 0 15px 0; font-size: 20px; }
-    input, button {
+
+    @keyframes floatIn {
+      from { transform: translateY(40px) scale(0.9); opacity: 0; }
+      to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+
+    /* Floating Strawberry icon at top center */
+    .card-topper {
+      position: absolute;
+      top: -24px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 48px;
+      height: 48px;
+      background: #ffffff;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 24px;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    h2.sweet-title {
+      font-family: 'Fredoka One', cursive;
+      color: #ffffff;
+      font-size: 26px;
+      letter-spacing: 0.5px;
+      margin-bottom: 22px;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Soft pill inputs */
+    .input-wrapper {
+      position: relative;
+      margin-bottom: 16px;
+    }
+
+    .sweet-input {
       width: 100%;
-      padding: 12px;
-      margin: 8px 0;
-      border-radius: 6px;
-      font-size: 14px;
-    }
-    input[type="text"], input[type="password"] {
-      background: #262a35;
-      border: 1px solid #3b4252;
-      color: #fff;
-      outline: none;
-    }
-    input[type="file"] {
-      background: #262a35;
-      border: 1px dashed #4f5869;
-      color: #aaa;
-      padding: 10px;
-      cursor: pointer;
-    }
-    button {
-      background: #ff4757;
-      color: white;
+      padding: 14px 20px;
+      padding-right: 48px;
+      background: rgba(255, 255, 255, 0.85);
       border: none;
-      font-weight: bold;
-      cursor: pointer;
+      border-radius: 50px;
+      font-size: 14px;
+      font-family: inherit;
+      color: #333;
+      outline: none;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+      transition: all 0.25s ease;
     }
-    button:disabled { background: #555; cursor: not-allowed; }
+
+    .sweet-input:focus {
+      background: #ffffff;
+      transform: scale(1.02);
+      box-shadow: 0 6px 20px rgba(255, 255, 255, 0.4);
+    }
+
+    .sweet-input::placeholder {
+      color: #999;
+    }
+
+    .eye-toggle {
+      position: absolute;
+      right: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      font-size: 18px;
+      user-select: none;
+      opacity: 0.6;
+      transition: opacity 0.2s;
+    }
+    .eye-toggle:hover { opacity: 1; }
+
+    /* Yellow/Gold Gradient Button ("LET'S GO!") */
+    .sweet-btn {
+      width: 100%;
+      padding: 14px;
+      margin-top: 8px;
+      background: linear-gradient(135deg, #ffe082 0%, #ffb300 100%);
+      color: #5d4037;
+      font-family: 'Fredoka One', cursive;
+      font-size: 16px;
+      letter-spacing: 1px;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(255, 179, 0, 0.4);
+      transition: all 0.2s ease;
+    }
+
+    .sweet-btn:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 10px 25px rgba(255, 179, 0, 0.55);
+    }
+
+    .sweet-btn:active {
+      transform: translateY(1px);
+    }
+
+    .err-text {
+      color: #fff;
+      background: rgba(220, 20, 60, 0.5);
+      border-radius: 20px;
+      font-size: 12px;
+      margin-top: 10px;
+      padding: 4px 10px;
+      display: inline-block;
+    }
+
+    /* DASHBOARD SECTION */
     .hidden { display: none !important; }
-    .item {
+
+    .dash-box {
+      text-align: left;
+    }
+
+    .video-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid #2a2e39;
-      padding: 10px 0;
-      font-size: 14px;
-    }
-    .item span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 250px; }
-    .del-btn {
-      background: #3b4252;
-      color: #ff6b6b;
-      border: none;
-      padding: 6px 12px;
-      border-radius: 4px;
-      cursor: pointer;
-      width: auto;
-      font-size: 12px;
-      margin: 0;
-    }
-    .progress-bar {
-      width: 100%;
-      height: 8px;
-      background: #262a35;
-      border-radius: 4px;
-      overflow: hidden;
+      background: rgba(255, 255, 255, 0.15);
+      padding: 10px 14px;
+      border-radius: 12px;
       margin-top: 8px;
+      font-size: 13px;
+      color: white;
     }
-    .progress-fill {
-      height: 100%;
-      width: 0%;
-      background: #2ed573;
-      transition: width 0.2s;
+
+    .video-item span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 220px;
+    }
+
+    .del-btn {
+      background: #ff4757;
+      color: #fff;
+      border: none;
+      padding: 5px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: bold;
+    }
+
+    .logout-link {
+      display: block;
+      margin-top: 20px;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 13px;
+      text-decoration: underline;
+      cursor: pointer;
+      text-align: center;
     }
   </style>
 
-  <!-- Firebase SDKs -->
+  <!-- Firebase v8 SDKs -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
 </head>
 <body>
 
-  <!-- LOGIN -->
-  <div id="login-box" class="box">
-    <h2>Owner Verification</h2>
-    <input type="password" id="admin-pass" placeholder="Enter Owner Password">
-    <button onclick="login()">Enter Dashboard</button>
-    <p id="err" style="color: #ff6b6b; font-size: 13px; margin: 6px 0 0 0;"></p>
-  </div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
 
-  <!-- DASHBOARD -->
-  <div id="dash-box" class="box hidden">
-    <h2>Upload Video File</h2>
-    <input type="text" id="v-title" placeholder="Video Title">
-    <input type="file" id="v-file" accept="video/mp4,video/webm,video/ogg,video/*">
+  <!-- 1. SWEET LOGIN CARD -->
+  <div id="login-box" class="sweet-card">
+    <div class="card-topper">🍓</div>
+    <h2 class="sweet-title">Sweet Login</h2>
     
-    <div id="progress-container" class="hidden">
-      <div class="progress-bar">
-        <div id="progress-fill" class="progress-fill"></div>
-      </div>
-      <p id="progress-status" style="font-size: 12px; color: #aaa; margin: 4px 0;">Uploading: 0%</p>
+    <div class="input-wrapper">
+      <input type="password" id="admin-pass" class="sweet-input" placeholder="Owner Password">
+      <span class="eye-toggle" id="eye-icon" onclick="togglePassword()">👁️</span>
     </div>
 
-    <button id="upload-btn" onclick="uploadVideoFile()">Upload to Website</button>
+    <button class="sweet-btn" onclick="login()">LET'S GO!</button>
+    <div id="err" class="err-text hidden"></div>
+  </div>
 
-    <h3 style="margin-top: 25px; font-size: 16px; border-bottom: 1px solid #2a2e39; padding-bottom: 6px;">Manage Videos</h3>
+  <!-- 2. DASHBOARD VIEW (AFTER SUCCESSFUL LOGIN) -->
+  <div id="dash-box" class="sweet-card dash-box hidden">
+    <div class="card-topper">🎮</div>
+    <h2 class="sweet-title" style="text-align:center;">Add Video</h2>
+
+    <div class="input-wrapper">
+      <input type="text" id="v-title" class="sweet-input" style="padding-right:20px;" placeholder="Video Title">
+    </div>
+
+    <div class="input-wrapper">
+      <input type="url" id="v-url" class="sweet-input" style="padding-right:20px;" placeholder="YouTube Link (e.g. youtu.be/...)">
+    </div>
+
+    <button class="sweet-btn" onclick="addVideo()">PUBLISH TO SITE</button>
+
+    <h3 style="color: #fff; font-size: 15px; margin: 24px 0 8px 0; font-family: 'Fredoka One', cursive;">Published Videos</h3>
     <div id="video-list"></div>
 
-    <button onclick="logout()" style="background: #262a35; color: #bbb; border: 1px solid #3b4252; margin-top: 20px;">Log Out</button>
+    <span class="logout-link" onclick="logout()">Log out of Portal</span>
   </div>
 
   <script>
+    // Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyBzLchy5M2fLne4c7Ghw1KNN8wVrlZdd8M",
       authDomain: "friendsgame-872f5.firebaseapp.com",
@@ -142,16 +270,31 @@
 
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-    const storage = firebase.storage();
 
+    // Password configured to your request
     const ADMIN_PASSWORD = "@breakup";
 
+    function togglePassword() {
+      const field = document.getElementById('admin-pass');
+      const eye = document.getElementById('eye-icon');
+      if (field.type === 'password') {
+        field.type = 'text';
+        eye.textContent = '🙈';
+      } else {
+        field.type = 'password';
+        eye.textContent = '👁️';
+      }
+    }
+
     function login() {
-      if (document.getElementById('admin-pass').value === ADMIN_PASSWORD) {
+      const val = document.getElementById('admin-pass').value;
+      const err = document.getElementById('err');
+      if (val === ADMIN_PASSWORD) {
         sessionStorage.setItem('isOwner', 'true');
         showDash();
       } else {
-        document.getElementById('err').innerText = 'Incorrect password';
+        err.textContent = "Oops! Wrong password";
+        err.classList.remove('hidden');
       }
     }
 
@@ -166,83 +309,59 @@
       location.reload();
     }
 
-    function uploadVideoFile() {
-      const title = document.getElementById('v-title').value.trim();
-      const fileInput = document.getElementById('v-file');
-      const file = fileInput.files[0];
+    function convertYouTubeUrl(url) {
+      if (url.includes('watch?v=')) {
+        const id = url.split('v=')[1]?.split('&')[0];
+        return `https://www.youtube.com/embed/${id}`;
+      } else if (url.includes('youtu.be/')) {
+        const id = url.split('youtu.be/')[1]?.split('?')[0];
+        return `https://www.youtube.com/embed/${id}`;
+      }
+      return url;
+    }
 
-      if (!title || !file) {
-        alert("Please enter a title and select a video file.");
+    function addVideo() {
+      const title = document.getElementById('v-title').value.trim();
+      const rawUrl = document.getElementById('v-url').value.trim();
+
+      if (!title || !rawUrl) {
+        alert('Please fill out both fields');
         return;
       }
 
-      const uploadBtn = document.getElementById('upload-btn');
-      const progressContainer = document.getElementById('progress-container');
-      const progressFill = document.getElementById('progress-fill');
-      const progressStatus = document.getElementById('progress-status');
-
-      uploadBtn.disabled = true;
-      progressContainer.classList.remove('hidden');
-
-      const storageRef = storage.ref('videos/' + Date.now() + '_' + file.name);
-      const uploadTask = storageRef.put(file);
-
-      uploadTask.on('state_changed', 
-        (snapshot) => {
-          const percent = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-          progressFill.style.width = percent + '%';
-          progressStatus.innerText = `Uploading: ${percent}%`;
-        }, 
-        (error) => {
-          alert("Upload failed: " + error.message);
-          uploadBtn.disabled = false;
-        }, 
-        () => {
-          uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-            db.ref('videos').push({
-              title: title,
-              url: downloadURL,
-              storagePath: storageRef.fullPath,
-              timestamp: Date.now()
-            }).then(() => {
-              document.getElementById('v-title').value = '';
-              fileInput.value = '';
-              progressContainer.classList.add('hidden');
-              progressFill.style.width = '0%';
-              uploadBtn.disabled = false;
-            });
-          });
-        }
-      );
+      db.ref('videos').push({
+        title: title,
+        url: convertYouTubeUrl(rawUrl),
+        timestamp: Date.now()
+      }).then(() => {
+        document.getElementById('v-title').value = '';
+        document.getElementById('v-url').value = '';
+      });
     }
 
     function loadVideos() {
-      db.ref('videos').on('value', snapshot => {
+      db.ref('videos').on('value', snap => {
         const list = document.getElementById('video-list');
         list.innerHTML = '';
-        if (!snapshot.exists()) {
-          list.innerHTML = '<p style="color:#777; font-size:13px;">No videos uploaded yet.</p>';
+        if (!snap.exists()) {
+          list.innerHTML = '<p style="color:rgba(255,255,255,0.6);font-size:12px;">No videos added yet.</p>';
           return;
         }
 
-        snapshot.forEach(child => {
-          const item = child.val();
-          const key = child.key;
+        snap.forEach(child => {
+          const v = child.val();
           const row = document.createElement('div');
-          row.className = 'item';
+          row.className = 'video-item';
           row.innerHTML = `
-            <span>${item.title}</span>
-            <button class="del-btn" onclick="deleteVideo('${key}', '${item.storagePath || ''}')">Delete</button>
+            <span>${v.title}</span>
+            <button class="del-btn" onclick="deleteVideo('${child.key}')">Delete</button>
           `;
           list.appendChild(row);
         });
       });
     }
 
-    function deleteVideo(key, path) {
-      if (path) {
-        storage.ref(path).delete().catch(() => {});
-      }
+    function deleteVideo(key) {
       db.ref('videos/' + key).remove();
     }
 
