@@ -346,6 +346,7 @@
       display: none;
       flex-direction: column;
       align-items: center;
+      width: 100%;
       animation: popIn 0.35s ease-out forwards;
     }
 
@@ -357,14 +358,24 @@
       display: flex;
     }
 
+    /* Multi-Avatar Row */
+    .title-avatars-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+
     .title-avatar {
-      width: 70px;
-      height: 70px;
+      width: 55px;
+      height: 55px;
       border-radius: 50%;
       overflow: hidden;
       border: 2px solid #f7d070;
-      margin-bottom: 8px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+      flex-shrink: 0;
     }
 
     .title-avatar img {
@@ -559,7 +570,7 @@
     </div>
   </section>
 
-  <!-- ==================== SCREEN 5: TAP TO REVEAL BATCH TITLES ==================== -->
+  <!-- ==================== SCREEN 5: TAP TO REVEAL BATCH TITLES (MULTI-IMAGE ENABLED) ==================== -->
   <section class="screen" id="screen-5">
     <div class="glass-card" style="max-width: 560px;">
       <h2 class="title-gold">🏆 Batch Titles 🎖️</h2>
@@ -569,98 +580,131 @@
 
       <div class="titles-grid">
         
-        <!-- 1. The Topper -->
+        <!-- 1. The Toppers (Multi-avatar: 2 People) -->
         <div class="title-card" onclick="revealTitle(this)">
-          <div class="badge-tag">📚 THE TOPPER</div>
+          <div class="badge-tag">📚 THE TOPPERS</div>
           <div class="title-mystery">
             <span class="lock-icon">❓</span>
             <span class="tap-hint">Tap to Reveal</span>
           </div>
           <div class="title-content">
-            <div class="title-avatar">
-              <img src="assets/mem1.jpg" alt="The Topper" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Topper'" />
+            <div class="title-avatars-row">
+              <div class="title-avatar">
+                <img src="assets/mem1.jpg" alt="Topper 1" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Topper'" />
+              </div>
+              <div class="title-avatar">
+                <img src="assets/mem2.jpg" alt="Topper 2" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Topper'" />
+              </div>
             </div>
-            <h4 class="title-name">Class Topper</h4>
+            <h4 class="title-name">Class Toppers</h4>
             <p class="title-quote">"Bro, I didn't study anything!" *Scores 98%* 🤦‍♂️</p>
           </div>
         </div>
 
-        <!-- 2. The Editor -->
+        <!-- 2. The Editors / Creators (Multi-avatar) -->
         <div class="title-card" onclick="revealTitle(this)">
-          <div class="badge-tag">🎬 THE EDITOR</div>
+          <div class="badge-tag">🎬 THE EDITORS</div>
           <div class="title-mystery">
             <span class="lock-icon">❓</span>
             <span class="tap-hint">Tap to Reveal</span>
           </div>
           <div class="title-content">
-            <div class="title-avatar">
-              <img src="assets/mem2.jpg" alt="The Editor" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Editor'" />
+            <div class="title-avatars-row">
+              <div class="title-avatar">
+                <img src="assets/mem3.jpg" alt="Editor 1" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Editor'" />
+              </div>
+              <div class="title-avatar">
+                <img src="assets/mem4.jpg" alt="Editor 2" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Editor'" />
+              </div>
             </div>
-            <h4 class="title-name">Satish (The Editor)</h4>
-            <p class="title-quote">Reels, edits, and aesthetic nostalgia creator ⚡</p>
+            <h4 class="title-name">Satish & Squad</h4>
+            <p class="title-quote">Reels, edits, and aesthetic nostalgia creators ⚡</p>
           </div>
         </div>
 
-        <!-- 3. The Cheater -->
+        <!-- 3. The Cheaters / Exam Hackers -->
         <div class="title-card" onclick="revealTitle(this)">
-          <div class="badge-tag">🤫 THE CHEATER</div>
+          <div class="badge-tag">🤫 THE CHEATERS</div>
           <div class="title-mystery">
             <span class="lock-icon">❓</span>
             <span class="tap-hint">Tap to Reveal</span>
           </div>
           <div class="title-content">
-            <div class="title-avatar">
-              <img src="assets/mem3.jpg" alt="The Cheater" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Cheater'" />
+            <div class="title-avatars-row">
+              <div class="title-avatar">
+                <img src="assets/mem5.jpg" alt="Cheater 1" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Cheater'" />
+              </div>
+              <div class="title-avatar">
+                <img src="assets/mem6.jpg" alt="Cheater 2" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Cheater'" />
+              </div>
             </div>
-            <h4 class="title-name">Exam Hacker</h4>
-            <p class="title-quote">Micro-chits & sign language master in exams 🤝</p>
+            <h4 class="title-name">Exam Hackers</h4>
+            <p class="title-quote">Micro-chits & sign language masters in public exams 🤝</p>
           </div>
         </div>
 
-        <!-- 4. The Backbencher -->
+        <!-- 4. The Backbench Gang (3 People) -->
         <div class="title-card" onclick="revealTitle(this)">
-          <div class="badge-tag">👑 BACKBENCHER</div>
+          <div class="badge-tag">👑 BACKBENCH GANG</div>
           <div class="title-mystery">
             <span class="lock-icon">❓</span>
             <span class="tap-hint">Tap to Reveal</span>
           </div>
           <div class="title-content">
-            <div class="title-avatar">
-              <img src="assets/mem4.jpg" alt="The Backbencher" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Backbencher'" />
+            <div class="title-avatars-row">
+              <div class="title-avatar">
+                <img src="assets/mem7.jpg" alt="Bench 1" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Bench'" />
+              </div>
+              <div class="title-avatar">
+                <img src="assets/mem8.jpg" alt="Bench 2" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Bench'" />
+              </div>
+              <div class="title-avatar">
+                <img src="assets/mem9.jpg" alt="Bench 3" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Bench'" />
+              </div>
             </div>
-            <h4 class="title-name">Bench President</h4>
+            <h4 class="title-name">Bench Presidents</h4>
             <p class="title-quote">Last bench entertainment & unlimited comedy 😂</p>
           </div>
         </div>
 
-        <!-- 5. The Food Stealer -->
+        <!-- 5. The Food Stealers -->
         <div class="title-card" onclick="revealTitle(this)">
-          <div class="badge-tag">🍱 LUNCH ROBBER</div>
+          <div class="badge-tag">🍱 LUNCH ROBBERS</div>
           <div class="title-mystery">
             <span class="lock-icon">❓</span>
             <span class="tap-hint">Tap to Reveal</span>
           </div>
           <div class="title-content">
-            <div class="title-avatar">
-              <img src="assets/mem5.jpg" alt="Lunch Robber" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Foodie'" />
+            <div class="title-avatars-row">
+              <div class="title-avatar">
+                <img src="assets/mem10.jpg" alt="Foodie 1" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Foodie'" />
+              </div>
+              <div class="title-avatar">
+                <img src="assets/mem11.jpg" alt="Foodie 2" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Foodie'" />
+              </div>
             </div>
-            <h4 class="title-name">Tiffin Finisher</h4>
+            <h4 class="title-name">Tiffin Finishers</h4>
             <p class="title-quote">Box empty before 12:30 PM lunch bell rings 🤤</p>
           </div>
         </div>
 
-        <!-- 6. The Silent Killer -->
+        <!-- 6. The Silent Killers -->
         <div class="title-card" onclick="revealTitle(this)">
-          <div class="badge-tag">😈 SILENT KILLER</div>
+          <div class="badge-tag">😈 SILENT KILLERS</div>
           <div class="title-mystery">
             <span class="lock-icon">❓</span>
             <span class="tap-hint">Tap to Reveal</span>
           </div>
           <div class="title-content">
-            <div class="title-avatar">
-              <img src="assets/mem6.jpg" alt="Silent Killer" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Silent'" />
+            <div class="title-avatars-row">
+              <div class="title-avatar">
+                <img src="assets/mem12.jpg" alt="Silent 1" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Silent'" />
+              </div>
+              <div class="title-avatar">
+                <img src="assets/mem13.jpg" alt="Silent 2" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Silent'" />
+              </div>
             </div>
-            <h4 class="title-name">Undercover Legend</h4>
+            <h4 class="title-name">Undercover Legends</h4>
             <p class="title-quote">Looks innocent in class, wildest outside 🤫</p>
           </div>
         </div>
