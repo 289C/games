@@ -26,7 +26,7 @@
       overflow-y: auto;
     }
 
-    /* Background Audio Floating Pill */
+    /* Floating Audio Pill */
     .audio-bar {
       position: fixed;
       top: 15px;
@@ -268,7 +268,7 @@
       margin-bottom: 14px;
     }
 
-    /* Screen 5: Batch Titles (Superlatives) Styling */
+    /* Screen 5: Titles Grid */
     .titles-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -356,7 +356,6 @@
       display: flex;
     }
 
-    /* Multi-Avatar Row */
     .title-avatars-row {
       display: flex;
       justify-content: center;
@@ -522,18 +521,20 @@
       cursor: pointer;
     }
 
-    /* Screen 6: Formspree Review Form */
+    /* Screen 6: Email Message Reply Form */
     .review-form {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 14px;
       text-align: left;
     }
 
     .review-form label {
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       color: #f7d070;
       font-weight: 600;
+      margin-bottom: 4px;
+      display: block;
     }
 
     .review-input, .review-textarea {
@@ -541,15 +542,20 @@
       padding: 12px 14px;
       border-radius: 10px;
       border: 1px solid rgba(255, 255, 255, 0.25);
-      background: rgba(0, 0, 0, 0.35);
+      background: rgba(0, 0, 0, 0.4);
       color: #fff;
       font-size: 0.95rem;
       outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .review-input:focus, .review-textarea:focus {
+      border-color: #f7d070;
     }
 
     .review-textarea {
       resize: vertical;
-      min-height: 90px;
+      min-height: 95px;
     }
   </style>
 </head>
@@ -565,7 +571,7 @@
     <source src="assets/song.mp3" type="audio/mpeg" />
   </audio>
 
-  <!-- Fullscreen Modal for Crystal-Clear HD Photos & Video -->
+  <!-- Fullscreen Modal for HD Photos & Videos -->
   <div class="hd-modal" id="hdModal">
     <img id="hdModalImg" src="" alt="Full Resolution Memory" style="display:none;" />
     <video id="hdModalVideo" src="" controls playsinline style="display:none;"></video>
@@ -612,17 +618,17 @@
     <div class="glass-card">
       <h1 class="title-gold">10th Memories ✨</h1>
       <p class="desc-text">
-        Tap below to reveal our precious school memories (photos & video) one by one!
+        Tap below to reveal our 32 precious school memories (30 photos & 2 videos) one by one!
       </p>
       <button class="btn-main" onclick="goToScreen(4)">Reveal Moments 📸</button>
     </div>
   </section>
 
-  <!-- ==================== SCREEN 4: 2 PER ROW TAP-TO-REVEAL ==================== -->
+  <!-- ==================== SCREEN 4: 2 PER ROW TAP-TO-REVEAL (30 PHOTOS + 2 VIDEOS) ==================== -->
   <section class="screen" id="screen-4">
     <div class="glass-card">
       <h2 class="title-gold">Tap to Reveal 📷</h2>
-      <div id="revealCounter" class="reveal-status">Revealed: 0 / 25</div>
+      <div id="revealCounter" class="reveal-status">Revealed: 0 / 32</div>
       
       <div class="reveal-grid-2col" id="revealGrid"></div>
 
@@ -633,7 +639,7 @@
     </div>
   </section>
 
-  <!-- ==================== SCREEN 5: BATCH TITLES (CUSTOM NAMES & MULTI-AVATAR PREVIEW) ==================== -->
+  <!-- ==================== SCREEN 5: BATCH TITLES ==================== -->
   <section class="screen" id="screen-5">
     <div class="glass-card" style="max-width: 560px;">
       <h2 class="title-gold">🏆 Batch Titles 🎖️</h2>
@@ -674,7 +680,7 @@
           <div class="title-content">
             <div class="title-avatars-row">
               <div class="title-avatar" onclick="openHdModal({ type: 'image', src: 'assets/Insta.jpg' })">
-                <img src="Insta.jpg" alt="Satish" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Satish'" />
+                <img src="assets/Insta.jpg" alt="Satish" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Satish'" />
               </div>
               <div class="title-avatar" onclick="openHdModal({ type: 'image', src: 'assets/shanker.jpg' })">
                 <img src="assets/shanker.jpg" alt="Shanker" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Shanker'" />
@@ -716,7 +722,7 @@
           <div class="title-content">
             <div class="title-avatars-row">
               <div class="title-avatar" onclick="openHdModal({ type: 'image', src: 'assets/Insta.jpg' })">
-                <img src="Insta.jpg" alt="Satish" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Satish'" />
+                <img src="assets/Insta.jpg" alt="Satish" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Satish'" />
               </div>
               <div class="title-avatar" onclick="openHdModal({ type: 'image', src: 'assets/balaji.jpg' })">
                 <img src="assets/balaji.jpg" alt="Balaji" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Balaji'" />
@@ -788,7 +794,7 @@
                 <img src="assets/ganesh.jpg" alt="Ganesh" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Ganesh'" />
               </div>
               <div class="title-avatar" onclick="openHdModal({ type: 'image', src: 'assets/shankar.jpg' })">
-                <img src="assets/shanker.jpg" alt="Shankar" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Shankar'" />
+                <img src="assets/shankar.jpg" alt="Shankar" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Shankar'" />
               </div>
             </div>
             <h4 class="title-name">Trinesh, Ganesh & Shankar</h4>
@@ -825,7 +831,7 @@
         <div style="font-size: 3rem; margin-bottom: 8px;">🎓</div>
         <h3 id="quizScoreTitle" class="title-gold" style="font-size: 1.5rem;">Score: 4 / 4</h3>
         <p id="quizScoreDesc" class="desc-text" style="margin-bottom: 20px; font-weight: 500;"></p>
-        <button class="btn-main" onclick="goToScreen(6)">Leave Your Review 💌</button>
+        <button class="btn-main" onclick="goToScreen(6)">Leave a Reply / Message 💌</button>
       </div>
 
       <div id="quizNavRow" style="margin-top: 16px; display: flex; gap: 10px; justify-content: center;">
@@ -834,36 +840,43 @@
     </div>
   </section>
 
-  <!-- ==================== SCREEN 6: FORMSPREE REVIEW ==================== -->
+  <!-- ==================== SCREEN 6: EMAIL MESSAGE REPLY FORM ==================== -->
   <section class="screen" id="screen-6">
     <div class="glass-card">
-      <h2 class="title-gold">Batch Review 💌</h2>
-      <p class="desc-text">How did you feel seeing these memories? Share your message below!</p>
+      <h2 class="title-gold">Send a Message 💌</h2>
+      <p class="desc-text">Leave a reply with your memories or thoughts! It will be delivered directly to my email.</p>
 
       <form action="https://formspree.io/f/mqpalnqw" method="POST" class="review-form">
         <div>
           <label>Your Name</label>
-          <input type="text" name="name" class="review-input" placeholder="Your name..." required />
+          <input type="text" name="name" class="review-input" placeholder="Your name / nickname..." required />
         </div>
         <div>
-          <label>Your Message / Thoughts</label>
-          <textarea name="message" class="review-textarea" placeholder="Say something about our 10th class..." required></textarea>
+          <label>Your Email Address (for reply)</label>
+          <input type="email" name="email" class="review-input" placeholder="yourname@gmail.com" required />
         </div>
-        <button type="submit" class="btn-main" style="margin-top: 6px;">Send Review 🚀</button>
+        <div>
+          <label>Your Message</label>
+          <textarea name="message" class="review-textarea" placeholder="Say something about our 10th class memories..." required></textarea>
+        </div>
+        <button type="submit" class="btn-main" style="margin-top: 4px;">Send Message 🚀</button>
       </form>
     </div>
   </section>
 
   <script>
-    // --- 1. MEDIA LIST: 24 PHOTOS + SLOT #18 IS THE VIDEO ---
+    // --- 1. MEDIA LIST: 30 PHOTOS + 2 VIDEOS (SLOT #15 IS video.mp4, SLOT #30 IS video2.mp4) ---
     const memories = [];
-    for (let i = 1; i <= 35; i++) {
-      if (i === 18) {
-        memories.push({ type: 'video', src: 'assets/video.mp4', label: '🎬 Video' });
-      } else if (i === 27) {
-        memories.push({ type: 'video', src: 'assets/video1.mp4', label: '🎬 Video 2' });
-      } else  {
-        memories.push({ type: 'image', src: `assets/mem${i}.jpg`, label: '🎁 Tap' });
+    let photoIndex = 1;
+
+    for (let slot = 1; slot <= 32; slot++) {
+      if (slot === 15) {
+        memories.push({ type: 'video', src: 'assets/video.mp4', label: '🎬 Video 1' });
+      } else if (slot === 30) {
+        memories.push({ type: 'video', src: 'assets/video2.mp4', label: '🎬 Video 2' });
+      } else {
+        memories.push({ type: 'image', src: `assets/mem${photoIndex}.jpg`, label: '🎁 Tap' });
+        photoIndex++;
       }
     }
 
@@ -946,7 +959,7 @@
       }
     }
 
-    // --- 5. SCREEN 4: TAP TO REVEAL PHOTOS ---
+    // --- 5. SCREEN 4: TAP TO REVEAL MEDIA ---
     const revealGrid = document.getElementById('revealGrid');
     let revealedCount = 0;
 
