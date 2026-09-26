@@ -11,14 +11,14 @@
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
     body, html { width: 100%; min-height: 100%; background: #4a0404; color: #fff; overflow-x: hidden; }
 
-    /* Romantic Plaid Background Matching Video */
+    /* Romantic Plaid Background */
     .plaid-bg {
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 24px 14px;
+      padding: 24px 14px 40px;
       background-color: #580808;
       background-image: 
         repeating-linear-gradient(0deg, transparent, transparent 35px, rgba(0,0,0,0.18) 35px, rgba(0,0,0,0.18) 70px),
@@ -31,9 +31,10 @@
       display: flex; justify-content: space-between; z-index: 50;
     }
     .pill-btn {
-      background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.2);
-      color: #fff; padding: 6px 14px; border-radius: 20px; font-size: 0.78rem;
+      background: rgba(0,0,0,0.45); border: 1px solid rgba(255,255,255,0.2);
+      color: #fff; padding: 7px 15px; border-radius: 20px; font-size: 0.8rem;
       cursor: pointer; text-decoration: none; backdrop-filter: blur(6px);
+      display: flex; align-items: center; gap: 5px;
     }
 
     /* Screen Card Scaffolding */
@@ -43,7 +44,7 @@
       border-radius: 28px; padding: 30px 22px;
       box-shadow: 0 20px 45px rgba(0,0,0,0.6);
       text-align: center; position: relative;
-      animation: fadeIn 0.45s ease-out;
+      animation: fadeIn 0.4s ease-out;
     }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -100,7 +101,7 @@
     }
     .gift-jar:hover { transform: scale(1.05); }
 
-    /* SCREEN 4: SONGS PLAYLIST */
+    /* SCREEN 4: ROMANTIC PLAYLIST */
     .track-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; text-align: left; }
     .track-item {
       background: #fff; padding: 12px 14px; border-radius: 14px;
@@ -110,15 +111,15 @@
     .track-info h4 { font-size: 0.85rem; color: #331115; }
     .track-info p { font-size: 0.72rem; color: #775558; }
 
-    /* SCREEN 5: POLAROID PINBOARD */
+    /* SCREEN 5: POLAROID MEMORIES */
     .polaroid-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
     .polaroid-item {
-      background: #fff; padding: 8px 8px 16px 8px; border-radius: 6px;
+      background: #fff; padding: 8px 8px 14px 8px; border-radius: 6px;
       box-shadow: 0 8px 16px rgba(0,0,0,0.12); transform: rotate(-2deg); cursor: pointer;
     }
     .polaroid-item:nth-child(even) { transform: rotate(3deg); }
-    .polaroid-item img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 4px; }
-    .polaroid-cap { font-size: 0.7rem; color: #442226; margin-top: 6px; font-weight: 600; }
+    .polaroid-item img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 4px; display: block; }
+    .polaroid-cap { font-size: 0.72rem; color: #442226; margin-top: 6px; font-weight: 600; text-align: center; }
 
     /* SCREEN 6: COUPLE QUIZ */
     .quiz-options { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
@@ -127,7 +128,7 @@
       padding: 12px; font-weight: 600; color: #800a18; cursor: pointer;
     }
 
-    /* SCREEN 7: FINGERPRINT SCANNER */
+    /* SCREEN 7: FINGERPRINT PROMISE */
     .fingerprint-touch {
       width: 120px; height: 120px; border-radius: 50%;
       border: 3px solid #800a18; margin: 24px auto;
@@ -137,7 +138,7 @@
     }
     .fingerprint-touch.holding { background: rgba(128,10,24,0.15); transform: scale(0.96); }
 
-    /* SCREEN 8: 3D FLOATING RING BOX & ROSES */
+    /* SCREEN 8: THREE.JS 3D RING BOX */
     #threejs-screen { position: fixed; inset: 0; width: 100%; height: 100%; display: none; z-index: 60; background: #280208; }
     #canvas-box { position: absolute; inset: 0; }
     .three-hud {
@@ -145,16 +146,12 @@
       z-index: 70; pointer-events: none;
     }
     .three-hud h2 { font-family: 'Playfair Display', serif; color: #ffd700; font-size: 1.7rem; }
-    .three-footer {
-      position: absolute; bottom: 35px; width: 100%; text-align: center; z-index: 70;
-    }
+    .three-footer { position: absolute; bottom: 35px; width: 100%; text-align: center; z-index: 70; }
 
-    /* SCREEN 9: HAPPILY EVER AFTER + WHATSAPP REPLY */
+    /* SCREEN 9: FINAL SCREEN + WHATSAPP REPLY */
     .final-heart-box { font-size: 4rem; margin-bottom: 8px; animation: pulseHeart 1.6s infinite; }
     @keyframes pulseHeart { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.12); } }
-    .reply-area {
-      background: #fff; padding: 14px; border-radius: 16px; margin-top: 18px; text-align: left;
-    }
+    .reply-area { background: #fff; padding: 14px; border-radius: 16px; margin-top: 18px; text-align: left; }
     .reply-area label { font-size: 0.78rem; font-weight: 700; color: #800a18; display: block; margin-bottom: 6px; }
     .reply-area input {
       width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid #ddd;
@@ -165,34 +162,50 @@
       border-radius: 20px; font-weight: bold; font-size: 0.88rem; cursor: pointer;
     }
 
-    /* ADMIN MODAL */
+    /* FULL COMPREHENSIVE ADMIN MODAL */
     .admin-pop {
       position: fixed; inset: 0; background: rgba(0,0,0,0.85);
       display: none; align-items: center; justify-content: center; z-index: 100; padding: 16px;
+      overflow-y: auto;
     }
-    .admin-form {
-      background: #fff; border-radius: 20px; max-width: 360px; width: 100%;
-      padding: 22px; color: #331115;
+    .admin-card {
+      background: #1e131d; color: #fff; border: 1px solid #e91e63;
+      border-radius: 24px; max-width: 440px; width: 100%;
+      padding: 24px; position: relative; max-height: 88vh; overflow-y: auto;
     }
-    .admin-form input, .admin-form textarea {
-      width: 100%; padding: 8px 10px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #ccc;
+    .admin-card h3 { color: #ffd700; margin-bottom: 4px; font-size: 1.25rem; }
+    .admin-sec {
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+      padding: 14px; border-radius: 14px; margin-top: 14px; text-align: left;
     }
+    .admin-sec h4 { font-size: 0.88rem; color: #ff758c; margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 4px; }
+    .admin-card label { display: block; font-size: 0.76rem; color: #ccc; margin-bottom: 4px; font-weight: 600; }
+    .admin-card input, .admin-card textarea {
+      width: 100%; padding: 9px 11px; margin-bottom: 10px; border-radius: 8px;
+      border: 1px solid #443245; background: #110912; color: #fff; font-size: 0.84rem; outline: none;
+    }
+    .admin-polaroid-item {
+      display: flex; gap: 10px; align-items: center; margin-bottom: 10px;
+      padding: 8px; background: rgba(0,0,0,0.3); border-radius: 10px;
+    }
+    .admin-polaroid-item img { width: 50px; height: 50px; object-fit: cover; border-radius: 6px; flex-shrink: 0; }
+    .close-admin-x { position: absolute; top: 16px; right: 20px; font-size: 1.5rem; background: none; border: none; color: #aaa; cursor: pointer; }
   </style>
 </head>
 <body>
 
-  <!-- ROMANTIC PLAID WRAPPER -->
+  <!-- ROMANTIC PLAID FLOW -->
   <div class="plaid-bg" id="flow-container">
     <div class="top-actions">
       <button class="pill-btn" onclick="stepBack()">← Back</button>
-      <button class="pill-btn" onclick="openAdmin()">🔒 Edit</button>
+      <button class="pill-btn" onclick="openAdmin()">🔒 Edit Page</button>
     </div>
 
     <!-- SCREEN 1: PASSCODE GATE -->
     <div class="app-card" id="screen-passcode">
-      <h2 class="card-title">Only my favourite person gets in ❤️</h2>
+      <h2 class="card-title" id="view-title">Only my favourite person gets in ❤️</h2>
       <div style="font-size: 3.5rem; margin: 10px 0;">💐</div>
-      <p class="card-sub" id="hint-text">hint: think of the date it all began for us (DD / MM)</p>
+      <p class="card-sub" id="view-hint">hint: think of the date it all began for us (DD / MM)</p>
       
       <div class="pin-dots">
         <span class="pin-dot" id="dot-0"></span>
@@ -230,13 +243,13 @@
 
     <!-- SCREEN 3: LOVE LETTER & TWO GIFTS -->
     <div class="app-card" id="screen-letter" style="display:none;">
-      <span class="handwriting">Happy Anniversary, Love!</span>
+      <span class="handwriting" id="view-headletter">Happy Anniversary, Love!</span>
       <div class="letter-paper">
-        <p id="letter-content">
+        <p id="view-letter">
           Another year of us and I still get the same sweet butterflies. Thank you for every laugh, every late-night talk, and every ordinary day you made extraordinary.<br><br>
           I made this little corner of the internet just for you.
         </p>
-        <p style="text-align: right; margin-top: 10px; font-weight: bold; color: #800a18;" id="letter-sign">— Always yours</p>
+        <p style="text-align: right; margin-top: 10px; font-weight: bold; color: #800a18;" id="view-sign">— Always yours</p>
       </div>
       <p class="card-sub">two little gifts for you</p>
       <div class="jars-container">
@@ -253,33 +266,11 @@
       </div>
     </div>
 
-    <!-- SCREEN 4: ROMANTIC PLAYLIST -->
+    <!-- SCREEN 4: ROMANTIC WORKING PLAYLIST -->
     <div class="app-card" id="screen-playlist" style="display:none;">
       <h2 class="card-title">songs that remind me of you 🎶</h2>
-      <div class="track-list">
-        <div class="track-item" onclick="playMusic(0)">
-          <div class="track-info">
-            <h4>01. Until I Found You</h4>
-            <p>Stephen Sanchez</p>
-          </div>
-          <span>▶️</span>
-        </div>
-        <div class="track-item" onclick="playMusic(1)">
-          <div class="track-info">
-            <h4>02. Lover</h4>
-            <p>Taylor Swift</p>
-          </div>
-          <span>▶️</span>
-        </div>
-        <div class="track-item" onclick="playMusic(2)">
-          <div class="track-info">
-            <h4>03. Perfect</h4>
-            <p>Ed Sheeran</p>
-          </div>
-          <span>▶️</span>
-        </div>
-      </div>
-      <p class="card-sub">every wave of them is a little bit about you</p>
+      <div class="track-list" id="track-container"></div>
+      <p class="card-sub">every melody is a little bit about you</p>
       <button class="btn-romance" onclick="showScreen('screen-letter')">back</button>
       <button class="btn-romance" onclick="showScreen('screen-polaroids')" style="margin-left: 8px;">next gift ➔</button>
     </div>
@@ -294,12 +285,8 @@
     <!-- SCREEN 6: COUPLE QUIZ -->
     <div class="app-card" id="screen-quiz" style="display:none;">
       <h2 class="card-title">quick question... 🤔</h2>
-      <p class="card-sub">Who said I love you first?</p>
-      <div class="quiz-options">
-        <button class="quiz-btn" onclick="wrongAnswer()">You</button>
-        <button class="quiz-btn" onclick="correctAnswer()">Me</button>
-        <button class="quiz-btn" onclick="wrongAnswer()">We both did at the same time</button>
-      </div>
+      <p class="card-sub" id="view-quiz-q">Who said I love you first?</p>
+      <div class="quiz-options" id="quiz-btn-box"></div>
     </div>
 
     <!-- WRONG ANSWER SAD CAT MODAL -->
@@ -323,17 +310,17 @@
     <div class="app-card" id="screen-final" style="display:none;">
       <div class="final-heart-box">❤️</div>
       <h2 class="card-title">happily ever after 🎈</h2>
-      <p class="card-sub">every love story is beautiful, but ours is my favourite.</p>
+      <p class="card-sub" id="view-final-quote">every love story is beautiful, but ours is my favourite.</p>
       
       <div class="reply-area">
-        <label>Send an Anniversary Reply to Satish:</label>
+        <label id="view-reply-label">Send an Anniversary Reply to Satish:</label>
         <input type="text" id="wa-reply-input" value="Happy Anniversary! Thank you so much for this heartfelt 3D surprise! ❤️✨" />
         <button class="btn-wa-send" onclick="sendReplyWhatsApp()">Reply on WhatsApp 📲</button>
       </div>
     </div>
   </div>
 
-  <!-- SCREEN 8: 3D FLOATING RING BOX & ROSES (THREE.JS) -->
+  <!-- SCREEN 8: 3D FLOATING RING BOX & ROSES -->
   <div id="threejs-screen">
     <div class="three-hud">
       <h2>Happy Anniversary! 💍</h2>
@@ -345,38 +332,126 @@
     </div>
   </div>
 
-  <!-- ADMIN PASSCODE / CUSTOMIZER MODAL -->
+  <!-- COMPLETE ADMIN CUSTOMIZATION SYSTEM (PASSWORD: satish123) -->
   <div class="admin-pop" id="admin-pop">
-    <div class="admin-form">
-      <h3 style="color:#800a18; margin-bottom: 8px;">Admin Settings 🔐</h3>
-      <input type="password" id="admin-pwd" placeholder="Enter admin password (satish123)" />
-      <div id="admin-fields" style="display:none;">
-        <label style="font-size:0.75rem;">Gate Passcode (4-digits):</label>
-        <input type="text" id="cfg-pin" value="2026" maxlength="4" />
-        <label style="font-size:0.75rem;">Love Letter Text:</label>
-        <textarea id="cfg-letter" rows="3"></textarea>
+    <div class="admin-card">
+      <button class="close-admin-x" onclick="closeAdmin()">&times;</button>
+      <h3>Universal Admin Editor 🔐</h3>
+      <p style="font-size:0.75rem; color:#aaa; margin-bottom:12px;">Edit and replace text, images, songs, and quiz for all pages.</p>
+      
+      <!-- Password Prompt -->
+      <div id="admin-login-sec">
+        <label>Admin Password:</label>
+        <input type="password" id="admin-pwd" placeholder="Enter password (default: satish123)" />
+        <button class="btn-romance" style="width:100%;" onclick="verifyAdmin()">Unlock Editor</button>
       </div>
-      <div style="display:flex; gap:8px; margin-top:8px;">
-        <button class="btn-romance" onclick="verifyAdmin()">Unlock</button>
-        <button class="btn-ghost" onclick="closeAdmin()">Close</button>
+
+      <!-- Editable Dashboard Form -->
+      <div id="admin-fields" style="display:none;">
+        
+        <!-- Passcode & Hints -->
+        <div class="admin-sec">
+          <h4>1. Passcode & Entry Screen</h4>
+          <label>Gate Heading Text:</label>
+          <input type="text" id="cfg-title" />
+          <label>4-Digit Pin:</label>
+          <input type="text" id="cfg-pin" maxlength="4" />
+          <label>Hint Text:</label>
+          <input type="text" id="cfg-hint" />
+        </div>
+
+        <!-- Love Letter Details -->
+        <div class="admin-sec">
+          <h4>2. Love Letter Page</h4>
+          <label>Letter Greeting:</label>
+          <input type="text" id="cfg-headletter" />
+          <label>Love Letter Body:</label>
+          <textarea id="cfg-letter" rows="4"></textarea>
+          <label>Signature Text:</label>
+          <input type="text" id="cfg-sign" />
+        </div>
+
+        <!-- Songs Replacement -->
+        <div class="admin-sec">
+          <h4>3. Playlist Songs</h4>
+          <div id="admin-songs-list"></div>
+        </div>
+
+        <!-- Polaroid Photos & Captions -->
+        <div class="admin-sec">
+          <h4>4. Polaroid Memories (Replace Images & Captions)</h4>
+          <div id="admin-polaroid-list"></div>
+        </div>
+
+        <!-- Quiz Question & Answers -->
+        <div class="admin-sec">
+          <h4>5. Quiz Settings</h4>
+          <label>Question:</label>
+          <input type="text" id="cfg-quiz-q" />
+          <label>Option 1 (Wrong):</label>
+          <input type="text" id="cfg-quiz-opt1" />
+          <label>Option 2 (Correct):</label>
+          <input type="text" id="cfg-quiz-opt2" />
+          <label>Option 3 (Wrong):</label>
+          <input type="text" id="cfg-quiz-opt3" />
+        </div>
+
+        <button class="btn-romance" style="width:100%; margin-top:14px; background:#25d366;" onclick="saveAllAdminData()">Save & Apply Changes 💾</button>
       </div>
     </div>
   </div>
 
   <script>
-    // --- APP STATE & CONFIGURATION ---
-    let correctPin = "2026";
-    let enteredPin = "";
+    // --- GLOBAL EDITABLE DATA STORE ---
+    const DEFAULT_CONFIG = {
+      pin: "2026",
+      title: "Only my favourite person gets in ❤️",
+      hint: "hint: think of the date it all began for us (DD / MM)",
+      headLetter: "Happy Anniversary, Love!",
+      letterText: "Another year of us and I still get the same sweet butterflies. Thank you for every laugh, every late-night talk, and every ordinary day you made extraordinary.\n\nI made this little corner of the internet just for you.",
+      letterSign: "— Always yours",
+      songs: [
+        { title: "Until I Found You", artist: "Stephen Sanchez", url: "https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=romantic-moment-112022.mp3" },
+        { title: "Lover Style Piano", artist: "Taylor Swift Melody", url: "https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0a13f69d2.mp3?filename=love-story-piano-version-10022.mp3" },
+        { title: "Perfect Melodies", artist: "Ed Sheeran Style", url: "https://cdn.pixabay.com/download/audio/2022/10/14/audio_9939f77cd5.mp3?filename=romantic-gentle-piano-123497.mp3" }
+      ],
+      polaroids: [
+        { url: "https://images.unsplash.com/photo-1519741497674-611481863552?w=500", cap: "where it began ✨" },
+        { url: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=500", cap: "my forever smile 💖" },
+        { url: "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=500", cap: "our adventures 🚗" },
+        { url: "https://images.unsplash.com/photo-1469371670807-013ccf25f16a?w=500", cap: "you & me always 🌹" }
+      ],
+      quiz: {
+        question: "Who said I love you first?",
+        opt1: "You",
+        opt2: "Me",
+        opt3: "We both did at the same time"
+      }
+    };
+
+    let AppConfig = JSON.parse(localStorage.getItem('anniversary_app_data')) || DEFAULT_CONFIG;
+
+    function applyConfigToUI() {
+      document.getElementById('view-title').innerText = AppConfig.title;
+      document.getElementById('view-hint').innerText = AppConfig.hint;
+      document.getElementById('view-headletter').innerText = AppConfig.headLetter;
+      document.getElementById('view-letter').innerHTML = AppConfig.letterText.replace(/\n/g, '<br>');
+      document.getElementById('view-sign').innerText = AppConfig.letterSign;
+      
+      renderPlaylist();
+      renderPolaroids();
+
+      document.getElementById('view-quiz-q').innerText = AppConfig.quiz.question;
+      const qBox = document.getElementById('quiz-btn-box');
+      qBox.innerHTML = `
+        <button class="quiz-btn" onclick="wrongAnswer()">${AppConfig.quiz.opt1}</button>
+        <button class="quiz-btn" onclick="correctAnswer()">${AppConfig.quiz.opt2}</button>
+        <button class="quiz-btn" onclick="wrongAnswer()">${AppConfig.quiz.opt3}</button>
+      `;
+    }
+
+    // --- NAVIGATION LOGIC ---
     let screenStack = ['screen-passcode'];
-
-    let coupleImages = [
-      { url: "https://images.unsplash.com/photo-1519741497674-611481863552?w=500", cap: "where it began ✨" },
-      { url: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=500", cap: "my forever smile 💖" },
-      { url: "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=500", cap: "our adventures 🚗" },
-      { url: "https://images.unsplash.com/photo-1469371670807-013ccf25f16a?w=500", cap: "you & me always 🌹" }
-    ];
-
-    // --- NAVIGATION CONTROLS ---
     function showScreen(screenId) {
       document.querySelectorAll('.app-card').forEach(c => c.style.display = 'none');
       document.getElementById('threejs-screen').style.display = 'none';
@@ -406,11 +481,11 @@
       }
     }
 
-    // Android/Gesture Back Listener
     history.pushState(null, null, location.href);
     window.onpopstate = () => stepBack();
 
-    // --- SCREEN 1: PASSCODE LOGIC ---
+    // --- SCREEN 1: PASSCODE CHECK ---
+    let enteredPin = "";
     function pressKey(num) {
       if (enteredPin.length < 4) {
         enteredPin += num;
@@ -418,12 +493,7 @@
         if (enteredPin.length === 4) setTimeout(checkPin, 200);
       }
     }
-
-    function clearPin() {
-      enteredPin = "";
-      updateDots();
-    }
-
+    function clearPin() { enteredPin = ""; updateDots(); }
     function updateDots() {
       for (let i = 0; i < 4; i++) {
         const dot = document.getElementById(`dot-${i}`);
@@ -431,9 +501,8 @@
         else dot.classList.remove('filled');
       }
     }
-
     function checkPin() {
-      if (enteredPin === correctPin) {
+      if (enteredPin === AppConfig.pin) {
         confetti({ particleCount: 60, spread: 70 });
         showScreen('screen-envelope');
       } else {
@@ -442,7 +511,7 @@
       }
     }
 
-    // --- SCREEN 2: ENVELOPE NO THANKS PLAYFUL BOUNCE ---
+    // --- SCREEN 2: ENVELOPE NO THANKS ---
     let refuseCount = 0;
     function refuseLetter() {
       refuseCount++;
@@ -452,16 +521,62 @@
       else showScreen('screen-letter');
     }
 
-    // --- SCREEN 4: MUSIC TRACKS ---
-    function playMusic(idx) {
-      alert("🎵 Playing track preview!");
+    // --- SCREEN 4: AUDIO PLAYLIST SYSTEM ---
+    let currentAudio = null;
+    let playingIdx = -1;
+
+    function renderPlaylist() {
+      const container = document.getElementById('track-container');
+      container.innerHTML = '';
+      AppConfig.songs.forEach((song, idx) => {
+        const item = document.createElement('div');
+        item.className = 'track-item';
+        item.onclick = () => playMusic(idx);
+        item.innerHTML = `
+          <div class="track-info">
+            <h4>${song.title}</h4>
+            <p>${song.artist}</p>
+          </div>
+          <span id="track-icon-${idx}">▶️</span>
+        `;
+        container.appendChild(item);
+      });
     }
 
-    // --- SCREEN 5: POLAROIDS BUILDER ---
+    function playMusic(idx) {
+      if (currentAudio && playingIdx === idx) {
+        if (!currentAudio.paused) {
+          currentAudio.pause();
+          document.getElementById(`track-icon-${idx}`).innerText = "▶️";
+          return;
+        } else {
+          currentAudio.play();
+          document.getElementById(`track-icon-${idx}`).innerText = "⏸️";
+          return;
+        }
+      }
+      if (currentAudio) {
+        currentAudio.pause();
+        if (playingIdx !== -1) {
+          const old = document.getElementById(`track-icon-${playingIdx}`);
+          if (old) old.innerText = "▶️";
+        }
+      }
+      playingIdx = idx;
+      currentAudio = new Audio(AppConfig.songs[idx].url);
+      currentAudio.play().catch(e => alert("Audio playback unavailable. Check MP3 URL in Admin!"));
+      document.getElementById(`track-icon-${idx}`).innerText = "⏸️";
+      currentAudio.onended = () => {
+        document.getElementById(`track-icon-${idx}`).innerText = "▶️";
+        playingIdx = -1;
+      };
+    }
+
+    // --- SCREEN 5: POLAROIDS REEL ---
     function renderPolaroids() {
       const box = document.getElementById('polaroid-box');
       box.innerHTML = '';
-      coupleImages.forEach(img => {
+      AppConfig.polaroids.forEach(img => {
         const p = document.createElement('div');
         p.className = 'polaroid-item';
         p.innerHTML = `<img src="${img.url}"><div class="polaroid-cap">${img.cap}</div>`;
@@ -471,15 +586,13 @@
     }
 
     // --- SCREEN 6: QUIZ ACTIONS ---
-    function wrongAnswer() {
-      showScreen('screen-wrong');
-    }
+    function wrongAnswer() { showScreen('screen-wrong'); }
     function correctAnswer() {
       confetti({ particleCount: 70, spread: 80 });
       launch3DRingScreen();
     }
 
-    // --- SCREEN 7: FINGERPRINT SCANNER ---
+    // --- SCREEN 7: FINGERPRINT PROMISE ---
     const fp = document.getElementById('fp-btn');
     let holdTimer;
     fp.addEventListener('pointerdown', () => {
@@ -497,7 +610,7 @@
       document.getElementById('fp-status').innerText = "Hold for 2 seconds...";
     });
 
-    // --- SCREEN 8: 3D THREE.JS FLOATING RING BOX & ROSES ---
+    // --- SCREEN 8: THREE.JS 3D FLOATING RING BOX & ROSES ---
     let scene, camera, renderer, ringGroup, boxLid, roseGroup, isLidOpen = false;
 
     function launch3DRingScreen() {
@@ -522,41 +635,29 @@
       goldSpot.position.set(0, 6, 6);
       scene.add(goldSpot);
 
-      // Ring Box Assembly
       ringGroup = new THREE.Group();
       const velvetMat = new THREE.MeshStandardMaterial({ color: 0x54091a, roughness: 0.4 });
       const goldMat = new THREE.MeshStandardMaterial({ color: 0xffd700, metalness: 0.9, roughness: 0.2 });
 
-      // Box Base & Trim
       const base = new THREE.Mesh(new THREE.BoxGeometry(2.4, 1.0, 2.4), velvetMat);
-      base.position.y = 0.5;
-      ringGroup.add(base);
+      base.position.y = 0.5; ringGroup.add(base);
 
       const trim = new THREE.Mesh(new THREE.BoxGeometry(2.44, 0.08, 2.44), goldMat);
-      trim.position.y = 1.02;
-      ringGroup.add(trim);
+      trim.position.y = 1.02; ringGroup.add(trim);
 
-      // Hinged Lid
       boxLid = new THREE.Group();
       boxLid.position.set(0, 1.04, -1.2);
       const lidMesh = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.6, 2.4), velvetMat);
       lidMesh.position.set(0, 0.3, 1.2);
-      boxLid.add(lidMesh);
-      ringGroup.add(boxLid);
+      boxLid.add(lidMesh); ringGroup.add(boxLid);
 
-      // Two Interlocked Golden Rings
       const ringGeom = new THREE.TorusGeometry(0.35, 0.07, 16, 32);
       const ring1 = new THREE.Mesh(ringGeom, goldMat);
-      ring1.position.set(-0.25, 1.2, 0.1);
-      ring1.rotation.y = 0.4;
-      ringGroup.add(ring1);
+      ring1.position.set(-0.25, 1.2, 0.1); ring1.rotation.y = 0.4; ringGroup.add(ring1);
 
       const ring2 = new THREE.Mesh(ringGeom, goldMat);
-      ring2.position.set(0.25, 1.2, -0.1);
-      ring2.rotation.y = -0.4;
-      ringGroup.add(ring2);
+      ring2.position.set(0.25, 1.2, -0.1); ring2.rotation.y = -0.4; ringGroup.add(ring2);
 
-      // Floating Red Roses
       roseGroup = new THREE.Group();
       for (let i = 0; i < 8; i++) {
         const petal = new THREE.Mesh(new THREE.SphereGeometry(0.22, 16, 16), new THREE.MeshStandardMaterial({ color: 0xb71540 }));
@@ -567,7 +668,6 @@
       ringGroup.add(roseGroup);
       scene.add(ringGroup);
 
-      // Open on Tap
       container.addEventListener('pointerdown', openBoxAnimate);
 
       function anim() {
@@ -592,38 +692,127 @@
       }, 16);
     }
 
-    function finish3DStage() {
-      showScreen('screen-promise');
-    }
+    function finish3DStage() { showScreen('screen-promise'); }
 
     // --- SCREEN 9: WHATSAPP REPLY TO 9281267188 ---
     function sendReplyWhatsApp() {
       const msg = document.getElementById('wa-reply-input').value.trim();
-      if (!msg) return alert("Please type your sweet message!");
+      if (!msg) return alert("Please type your message!");
       const text = encodeURIComponent(`Hi Satish! ❤️ ${msg}`);
       window.open(`https://api.whatsapp.com/send?phone=919281267188&text=${text}`, '_blank');
     }
 
-    // --- ADMIN PASSWORD PROTECTION ---
+    // --- UNIVERSAL ADMIN SYSTEM LOGIC ---
     function openAdmin() {
       document.getElementById('admin-pop').style.display = 'flex';
+      document.getElementById('admin-login-sec').style.display = 'block';
+      document.getElementById('admin-fields').style.display = 'none';
       document.getElementById('admin-pwd').value = '';
     }
+
     function closeAdmin() {
       document.getElementById('admin-pop').style.display = 'none';
     }
+
     function verifyAdmin() {
-      const p = document.getElementById('admin-pwd').value;
-      if (p === "satish123") {
+      const pwd = document.getElementById('admin-pwd').value;
+      if (pwd === "satish123") {
+        document.getElementById('admin-login-sec').style.display = 'none';
         document.getElementById('admin-fields').style.display = 'block';
-        document.getElementById('cfg-pin').value = correctPin;
+        loadAdminForm();
       } else {
-        alert("Incorrect password!");
+        alert("Incorrect Admin Password!");
       }
     }
 
+    function loadAdminForm() {
+      document.getElementById('cfg-title').value = AppConfig.title;
+      document.getElementById('cfg-pin').value = AppConfig.pin;
+      document.getElementById('cfg-hint').value = AppConfig.hint;
+      document.getElementById('cfg-headletter').value = AppConfig.headLetter;
+      document.getElementById('cfg-letter').value = AppConfig.letterText;
+      document.getElementById('cfg-sign').value = AppConfig.letterSign;
+
+      const songsList = document.getElementById('admin-songs-list');
+      songsList.innerHTML = '';
+      AppConfig.songs.forEach((s, i) => {
+        songsList.innerHTML += `
+          <div style="margin-bottom:8px; padding-bottom:8px; border-bottom:1px solid #333;">
+            <label>Song ${i+1} Title:</label>
+            <input type="text" id="cfg-song-t-${i}" value="${s.title}">
+            <label>Artist:</label>
+            <input type="text" id="cfg-song-a-${i}" value="${s.artist}">
+            <label>MP3 URL:</label>
+            <input type="text" id="cfg-song-u-${i}" value="${s.url}">
+          </div>
+        `;
+      });
+
+      const polList = document.getElementById('admin-polaroid-list');
+      polList.innerHTML = '';
+      AppConfig.polaroids.forEach((p, i) => {
+        polList.innerHTML += `
+          <div class="admin-polaroid-item">
+            <img src="${p.url}" id="prev-pol-${i}">
+            <div style="flex:1;">
+              <label>Caption:</label>
+              <input type="text" id="cfg-pol-c-${i}" value="${p.cap}">
+              <label>Replace Image (Phone Gallery):</label>
+              <input type="file" accept="image/*" onchange="uploadPolaroidImg(event, ${i})">
+            </div>
+          </div>
+        `;
+      });
+
+      document.getElementById('cfg-quiz-q').value = AppConfig.quiz.question;
+      document.getElementById('cfg-quiz-opt1').value = AppConfig.quiz.opt1;
+      document.getElementById('cfg-quiz-opt2').value = AppConfig.quiz.opt2;
+      document.getElementById('cfg-quiz-opt3').value = AppConfig.quiz.opt3;
+    }
+
+    function uploadPolaroidImg(e, idx) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = ev => {
+          AppConfig.polaroids[idx].url = ev.target.result;
+          document.getElementById(`prev-pol-${idx}`).src = ev.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function saveAllAdminData() {
+      AppConfig.title = document.getElementById('cfg-title').value.trim();
+      AppConfig.pin = document.getElementById('cfg-pin').value.trim();
+      AppConfig.hint = document.getElementById('cfg-hint').value.trim();
+      AppConfig.headLetter = document.getElementById('cfg-headletter').value.trim();
+      AppConfig.letterText = document.getElementById('cfg-letter').value.trim();
+      AppConfig.letterSign = document.getElementById('cfg-sign').value.trim();
+
+      AppConfig.songs.forEach((s, i) => {
+        s.title = document.getElementById(`cfg-song-t-${i}`).value.trim();
+        s.artist = document.getElementById(`cfg-song-a-${i}`).value.trim();
+        s.url = document.getElementById(`cfg-song-u-${i}`).value.trim();
+      });
+
+      AppConfig.polaroids.forEach((p, i) => {
+        p.cap = document.getElementById(`cfg-pol-c-${i}`).value.trim();
+      });
+
+      AppConfig.quiz.question = document.getElementById('cfg-quiz-q').value.trim();
+      AppConfig.quiz.opt1 = document.getElementById('cfg-quiz-opt1').value.trim();
+      AppConfig.quiz.opt2 = document.getElementById('cfg-quiz-opt2').value.trim();
+      AppConfig.quiz.opt3 = document.getElementById('cfg-quiz-opt3').value.trim();
+
+      localStorage.setItem('anniversary_app_data', JSON.stringify(AppConfig));
+      alert("All pages updated and saved successfully! 🎉");
+      closeAdmin();
+      applyConfigToUI();
+    }
+
     window.onload = () => {
-      renderPolaroids();
+      applyConfigToUI();
     };
   </script>
 </body>
