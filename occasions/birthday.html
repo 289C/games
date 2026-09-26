@@ -169,14 +169,12 @@
           mediaList: selectedMedia
         });
 
-        tx.oncomplete = () => {
-          // If birthday.html is in /occasions/, wish3d.html is at ../wish3d.html
-          window.location.href = "../wish3d.html?type=birthday";
-        };
-      } catch (err) {
-        // Fallback standard redirection
-        window.location.href = `../wish3d.html?type=birthday&name=${encodeURIComponent(name)}&from=${encodeURIComponent(from)}&note=${encodeURIComponent(note)}`;
-      }
+    tx.oncomplete = () => {
+      window.location.href = "wish3d.html?type=birthday";
+    };
+  } catch (err) {
+    window.location.href = `wish3d.html?type=birthday&name=${encodeURIComponent(name)}&from=${encodeURIComponent(from)}&note=${encodeURIComponent(note)}`;
+  }
     }
   </script>
 </body>
