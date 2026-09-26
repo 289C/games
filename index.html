@@ -509,6 +509,97 @@
   <span class="counter-txt">Games Available</span>
   <span class="pulse-dot"></span>
 </div>
+
+<!-- WISHING BANNER COMPONENT -->
+<div class="wish-banner-container">
+  <div class="wish-banner-content">
+    <span class="wish-badge">✨ NEW 3D EXPERIENCE</span>
+    <h2>Send Magic, Not Just Text! 🎉</h2>
+    <p>Create an interactive 3D birthday cake with mic blow, floating photo memories, and balloon surprises for your loved ones.</p>
+    <a href="occasions.html" class="wish-banner-btn">Create a 3D Wish Now ➔</a>
+  </div>
+  <div class="wish-banner-decor">🎂 🎈 🎁</div>
+</div>
+
+<style>
+  .wish-banner-container {
+    width: 92%;
+    max-width: 1100px;
+    margin: 25px auto;
+    background: linear-gradient(135deg, #1f1c2c, #928dab);
+    border-radius: 20px;
+    padding: 35px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .wish-banner-container:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(102, 252, 241, 0.25);
+  }
+  .wish-banner-content {
+    max-width: 650px;
+    z-index: 2;
+  }
+  .wish-badge {
+    background: rgba(102, 252, 241, 0.2);
+    color: #66fcf1;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 5px 12px;
+    border-radius: 20px;
+    letter-spacing: 1px;
+    display: inline-block;
+    margin-bottom: 10px;
+  }
+  .wish-banner-content h2 {
+    font-size: 2rem;
+    color: #ffffff;
+    margin: 0 0 10px 0;
+    font-family: 'Poppins', sans-serif;
+  }
+  .wish-banner-content p {
+    color: #e0e0e0;
+    font-size: 1rem;
+    margin: 0 0 20px 0;
+    line-height: 1.5;
+  }
+  .wish-banner-btn {
+    display: inline-block;
+    background: linear-gradient(135deg, #ff4081, #ff007f);
+    color: #fff;
+    padding: 12px 28px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1rem;
+    box-shadow: 0 5px 18px rgba(255, 0, 127, 0.4);
+    transition: transform 0.2s ease;
+  }
+  .wish-banner-btn:hover {
+    transform: scale(1.05);
+  }
+  .wish-banner-decor {
+    font-size: 4rem;
+    user-select: none;
+    animation: floatDecor 3s ease-in-out infinite alternate;
+  }
+  @keyframes floatDecor {
+    from { transform: translateY(0px) rotate(0deg); }
+    to { transform: translateY(-12px) rotate(5deg); }
+  }
+  @media (max-width: 768px) {
+    .wish-banner-container { flex-direction: column; text-align: center; }
+    .wish-banner-decor { margin-top: 15px; font-size: 3rem; }
+  }
+</style>
+  
   
 
   <!-- Games Grid -->
