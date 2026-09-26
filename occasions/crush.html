@@ -404,24 +404,28 @@
       "You have no choice now Devi! 😂"
     ];
 
-    function dodgeNo() {
+        function dodgeNo() {
       playSfx('dodge');
       noCount++;
       const yesBtn = document.getElementById('btn-yes');
       const noBtn = document.getElementById('btn-no');
 
+      // Make YES button grow bigger
       const currentScale = 1 + (noCount * 0.22);
       yesBtn.style.transform = `scale(${currentScale})`;
 
+      // Change headline playfully without adding count numbers to the No button
       if (noCount <= noPhrases.length) {
         document.getElementById('ask-heading').innerText = noPhrases[noCount - 1];
-        noBtn.innerText = "No (" + noCount + ")";
+        noBtn.innerText = "No";
       }
 
+      // Move NO button away
       const randomX = (Math.random() - 0.5) * 160;
       const randomY = (Math.random() - 0.5) * 120;
       noBtn.style.transform = `translate(${randomX}px, ${randomY}px)`;
 
+      // Vanish NO button after 5 clicks
       if (noCount >= 5) {
         noBtn.style.display = 'none';
         document.getElementById('ask-sub').innerText = "Now you can only click YES for Ganesh! ❤️";
