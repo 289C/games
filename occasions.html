@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Choose an Occasion</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
+    body {
+      background: #0b0c10; color: #fff; min-height: 100vh;
+      padding: 30px 15px; display: flex; flex-direction: column; align-items: center;
+    }
+    h1 { color: #66fcf1; font-size: 1.8rem; margin-bottom: 8px; text-align: center; }
+    p.sub { color: #aaa; margin-bottom: 30px; text-align: center; font-size: 0.95rem; }
+    .grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px; width: 100%; max-width: 800px;
+    }
+    a.card-link { text-decoration: none; color: inherit; }
+    .card {
+      background: #1f2430; border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 14px; padding: 25px 15px; text-align: center;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .card:hover { transform: translateY(-4px); border-color: #66fcf1; }
+    .icon { font-size: 2.8rem; display: block; margin-bottom: 10px; }
+    .card h3 { font-size: 1.2rem; }
+    .card p { font-size: 0.85rem; color: #bbb; margin-top: 5px; }
+    .back-btn { margin-top: 30px; color: #66fcf1; text-decoration: none; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+  <h1>Select an Occasion 🎉</h1>
+  <p class="sub">Choose an occasion to build a personalized 3D greeting</p>
+
+  <div class="grid">
+    <a href="birthday.html" class="card-link">
+      <div class="card">
+        <span class="icon">🎂</span>
+        <h3>Birthday</h3>
+        <p>Blow cake candles & photo memories</p>
+      </div>
+    </a>
+
+    <a href="anniversary.html" class="card-link">
+      <div class="card">
+        <span class="icon">🥂</span>
+        <h3>Anniversary</h3>
+        <p>Celebrate milestone couple memories</p>
+      </div>
+    </a>
+
+    <a href="wedding.html" class="card-link">
+      <div class="card">
+        <span class="icon">💍</span>
+        <h3>Wedding</h3>
+        <p>Warm congratulations & wishes</p>
+      </div>
+    </a>
+  </div>
+
+  <a href="index.html" class="back-btn">← Back to Home</a>
+</body>
+</html>
