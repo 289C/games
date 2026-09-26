@@ -1,918 +1,384 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>The Ultimate Birthday Surprise 🎉</title>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Pacifico&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3D Interactive Celebration</title>
+  <!-- Three.js and Canvas Confetti -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      -webkit-tap-highlight-color: transparent;
-      user-select: none;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+    body, html { width: 100%; height: 100%; overflow: hidden; background: #0b0c10; color: #fff; }
+    #canvas-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
 
-    html, body {
-      width: 100%;
-      height: 100%;
-      overflow-x: hidden;
+    /* UI Overlay */
+    .hud {
+      position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
+      z-index: 10; text-align: center; pointer-events: none; width: 90%; max-width: 500px;
     }
+    .hud h1 { font-size: 1.8rem; color: #66fcf1; text-shadow: 0 0 12px rgba(102, 252, 241, 0.6); }
+    .hud p { font-size: 0.95rem; color: #c5c6c7; margin-top: 6px; }
 
-    body {
-      min-height: 100vh;
-      min-height: 100dvh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: linear-gradient(135deg, #12072b 0%, #2a085c 40%, #5c0d75 70%, #d81159 100%);
-      background-size: 300% 300%;
-      animation: auroraShift 12s ease infinite;
-      font-family: 'Poppins', sans-serif;
-      padding: 16px;
-      position: relative;
+    /* Interactive Buttons */
+    .controls {
+      position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+      z-index: 10; display: flex; gap: 12px;
     }
+    .btn {
+      padding: 12px 24px; border: none; border-radius: 25px;
+      background: linear-gradient(135deg, #45a29e, #66fcf1); color: #0b0c10;
+      font-weight: 700; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn:hover { transform: scale(1.05); box-shadow: 0 0 15px rgba(102, 252, 241, 0.5); }
 
-    @keyframes auroraShift {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+    /* Pop-up Message Modal for Balloon Text */
+    #note-modal {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.8);
+      background: rgba(20, 20, 30, 0.92); border: 1px solid #66fcf1; border-radius: 16px;
+      padding: 24px; text-align: center; z-index: 20; max-width: 320px; width: 85%;
+      box-shadow: 0 0 30px rgba(102, 252, 241, 0.3); opacity: 0; pointer-events: none;
+      transition: 0.3s ease-in-out;
     }
+    #note-modal.active { opacity: 1; pointer-events: auto; transform: translate(-50%, -50%) scale(1); }
+    #note-modal h3 { color: #ffe600; margin-bottom: 8px; }
+    #note-modal p { font-size: 1.05rem; color: #fff; margin-bottom: 16px; }
 
-    /* Ambient glow elements */
-    .glow-orb {
-      position: fixed;
-      border-radius: 50%;
-      filter: blur(85px);
-      z-index: 1;
-      pointer-events: none;
-      animation: orbFloat 10s ease-in-out infinite alternate;
+    /* Final Card Container */
+    #final-view {
+      position: absolute; bottom: 15%; left: 50%; transform: translateX(-50%);
+      text-align: center; z-index: 10; background: rgba(0, 0, 0, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.2); backdrop-filter: blur(8px);
+      padding: 20px 30px; border-radius: 12px; display: none; width: 85%; max-width: 420px;
     }
-    .orb-1 { width: 340px; height: 340px; background: #00f5d4; top: -5%; left: -10%; opacity: 0.35; }
-    .orb-2 { width: 320px; height: 320px; background: #ff007f; bottom: -5%; right: -10%; opacity: 0.35; animation-delay: -5s; }
-
-    @keyframes orbFloat {
-      0% { transform: translateY(0) scale(1); }
-      100% { transform: translateY(40px) scale(1.15); }
-    }
-
-    /* Stage Container */
-    .page-stage {
-      position: relative;
-      z-index: 5;
-      width: 100%;
-      max-width: 390px;
-      background: rgba(255, 255, 255, 0.12);
-      backdrop-filter: blur(28px);
-      -webkit-backdrop-filter: blur(28px);
-      border: 1.5px solid rgba(255, 255, 255, 0.35);
-      border-radius: 28px;
-      padding: 34px 22px;
-      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.4);
-      text-align: center;
-      transition: all 0.3s ease;
-      margin: auto;
-    }
-
-    .badge-icon {
-      width: 60px;
-      height: 60px;
-      margin: 0 auto 16px auto;
-      background: rgba(255, 255, 255, 0.95);
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 28px;
-      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
-      animation: bobble 3s ease-in-out infinite;
-    }
-
-    @keyframes bobble {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-8px); }
-    }
-
-    h2.stage-title {
-      font-family: 'Fredoka One', cursive;
-      color: #ffffff;
-      font-size: 24px;
-      margin-bottom: 10px;
-      text-shadow: 0 3px 12px rgba(0, 0, 0, 0.3);
-    }
-
-    p.stage-desc {
-      color: rgba(255, 255, 255, 0.88);
-      font-size: 13px;
-      margin-bottom: 22px;
-      line-height: 1.5;
-    }
-
-    /* Form Inputs */
-    .input-wrapper {
-      position: relative;
-      width: 100%;
-      margin-bottom: 16px;
-    }
-
-    .custom-input {
-      width: 100%;
-      padding: 14px 48px 14px 18px;
-      background: rgba(255, 255, 255, 0.92);
-      border: 2px solid transparent;
-      border-radius: 50px;
-      font-family: inherit;
-      font-size: 14px;
-      color: #222;
-      outline: none;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-      transition: all 0.2s ease;
-      user-select: text;
-    }
-    .custom-input:focus {
-      background: #ffffff;
-      border-color: #ff007f;
-      transform: scale(1.02);
-    }
-
-    .eye-icon {
-      position: absolute;
-      right: 18px;
-      top: 50%;
-      transform: translateY(-50%);
-      cursor: pointer;
-      font-size: 18px;
-      opacity: 0.65;
-    }
-
-    .gradient-btn {
-      width: 100%;
-      padding: 14px;
-      background: linear-gradient(135deg, #ffd166 0%, #ff007f 100%);
-      color: #ffffff;
-      font-family: 'Fredoka One', cursive;
-      font-size: 16px;
-      letter-spacing: 0.5px;
-      border: none;
-      border-radius: 50px;
-      cursor: pointer;
-      box-shadow: 0 10px 25px rgba(255, 0, 127, 0.4);
-      transition: all 0.2s ease;
-    }
-    .gradient-btn:hover {
-      transform: translateY(-2px) scale(1.02);
-      box-shadow: 0 14px 30px rgba(255, 0, 127, 0.6);
-    }
-    .gradient-btn:active {
-      transform: translateY(1px);
-    }
-
-    .err-tag {
-      color: #ffffff;
-      background: rgba(220, 20, 60, 0.7);
-      border-radius: 20px;
-      font-size: 12px;
-      margin-top: 10px;
-      padding: 5px 12px;
-      display: inline-block;
-    }
-
-    /* 3D Cake with Extinguishable Candle */
-    .cake-box {
-      width: 160px;
-      height: 120px;
-      margin: 20px auto;
-      position: relative;
-    }
-    .cake-base {
-      position: absolute;
-      bottom: 0;
-      width: 160px;
-      height: 65px;
-      background: linear-gradient(135deg, #ff4d6d, #c9184a);
-      border-radius: 18px;
-      box-shadow: 0 12px 25px rgba(0,0,0,0.35);
-    }
-    .cake-frosting {
-      position: absolute;
-      top: -10px;
-      width: 100%;
-      height: 22px;
-      background: #ffffff;
-      border-radius: 18px 18px 10px 10px;
-    }
-    .candle {
-      position: absolute;
-      top: -30px;
-      left: 73px;
-      width: 14px;
-      height: 35px;
-      background: repeating-linear-gradient(45deg, #ffeaa7, #ffeaa7 4px, #fdcb6e 4px, #fdcb6e 8px);
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    .flame {
-      position: absolute;
-      top: -16px;
-      left: 1px;
-      width: 12px;
-      height: 18px;
-      background: #ff7675;
-      border-radius: 50% 50% 20% 20%;
-      box-shadow: 0 0 15px #ffeaa7, 0 0 30px #fdcb6e;
-      animation: flameFlicker 0.6s infinite alternate;
-      transition: opacity 0.4s ease;
-    }
-    .flame.extinguished {
-      opacity: 0;
-      pointer-events: none;
-    }
-    .smoke-puff {
-      position: absolute;
-      top: -24px;
-      left: 2px;
-      font-size: 16px;
-      opacity: 0;
-      pointer-events: none;
-    }
-    .smoke-puff.active {
-      animation: puffUp 1.2s ease-out forwards;
-    }
-    @keyframes puffUp {
-      0% { opacity: 0.9; transform: translateY(0) scale(0.6); }
-      100% { opacity: 0; transform: translateY(-35px) scale(1.8); }
-    }
-
-    @keyframes flameFlicker {
-      0% { transform: scale(1) rotate(-3deg); }
-      100% { transform: scale(1.2) rotate(3deg); }
-    }
-
-    /* Sequential Balloons */
-    .balloon-cluster {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      margin: 20px 0 14px 0;
-      flex-wrap: wrap;
-    }
-    .balloon-item {
-      width: 58px;
-      height: 72px;
-      border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
-      position: relative;
-      cursor: pointer;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 20px;
-      box-shadow: inset -5px -5px 12px rgba(0,0,0,0.25), 0 8px 16px rgba(0,0,0,0.3);
-      animation: floatBobble 3s ease-in-out infinite alternate;
-      transition: transform 0.15s ease;
-    }
-    .balloon-item::after {
-      content: '';
-      position: absolute;
-      bottom: -8px;
-      width: 2px;
-      height: 14px;
-      background: rgba(255, 255, 255, 0.7);
-    }
-    .balloon-item:nth-child(1) { background: #ff4757; animation-delay: 0s; }
-    .balloon-item:nth-child(2) { background: #2ed573; animation-delay: 0.4s; }
-    .balloon-item:nth-child(3) { background: #ffa502; animation-delay: 0.8s; }
-    .balloon-item:nth-child(4) { background: #1e90ff; animation-delay: 1.2s; }
-    .balloon-item:nth-child(5) { background: #ff6b81; animation-delay: 1.6s; }
-
-    @keyframes floatBobble {
-      0% { transform: translateY(0) rotate(-3deg); }
-      100% { transform: translateY(-12px) rotate(4deg); }
-    }
-    .balloon-item.popped {
-      transform: scale(0) !important;
-      opacity: 0;
-      pointer-events: none;
-      transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-
-    .revealed-sentence-box {
-      min-height: 52px;
-      background: rgba(255, 255, 255, 0.12);
-      border: 1px dashed rgba(255, 255, 255, 0.35);
-      border-radius: 18px;
-      padding: 10px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 6px;
-      flex-wrap: wrap;
-      margin: 16px 0;
-    }
-    .word-slot {
-      background: rgba(255, 255, 255, 0.15);
-      border: 1px dashed rgba(255, 255, 255, 0.4);
-      color: transparent;
-      font-weight: 700;
-      font-size: 13px;
-      padding: 6px 12px;
-      border-radius: 20px;
-      min-width: 45px;
-      transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-    .word-slot.filled {
-      background: #ffffff;
-      color: #7209b7;
-      border: 1px solid #ffffff;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-      transform: scale(1.05);
-    }
-
-    /* Scratch-Off Canvas Stage */
-    .scratch-wrapper {
-      position: relative;
-      width: 290px;
-      height: 150px;
-      margin: 20px auto;
-      border-radius: 18px;
-      overflow: hidden;
-      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.35);
-    }
-    .scratch-secret {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(135deg, #ff0844 0%, #ffb199 100%);
-      color: white;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 12px;
-    }
-    .scratch-secret h3 {
-      font-family: 'Fredoka One', cursive;
-      font-size: 20px;
-      margin-bottom: 4px;
-    }
-    .scratch-secret p {
-      font-size: 12px;
-      font-weight: 600;
-    }
-    #scratchCanvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-      cursor: crosshair;
-      touch-action: none;
-    }
-
-    /* Photo Tiles */
-    .photo-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      margin: 18px 0;
-    }
-    .flip-tile {
-      height: 160px;
-      perspective: 1000px;
-      cursor: pointer;
-    }
-    .tile-inner {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      transform-style: preserve-3d;
-      transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      border-radius: 18px;
-    }
-    .flip-tile.revealed .tile-inner {
-      transform: rotateY(180deg);
-    }
-    .tile-face {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      border-radius: 18px;
-      -webkit-backface-visibility: hidden;
-      backface-visibility: hidden;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 8px;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.25);
-    }
-    .tile-front {
-      background: linear-gradient(135deg, #7209b7, #f72585);
-      border: 2px dashed rgba(255,255,255,0.7);
-      color: white;
-    }
-    .tile-front span {
-      font-size: 12px;
-      font-weight: 600;
-      margin-top: 6px;
-    }
-    .tile-back {
-      background: #ffffff;
-      transform: rotateY(180deg);
-      border: 2px solid #f72585;
-      overflow: hidden;
-    }
-    .tile-back img {
-      width: 100%;
-      height: 110px;
-      object-fit: cover;
-      border-radius: 12px;
-    }
-    .tile-back p {
-      font-size: 11px;
-      font-weight: 700;
-      color: #7209b7;
-      margin-top: 4px;
-    }
-
-    /* Floating Heart FX */
-    .floating-heart {
-      position: fixed;
-      font-size: 22px;
-      pointer-events: none;
-      z-index: 10;
-      animation: floatHeart 3.5s linear forwards;
-    }
-    @keyframes floatHeart {
-      0% { transform: translateY(105vh) scale(0.6); opacity: 0; }
-      20% { opacity: 1; }
-      100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
-    }
-
-    .hidden { display: none !important; }
+    #final-view h2 { color: #ff007f; margin-bottom: 8px; }
   </style>
 </head>
 <body>
 
-  <div class="glow-orb orb-1"></div>
-  <div class="glow-orb orb-2"></div>
+  <div id="canvas-container"></div>
 
-  <!-- STAGE 0: LOGIN CARD -->
-  <div id="login-box" class="page-stage">
-    <div class="badge-icon">🍓</div>
-    <h2 class="stage-title">Sweet Login</h2>
-    <p class="stage-desc">Enter the secret key to unlock your surprise!</p>
-
-    <div class="input-wrapper">
-      <input type="password" id="admin-pass" class="custom-input" placeholder="Enter password">
-      <span class="eye-icon" id="eye-icon" onclick="togglePass()">👁️</span>
-    </div>
-
-    <button class="gradient-btn" onclick="checkLogin()">LET'S GO! ✨</button>
-    <div id="err" class="err-tag hidden"></div>
+  <div class="hud">
+    <h1 id="title-text">Stage 1: Blow the Candles 🎂</h1>
+    <p id="sub-text">Blow directly into your mic or click below to blow out the candles!</p>
   </div>
 
-  <!-- STAGE 1: SURPRISE WAITING -->
-  <div id="stage-1" class="page-stage hidden">
-    <div class="badge-icon">🎁</div>
-    <h2 class="stage-title">A Surprise Awaits!</h2>
-    <p class="stage-desc">A special multi-stage birthday journey made just for you!</p>
-    <button class="gradient-btn" style="background: linear-gradient(135deg, #00f5d4, #00bbf9); color: #032b43;" onclick="toStage2()">
-      OPEN THE SURPRISE 💖
-    </button>
+  <div class="controls" id="btn-group">
+    <button class="btn" id="mic-btn" onclick="startMicDetection()">Enable Mic 🎙️</button>
+    <button class="btn" id="blow-btn" onclick="extinguishCandles()">Manual Blow 💨</button>
   </div>
 
-  <!-- STAGE 2: CANDLE CEREMONY WITH BLOW/TAP -->
-  <div id="stage-2" class="page-stage hidden">
-    <div class="badge-icon">🎂</div>
-    <h2 class="stage-title">Blow Out the Candle!</h2>
-    <p class="stage-desc">Tap the flame or tap the button below to blow it out and make your wish!</p>
-
-    <div class="cake-box">
-      <div class="candle" onclick="extinguishAndCelebrate()">
-        <div class="flame" id="cakeFlame"></div>
-        <div class="smoke-puff" id="smokePuff">💨</div>
-      </div>
-      <div class="cake-base">
-        <div class="cake-frosting"></div>
-      </div>
-    </div>
-
-    <button class="gradient-btn" style="margin-top: 10px;" onclick="extinguishAndCelebrate()">
-      🌬️ BLOW OUT THE CANDLE ✨
-    </button>
+  <!-- Note Reveal Modal -->
+  <div id="note-modal">
+    <h3 id="modal-tag">Surprise! 🎈</h3>
+    <p id="modal-text">Default Text</p>
+    <button class="btn" onclick="closeModal()">Next Balloon</button>
   </div>
 
-  <!-- STAGE 3: GRAND CELEBRATION BANNER -->
-  <div id="stage-3" class="page-stage hidden">
-    <div class="badge-icon">👑</div>
-    <div style="font-family: 'Pacifico', cursive; font-size: 32px; color: #fff; text-shadow: 0 4px 20px #ff007f; margin: 12px 0;">
-      Happy Birthday! 🎉
-    </div>
-    <p class="stage-desc">Wishing you endless joy, bright smiles, and all your dreams fulfilled!</p>
-    <button class="gradient-btn" onclick="toBalloonStage()">
-      Pop the Birthday Balloons 🎈 ➡️
-    </button>
-  </div>
-
-  <!-- STAGE 4: SEQUENTIAL BALLOONS MINI-GAME -->
-  <div id="stage-balloons" class="page-stage hidden">
-    <div class="badge-icon">🎈</div>
-    <h2 class="stage-title">Pop All 5 Balloons!</h2>
-    <p class="stage-desc" style="margin-bottom: 10px;">Pop every balloon to unlock your secret message!</p>
-
-    <div class="balloon-cluster">
-      <div class="balloon-item" onclick="popBalloon(this, 'slot-1')">🎈</div>
-      <div class="balloon-item" onclick="popBalloon(this, 'slot-2')">🎈</div>
-      <div class="balloon-item" onclick="popBalloon(this, 'slot-3')">🎈</div>
-      <div class="balloon-item" onclick="popBalloon(this, 'slot-4')">🎈</div>
-      <div class="balloon-item" onclick="popBalloon(this, 'slot-5')">🎈</div>
-    </div>
-
-    <div class="revealed-sentence-box">
-      <span class="word-slot" id="slot-1">YOU</span>
-      <span class="word-slot" id="slot-2">ARE</span>
-      <span class="word-slot" id="slot-3">THE</span>
-      <span class="word-slot" id="slot-4">MOST</span>
-      <span class="word-slot" id="slot-5">SPECIAL! 💖</span>
-    </div>
-
-    <button class="gradient-btn hidden" id="balloon-next-btn" onclick="toScratchStage()">
-      Scratch Your Gift Card 🎫 ➡️
-    </button>
-  </div>
-
-  <!-- STAGE 5: GOLD SCRATCH CARD -->
-  <div id="stage-scratch" class="page-stage hidden">
-    <div class="badge-icon">🎫</div>
-    <h2 class="stage-title">Scratch & Win!</h2>
-    <p class="stage-desc" style="margin-bottom: 12px;">Rub your finger across the gold ticket to reveal a special surprise voucher!</p>
-
-    <div class="scratch-wrapper">
-      <div class="scratch-secret">
-        <h3>VIP BIRTHDAY PASS 🎟️</h3>
-        <p>Unlimited Smiles & One Free Wish! ✨</p>
-      </div>
-      <canvas id="scratchCanvas" width="290" height="150"></canvas>
-    </div>
-
-    <button class="gradient-btn hidden" id="scratch-next-btn" onclick="toPhotoStage()">
-      Reveal Photo Memories 📸 ➡️
-    </button>
-  </div>
-
-  <!-- STAGE 6: PHOTO TILES -->
-  <div id="stage-photos" class="page-stage hidden" style="max-width: 440px;">
-    <div class="badge-icon">📸</div>
-    <h2 class="stage-title">Tap to Reveal Memories!</h2>
-    <p class="stage-desc" style="margin-bottom: 12px;">Touch each gift box to reveal memories inside</p>
-
-    <div class="photo-grid">
-      <div class="flip-tile" onclick="revealTile(this)">
-        <div class="tile-inner">
-          <div class="tile-face tile-front">
-            <div style="font-size: 32px;">🎁</div>
-            <span>Tap to open</span>
-          </div>
-          <div class="tile-back">
-            <img src="insta.jpg" onerror="this.src='https://picsum.photos/300/300?random=11'" alt="Pic 1">
-            <p>Best Smiles ✨</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="flip-tile" onclick="revealTile(this)">
-        <div class="tile-inner">
-          <div class="tile-face tile-front">
-            <div style="font-size: 32px;">💌</div>
-            <span>Tap to open</span>
-          </div>
-          <div class="tile-back">
-            <img src="https://picsum.photos/300/300?random=12" alt="Pic 2">
-            <p>Cherished Moments 🌸</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="flip-tile" onclick="revealTile(this)">
-        <div class="tile-inner">
-          <div class="tile-face tile-front">
-            <div style="font-size: 32px;">🎉</div>
-            <span>Tap to open</span>
-          </div>
-          <div class="tile-back">
-            <img src="https://picsum.photos/300/300?random=13" alt="Pic 3">
-            <p>Always Shining 💫</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="flip-tile" onclick="revealTile(this)">
-        <div class="tile-inner">
-          <div class="tile-face tile-front">
-            <div style="font-size: 32px;">💖</div>
-            <span>Tap to open</span>
-          </div>
-          <div class="tile-back">
-            <img src="https://picsum.photos/300/300?random=14" alt="Pic 4">
-            <p>Stay Blessed! 🎂</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <button class="gradient-btn" style="margin-top: 10px;" onclick="toReplyStage()">
-      Write a Reply Note 💌 ➡️
-    </button>
-  </div>
-
-  <!-- STAGE 7: DEDICATED REPLY NOTE PAGE -->
-  <div id="stage-reply" class="page-stage hidden">
-    <div class="badge-icon">💌</div>
-    <h2 class="stage-title">Send Your Note 💬</h2>
-    <p class="stage-desc">Your message will be sent straight to Satish!</p>
-
-    <div class="input-wrapper">
-      <input type="text" id="sender-name" class="custom-input" style="padding-right: 18px;" placeholder="Your Name / Nickname">
-    </div>
-
-    <div class="input-wrapper">
-      <textarea id="reply-text" class="custom-input" style="padding-right: 18px; border-radius: 18px; height: 110px; resize: none;" placeholder="Write your heartfelt note here... ❤️"></textarea>
-    </div>
-
-    <button class="gradient-btn" id="send-btn" style="background: linear-gradient(135deg, #00f5d4, #00bbf9); color: #032b43;" onclick="sendDirectNote()">
-      Send Note Directly ✨
-    </button>
-
-    <p id="reply-status" style="font-size: 13px; margin-top: 14px; font-weight: 600; display: none;"></p>
-
-    <div style="margin-top: 24px; display: flex; justify-content: space-around;">
-      <span onclick="toPhotoStage()" style="color: rgba(255,255,255,0.75); font-size: 12px; cursor: pointer; text-decoration: underline;">⬅️ View Memories</span>
-      <span onclick="location.reload()" style="color: rgba(255,255,255,0.75); font-size: 12px; cursor: pointer; text-decoration: underline;">🔒 Lock Page</span>
-    </div>
+  <!-- Final Stage Screen -->
+  <div id="final-view">
+    <h2 id="final-receiver">Dear Friend,</h2>
+    <p id="final-message" style="margin-bottom: 12px; color: #ddd;"></p>
+    <p id="final-sender" style="color: #66fcf1; font-weight: bold;"></p>
   </div>
 
   <script>
-    const ADMIN_PASSWORD = "@breakup";
-    const FORMSPREE_URL = "https://formspree.io/f/mbglkqep";
+    // URL Parameter Customization (e.g. ?name=Rohit&from=Satish&note=You+are+the+best)
+    const urlParams = new URLSearchParams(window.location.search);
+    const receiverName = urlParams.get('name') || "Special Friend";
+    const senderName = urlParams.get('from') || "Your Best Buddy";
+    const customFinalNote = urlParams.get('note') || "May this new year bring you limitless joy, peace, and milestone achievements!";
+    
+    // Custom messages inside the balloons
+    const balloonWishes = [
+      "Keep shining brighter every day! ⭐",
+      "May all your coding bugs be squashed! 🚀",
+      "Health, Wealth, and Pure Happiness! 🌟"
+    ];
 
-    let poppedCount = 0;
-    let scratchedPercent = 0;
+    let currentStage = 1;
+    let scene, camera, renderer, cakeGroup, balloonsGroup = [];
+    let candleLights = [], flameMeshes = [];
+    let isBlownOut = false;
+    let audioContext, analyser, microphone;
 
-    function togglePass() {
-      const p = document.getElementById('admin-pass');
-      const eye = document.getElementById('eye-icon');
-      if (p.type === 'password') {
-        p.type = 'text';
-        eye.textContent = '🙈';
-      } else {
-        p.type = 'password';
-        eye.textContent = '👁️';
-      }
+    // --- INIT THREE.JS SCENE ---
+    function init() {
+      const container = document.getElementById('canvas-container');
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+      camera.position.set(0, 4, 12);
+      camera.lookAt(0, 1, 0);
+
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(window.devicePixelRatio);
+      container.appendChild(renderer.domElement);
+
+      // Ambient & Spot Lighting
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+      scene.add(ambientLight);
+
+      const spotLight = new THREE.SpotLight(0xfffaed, 1.2);
+      spotLight.position.set(5, 12, 8);
+      scene.add(spotLight);
+
+      buildCake();
+      window.addEventListener('resize', onWindowResize);
+      window.addEventListener('pointerdown', onSceneClick);
+      animate();
     }
 
-    function checkLogin() {
-      const val = document.getElementById('admin-pass').value;
-      const err = document.getElementById('err');
-      if (val === ADMIN_PASSWORD) {
-        document.getElementById('login-box').classList.add('hidden');
-        toStage1();
-      } else {
-        err.textContent = "Incorrect password! Try again.";
-        err.classList.remove('hidden');
-      }
-    }
+    // --- STAGE 1: BUILD 3D CAKE ---
+    function buildCake() {
+      cakeGroup = new THREE.Group();
 
-    function toStage1() {
-      document.getElementById('stage-1').classList.remove('hidden');
-      spawnHearts(['✨', '💖', '🎈']);
-    }
+      // Plate
+      const plateGeo = new THREE.CylinderGeometry(3.6, 3.2, 0.2, 32);
+      const plateMat = new THREE.MeshStandardMaterial({ color: 0xcccccc, metalness: 0.3 });
+      cakeGroup.add(new THREE.Mesh(plateGeo, plateMat));
 
-    function toStage2() {
-      document.getElementById('stage-1').classList.add('hidden');
-      document.getElementById('stage-2').classList.remove('hidden');
-      spawnHearts(['🍰', '🎉', '🌸']);
-    }
+      // Bottom Tier
+      const tier1Geo = new THREE.CylinderGeometry(3, 3, 1.5, 32);
+      const tier1Mat = new THREE.MeshStandardMaterial({ color: 0xff6b81, roughness: 0.4 });
+      const tier1 = new THREE.Mesh(tier1Geo, tier1Mat);
+      tier1.position.y = 0.85;
+      cakeGroup.add(tier1);
 
-    function extinguishAndCelebrate() {
-      const flame = document.getElementById('cakeFlame');
-      const smoke = document.getElementById('smokePuff');
-      if (flame.classList.contains('extinguished')) return;
+      // Top Tier
+      const tier2Geo = new THREE.CylinderGeometry(2, 2, 1.2, 32);
+      const tier2Mat = new THREE.MeshStandardMaterial({ color: 0xfff0f5, roughness: 0.4 });
+      const tier2 = new THREE.Mesh(tier2Geo, tier2Mat);
+      tier2.position.y = 2.2;
+      cakeGroup.add(tier2);
 
-      flame.classList.add('extinguished');
-      smoke.classList.add('active');
+      // Candles with Flames
+      const candlePositions = [[-0.7, 0], [0.7, 0], [0, 0.7], [0, -0.7]];
+      candlePositions.forEach(([x, z]) => {
+        // Wax Stick
+        const stickGeo = new THREE.CylinderGeometry(0.08, 0.08, 0.8, 16);
+        const stickMat = new THREE.MeshStandardMaterial({ color: 0x48dbfb });
+        const stick = new THREE.Mesh(stickGeo, stickMat);
+        stick.position.set(x, 3.2, z);
+        cakeGroup.add(stick);
 
-      if (navigator.vibrate) navigator.vibrate([60, 50, 60]);
+        // Flame
+        const flameGeo = new THREE.SphereGeometry(0.12, 16, 16);
+        flameGeo.scale(1, 1.8, 1);
+        const flameMat = new THREE.MeshBasicMaterial({ color: 0xffa502 });
+        const flame = new THREE.Mesh(flameGeo, flameMat);
+        flame.position.set(x, 3.7, z);
+        cakeGroup.add(flame);
+        flameMeshes.push(flame);
 
-      setTimeout(() => {
-        document.getElementById('stage-2').classList.add('hidden');
-        document.getElementById('stage-3').classList.remove('hidden');
-        triggerFireworks(4000);
-        spawnHearts(['👑', '💖', '🎂', '✨']);
-      }, 700);
-    }
-
-    function toBalloonStage() {
-      document.getElementById('stage-3').classList.add('hidden');
-      document.getElementById('stage-balloons').classList.remove('hidden');
-      spawnHearts(['🎈', '✨']);
-    }
-
-    function popBalloon(element, slotId) {
-      if (element.classList.contains('popped')) return;
-
-      element.classList.add('popped');
-      poppedCount++;
-
-      if (navigator.vibrate) navigator.vibrate(40);
-
-      confetti({
-        particleCount: 22,
-        spread: 45,
-        origin: { y: 0.55 }
+        // Candle Light Glow
+        const light = new THREE.PointLight(0xff7700, 1.5, 4);
+        light.position.set(x, 3.8, z);
+        cakeGroup.add(light);
+        candleLights.push(light);
       });
 
-      const targetSlot = document.getElementById(slotId);
-      if (targetSlot) {
-        targetSlot.classList.add('filled');
-      }
-
-      if (poppedCount >= 5) {
-        setTimeout(() => {
-          document.getElementById('balloon-next-btn').classList.remove('hidden');
-          triggerFireworks(1800);
-        }, 400);
-      }
+      scene.add(cakeGroup);
     }
 
-    function toScratchStage() {
-      document.getElementById('stage-balloons').classList.add('hidden');
-      document.getElementById('stage-scratch').classList.remove('hidden');
-      initScratchCard();
-    }
+    // --- MICROPHONE BLOW DETECTION ---
+    async function startMicDetection() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = audioContext.createAnalyser();
+        microphone = audioContext.createMediaStreamSource(stream);
+        microphone.connect(analyser);
+        analyser.fftSize = 256;
 
-    function initScratchCard() {
-      const canvas = document.getElementById('scratchCanvas');
-      const ctx = canvas.getContext('2d');
-      const width = canvas.width;
-      const height = canvas.height;
-
-      const grad = ctx.createLinearGradient(0, 0, width, height);
-      grad.addColorStop(0, '#ffd700');
-      grad.addColorStop(0.5, '#fff176');
-      grad.addColorStop(1, '#ffa000');
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, width, height);
-
-      ctx.fillStyle = "#8d6e63";
-      ctx.font = "bold 14px Poppins, sans-serif";
-      ctx.textAlign = "center";
-      ctx.fillText("✨ Rub to Scratch & Reveal ✨", width / 2, height / 2 + 5);
-
-      let isDrawing = false;
-
-      function scratch(x, y) {
-        ctx.globalCompositeOperation = 'destination-out';
-        ctx.beginPath();
-        ctx.arc(x, y, 16, 0, Math.PI * 2);
-        ctx.fill();
-        checkScratchProgress();
-      }
-
-      function getPos(e) {
-        const rect = canvas.getBoundingClientRect();
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-        return {
-          x: clientX - rect.left,
-          y: clientY - rect.top
-        };
-      }
-
-      canvas.addEventListener('mousedown', e => { isDrawing = true; const p = getPos(e); scratch(p.x, p.y); });
-      window.addEventListener('mouseup', () => isDrawing = false);
-      canvas.addEventListener('mousemove', e => { if (isDrawing) { const p = getPos(e); scratch(p.x, p.y); } });
-
-      canvas.addEventListener('touchstart', e => { isDrawing = true; const p = getPos(e); scratch(p.x, p.y); }, { passive: true });
-      window.addEventListener('touchend', () => isDrawing = false);
-      canvas.addEventListener('touchmove', e => { if (isDrawing) { const p = getPos(e); scratch(p.x, p.y); } }, { passive: true });
-
-      let checkedThrottle = 0;
-      function checkScratchProgress() {
-        checkedThrottle++;
-        if (checkedThrottle % 8 !== 0) return;
-
-        const imgData = ctx.getImageData(0, 0, width, height);
-        let clearPixels = 0;
-        for (let i = 3; i < imgData.data.length; i += 16) {
-          if (imgData.data[i] === 0) clearPixels++;
-        }
-
-        const totalSampled = imgData.data.length / 16;
-        if (clearPixels / totalSampled > 0.40) {
-          canvas.style.transition = 'opacity 0.6s ease';
-          canvas.style.opacity = '0';
-          setTimeout(() => canvas.remove(), 600);
-          document.getElementById('scratch-next-btn').classList.remove('hidden');
-          triggerFireworks(2000);
-        }
+        document.getElementById('mic-btn').innerText = "Mic Active 🎙️";
+        listenAudioLevels();
+      } catch (err) {
+        alert("Microphone access denied or unsupported. Use the 'Manual Blow' button instead!");
       }
     }
 
-    function toPhotoStage() {
-      document.getElementById('stage-scratch').classList.add('hidden');
-      document.getElementById('stage-reply').classList.add('hidden');
-      document.getElementById('stage-photos').classList.remove('hidden');
-      triggerFireworks(2000);
-    }
+    function listenAudioLevels() {
+      if (isBlownOut) return;
+      const bufferLength = analyser.frequencyBinCount;
+      const dataArray = new Uint8Array(bufferLength);
+      analyser.getByteFrequencyData(dataArray);
 
-    function toReplyStage() {
-      document.getElementById('stage-photos').classList.add('hidden');
-      document.getElementById('stage-reply').classList.remove('hidden');
-      spawnHearts(['💌', '💖', '✨']);
-    }
+      let sum = 0;
+      for (let i = 0; i < bufferLength; i++) sum += dataArray[i];
+      let average = sum / bufferLength;
 
-    function revealTile(element) {
-      if (!element.classList.contains('revealed')) {
-        element.classList.add('revealed');
-        confetti({
-          particleCount: 25,
-          spread: 45,
-          origin: { y: 0.6 }
-        });
-      }
-    }
-
-    function sendDirectNote() {
-      const name = document.getElementById('sender-name').value.trim() || "Someone Special";
-      const message = document.getElementById('reply-text').value.trim();
-      const status = document.getElementById('reply-status');
-      const btn = document.getElementById('send-btn');
-
-      if (!message) {
-        alert("Please write a small note first! 💬");
+      // Noise threshold when blowing directly into microphone
+      if (average > 65) {
+        extinguishCandles();
         return;
       }
+      requestAnimationFrame(listenAudioLevels);
+    }
 
-      btn.disabled = true;
-      btn.innerText = "Sending your note...";
-      status.style.display = "block";
-      status.style.color = "#ffd166";
-      status.innerText = "Delivering...";
+    function extinguishCandles() {
+      if (isBlownOut) return;
+      isBlownOut = true;
 
-      fetch(FORMSPREE_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Accept": "application/json" },
-        body: JSON.stringify({ name: name, message: message })
-      })
-      .then(response => {
-        if (response.ok) {
-          status.style.color = "#00f5d4";
-          status.innerText = "✨ Your note was sent straight to Satish! 💖";
-          document.getElementById('reply-text').value = "";
-          btn.innerText = "Sent Successfully! 🎉";
-          confetti({ particleCount: 50, spread: 80 });
-        } else {
-          status.style.color = "#ff4d6d";
-          status.innerText = "Failed to deliver. Please check connection.";
-          btn.disabled = false;
-          btn.innerText = "Try Again";
+      // Remove flame visuals & point lights
+      flameMeshes.forEach(f => f.scale.set(0, 0, 0));
+      candleLights.forEach(l => l.intensity = 0);
+
+      // Trigger Confetti
+      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+
+      // Transition to Stage 2 after 1.5 seconds
+      setTimeout(() => {
+        transitionToStage2();
+      }, 1500);
+    }
+
+    // --- STAGE 2: 3D BALLOON POPPING GAME ---
+    function transitionToStage2() {
+      currentStage = 2;
+      document.getElementById('title-text').innerText = "Stage 2: Tap the Balloons 🎈";
+      document.getElementById('sub-text').innerText = "Click floating balloons to reveal secret wishes!";
+      document.getElementById('btn-group').style.display = 'none';
+
+      // Animate cake downward out of sight
+      let removeCake = setInterval(() => {
+        cakeGroup.position.y -= 0.15;
+        if (cakeGroup.position.y < -8) {
+          clearInterval(removeCake);
+          scene.remove(cakeGroup);
+          spawnBalloons();
         }
-      })
-      .catch(() => {
-        status.style.color = "#ff4d6d";
-        status.innerText = "Error sending message. Check connection.";
-        btn.disabled = false;
-        btn.innerText = "Try Again";
+      }, 20);
+    }
+
+    function spawnBalloons() {
+      const colors = [0xff4757, 0x2ed573, 0x1e90ff];
+      const positions = [-2.8, 0, 2.8];
+
+      positions.forEach((xPos, idx) => {
+        const balloonNode = new THREE.Group();
+
+        // Balloon Body
+        const geo = new THREE.SphereGeometry(1, 32, 32);
+        geo.scale(1, 1.25, 1);
+        const mat = new THREE.MeshStandardMaterial({
+          color: colors[idx],
+          roughness: 0.2,
+          metalness: 0.1
+        });
+        const mesh = new THREE.Mesh(geo, mat);
+        balloonNode.add(mesh);
+
+        // String
+        const stringGeo = new THREE.CylinderGeometry(0.015, 0.015, 2, 8);
+        const stringMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+        const stringMesh = new THREE.Mesh(stringGeo, stringMat);
+        stringMesh.position.y = -2;
+        balloonNode.add(stringMesh);
+
+        balloonNode.position.set(xPos, -0.5, 0);
+        balloonNode.userData = { id: idx, message: balloonWishes[idx] };
+
+        scene.add(balloonNode);
+        balloonsGroup.push(balloonNode);
       });
     }
 
-    function triggerFireworks(durationMs) {
-      const end = Date.now() + durationMs;
-      (function frame() {
-        confetti({ particleCount: 6, angle: 60, spread: 65, origin: { x: 0 } });
-        confetti({ particleCount: 6, angle: 120, spread: 65, origin: { x: 1 } });
-        if (Date.now() < end) requestAnimationFrame(frame);
-      }());
-    }
+    // --- CLICK / RAYCASTING INTERACTIONS ---
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
 
-    function spawnHearts(icons) {
-      for (let i = 0; i < 16; i++) {
-        setTimeout(() => {
-          const p = document.createElement('div');
-          p.className = 'floating-heart';
-          p.textContent = icons[Math.floor(Math.random() * icons.length)];
-          p.style.left = (Math.random() * 88 + 6) + 'vw';
-          p.style.animationDuration = (3 + Math.random() * 2) + 's';
-          document.body.appendChild(p);
-          setTimeout(() => p.remove(), 4500);
-        }, i * 200);
+    function onSceneClick(event) {
+      if (currentStage !== 2) return;
+
+      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObjects(scene.children, true);
+
+      if (intersects.length > 0) {
+        // Find which balloon was clicked
+        let obj = intersects[0].object;
+        while (obj.parent && obj.parent !== scene) {
+          obj = obj.parent;
+        }
+
+        const bIndex = balloonsGroup.indexOf(obj);
+        if (bIndex > -1) {
+          popBalloon(obj, bIndex);
+        }
       }
     }
+
+    function popBalloon(balloon, index) {
+      // Confetti burst from balloon position
+      confetti({ particleCount: 50, spread: 60, origin: { x: (balloon.position.x / 10) + 0.5, y: 0.5 } });
+
+      // Show note
+      document.getElementById('modal-text').innerText = balloon.userData.message;
+      document.getElementById('note-modal').classList.add('active');
+
+      scene.remove(balloon);
+      balloonsGroup.splice(index, 1);
+
+      if (balloonsGroup.length === 0) {
+        setTimeout(transitionToStage3, 1000);
+      }
+    }
+
+    function closeModal() {
+      document.getElementById('note-modal').classList.remove('active');
+    }
+
+    // --- STAGE 3: FINAL NOTE VIEW ---
+    function transitionToStage3() {
+      currentStage = 3;
+      closeModal();
+      document.getElementById('title-text').innerText = `Celebration Completed! ✨`;
+      document.getElementById('sub-text').innerText = "";
+
+      const finalView = document.getElementById('final-view');
+      document.getElementById('final-receiver').innerText = `To ${receiverName},`;
+      document.getElementById('final-message').innerText = customFinalNote;
+      document.getElementById('final-sender').innerText = `— Warmly sent by ${senderName}`;
+      finalView.style.display = 'block';
+
+      // Endless subtle celebration fireworks
+      setInterval(() => {
+        confetti({ particleCount: 30, spread: 360, startVelocity: 25, origin: { x: Math.random(), y: Math.random() * 0.5 } });
+      }, 1200);
+    }
+
+    // --- ANIMATION LOOP ---
+    function animate() {
+      requestAnimationFrame(animate);
+
+      // Flickering candle effect in Stage 1
+      if (currentStage === 1 && !isBlownOut) {
+        candleLights.forEach(l => {
+          l.intensity = 1.2 + Math.sin(Date.now() * 0.02) * 0.3;
+        });
+      }
+
+      // Gentle floating animation for balloons
+      if (currentStage === 2) {
+        balloonsGroup.forEach((b, i) => {
+          b.position.y += Math.sin(Date.now() * 0.003 + i) * 0.005;
+          b.rotation.y += 0.008;
+        });
+      }
+
+      renderer.render(scene, camera);
+    }
+
+    function onWindowResize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    window.onload = init;
   </script>
 </body>
 </html>
-
-   
