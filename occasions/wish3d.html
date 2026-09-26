@@ -83,6 +83,22 @@
   </div>
 
   <script>
+// --- ANDROID & SCROLL BACK NAVIGATION FOR WISH3D ---
+history.pushState(null, null, location.href);
+window.onpopstate = function () {
+  window.location.href = "birthday.html";
+};
+
+let touchStartY = 0;
+window.addEventListener('touchstart', e => { touchStartY = e.touches[0].clientY; }, { passive: true });
+window.addEventListener('touchend', e => {
+  let touchEndY = e.changedTouches[0].clientY;
+  // If user pulls down strongly from top
+  if (touchEndY - touchStartY > 150) {
+    window.location.href = "birthday.html";
+  }
+}, { passive: true });
+    
     let receiverName = "Friend", senderName = "Satish", customNote = "Happy Birthday!";
     let mediaItems = [];
 
