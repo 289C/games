@@ -1,1 +1,255 @@
-h
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Birthday 3D Studio - Create Wish</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+    body {
+      background: radial-gradient(circle at top, #2b1055, #0b0c10);
+      color: #fff;
+      min-height: 100vh;
+      padding: 30px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .container {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 105, 180, 0.35);
+      border-radius: 22px;
+      width: 100%;
+      max-width: 480px;
+      padding: 28px 22px;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.55);
+    }
+    .back-nav {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #ff758c;
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+      transition: opacity 0.2s;
+    }
+    .back-nav:hover { opacity: 0.8; }
+    
+    .header-box { text-align: center; margin-bottom: 22px; }
+    .header-box h1 { font-size: 1.8rem; color: #ff758c; }
+    .header-box p { font-size: 0.88rem; color: #ccc; margin-top: 4px; }
+
+    .form-group { margin-bottom: 15px; }
+    label { display: block; font-size: 0.82rem; color: #e0e0e0; margin-bottom: 6px; font-weight: 600; }
+    input, textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid #3d3a4d;
+      background: #171524;
+      color: #fff;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input:focus, textarea:focus { border-color: #ff758c; }
+
+    /* Preset Quick Buttons */
+    .presets {
+      display: flex;
+      gap: 6px;
+      margin-top: 6px;
+      flex-wrap: wrap;
+    }
+    .preset-chip {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #ddd;
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      border-radius: 15px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .preset-chip:hover {
+      background: #ff758c;
+      color: #fff;
+      border-color: #ff758c;
+    }
+
+    /* Primary Action Buttons */
+    .btn-launch {
+      width: 100%;
+      padding: 14px;
+      border-radius: 25px;
+      border: none;
+      background: linear-gradient(135deg, #ff758c, #ff4081);
+      color: #fff;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 14px;
+      box-shadow: 0 4px 18px rgba(255, 64, 129, 0.45);
+      transition: transform 0.2s;
+    }
+    .btn-launch:hover { transform: scale(1.02); opacity: 0.95; }
+
+    .share-area {
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      text-align: center;
+      display: none;
+    }
+    .btn-whatsapp {
+      width: 100%;
+      padding: 12px;
+      border-radius: 25px;
+      border: none;
+      background: #25d366;
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      margin-top: 8px;
+      display: inline-block;
+      text-decoration: none;
+    }
+    .btn-whatsapp:hover { background: #1eb956; }
+
+    /* Creator Instagram Footer */
+    .creator-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 22px;
+      padding-top: 15px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      text-decoration: none;
+    }
+    .creator-badge img {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1.5px solid #ff758c;
+    }
+    .creator-badge span {
+      font-size: 0.78rem;
+      color: #bbb;
+    }
+    .creator-badge strong {
+      color: #ff758c;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <a href="../index.html" class="back-nav">← Back to Arcade</a>
+
+    <div class="header-box">
+      <h1>Birthday 3D Studio 🎂</h1>
+      <p>Set up an interactive mic blow cake & 3D balloons</p>
+    </div>
+
+    <!-- Receiver Name -->
+    <div class="form-group">
+      <label>Birthday Person's Name *</label>
+      <input type="text" id="b-name" placeholder="e.g. Rahul" required />
+    </div>
+
+    <!-- Sender Name -->
+    <div class="form-group">
+      <label>Your Name (Sender) *</label>
+      <input type="text" id="b-from" placeholder="e.g. Satish" required />
+    </div>
+
+    <!-- Custom Image (URL or Assets) -->
+    <div class="form-group">
+      <label>Custom Photo (Optional: URL or assets/mem1.jpg)</label>
+      <input type="text" id="b-img" placeholder="../assets/mem1.jpg or image link" />
+    </div>
+
+    <!-- Message / Note -->
+    <div class="form-group">
+      <label>Birthday Message</label>
+      <textarea id="b-note" rows="3">Happy Birthday! May your day be packed with smiles, delicious cake, and extraordinary moments! Keep shining bright! 🎂✨</textarea>
+      
+      <!-- Preset Quick Fill Chips -->
+      <div class="presets">
+        <span class="preset-chip" onclick="setPreset('heartfelt')">Heartfelt ❤️</span>
+        <span class="preset-chip" onclick="setPreset('funny')">Funny 😜</span>
+        <span class="preset-chip" onclick="setPreset('motivational')">Success 🚀</span>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <button class="btn-launch" onclick="createAndLaunch()">Preview 3D Wish ➔</button>
+
+    <div class="share-area" id="share-box">
+      <p style="font-size: 0.8rem; color: #aaa;">Your custom wish link is ready:</p>
+      <a id="wa-btn" class="btn-whatsapp" target="_blank">Share Directly on WhatsApp 📲</a>
+    </div>
+
+    <!-- Creator Branding with Insta.jpg (navigates up to root) -->
+    <a href="https://www.instagram.com/_satish_official_16?stkn=MTNzNXZ2cWpkdmRtNA==" target="_blank" class="creator-badge">
+      <img src="../Insta.jpg" alt="Satish" onerror="this.src='https://cdn-icons-png.flaticon.com/512/174/174855.png'" />
+      <span>Created by <strong>@_satish_official_16</strong> • DM for wishes</span>
+    </a>
+  </div>
+
+  <script>
+    function setPreset(type) {
+      const textarea = document.getElementById('b-note');
+      if (type === 'heartfelt') {
+        textarea.value = "Happy Birthday! May your day be surrounded by genuine love, sweet memories, and pure happiness today and always! 💖🎂";
+      } else if (type === 'funny') {
+        textarea.value = "Happy Birthday! Don't worry about getting older, you still look young enough to do silly things! Save me the biggest piece of cake! 🍰😂";
+      } else if (type === 'motivational') {
+        textarea.value = "Happy Birthday! May this upcoming year bring milestone achievements, high ranks, and unstoppable growth to your journey! 🚀⭐";
+      }
+    }
+
+    function createAndLaunch() {
+      const name = encodeURIComponent(document.getElementById('b-name').value.trim());
+      const from = encodeURIComponent(document.getElementById('b-from').value.trim());
+      const note = encodeURIComponent(document.getElementById('b-note').value.trim());
+      const img = encodeURIComponent(document.getElementById('b-img').value.trim());
+
+      if (!name || !from) {
+        alert("Please enter both the birthday person's name and your name!");
+        return;
+      }
+
+      // Points up one directory to wish3d.html in root
+      let targetPath = `../wish3d.html?type=birthday&name=${name}&from=${from}&note=${note}`;
+      if (img) targetPath += `&img1=${img}`;
+
+      // Build absolute URL for WhatsApp share
+      const fullUrl = new URL(targetPath, window.location.href).href;
+      const waShareText = `Hey! I created a special interactive 3D birthday wish for you 🎂✨ Tap here to open: ${fullUrl}`;
+      document.getElementById('wa-btn').href = `https://api.whatsapp.com/send?text=${encodeURIComponent(waShareText)}`;
+      
+      document.getElementById('share-box').style.display = 'block';
+
+      // Redirect to the 3D experience
+      setTimeout(() => {
+        window.location.href = targetPath;
+      }, 350);
+    }
+  </script>
+</body>
+</html>
+
