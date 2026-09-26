@@ -3,355 +3,305 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Birthday 3D Studio - All in One</title>
+  <title>Birthday 3D Celebration</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
-  <!-- Three.js and Canvas Confetti -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-    body, html { width: 100%; height: 100%; background: #0d0f18; color: #fff; overflow-x: hidden; }
-
-    /* VIEW 1: EXAMPLES & CREATOR VIEW */
-    #menu-view {
-      min-height: 100vh;
-      padding: 24px 14px 40px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .top-header {
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      padding: 10px 22px;
-      border-radius: 30px;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .top-header h1 { font-size: 1.1rem; color: #ff758c; }
-
-    .examples-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 14px;
-      width: 100%;
-      max-width: 450px;
-      margin-bottom: 25px;
-    }
-    .example-card {
-      background: #151722;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 20px;
-      padding: 16px 12px 14px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-decoration: none;
-      color: #fff;
-      position: relative;
-      cursor: pointer;
-      transition: transform 0.2s, border-color 0.2s;
-    }
-    .example-card:hover { transform: translateY(-3px); border-color: #ff758c; }
-    .card-badge {
-      position: absolute; top: 10px; right: 12px;
-      font-size: 0.62rem; font-weight: 700; padding: 3px 8px;
-      border-radius: 12px; color: #fff;
-    }
-    .badge-pink { background: linear-gradient(135deg, #ff007f, #7928ca); }
-    .badge-blue { background: linear-gradient(135deg, #00d2ff, #005bea); }
-    .badge-yellow { background: linear-gradient(135deg, #f7971e, #ffd200); color: #000; }
-
-    .card-icon-box {
-      width: 85px; height: 85px; border-radius: 18px;
-      margin-top: 10px; margin-bottom: 10px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 2.6rem; background: #1e2130;
-    }
-    .card-title { font-size: 0.82rem; font-weight: 600; text-align: center; }
-
-    /* CREATOR BOX */
-    .creator-box {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 105, 180, 0.35);
-      border-radius: 22px; width: 100%; max-width: 450px;
-      padding: 22px 18px; backdrop-filter: blur(12px);
-    }
-    .creator-box h2 { font-size: 1.3rem; color: #ff758c; margin-bottom: 4px; text-align: center; }
-    .creator-box p.sub { font-size: 0.82rem; color: #ccc; margin-bottom: 18px; text-align: center; }
-    .form-group { margin-bottom: 12px; }
-    label { display: block; font-size: 0.8rem; color: #e0e0e0; margin-bottom: 5px; font-weight: 600; }
-    input, textarea {
-      width: 100%; padding: 10px 12px; border-radius: 10px;
-      border: 1px solid #3d3a4d; background: #171524; color: #fff;
-      font-size: 0.9rem; outline: none;
-    }
-    input:focus, textarea:focus { border-color: #ff758c; }
-    .file-dropzone {
-      border: 2px dashed #ff758c; border-radius: 10px; padding: 12px;
-      text-align: center; cursor: pointer; background: rgba(255, 117, 140, 0.05);
-    }
-    .preview-container { display: flex; gap: 8px; overflow-x: auto; margin-top: 8px; }
-    .preview-thumb { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; border: 1px solid #ff758c; flex-shrink: 0; }
-    .btn-launch {
-      width: 100%; padding: 13px; border-radius: 25px; border: none;
-      background: linear-gradient(135deg, #ff758c, #ff4081);
-      color: #fff; font-weight: 700; font-size: 0.95rem; cursor: pointer;
-      margin-top: 10px; box-shadow: 0 4px 15px rgba(255, 64, 129, 0.4);
-    }
-
-    /* VIEW 2: 3D INTERACTIVE STAGE */
-    #stage-view { position: fixed; inset: 0; display: none; z-index: 50; background: #0b0c10; }
-    #canvas-container { position: absolute; inset: 0; width: 100%; height: 100%; }
+    body, html { width: 100%; height: 100%; overflow: hidden; background: #0b0c10; color: #fff; }
+    
+    #canvas-container { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; }
+    
+    /* Top HUD */
     .hud {
-      position: absolute; top: 18px; left: 50%; transform: translateX(-50%);
-      z-index: 60; text-align: center; pointer-events: none; width: 90%; max-width: 500px;
+      position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
+      z-index: 10; text-align: center; pointer-events: none; width: 90%; max-width: 500px;
     }
-    .hud h2 { font-size: 1.5rem; color: #66fcf1; text-shadow: 0 0 12px rgba(102, 252, 241, 0.6); }
+    .hud h1 { font-size: 1.6rem; color: #66fcf1; text-shadow: 0 0 12px rgba(102, 252, 241, 0.6); }
     .hud p { font-size: 0.85rem; color: #c5c6c7; margin-top: 4px; }
 
+    /* Top Navigation & Admin Lock Button */
+    .top-bar {
+      position: absolute; top: 16px; left: 16px; right: 16px;
+      display: flex; justify-content: space-between; align-items: center; z-index: 20;
+    }
+    .btn-icon {
+      background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff; padding: 7px 14px; border-radius: 20px; font-size: 0.8rem;
+      cursor: pointer; backdrop-filter: blur(8px); text-decoration: none;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn-icon:hover { background: rgba(255, 255, 255, 0.2); }
+
+    /* Controls Bottom */
     .controls {
-      position: absolute; bottom: 25px; left: 50%; transform: translateX(-50%);
-      z-index: 60; display: flex; gap: 10px;
+      position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+      z-index: 10; display: flex; gap: 12px;
     }
-    .btn {
-      padding: 10px 20px; border: none; border-radius: 20px;
+    .btn-action {
+      padding: 11px 22px; border: none; border-radius: 25px;
       background: linear-gradient(135deg, #45a29e, #66fcf1); color: #0b0c10;
-      font-weight: 700; cursor: pointer; font-size: 0.88rem;
+      font-weight: 700; cursor: pointer; font-size: 0.88rem; transition: transform 0.2s;
     }
-    #gallery-ui { position: absolute; bottom: 75px; left: 50%; transform: translateX(-50%); z-index: 60; display: none; }
-    
+    .btn-action:hover { transform: scale(1.04); }
+
+    /* Photo Gallery Stage Navigation */
+    #gallery-ui {
+      position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%);
+      z-index: 15; text-align: center; display: none;
+    }
+
+    /* Note Modal for Balloons */
     #note-modal {
       position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.8);
       background: rgba(20, 20, 30, 0.95); border: 1px solid #66fcf1; border-radius: 16px;
-      padding: 22px; text-align: center; z-index: 70; max-width: 320px; width: 85%;
+      padding: 22px; text-align: center; z-index: 25; max-width: 320px; width: 85%;
       box-shadow: 0 0 30px rgba(102, 252, 241, 0.3); opacity: 0; pointer-events: none;
       transition: 0.3s;
     }
     #note-modal.active { opacity: 1; pointer-events: auto; transform: translate(-50%, -50%) scale(1); }
 
+    /* Final Stage 4 Message */
     #final-view {
       position: absolute; bottom: 12%; left: 50%; transform: translateX(-50%);
-      text-align: center; z-index: 60; background: rgba(0, 0, 0, 0.75);
+      text-align: center; z-index: 15; background: rgba(0, 0, 0, 0.75);
       border: 1px solid rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px);
-      padding: 20px 24px; border-radius: 14px; display: none; width: 88%; max-width: 440px;
+      padding: 20px 24px; border-radius: 16px; display: none; width: 88%; max-width: 440px;
     }
-    .share-btns { display: flex; gap: 8px; justify-content: center; margin-top: 12px; }
-    .btn-wa { background: #25d366; color: #fff; padding: 7px 14px; border-radius: 14px; font-size: 0.8rem; text-decoration: none; font-weight: bold; }
-    .btn-copy { background: #3d3a4d; color: #fff; padding: 7px 14px; border-radius: 14px; font-size: 0.8rem; border: none; cursor: pointer; }
-    .btn-back-stage { position: absolute; top: 18px; left: 16px; z-index: 65; color: #66fcf1; background: none; border: none; font-size: 0.9rem; cursor: pointer; }
+    .btn-wa {
+      background: #25d366; color: #fff; padding: 8px 16px; border-radius: 20px;
+      font-size: 0.82rem; text-decoration: none; font-weight: bold; display: inline-block; margin-top: 10px;
+    }
+
+    /* PASSWORD & ADMIN EDIT MODAL */
+    .admin-modal-overlay {
+      position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85);
+      z-index: 100; display: none; align-items: center; justify-content: center; padding: 18px;
+    }
+    .admin-modal {
+      background: #171822; border: 1px solid #ff758c; border-radius: 20px;
+      width: 100%; max-width: 420px; padding: 24px; position: relative;
+    }
+    .admin-modal h3 { color: #ff758c; font-size: 1.2rem; margin-bottom: 8px; }
+    .admin-modal p { font-size: 0.8rem; color: #aaa; margin-bottom: 16px; }
+    .form-group { margin-bottom: 12px; text-align: left; }
+    .form-group label { display: block; font-size: 0.78rem; color: #ccc; margin-bottom: 4px; font-weight: 600; }
+    .admin-modal input, .admin-modal textarea {
+      width: 100%; padding: 10px 12px; border-radius: 10px;
+      border: 1px solid #333; background: #222433; color: #fff; font-size: 0.88rem; outline: none;
+    }
+    .file-btn {
+      border: 1.5px dashed #ff758c; padding: 10px; border-radius: 10px;
+      text-align: center; cursor: pointer; color: #ff758c; font-size: 0.8rem;
+    }
+    .btn-save {
+      width: 100%; padding: 12px; border-radius: 20px; border: none;
+      background: linear-gradient(135deg, #ff758c, #ff4081); color: #fff;
+      font-weight: 700; cursor: pointer; margin-top: 10px; font-size: 0.9rem;
+    }
+    .close-modal { position: absolute; top: 16px; right: 18px; background: none; border: none; color: #888; font-size: 1.3rem; cursor: pointer; }
   </style>
 </head>
 <body>
 
-  <!-- VIEW 1: EXAMPLES & CREATOR -->
-  <div id="menu-view">
-    <div class="top-header">
-      <span>🎂</span>
-      <h1>Birthday 3D Studio</h1>
+  <!-- Top Navigation & Hidden Admin Edit Lock -->
+  <div class="top-bar">
+    <button class="btn-icon" onclick="goBackStep()">← Back</button>
+    <button class="btn-icon" onclick="openPasswordPrompt()">🔒 Edit Wish</button>
+  </div>
+
+  <div id="canvas-container"></div>
+
+  <!-- HUD Titles -->
+  <div class="hud">
+    <h1 id="stage-title">Stage 1: Blow the Candles 🎂</h1>
+    <p id="stage-sub">Blow directly into your microphone or tap manual blow!</p>
+  </div>
+
+  <!-- Stage 1 Controls -->
+  <div class="controls" id="cake-controls">
+    <button class="btn-action" id="mic-btn" onclick="startMicDetection()">Enable Mic 🎙️</button>
+    <button class="btn-action" onclick="extinguishCandles()">Manual Blow 💨</button>
+  </div>
+
+  <!-- Stage 2 Photo Controls -->
+  <div id="gallery-ui">
+    <div style="display: flex; gap: 10px; justify-content: center;">
+      <button class="btn-action" onclick="rotateGallery(-1)">◀ Prev</button>
+      <button class="btn-action" onclick="rotateGallery(1)">Next ▶</button>
+      <button class="btn-action" style="background:#ff007f; color:#fff;" onclick="finishGalleryStage()">Pop Balloons 🎈</button>
     </div>
+  </div>
 
-    <!-- 3 Examples Ready to Launch -->
-    <div class="examples-grid">
-      <div class="example-card" onclick="launch3D('Rahul', 'Satish', 'Happy Birthday! May your dreams come true! Keep shining!', [])">
-        <span class="card-badge badge-pink">MIC BLOW</span>
-        <div class="card-icon-box">🍰</div>
-        <span class="card-title">Classic Mic Blow</span>
-      </div>
+  <!-- Balloon Note Modal -->
+  <div id="note-modal">
+    <h3 style="color:#ffe600; margin-bottom:8px;">Surprise Note! 🎈</h3>
+    <p id="modal-text" style="margin-bottom:14px;"></p>
+    <button class="btn-action" onclick="closeModal()">Next</button>
+  </div>
 
-      <div class="example-card" onclick="launch3D('Sneha', 'Satish', 'Wishing you the happiest celebration filled with love!', [{data:'https://images.unsplash.com/photo-1513151233558-d860c5398176?w=600', isVideo:false}])">
-        <span class="card-badge badge-blue">PHOTO REEL</span>
-        <div class="card-icon-box">📸</div>
-        <span class="card-title">Memory Reel 3D</span>
-      </div>
+  <!-- Stage 4 Final Wish Card -->
+  <div id="final-view">
+    <h2 id="final-receiver" style="color:#ff007f; margin-bottom:6px;">To Our Star,</h2>
+    <p id="final-message" style="margin-bottom: 10px; color: #ddd; font-size:0.9rem;"></p>
+    <p id="final-sender" style="color: #66fcf1; font-weight: bold; font-size:0.85rem;"></p>
+    <a id="wa-share-btn" class="btn-wa" target="_blank">Share on WhatsApp 📲</a>
+  </div>
 
-      <div class="example-card" onclick="launch3D('Ajay', 'Satish', 'Have an absolute blast today! More success to you!', [])">
-        <span class="card-badge badge-yellow">BALLOONS</span>
-        <div class="card-icon-box">🎈</div>
-        <span class="card-title">Balloon Pop Wish</span>
+  <!-- PASSWORD PROMPT MODAL -->
+  <div class="admin-modal-overlay" id="password-modal">
+    <div class="admin-modal" style="max-width:340px;">
+      <button class="close-modal" onclick="closeAdminModals()">&times;</button>
+      <h3>Enter Admin Password 🔐</h3>
+      <p>Only authorized creators can edit this wish.</p>
+      <div class="form-group">
+        <input type="password" id="admin-pass" placeholder="Enter password..." />
       </div>
-
-      <div class="example-card" onclick="scrollToCreator()" style="border: 1px dashed #ff758c;">
-        <span class="card-badge badge-pink">CUSTOM</span>
-        <div class="card-icon-box">✍️</div>
-        <span class="card-title">Custom Creator</span>
-      </div>
+      <button class="btn-save" onclick="verifyPassword()">Unlock Studio</button>
     </div>
+  </div>
 
-    <!-- Custom Creator Studio Form -->
-    <div class="creator-box" id="creator-box">
-      <h2>Custom 3D Wish Maker 🎨</h2>
-      <p class="sub">Pick photos from gallery & blow candles with mic</p>
+  <!-- EDIT CUSTOMIZER MODAL (Protected) -->
+  <div class="admin-modal-overlay" id="editor-modal">
+    <div class="admin-modal">
+      <button class="close-modal" onclick="closeAdminModals()">&times;</button>
+      <h3>Customize Birthday 3D 🎨</h3>
+      <p>Modify celebration details and photos</p>
 
       <div class="form-group">
-        <label>Birthday Person's Name *</label>
-        <input type="text" id="c-name" placeholder="e.g. Rahul" required />
+        <label>Birthday Person's Name</label>
+        <input type="text" id="edit-to" placeholder="e.g. Rahul" />
       </div>
 
       <div class="form-group">
-        <label>Your Name (Sender) *</label>
-        <input type="text" id="c-from" placeholder="e.g. Satish" required />
+        <label>Your Name (Sender)</label>
+        <input type="text" id="edit-from" placeholder="e.g. Satish" />
       </div>
 
       <div class="form-group">
-        <label>Select Memories from Phone (Photos/Videos)</label>
-        <div class="file-dropzone" onclick="document.getElementById('media-files').click()">
-          <p style="font-size: 0.8rem; color: #ff758c; font-weight: bold;">📁 Select from Gallery</p>
-          <input type="file" id="media-files" accept="image/*,video/*" multiple style="display:none;" onchange="handleMediaUpload(event)" />
+        <label>Upload Gallery Photos / Videos</label>
+        <div class="file-btn" onclick="document.getElementById('edit-files').click()">
+          📁 Pick Images/Videos from Phone
+          <input type="file" id="edit-files" accept="image/*,video/*" multiple style="display:none;" onchange="handleAdminFiles(event)" />
         </div>
-        <div class="preview-container" id="preview-box"></div>
+        <p id="file-count" style="font-size:0.75rem; color:#aaa; margin-top:4px;"></p>
       </div>
 
       <div class="form-group">
         <label>Personal Birthday Message</label>
-        <textarea id="c-note" rows="3">Happy Birthday! May your day be packed with smiles, cake, and extraordinary moments! Keep shining bright! 🎂✨</textarea>
+        <textarea id="edit-msg" rows="3"></textarea>
       </div>
 
-      <button class="btn-launch" onclick="launchCustomWish()">Launch Custom 3D Wish ➔</button>
-    </div>
-
-    <a href="../index.html" style="color:#777; font-size:0.85rem; margin-top:25px; text-decoration:none;">← Back to Arcade Home</a>
-  </div>
-
-  <!-- VIEW 2: 3D ENGINE -->
-  <div id="stage-view">
-    <button class="btn-back-stage" onclick="stepBackStage()">← Back</button>
-    <div id="canvas-container"></div>
-
-    <div class="hud">
-      <h2 id="stage-title">Stage 1: Blow the Candles 🎂</h2>
-      <p id="stage-sub">Blow into microphone or tap manual blow!</p>
-    </div>
-
-    <div class="controls" id="cake-controls">
-      <button class="btn" id="mic-btn" onclick="startMic()">Enable Mic 🎙️</button>
-      <button class="btn" onclick="blowCandles()">Manual Blow 💨</button>
-    </div>
-
-    <div id="gallery-ui">
-      <div style="display:flex; gap:10px; justify-content:center;">
-        <button class="btn" onclick="rotatePhotos(-1)">◀ Prev</button>
-        <button class="btn" onclick="rotatePhotos(1)">Next ▶</button>
-        <button class="btn" style="background:#ff007f; color:#fff;" onclick="finishGallery()">Pop Balloons 🎈</button>
-      </div>
-    </div>
-
-    <div id="note-modal">
-      <h3 style="color:#ffe600; margin-bottom:8px;">Surprise Note! 🎈</h3>
-      <p id="modal-text" style="margin-bottom:14px;"></p>
-      <button class="btn" onclick="closeNote()">Next</button>
-    </div>
-
-    <div id="final-view">
-      <h2 id="final-to" style="color:#ff007f; margin-bottom:6px;"></h2>
-      <p id="final-msg" style="color:#ddd; margin-bottom:10px; font-size:0.9rem;"></p>
-      <p id="final-from" style="color:#66fcf1; font-weight:bold; font-size:0.85rem;"></p>
-      <div class="share-btns">
-        <a id="wa-share-btn" class="btn-wa" target="_blank">Share on WhatsApp 📲</a>
-        <button class="btn-copy" onclick="copyWishLink()">Copy Link 📋</button>
-      </div>
+      <button class="btn-save" onclick="saveAdminChanges()">Save & Reload 3D ➔</button>
     </div>
   </div>
 
   <script>
-    // --- STEP-BY-STEP BACK NAVIGATION LOGIC ---
-    let currentStage = 0; // 0: Menu, 1: Cake, 2: Gallery, 3: Balloons, 4: Final
-    let selectedFiles = [];
-    let currentReceiver = "", currentSender = "", currentNote = "";
+    // --- DEFAULT CELEBRATION DATA ---
+    const ADMIN_PASSWORD = "satish123"; // Change your password here
+
+    let wishData = {
+      receiver: "Rahul",
+      sender: "Satish",
+      message: "Happy Birthday! Wishing you a magnificent year filled with big wins, radiant happiness, and endless success! Keep shining bright! 🎂⭐",
+      media: [
+        { data: 'https://images.unsplash.com/photo-1513151233558-d860c5398176?w=600', isVideo: false },
+        { data: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=600', isVideo: false }
+      ]
+    };
+
+    // Load custom saved data if available
+    const saved = localStorage.getItem("birthday_custom_wish");
+    if (saved) {
+      try { wishData = JSON.parse(saved); } catch(e){}
+    }
+
+    // --- STEP-BY-STEP BACK NAVIGATION ---
+    let currentStage = 1; // 1: Cake, 2: Gallery, 3: Balloons, 4: Final Note
 
     history.pushState(null, null, location.href);
     window.onpopstate = function () {
-      stepBackStage();
+      goBackStep();
     };
 
-    // Scroll up / Swipe down back gesture
     let touchStartY = 0;
     window.addEventListener('touchstart', e => { touchStartY = e.touches[0].clientY; }, { passive: true });
     window.addEventListener('touchend', e => {
       let touchEndY = e.changedTouches[0].clientY;
       if (touchEndY - touchStartY > 140) {
-        stepBackStage();
+        goBackStep();
       }
     }, { passive: true });
 
-    function stepBackStage() {
+    function goBackStep() {
       if (currentStage > 1) {
         currentStage--;
-        updateStageView();
-      } else if (currentStage === 1) {
-        currentStage = 0;
-        document.getElementById('stage-view').style.display = 'none';
-        document.getElementById('menu-view').style.display = 'flex';
+        updateStageUI();
       } else {
-        window.location.href = "../index.html";
+        // Return to occasions category page
+        window.location.href = "index.html";
       }
     }
 
-    function scrollToCreator() {
-      document.getElementById('creator-box').scrollIntoView({ behavior: 'smooth' });
+    // --- ADMIN PASSWORD LOGIC ---
+    function openPasswordPrompt() {
+      document.getElementById('password-modal').style.display = 'flex';
+      document.getElementById('admin-pass').value = '';
     }
 
-    function handleMediaUpload(e) {
-      const files = Array.from(e.target.files);
-      const preview = document.getElementById('preview-box');
-      preview.innerHTML = '';
-      selectedFiles = [];
+    function verifyPassword() {
+      const entered = document.getElementById('admin-pass').value;
+      if (entered === ADMIN_PASSWORD) {
+        document.getElementById('password-modal').style.display = 'none';
+        document.getElementById('editor-modal').style.display = 'flex';
 
-      files.forEach(file => {
-        const reader = new FileReader();
-        reader.onload = ev => {
-          const isVid = file.type.startsWith('video');
-          selectedFiles.push({ data: ev.target.result, isVideo: isVid });
-          const elem = document.createElement(isVid ? 'div' : 'img');
-          elem.className = 'preview-thumb';
-          if (!isVid) elem.src = ev.target.result;
-          else { elem.style.background = '#222'; elem.innerText = '🎬'; elem.style.display = 'flex'; elem.style.alignItems='center'; elem.style.justifyContent='center'; }
-          preview.appendChild(elem);
+        document.getElementById('edit-to').value = wishData.receiver;
+        document.getElementById('edit-from').value = wishData.sender;
+        document.getElementById('edit-msg').value = wishData.message;
+      } else {
+        alert("Incorrect password! Access denied.");
+      }
+    }
+
+    function closeAdminModals() {
+      document.getElementById('password-modal').style.display = 'none';
+      document.getElementById('editor-modal').style.display = 'none';
+    }
+
+    let tempMedia = [];
+    function handleAdminFiles(e) {
+      const files = Array.from(e.target.files);
+      tempMedia = [];
+      files.forEach(f => {
+        const r = new FileReader();
+        r.onload = ev => {
+          tempMedia.push({ data: ev.target.result, isVideo: f.type.startsWith('video') });
+          document.getElementById('file-count').innerText = `${tempMedia.length} files selected`;
         };
-        reader.readAsDataURL(file);
+        r.readAsDataURL(f);
       });
     }
 
-    function launchCustomWish() {
-      const name = document.getElementById('c-name').value.trim();
-      const from = document.getElementById('c-from').value.trim();
-      const note = document.getElementById('c-note').value.trim();
-      if (!name || !from) return alert("Please fill in names!");
-      launch3D(name, from, note, selectedFiles);
+    function saveAdminChanges() {
+      wishData.receiver = document.getElementById('edit-to').value.trim() || wishData.receiver;
+      wishData.sender = document.getElementById('edit-from').value.trim() || wishData.sender;
+      wishData.message = document.getElementById('edit-msg').value.trim() || wishData.message;
+      if (tempMedia.length > 0) wishData.media = tempMedia;
+
+      localStorage.setItem("birthday_custom_wish", JSON.stringify(wishData));
+      alert("Celebration updated successfully! 🎉");
+      closeAdminModals();
+      location.reload();
     }
 
-    // --- 3D ENGINE IMPLEMENTATION ---
+    // --- THREE.JS 3D ENGINE ---
     let scene, camera, renderer, cakeGroup, galleryGroup, balloonsGroup = [];
     let candleLights = [], flameMeshes = [], isBlownOut = false;
-    let targetGalleryRotation = 0, audioContext, analyser, micStream;
+    let targetGalleryRotation = 0, audioContext, analyser, microphone;
 
-    function launch3D(name, from, note, media) {
-      currentReceiver = name;
-      currentSender = from;
-      currentNote = note;
-      selectedFiles = media;
-
-      document.getElementById('menu-view').style.display = 'none';
-      document.getElementById('stage-view').style.display = 'block';
-
-      // Setup share links
-      const shareUrl = `${window.location.origin}${window.location.pathname}?name=${encodeURIComponent(name)}&from=${encodeURIComponent(from)}`;
-      document.getElementById('wa-share-btn').href = `https://api.whatsapp.com/send?text=${encodeURIComponent("Hey " + name + "! I made a 3D birthday wish for you 🎂✨ " + shareUrl)}`;
-
-      currentStage = 1;
-      initThreeEngine();
-    }
-
-    function copyWishLink() {
-      navigator.clipboard.writeText(window.location.href);
-      alert("Wish Link copied to clipboard! 📋");
-    }
-
-    function initThreeEngine() {
+    function init3D() {
       const container = document.getElementById('canvas-container');
-      container.innerHTML = '';
       scene = new THREE.Scene();
       camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
       camera.position.set(0, 4, 12);
@@ -366,12 +316,12 @@
       spot.position.set(5, 12, 10);
       scene.add(spot);
 
-      buildCakeMesh();
-      updateStageView();
+      buildCake();
+      updateStageUI();
       animate();
     }
 
-    function buildCakeMesh() {
+    function buildCake() {
       cakeGroup = new THREE.Group();
       candleLights = []; flameMeshes = []; isBlownOut = false;
 
@@ -398,51 +348,51 @@
       scene.add(cakeGroup);
     }
 
-    async function startMic() {
+    async function startMicDetection() {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
         analyser = audioContext.createAnalyser();
-        micStream = audioContext.createMediaStreamSource(stream);
-        micStream.connect(analyser);
+        microphone = audioContext.createMediaStreamSource(stream);
+        microphone.connect(analyser);
         analyser.fftSize = 256;
         document.getElementById('mic-btn').innerText = "Mic Active 🎙️";
-        listenBlow();
-      } catch (err) { alert("Mic denied. Tap 'Manual Blow'!"); }
+        listenAudioLevels();
+      } catch (e) { alert("Mic unavailable. Use Manual Blow button!"); }
     }
 
-    function listenBlow() {
+    function listenAudioLevels() {
       if (isBlownOut || currentStage !== 1) return;
       const data = new Uint8Array(analyser.frequencyBinCount);
       analyser.getByteFrequencyData(data);
       let sum = data.reduce((a, b) => a + b, 0);
-      if (sum / data.length > 65) return blowCandles();
-      requestAnimationFrame(listenBlow);
+      if (sum / data.length > 65) return extinguishCandles();
+      requestAnimationFrame(listenAudioLevels);
     }
 
-    function blowCandles() {
+    function extinguishCandles() {
       if (isBlownOut) return;
       isBlownOut = true;
       flameMeshes.forEach(f => f.scale.set(0, 0, 0));
       candleLights.forEach(l => l.intensity = 0);
       confetti({ particleCount: 100, spread: 80, origin: { y: 0.6 } });
-      setTimeout(() => { currentStage = 2; updateStageView(); }, 1200);
+      setTimeout(() => { currentStage = 2; updateStageUI(); }, 1200);
     }
 
-    function updateStageView() {
+    function updateStageUI() {
       document.getElementById('cake-controls').style.display = 'none';
       document.getElementById('gallery-ui').style.display = 'none';
       document.getElementById('final-view').style.display = 'none';
 
       if (currentStage === 1) {
-        document.getElementById('stage-title').innerText = "Stage 1: Blow the Candles 🎂";
-        document.getElementById('stage-sub').innerText = "Blow into microphone or tap manual blow!";
+        document.getElementById('stage-title').innerText = `Happy Birthday ${wishData.receiver}! 🎂`;
+        document.getElementById('stage-sub').innerText = "Blow directly into microphone or tap manual blow!";
         document.getElementById('cake-controls').style.display = 'flex';
         if (cakeGroup) cakeGroup.position.y = 0;
         if (galleryGroup) scene.remove(galleryGroup);
       } else if (currentStage === 2) {
-        document.getElementById('stage-title').innerText = "Stage 2: Gallery Memories 📸";
-        document.getElementById('stage-sub').innerText = "Swipe or tap Next to look through memories";
+        document.getElementById('stage-title').innerText = "Stage 2: Special Memories 📸";
+        document.getElementById('stage-sub').innerText = "Swipe or tap Next to look at the photos/videos";
         document.getElementById('gallery-ui').style.display = 'block';
         if (cakeGroup) cakeGroup.position.y = -10;
         createGalleryCarousel();
@@ -450,15 +400,18 @@
         document.getElementById('stage-title').innerText = "Stage 3: Pop the Balloons 🎈";
         document.getElementById('stage-sub').innerText = "Tap balloons to open surprise wishes!";
         if (galleryGroup) scene.remove(galleryGroup);
-        spawnBalloonsMesh();
+        spawnBalloons();
       } else if (currentStage === 4) {
-        document.getElementById('stage-title').innerText = "Happy Birthday! ✨";
+        document.getElementById('stage-title').innerText = "Celebration Complete! ✨";
         document.getElementById('stage-sub').innerText = "";
-        document.getElementById('final-to').innerText = `To ${currentReceiver},`;
-        document.getElementById('final-msg').innerText = currentNote;
-        document.getElementById('final-from').innerText = `— With love, ${currentSender}`;
+        document.getElementById('final-receiver').innerText = `To ${wishData.receiver},`;
+        document.getElementById('final-message').innerText = wishData.message;
+        document.getElementById('final-sender').innerText = `— With love, ${wishData.sender}`;
         document.getElementById('final-view').style.display = 'block';
-        confetti({ particleCount: 80, spread: 100 });
+
+        const shareUrl = window.location.href;
+        document.getElementById('wa-share-btn').href = `https://api.whatsapp.com/send?text=${encodeURIComponent("Happy Birthday! Check out this interactive 3D wish 🎂✨ " + shareUrl)}`;
+        confetti({ particleCount: 80, spread: 90 });
       }
     }
 
@@ -466,19 +419,13 @@
       if (galleryGroup) scene.remove(galleryGroup);
       galleryGroup = new THREE.Group();
       const loader = new THREE.TextureLoader();
-
-      let items = selectedFiles.length > 0 ? selectedFiles : [
-        { data: 'https://images.unsplash.com/photo-1513151233558-d860c5398176?w=600', isVideo: false },
-        { data: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=600', isVideo: false }
-      ];
-
+      const items = wishData.media;
       const total = items.length;
       const radius = Math.max(4.2, total * 0.8);
 
       items.forEach((item, index) => {
         const angle = (index / total) * Math.PI * 2;
         const frame = new THREE.Group();
-
         const border = new THREE.Mesh(new THREE.BoxGeometry(3.2, 3.2, 0.12), new THREE.MeshStandardMaterial({ color: 0xffffff }));
         frame.add(border);
 
@@ -498,29 +445,35 @@
       scene.add(galleryGroup);
     }
 
-    function rotatePhotos(dir) {
+    function rotateGallery(dir) {
       targetGalleryRotation += (dir * 1.2);
     }
 
-    function finishGallery() {
+    function finishGalleryStage() {
       currentStage = 3;
-      updateStageView();
+      updateStageUI();
     }
 
-    function spawnBalloonsMesh() {
+    function spawnBalloons() {
       balloonsGroup.forEach(b => scene.remove(b));
       balloonsGroup = [];
       const colors = [0xff4757, 0x2ed573, 0x1e90ff];
-      const msgs = ["Keep shining brighter every day! ⭐", "May all your coding dreams come true! 🚀", "Enjoy the best cake ever today! 🍰"];
+      const wishes = [
+        "May every goal of yours turn to gold this year! 🚀",
+        "Keep smiling brighter every single day! ✨",
+        "Enjoy the sweetest cake and party today! 🍰"
+      ];
 
       [-2.8, 0, 2.8].forEach((x, i) => {
         const node = new THREE.Group();
-        const geo = new THREE.SphereGeometry(1, 32, 32); geo.scale(1, 1.25, 1);
+        const geo = new THREE.SphereGeometry(1, 32, 32); 
+        geo.scale(1, 1.25, 1);
         node.add(new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color: colors[i], roughness: 0.3 })));
         const string = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 2.2, 8), new THREE.MeshBasicMaterial({ color: 0xffffff }));
-        string.position.y = -2; node.add(string);
+        string.position.y = -2; 
+        node.add(string);
         node.position.set(x, -0.2, 0);
-        node.userData = { msg: msgs[i] };
+        node.userData = { msg: wishes[i] };
         scene.add(node);
         balloonsGroup.push(node);
       });
@@ -544,12 +497,12 @@
           document.getElementById('note-modal').classList.add('active');
           scene.remove(obj);
           balloonsGroup.splice(idx, 1);
-          if (balloonsGroup.length === 0) setTimeout(() => { currentStage = 4; updateStageView(); }, 1000);
+          if (balloonsGroup.length === 0) setTimeout(() => { currentStage = 4; updateStageUI(); }, 1000);
         }
       }
     });
 
-    function closeNote() {
+    function closeModal() {
       document.getElementById('note-modal').classList.remove('active');
     }
 
@@ -567,6 +520,8 @@
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
     });
+
+    window.onload = init3D;
   </script>
 </body>
 </html>
