@@ -521,7 +521,7 @@
       cursor: pointer;
     }
 
-    /* Screen 6: Email Message Reply Form */
+    /* Screen 6: Direct Message Form */
     .review-form {
       display: flex;
       flex-direction: column;
@@ -530,7 +530,7 @@
     }
 
     .review-form label {
-      font-size: 0.82rem;
+      font-size: 0.85rem;
       color: #f7d070;
       font-weight: 600;
       margin-bottom: 4px;
@@ -555,7 +555,7 @@
 
     .review-textarea {
       resize: vertical;
-      min-height: 95px;
+      min-height: 100px;
     }
   </style>
 </head>
@@ -670,7 +670,7 @@
           </div>
         </div>
 
-        <!-- 2. The Editors (Insta.jpg & shanker.jpg) -->
+        <!-- 2. The Editors (Insta.jpg & assets/shanker.jpg) -->
         <div class="title-card" onclick="handleTitleClick(event, this)">
           <div class="badge-tag">🎬 THE EDITORS</div>
           <div class="title-mystery">
@@ -679,8 +679,8 @@
           </div>
           <div class="title-content">
             <div class="title-avatars-row">
-              <div class="title-avatar" onclick="openHdModal({ type: 'image', src: 'assets/Insta.jpg' })">
-                <img src="assets/Insta.jpg" alt="Satish" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Satish'" />
+              <div class="title-avatar" onclick="openHdModal({ type: 'image', src: 'Insta.jpg' })">
+                <img src="Insta.jpg" alt="Satish" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Satish'" />
               </div>
               <div class="title-avatar" onclick="openHdModal({ type: 'image', src: 'assets/shanker.jpg' })">
                 <img src="assets/shanker.jpg" alt="Shanker" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Shanker'" />
@@ -721,8 +721,8 @@
           </div>
           <div class="title-content">
             <div class="title-avatars-row">
-              <div class="title-avatar" onclick="openHdModal({ type: 'image', src: 'assets/Insta.jpg' })">
-                <img src="assets/Insta.jpg" alt="Satish" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Satish'" />
+              <div class="title-avatar" onclick="openHdModal({ type: 'image', src: 'Insta.jpg' })">
+                <img src="Insta.jpg" alt="Satish" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Satish'" />
               </div>
               <div class="title-avatar" onclick="openHdModal({ type: 'image', src: 'assets/balaji.jpg' })">
                 <img src="assets/balaji.jpg" alt="Balaji" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Balaji'" />
@@ -778,7 +778,7 @@
           </div>
         </div>
 
-        <!-- 7. The Entertainers (trinesh.jpg, ganesh.jpg & shankar.jpg) -->
+        <!-- 7. The Entertainers (trinesh.jpg, gani.jpg & assets/shanker.jpg) -->
         <div class="title-card" onclick="handleTitleClick(event, this)">
           <div class="badge-tag">🎭 THE ENTERTAINERS</div>
           <div class="title-mystery">
@@ -790,14 +790,14 @@
               <div class="title-avatar" onclick="openHdModal({ type: 'image', src: 'assets/trinesh.jpg' })">
                 <img src="assets/trinesh.jpg" alt="Trinesh" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Trinesh'" />
               </div>
-              <div class="title-avatar" onclick="openHdModal({ type: 'image', src: 'assets/ganesh.jpg' })">
-                <img src="assets/ganesh.jpg" alt="Ganesh" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Ganesh'" />
+              <div class="title-avatar" onclick="openHdModal({ type: 'image', src: 'assets/gani.jpg' })">
+                <img src="assets/gani.jpg" alt="Gani" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Gani'" />
               </div>
-              <div class="title-avatar" onclick="openHdModal({ type: 'image', src: 'assets/shankar.jpg' })">
-                <img src="assets/shankar.jpg" alt="Shankar" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Shankar'" />
+              <div class="title-avatar" onclick="openHdModal({ type: 'image', src: 'assets/shanker.jpg' })">
+                <img src="assets/shanker.jpg" alt="Shanker" onerror="this.src='https://placehold.co/150x150/1c2638/f7d070?text=Shanker'" />
               </div>
             </div>
-            <h4 class="title-name">Trinesh, Ganesh & Shankar</h4>
+            <h4 class="title-name">Trinesh, Gani & Shanker</h4>
             <p class="title-quote">Non-stop comedy, dialogues, and full classroom entertainment 😂🔥</p>
           </div>
         </div>
@@ -834,17 +834,17 @@
         <button class="btn-main" onclick="goToScreen(6)">Leave a Reply / Message 💌</button>
       </div>
 
-      <div id="quizNavRow" style="margin-top: 16px; display: flex; gap: 10px; justify-content: center;">
+      <div id="quizNavRow" style="margin-top: 16px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
         <button class="btn-main" style="background: rgba(255,255,255,0.15); color: #fff;" onclick="goToScreen(5)">Back to Titles 🏆</button>
+        <button class="btn-main" onclick="goToScreen(6)">Go to Review ✍️</button>
       </div>
     </div>
   </section>
-
-  <!-- ==================== SCREEN 6: EMAIL MESSAGE REPLY FORM ==================== -->
+    <!-- ==================== SCREEN 6: MESSAGE / REVIEW (NO EMAIL ASKED) ==================== -->
   <section class="screen" id="screen-6">
     <div class="glass-card">
       <h2 class="title-gold">Send a Message 💌</h2>
-      <p class="desc-text">Leave a reply with your memories or thoughts! It will be delivered directly to my email.</p>
+      <p class="desc-text">Leave a reply with your memories or thoughts! It will be delivered directly to me.</p>
 
       <form action="https://formspree.io/f/mqpalnqw" method="POST" class="review-form">
         <div>
@@ -852,14 +852,10 @@
           <input type="text" name="name" class="review-input" placeholder="Your name / nickname..." required />
         </div>
         <div>
-          <label>Your Email Address (for reply)</label>
-          <input type="email" name="email" class="review-input" placeholder="yourname@gmail.com" required />
-        </div>
-        <div>
           <label>Your Message</label>
           <textarea name="message" class="review-textarea" placeholder="Say something about our 10th class memories..." required></textarea>
         </div>
-        <button type="submit" class="btn-main" style="margin-top: 4px;">Send Message 🚀</button>
+        <button type="submit" class="btn-main" style="margin-top: 6px;">Send Message 🚀</button>
       </form>
     </div>
   </section>
@@ -1114,7 +1110,6 @@
 
     function showQuizResults() {
       document.getElementById('quizContainer').style.display = 'none';
-      document.getElementById('quizNavRow').style.display = 'none';
       const resultBox = document.getElementById('quizResultBox');
       resultBox.style.display = 'block';
 
