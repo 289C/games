@@ -8,158 +8,184 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
-    body, html { width: 100%; min-height: 100%; background: #260207; color: #fff; overflow-x: hidden; }
+    body, html { width: 100%; min-height: 100%; background: #260515; color: #fff; overflow-x: hidden; }
 
-    /* Romantic Plaid Background */
-    .plaid-wrap {
+    /* Dreamy Pastel Aesthetic Background */
+    .aesthetic-wrap {
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 24px 14px 40px;
-      background-color: #4a0404;
-      background-image: 
-        repeating-linear-gradient(0deg, transparent, transparent 35px, rgba(0,0,0,0.2) 35px, rgba(0,0,0,0.2) 70px),
-        repeating-linear-gradient(90deg, transparent, transparent 35px, rgba(0,0,0,0.2) 35px, rgba(0,0,0,0.2) 70px);
+      padding: 24px 14px 44px;
+      background: radial-gradient(circle at 50% 20%, #4a0d2f 0%, #29031a 55%, #180110 100%);
       position: relative;
+      overflow: hidden;
     }
 
-    /* Floating Heart Dust Background Effect */
-    .heart-particle {
-      position: absolute; color: rgba(255, 105, 180, 0.35);
-      font-size: 1.2rem; pointer-events: none; animation: floatUp 6s linear infinite;
+    /* Floating Petals & Sparkles Layer */
+    .petal-particle {
+      position: absolute; pointer-events: none;
+      font-size: 1.3rem; animation: petalDrift 7s linear infinite;
+      filter: drop-shadow(0 0 6px rgba(255, 105, 180, 0.6));
     }
-    @keyframes floatUp {
-      0% { transform: translateY(100vh) rotate(0deg) scale(0.8); opacity: 0; }
-      50% { opacity: 0.8; }
-      100% { transform: translateY(-10vh) rotate(360deg) scale(1.2); opacity: 0; }
+    @keyframes petalDrift {
+      0% { transform: translateY(105vh) rotate(0deg) scale(0.7); opacity: 0; }
+      20% { opacity: 0.9; }
+      80% { opacity: 0.9; }
+      100% { transform: translateY(-10vh) rotate(420deg) scale(1.2); opacity: 0; }
     }
 
+    /* Top Action Bar */
     .top-bar {
       position: absolute; top: 16px; left: 16px; right: 16px;
       display: flex; justify-content: space-between; z-index: 50;
     }
     .pill-btn {
-      background: rgba(0,0,0,0.45); border: 1px solid rgba(255,255,255,0.2);
-      color: #fff; padding: 6px 14px; border-radius: 20px; font-size: 0.78rem;
-      cursor: pointer; text-decoration: none; backdrop-filter: blur(6px);
+      background: rgba(255, 182, 193, 0.15); border: 1px solid rgba(255, 192, 203, 0.4);
+      color: #ffd1dc; padding: 7px 15px; border-radius: 20px; font-size: 0.8rem;
+      cursor: pointer; text-decoration: none; backdrop-filter: blur(10px);
+      box-shadow: 0 4px 15px rgba(255, 105, 180, 0.2);
+      display: inline-flex; align-items: center; gap: 6px;
     }
 
-    /* Main Container Card */
+    /* Core Cute Card */
     .crush-card {
       width: 100%; max-width: 390px;
-      background: #fff8f0; color: #2c0e12;
-      border-radius: 28px; padding: 32px 22px;
-      box-shadow: 0 20px 45px rgba(0,0,0,0.65), 0 0 25px rgba(255, 64, 129, 0.2);
+      background: linear-gradient(165deg, #fffafd 0%, #fff0f6 100%);
+      color: #3b0d21; border-radius: 32px; padding: 32px 22px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.7), 0 0 30px rgba(255, 105, 180, 0.35);
+      border: 2px solid rgba(255, 192, 203, 0.6);
       text-align: center; position: relative;
-      animation: popCard 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      animation: popCard 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
-    @keyframes popCard { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: scale(1); } }
+    @keyframes popCard { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
 
     .card-heading {
       font-family: 'Playfair Display', serif;
-      font-size: 1.55rem; color: #690a18; margin-bottom: 6px; line-height: 1.3;
+      font-size: 1.6rem; color: #a1114b; margin-bottom: 6px; line-height: 1.3;
+      text-shadow: 0 1px 2px rgba(255, 192, 203, 0.6);
     }
-    .card-desc { font-size: 0.8rem; color: #7d5e62; margin-bottom: 18px; }
+    .card-desc { font-size: 0.82rem; color: #824760; margin-bottom: 18px; }
 
-    /* PAGE 1: LOCK GATE */
-    .lock-input-group { margin: 18px 0; }
-    .lock-input {
-      width: 100%; padding: 13px 16px; border-radius: 16px;
-      border: 1.8px solid #690a18; background: #fff; color: #690a18;
-      font-size: 0.95rem; text-align: center; font-weight: 600; outline: none;
-      box-shadow: inset 0 2px 6px rgba(0,0,0,0.06); transition: 0.2s;
+    /* PASSWORD BOX WITH SHOW / HIDE (🙈 / 👁️) */
+    .lock-field-box {
+      position: relative; width: 100%; margin: 18px 0 10px;
+      display: flex; align-items: center;
     }
-    .lock-input:focus { border-color: #ff007f; box-shadow: 0 0 12px rgba(255,0,127,0.3); }
+    .lock-input {
+      width: 100%; padding: 13px 44px 13px 18px; border-radius: 20px;
+      border: 2px solid #ff758f; background: #ffffff; color: #700b33;
+      font-size: 0.95rem; font-weight: 600; outline: none; text-align: center;
+      box-shadow: inset 0 2px 8px rgba(255, 105, 180, 0.1);
+      transition: all 0.25s;
+    }
+    .lock-input:focus {
+      border-color: #ff007f;
+      box-shadow: 0 0 16px rgba(255, 0, 127, 0.35);
+    }
+    .toggle-eye-btn {
+      position: absolute; right: 14px; background: none; border: none;
+      font-size: 1.3rem; cursor: pointer; user-select: none;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+    }
+
+    /* Buttons */
     .btn-action {
-      width: 100%; padding: 13px; border-radius: 22px; border: none;
-      background: linear-gradient(135deg, #a71d2a, #690a18); color: #fff;
+      width: 100%; padding: 13px; border-radius: 25px; border: none;
+      background: linear-gradient(135deg, #ff4d80, #c9184a); color: #fff;
       font-weight: 700; font-size: 0.95rem; cursor: pointer;
-      box-shadow: 0 4px 15px rgba(105, 10, 24, 0.4); margin-top: 10px;
-      transition: transform 0.15s;
+      box-shadow: 0 6px 20px rgba(201, 24, 74, 0.4); margin-top: 10px;
+      transition: transform 0.15s, box-shadow 0.15s;
     }
     .btn-action:active { transform: scale(0.97); }
 
-    /* PAGE 2: MESSAGE PAPER */
-    .handwriting { font-family: 'Sacramento', cursive; font-size: 2.2rem; color: #800a18; }
+    /* PAGE 2: LOVE LETTER */
+    .handwriting { font-family: 'Sacramento', cursive; font-size: 2.3rem; color: #a1114b; }
     .letter-paper {
-      background: #fff; border-left: 4px solid #800a18;
-      border-radius: 12px; padding: 18px 16px; text-align: left;
-      font-size: 0.88rem; line-height: 1.6; color: #442226;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.05); margin-bottom: 20px;
+      background: #ffffff; border-left: 4px solid #ff4d80;
+      border-radius: 16px; padding: 18px 16px; text-align: left;
+      font-size: 0.88rem; line-height: 1.65; color: #4a192c;
+      box-shadow: 0 8px 20px rgba(255, 182, 193, 0.3); margin-bottom: 20px;
     }
 
-    /* PAGE 3: 3D PHOTO REEL */
+    /* PAGE 3: 3D COVERFLOW MEMORY REEL */
     .coverflow-wrap {
       width: 100%; height: 230px; perspective: 700px;
       display: flex; justify-content: center; align-items: center; position: relative;
       margin: 15px 0;
     }
     .cf-card {
-      width: 160px; height: 210px; border-radius: 16px;
-      position: absolute; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      width: 160px; height: 210px; border-radius: 20px;
+      position: absolute; overflow: hidden; box-shadow: 0 12px 30px rgba(0,0,0,0.3);
       transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-      border: 2px solid rgba(255,255,255,0.7); cursor: pointer;
+      border: 3px solid rgba(255, 255, 255, 0.9); cursor: pointer;
     }
     .cf-card img { width: 100%; height: 100%; object-fit: cover; }
     .cf-prev { transform: translateX(-85px) scale(0.85) rotateY(25deg); z-index: 1; opacity: 0.7; }
-    .cf-center { transform: translateX(0) scale(1.05) rotateY(0deg); z-index: 3; opacity: 1; }
+    .cf-center { transform: translateX(0) scale(1.05) rotateY(0deg); z-index: 3; opacity: 1; box-shadow: 0 0 25px rgba(255, 105, 180, 0.5); }
     .cf-next { transform: translateX(85px) scale(0.85) rotateY(-25deg); z-index: 1; opacity: 0.7; }
 
-    /* PAGE 4: PROPOSAL YES/NO */
-    .cute-bear { font-size: 4rem; margin: 10px 0; animation: bounceBear 1.5s infinite alternate; }
-    @keyframes bounceBear { from { transform: translateY(0); } to { transform: translateY(-8px); } }
+    /* PAGE 4: PROPOSAL BUTTONS */
+    .cute-bear { font-size: 4.2rem; margin: 8px 0; animation: bounceGently 1.6s infinite alternate; }
+    @keyframes bounceGently { from { transform: translateY(0); } to { transform: translateY(-10px); } }
     .btn-area {
       display: flex; justify-content: center; align-items: center;
       gap: 15px; margin-top: 24px; min-height: 80px; position: relative;
     }
     #btn-yes {
-      padding: 12px 30px; border-radius: 25px; border: none;
-      background: #e61c5d; color: #fff; font-weight: 700;
-      font-size: 1rem; cursor: pointer; transition: all 0.25s ease;
-      box-shadow: 0 4px 15px rgba(230, 28, 93, 0.5); z-index: 10;
+      padding: 13px 32px; border-radius: 25px; border: none;
+      background: linear-gradient(135deg, #ff007f, #ff4081); color: #fff;
+      font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.25s ease;
+      box-shadow: 0 6px 20px rgba(255, 0, 127, 0.45); z-index: 10;
     }
     #btn-no {
-      padding: 11px 22px; border-radius: 25px; border: 1px solid #999;
-      background: #fff; color: #444; font-weight: 600;
+      padding: 11px 22px; border-radius: 25px; border: 1.5px solid #ffccd5;
+      background: #fff; color: #a1114b; font-weight: 600;
       font-size: 0.85rem; cursor: pointer; transition: 0.15s ease;
     }
 
-    /* PAGE 5: FINAL + WHATSAPP REPLY TO GANESH (8688431772) */
-    .big-heart { font-size: 4rem; animation: heartBeat 1.4s infinite; }
-    @keyframes heartBeat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+    /* PAGE 5: FINAL WHATSAPP CARD */
+    .big-heart { font-size: 4.2rem; animation: pulseSparkle 1.4s infinite; }
+    @keyframes pulseSparkle { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
     .reply-box {
-      margin-top: 18px; padding-top: 14px; border-top: 1px solid rgba(0,0,0,0.08); text-align: left;
+      margin-top: 18px; padding-top: 14px; border-top: 1px solid rgba(255, 182, 193, 0.4); text-align: left;
     }
-    .reply-box label { font-size: 0.78rem; font-weight: bold; color: #690a18; display: block; margin-bottom: 6px; }
+    .reply-box label { font-size: 0.78rem; font-weight: bold; color: #a1114b; display: block; margin-bottom: 6px; }
     .reply-box input {
-      width: 100%; padding: 10px 12px; border-radius: 12px; border: 1px solid #ccc;
-      font-size: 0.88rem; outline: none; margin-bottom: 8px;
+      width: 100%; padding: 11px 14px; border-radius: 14px; border: 1.5px solid #ffccd5;
+      font-size: 0.88rem; outline: none; margin-bottom: 8px; color: #590d22;
     }
     .btn-wa-reply {
-      width: 100%; padding: 12px; border-radius: 20px; border: none;
-      background: #25d366; color: #fff; font-weight: 700; font-size: 0.9rem;
+      width: 100%; padding: 13px; border-radius: 22px; border: none;
+      background: #25d366; color: #fff; font-weight: 700; font-size: 0.92rem;
       cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+      box-shadow: 0 4px 15px rgba(37, 211, 102, 0.35);
     }
   </style>
 </head>
 <body>
 
-  <div class="plaid-wrap" id="main-container">
+  <!-- Background Music Audio Element -->
+  <audio id="bg-audio" loop preload="auto">
+    <source src="song5.mp3" type="audio/mpeg" />
+  </audio>
+
+  <div class="aesthetic-wrap" id="main-container">
     <div class="top-bar">
       <button class="pill-btn" onclick="stepBack()">← Back</button>
-      <span class="pill-btn">💖 Devi & Ganesh</span>
+      <button class="pill-btn" id="music-toggle-btn" onclick="toggleBackgroundMusic()">🎵 Music: ON</button>
     </div>
 
     <!-- PAGE 1: THE LOCK GATE (PASSWORD: loveyoubangaram) -->
     <div class="crush-card" id="page-1">
       <h2 class="card-heading">Only for you Bangaram 🥰🤌🏻</h2>
-      <div style="font-size: 3.8rem; margin: 12px 0;">💐</div>
+      <div style="font-size: 3.8rem; margin: 10px 0;">💐✨</div>
       <p class="card-desc">Enter the secret password to open Ganesh's heart 🔒</p>
 
-      <div class="lock-input-group">
-        <input type="password" id="pass-input" class="lock-input" placeholder="Enter password here..." autocomplete="off" />
+      <div class="lock-field-box">
+        <input type="password" id="pass-input" class="lock-input" placeholder="Type password here..." autocomplete="off" />
+        <button type="button" class="toggle-eye-btn" id="eye-btn" onclick="togglePasswordVisibility()">🙈</button>
       </div>
       <button class="btn-action" onclick="unlockGate()">Unlock Heart ➔</button>
     </div>
@@ -172,7 +198,7 @@
           From the day you entered my life, every moment has become magical. Your smile is my daily peace, and your voice is my favorite melody.<br><br>
           I made this tiny space in the digital universe solely to speak what my heart carries every single day.
         </p>
-        <p style="text-align: right; margin-top: 10px; font-weight: bold; color: #800a18;">— Truly yours, Ganesh</p>
+        <p style="text-align: right; margin-top: 10px; font-weight: bold; color: #a1114b;">— Truly yours, Ganesh 🌸</p>
       </div>
       <button class="btn-action" onclick="goToPage(3)">See Our Moments 📸 ➔</button>
     </div>
@@ -187,13 +213,13 @@
         <div class="cf-card cf-center" id="cf-1"><img src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=500" alt="Memory 2" /></div>
         <div class="cf-card cf-next" id="cf-2"><img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=500" alt="Memory 3" /></div>
       </div>
-      <p style="font-size:0.75rem; color:#888; margin-bottom:14px;">Tap photos to cycle</p>
+      <p style="font-size:0.75rem; color:#a1114b; margin-bottom:14px; font-weight:600;">Tap photos to cycle 🌸</p>
       <button class="btn-action" onclick="goToPage(4)">Ganesh Has a Question ➔</button>
     </div>
 
-    <!-- PAGE 4: DO YOU LOVE ME (PROPOSAL & RUNAWAY NO BUTTON) -->
+    <!-- PAGE 4: DO YOU LOVE ME -->
     <div class="crush-card" id="page-4" style="display:none;">
-      <div class="cute-bear">🐱❤️</div>
+      <div class="cute-bear">🐱💖</div>
       <h2 class="card-heading" id="ask-heading">Devi, Do you love me? 🥰</h2>
       <p class="card-desc" id="ask-sub">Ganesh is all yours!</p>
 
@@ -205,7 +231,7 @@
 
     <!-- PAGE 5: FINAL CELEBRATION & DIRECT WHATSAPP TO 8688431772 -->
     <div class="crush-card" id="page-5" style="display:none;">
-      <div class="big-heart">💖</div>
+      <div class="big-heart">💖🌸</div>
       <h2 class="card-heading">I Knew It, Devi! 🥰</h2>
       <p class="card-desc">You are my forever and always, Bangaram. Love you to the moon and back!</p>
 
@@ -220,7 +246,48 @@
   </div>
 
   <script>
-    // --- SYNTHETIC WEB AUDIO SFX GENERATOR ---
+    // --- SHOW / HIDE PASSWORD TOGGLE ---
+    function togglePasswordVisibility() {
+      const input = document.getElementById('pass-input');
+      const eyeBtn = document.getElementById('eye-btn');
+      if (input.type === 'password') {
+        input.type = 'text';
+        eyeBtn.innerText = '👁️';
+      } else {
+        input.type = 'password';
+        eyeBtn.innerText = '🙈';
+      }
+    }
+
+    // --- BACKGROUND MUSIC LOGIC ---
+    const bgAudio = document.getElementById('bg-audio');
+    let isMusicPlaying = false;
+
+    function startMusic() {
+      if (bgAudio && !isMusicPlaying) {
+        bgAudio.play().then(() => {
+          isMusicPlaying = true;
+          document.getElementById('music-toggle-btn').innerText = "🎵 Music: ON";
+        }).catch(err => {
+          console.log("Audio waiting for interaction:", err);
+        });
+      }
+    }
+
+    function toggleBackgroundMusic() {
+      if (!bgAudio) return;
+      if (isMusicPlaying) {
+        bgAudio.pause();
+        isMusicPlaying = false;
+        document.getElementById('music-toggle-btn').innerText = "🔇 Music: OFF";
+      } else {
+        bgAudio.play();
+        isMusicPlaying = true;
+        document.getElementById('music-toggle-btn').innerText = "🎵 Music: ON";
+      }
+    }
+
+    // --- SYNTHETIC WEB AUDIO SFX ---
     let audioCtx = null;
     function playSfx(type) {
       try {
@@ -232,32 +299,29 @@
 
         const now = audioCtx.currentTime;
         if (type === 'unlock') {
-          // Romantic bright chime
           osc.type = 'triangle';
-          osc.frequency.setValueAtTime(523.25, now); // C5
-          osc.frequency.exponentialRampToValueAtTime(1046.50, now + 0.3); // C6
-          gain.gain.setValueAtTime(0.3, now);
+          osc.frequency.setValueAtTime(523.25, now);
+          osc.frequency.exponentialRampToValueAtTime(1046.50, now + 0.3);
+          gain.gain.setValueAtTime(0.25, now);
           gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
           osc.start(now);
           osc.stop(now + 0.4);
         } else if (type === 'dodge') {
-          // Boing / slide sound for No button
           osc.type = 'sine';
-          osc.frequency.setValueAtTime(350, now);
-          osc.frequency.exponentialRampToValueAtTime(150, now + 0.2);
+          osc.frequency.setValueAtTime(360, now);
+          osc.frequency.exponentialRampToValueAtTime(160, now + 0.2);
           gain.gain.setValueAtTime(0.2, now);
           gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
           osc.start(now);
           osc.stop(now + 0.2);
         } else if (type === 'cheer') {
-          // Success high chords
           [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
             const o = audioCtx.createOscillator();
             const g = audioCtx.createGain();
             o.connect(g); g.connect(audioCtx.destination);
             o.type = 'triangle';
             o.frequency.value = freq;
-            g.gain.setValueAtTime(0.2, now + (i * 0.08));
+            g.gain.setValueAtTime(0.18, now + (i * 0.08));
             g.gain.exponentialRampToValueAtTime(0.01, now + (i * 0.08) + 0.5);
             o.start(now + (i * 0.08));
             o.stop(now + (i * 0.08) + 0.5);
@@ -266,12 +330,13 @@
       } catch (e) {}
     }
 
-    // --- FLOATING HEARTS GENERATOR ---
+    // --- FLOATING PETALS & SPARKLES LAYER ---
     const wrap = document.getElementById('main-container');
-    for (let i = 0; i < 15; i++) {
+    const cuteIcons = ['🌸', '💖', '✨', '🌷', '💕', '🎀'];
+    for (let i = 0; i < 18; i++) {
       const h = document.createElement('div');
-      h.className = 'heart-particle';
-      h.innerText = ['💖', '💕', '✨', '🌸'][Math.floor(Math.random() * 4)];
+      h.className = 'petal-particle';
+      h.innerText = cuteIcons[Math.floor(Math.random() * cuteIcons.length)];
       h.style.left = Math.random() * 100 + 'vw';
       h.style.animationDelay = (Math.random() * 6) + 's';
       h.style.animationDuration = (5 + Math.random() * 4) + 's';
@@ -310,7 +375,8 @@
       const pass = document.getElementById('pass-input').value.trim();
       if (pass.toLowerCase() === "loveyoubangaram") {
         playSfx('unlock');
-        confetti({ particleCount: 75, spread: 80, colors: ['#ff007f', '#ffd700', '#ffffff'] });
+        startMusic();
+        confetti({ particleCount: 85, spread: 85, colors: ['#ff007f', '#ffccd5', '#ffffff', '#ffd700'] });
         setTimeout(() => goToPage(2), 300);
       } else {
         alert("Wrong password Devi! Hint: loveyoubangaram 🥰");
@@ -344,22 +410,18 @@
       const yesBtn = document.getElementById('btn-yes');
       const noBtn = document.getElementById('btn-no');
 
-      // Expand YES button
       const currentScale = 1 + (noCount * 0.22);
       yesBtn.style.transform = `scale(${currentScale})`;
 
-      // Change text
       if (noCount <= noPhrases.length) {
         document.getElementById('ask-heading').innerText = noPhrases[noCount - 1];
         noBtn.innerText = "No (" + noCount + ")";
       }
 
-      // Move NO button away
       const randomX = (Math.random() - 0.5) * 160;
       const randomY = (Math.random() - 0.5) * 120;
       noBtn.style.transform = `translate(${randomX}px, ${randomY}px)`;
 
-      // Vanish NO button after 5 clicks
       if (noCount >= 5) {
         noBtn.style.display = 'none';
         document.getElementById('ask-sub').innerText = "Now you can only click YES for Ganesh! ❤️";
@@ -368,7 +430,7 @@
 
     function acceptProposal() {
       playSfx('cheer');
-      confetti({ particleCount: 120, spread: 90, colors: ['#ff007f', '#ffd700', '#ffffff'] });
+      confetti({ particleCount: 130, spread: 95, colors: ['#ff007f', '#ffccd5', '#ffffff'] });
       setTimeout(() => goToPage(5), 500);
     }
 
@@ -381,5 +443,4 @@
     }
   </script>
 </body>
-  </html>
-        
+</html>
