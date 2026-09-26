@@ -575,32 +575,61 @@
     background: linear-gradient(135deg, #ff4081, #ff007f);
     color: #fff;
     padding: 12px 28px;
-    border-radius: 30px;
+<!-- 3D WISHES BANNER -->
+<div class="wish-banner" onclick="window.location.href='occasions.html'">
+  <div class="wish-banner-text">
+    <span class="badge">✨ NEW 3D EXPERIENCE</span>
+    <h2>Send Interactive 3D Wishes! 🎂🎈</h2>
+    <p>Blow candles with mic, reveal floating photos & pop 3D balloons.</p>
+    <a href="occasions.html" class="wish-btn">Create a Wish Now ➔</a>
+  </div>
+  <div class="wish-banner-emoji">🎂✨</div>
+</div>
+
+<style>
+  .wish-banner {
+    width: 95%;
+    max-width: 900px;
+    margin: 20px auto;
+    background: linear-gradient(135deg, #1f1c2c, #928dab);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+    transition: transform 0.2s;
+  }
+  .wish-banner:hover { transform: translateY(-3px); }
+  .badge {
+    background: rgba(102, 252, 241, 0.25);
+    color: #66fcf1;
+    font-size: 0.75rem;
+    font-weight: bold;
+    padding: 4px 10px;
+    border-radius: 12px;
+  }
+  .wish-banner h2 { color: #fff; margin: 8px 0; font-size: 1.5rem; }
+  .wish-banner p { color: #ddd; font-size: 0.9rem; margin-bottom: 15px; }
+  .wish-btn {
+    display: inline-block;
+    background: #ff007f;
+    color: #fff;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-weight: bold;
     text-decoration: none;
-    font-weight: 700;
-    font-size: 1rem;
-    box-shadow: 0 5px 18px rgba(255, 0, 127, 0.4);
-    transition: transform 0.2s ease;
+    font-size: 0.9rem;
   }
-  .wish-banner-btn:hover {
-    transform: scale(1.05);
-  }
-  .wish-banner-decor {
-    font-size: 4rem;
-    user-select: none;
-    animation: floatDecor 3s ease-in-out infinite alternate;
-  }
-  @keyframes floatDecor {
-    from { transform: translateY(0px) rotate(0deg); }
-    to { transform: translateY(-12px) rotate(5deg); }
-  }
-  @media (max-width: 768px) {
-    .wish-banner-container { flex-direction: column; text-align: center; }
-    .wish-banner-decor { margin-top: 15px; font-size: 3rem; }
+  .wish-banner-emoji { font-size: 3rem; }
+  @media (max-width: 600px) {
+    .wish-banner { flex-direction: column; text-align: center; }
+    .wish-banner-emoji { margin-top: 10px; }
   }
 </style>
-  
-  
+
 
   <!-- Games Grid -->
   <main class="grid">
