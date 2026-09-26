@@ -9,17 +9,21 @@
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
     body {
       background: radial-gradient(circle at top, #2b1055, #0b0c10);
-      color: #fff; min-height: 100vh; padding: 30px 16px;
+      color: #fff; min-height: 100vh; padding: 25px 16px;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
+      touch-action: pan-y;
     }
     .container {
       background: rgba(255, 255, 255, 0.06);
       border: 1px solid rgba(255, 105, 180, 0.35);
-      border-radius: 22px; width: 100%; max-width: 480px; padding: 26px 20px;
+      border-radius: 22px; width: 100%; max-width: 480px; padding: 24px 20px;
       backdrop-filter: blur(14px); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.55);
     }
-    .back-nav { color: #ff758c; text-decoration: none; font-size: 0.88rem; font-weight: 600; display: inline-block; margin-bottom: 14px; }
-    .header-box { text-align: center; margin-bottom: 20px; }
+    .back-nav {
+      color: #ff758c; text-decoration: none; font-size: 0.88rem; font-weight: 600;
+      display: inline-block; margin-bottom: 12px; cursor: pointer;
+    }
+    .header-box { text-align: center; margin-bottom: 18px; }
     .header-box h1 { font-size: 1.7rem; color: #ff758c; }
     .header-box p { font-size: 0.85rem; color: #ccc; margin-top: 4px; }
     .form-group { margin-bottom: 14px; }
@@ -30,18 +34,15 @@
     }
     input:focus, textarea:focus { border-color: #ff758c; }
     
-    /* File Upload Styling */
     .file-dropzone {
-      border: 2px dashed #ff758c; border-radius: 12px; padding: 16px;
+      border: 2px dashed #ff758c; border-radius: 12px; padding: 14px;
       text-align: center; cursor: pointer; background: rgba(255, 117, 140, 0.05);
-      transition: background 0.2s;
     }
-    .file-dropzone:hover { background: rgba(255, 117, 140, 0.15); }
     .preview-container {
-      display: flex; gap: 8px; overflow-x: auto; margin-top: 10px; padding-bottom: 5px;
+      display: flex; gap: 8px; overflow-x: auto; margin-top: 10px; padding-bottom: 4px;
     }
     .preview-thumb {
-      width: 60px; height: 60px; border-radius: 8px; object-fit: cover;
+      width: 55px; height: 55px; border-radius: 8px; object-fit: cover;
       border: 1px solid #ff758c; flex-shrink: 0;
     }
 
@@ -51,14 +52,32 @@
       color: #fff; font-weight: 700; font-size: 1rem; cursor: pointer;
       margin-top: 12px; box-shadow: 0 4px 18px rgba(255, 64, 129, 0.45);
     }
-    .btn-launch:hover { opacity: 0.95; }
-    .status-msg { font-size: 0.8rem; color: #ffe600; text-align: center; margin-top: 8px; display: none; }
+
+    /* Multi-Share Hub */
+    .share-hub {
+      margin-top: 18px; padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, 0.12);
+      display: none; text-align: center;
+    }
+    .share-hub h3 { font-size: 0.95rem; color: #ffe600; margin-bottom: 10px; }
+    .share-btn-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;
+    }
+    .btn-share {
+      padding: 10px; border-radius: 14px; border: none; font-size: 0.85rem;
+      font-weight: 700; cursor: pointer; text-decoration: none; color: #fff;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .btn-wa { background: #25d366; }
+    .btn-ig { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
+    .btn-copy { background: #3d3a4d; border: 1px solid rgba(255, 255, 255, 0.2); }
+    .btn-native { background: #45a29e; }
+    .copy-toast { font-size: 0.75rem; color: #66fcf1; margin-top: 6px; display: none; }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <a href="../index.html" class="back-nav">← Back to Arcade</a>
+    <span class="back-nav" onclick="goBack()">← Back to Arcade</span>
 
     <div class="header-box">
       <h1>Birthday 3D Studio 🎂</h1>
@@ -75,12 +94,10 @@
       <input type="text" id="b-from" placeholder="e.g. Satish" required />
     </div>
 
-    <!-- Gallery Media Picker (Multiple Images & Videos) -->
     <div class="form-group">
-      <label>Select Memories from Phone Gallery (Images & Videos)</label>
+      <label>Select Memories from Gallery (Images/Videos)</label>
       <div class="file-dropzone" onclick="document.getElementById('media-input').click()">
-        <p style="font-size: 0.85rem; color: #ff758c; font-weight: bold;">📁 Tap here to select from Gallery</p>
-        <span style="font-size: 0.75rem; color: #aaa;">Select as many photos or videos as you like</span>
+        <p style="font-size: 0.85rem; color: #ff758c; font-weight: bold;">📁 Tap to select from Gallery</p>
         <input type="file" id="media-input" accept="image/*,video/*" multiple style="display:none;" onchange="handleMediaSelect(event)" />
       </div>
       <div class="preview-container" id="preview-box"></div>
@@ -91,13 +108,49 @@
       <textarea id="b-note" rows="3">Happy Birthday! May your day be packed with smiles, cake, and extraordinary moments! Keep shining bright! 🎂✨</textarea>
     </div>
 
-    <p id="status-text" class="status-msg">Saving media to 3D engine...</p>
-    <button class="btn-launch" id="launch-btn" onclick="saveAndStart3D()">Preview 3D Wish ➔</button>
+    <button class="btn-launch" onclick="saveAndStart3D()">Generate & Preview 3D ➔</button>
+
+    <!-- Share Hub Section -->
+    <div class="share-hub" id="share-hub">
+      <h3>Direct Share Link:</h3>
+      <div class="share-btn-grid">
+        <a id="wa-btn" class="btn-share btn-wa" target="_blank">WhatsApp 📲</a>
+        <button class="btn-share btn-ig" onclick="shareInstagram()">Instagram 📸</button>
+        <button class="btn-share btn-copy" onclick="copyShareLink()">Copy Link 📋</button>
+        <button class="btn-share btn-native" onclick="shareNative()">Share More 🔗</button>
+      </div>
+      <p id="copy-toast" class="copy-toast">✓ Link copied to clipboard!</p>
+    </div>
   </div>
 
   <script>
-    let selectedMedia = [];
+    // --- BROWSER / GESTURE BACK NAVIGATION ---
+    history.pushState(null, null, location.href);
+    window.onpopstate = function () {
+      goBack();
+    };
 
+    function goBack() {
+      if (document.referrer && document.referrer.includes(window.location.hostname)) {
+        window.history.back();
+      } else {
+        window.location.href = "../index.html";
+      }
+    }
+
+    // Scroll-up / swipe-down back trigger (mobile gesture)
+    let startY = 0;
+    window.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, { passive: true });
+    window.addEventListener('touchend', e => {
+      let endY = e.changedTouches[0].clientY;
+      // If user is at very top of screen and drags downwards strongly
+      if (window.scrollY === 0 && endY - startY > 140) {
+        goBack();
+      }
+    }, { passive: true });
+
+    // --- MEDIA HANDLING ---
+    let selectedMedia = [];
     function handleMediaSelect(e) {
       const files = Array.from(e.target.files);
       const previewBox = document.getElementById('preview-box');
@@ -109,39 +162,27 @@
         reader.onload = (event) => {
           const isVideo = file.type.startsWith('video');
           selectedMedia.push({ data: event.target.result, isVideo: isVideo, name: file.name });
-
-          if (!isVideo) {
-            const img = document.createElement('img');
-            img.src = event.target.result;
-            img.className = 'preview-thumb';
-            previewBox.appendChild(img);
-          } else {
-            const vidThumb = document.createElement('div');
-            vidThumb.className = 'preview-thumb';
-            vidThumb.style.background = '#222';
-            vidThumb.style.display = 'flex';
-            vidThumb.style.alignItems = 'center';
-            vidThumb.style.justifyContent = 'center';
-            vidThumb.style.fontSize = '1.2rem';
-            vidThumb.innerText = '🎬';
-            previewBox.appendChild(vidThumb);
-          }
+          const elem = document.createElement(isVideo ? 'div' : 'img');
+          elem.className = 'preview-thumb';
+          if (!isVideo) { elem.src = event.target.result; } 
+          else { elem.style.background = '#222'; elem.innerText = '🎬'; }
+          previewBox.appendChild(elem);
         };
         reader.readAsDataURL(file);
       });
     }
 
-    // Save to IndexedDB so 3D scene can load infinite media without size limits
+    // --- INDEXEDDB STORAGE ---
     function openDB() {
       return new Promise((resolve, reject) => {
         const req = indexedDB.open("Wish3DDB", 1);
-        req.onupgradeneeded = (e) => {
-          e.target.result.createObjectStore("mediaStore", { keyPath: "id" });
-        };
+        req.onupgradeneeded = (e) => e.target.result.createObjectStore("mediaStore", { keyPath: "id" });
         req.onsuccess = () => resolve(req.result);
         req.onerror = () => reject(req.error);
       });
     }
+
+    let generatedShareUrl = "";
 
     async function saveAndStart3D() {
       const name = document.getElementById('b-name').value.trim();
@@ -149,32 +190,64 @@
       const note = document.getElementById('b-note').value.trim();
 
       if (!name || !from) {
-        alert("Please enter both the birthday person's name and your name!");
+        alert("Please enter both names!");
         return;
       }
 
-      const status = document.getElementById('status-text');
-      status.style.display = 'block';
-      status.innerText = "Preparing 3D experience...";
+      // Build full share URL
+      generatedShareUrl = `${window.location.origin}${window.location.pathname.replace('birthday.html', 'wish3d.html')}?type=birthday&name=${encodeURIComponent(name)}&from=${encodeURIComponent(from)}&note=${encodeURIComponent(note)}`;
+
+      // Setup Social Share Links
+      const msg = `Hey ${name}! I made a special 3D Birthday Wish for you 🎂✨ Tap here to open: ${generatedShareUrl}`;
+      document.getElementById('wa-btn').href = `https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`;
+      document.getElementById('share-hub').style.display = 'block';
 
       try {
         const db = await openDB();
         const tx = db.transaction("mediaStore", "readwrite");
-        const store = tx.objectStore("mediaStore");
-        store.put({
+        tx.objectStore("mediaStore").put({
           id: "currentWish",
           receiver: name,
           sender: from,
           message: note,
           mediaList: selectedMedia
         });
+        tx.oncomplete = () => {
+          setTimeout(() => { window.location.href = "wish3d.html?type=birthday"; }, 800);
+        };
+      } catch (err) {
+        window.location.href = `wish3d.html?type=birthday&name=${encodeURIComponent(name)}&from=${encodeURIComponent(from)}&note=${encodeURIComponent(note)}`;
+      }
+    }
 
-    tx.oncomplete = () => {
-      window.location.href = "wish3d.html?type=birthday";
-    };
-  } catch (err) {
-    window.location.href = `wish3d.html?type=birthday&name=${encodeURIComponent(name)}&from=${encodeURIComponent(from)}&note=${encodeURIComponent(note)}`;
-  }
+    // Copy link helper
+    function copyShareLink() {
+      if (!generatedShareUrl) return;
+      navigator.clipboard.writeText(generatedShareUrl).then(() => {
+        const toast = document.getElementById('copy-toast');
+        toast.style.display = 'block';
+        setTimeout(() => toast.style.display = 'none', 2500);
+      });
+    }
+
+    // Instagram share helper
+    function shareInstagram() {
+      copyShareLink();
+      alert("Link copied! Opening Instagram so you can paste it into your friend's DM 💬");
+      window.open("https://www.instagram.com/direct/inbox/", "_blank");
+    }
+
+    // Native mobile share sheet
+    function shareNative() {
+      if (navigator.share) {
+        navigator.share({
+          title: "3D Birthday Wish",
+          text: "Here is an interactive 3D birthday surprise for you! 🎂✨",
+          url: generatedShareUrl
+        }).catch(() => {});
+      } else {
+        copyShareLink();
+      }
     }
   </script>
 </body>
