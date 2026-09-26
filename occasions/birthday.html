@@ -561,13 +561,15 @@
       document.getElementById('note-modal').classList.remove('active');
     }
 
-    // --- REPLY ON WHATSAPP SYSTEM ---
-    function sendWhatsAppReply() {
-      const replyMsg = document.getElementById('reply-input').value.trim();
-      if (!replyMsg) return alert("Please type a quick reply!");
-      const text = encodeURIComponent(`Hi ${wishData.sender}! ${replyMsg}`);
-      window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
-    }
+// To this:
+function sendWhatsAppReply() {
+  const replyMsg = document.getElementById('reply-input').value.trim();
+  if (!replyMsg) return alert("Please type a quick reply!");
+  const text = encodeURIComponent(`Hi Satish! ${replyMsg}`);
+  // Sends directly to your WhatsApp number:
+  window.open(`https://api.whatsapp.com/send?phone=919281267188&text=${text}`, '_blank');
+}
+
 
     // --- ADMIN CONTROLS ---
     function openPasswordPrompt() {
