@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3D Interactive Wish Celebration</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+    body, html { width: 100%; height: 100%; overflow: hidden; background: #0b0c10; color: #fff; }
+    #canvas-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+    .hud {
+      position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
+      z-index: 10; text-align: center; pointer-events: none; width: 90%; max-width: 500px;
+    }
+    .hud h1 { font-size: 1.7rem; color: #66fcf1; text-shadow: 0 0 12px rgba(102, 252, 241, 0.6); }
+    .hud p { font-size: 0.9rem; color: #c5c6c7; margin-top: 6px; }
+
+    .controls {
+      position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+      z-index: 10; display: flex; gap: 12px;
+    }
+    .btn {
+      padding: 12px 24px; border: none; border-radius: 25px;
+      background: linear-gradient(135deg, #45a29e, #66fcf1); color: #0b0c10;
+      font-weight: 700; cursor: pointer; transition: transform 0.2s;
+    }
+    .btn:hover { transform: scale(1.05); }
+    
+    #gallery-ui {
+      position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%);
+      z-index: 15; text-align: center; display: none;
+    }
+    #note-modal {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.8);
+      background: rgba(20, 20, 30, 0.95); border: 1px solid #66fcf1; border-radius: 16px;
+      padding: 24px; text-align: center; z-index: 20; max-width: 320px; width: 85%;
+      box-shadow: 0 0 30px rgba(102, 252, 241, 0.3); opacity: 0; pointer-events: none;
+      transition: 0.3s;
+    }
+    #note-modal.active { opacity: 1; pointer-events: auto; transform: translate(-50%, -50%) scale(1); }
+    #final-view {
+      position: absolute; bottom: 15%; left: 50%; transform: translateX(-50%);
+      text-align: center; z-index: 10; background: rgba(0, 0, 0, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px);
+      padding: 24px 30px; border-radius: 14px; display: none; width: 85%; max-width: 440px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="canvas-container"></div>
+
+  <div class="hud">
+    <h1 id="title-text">Stage 1: Blow the Candles 🎂</h1>
+    <p id="sub-text">Blow directly into your microphone or tap manual blow!</p>
+  </div>
+
+  <div class="controls" id="cake-controls">
+    <button class="btn" id="mic-btn" onclick="startMicDetection()">Enable Mic 🎙️</button>
+    <button class="btn" onclick="extinguishCandles()">Manual Blow 💨</button>
+  </div>
+
+  <div id="gallery-ui">
+    <div style="display: flex; gap: 10px; justify-content: center;">
+      <button class="btn" onclick="rotateGallery(-1)">◀ Prev</button>
+      <button class="btn" onclick="rotateGallery(1)">Next ▶</button>
+      <button class="btn" style="background:#ff007f; color:#fff;" onclick="finishGalleryStage()">Pop Balloons 🎈</button>
+    </div>
+  </div>
+
+  <div id="note-modal">
+    <h3 style="color:#ffe600; margin-bottom:8px;">Surprise Note! 🎈</h3>
+    <p id="modal-text" style="margin-bottom:16px;"></p>
+    <button class="btn" onclick="closeModal()">Next</button>
+  </div>
+
+  <div id="final-view">
+    <h2 id="final-receiver" style="color:#ff007f; margin-bottom:8px;"></h2>
+    <p id="final-message" style="margin-bottom: 14px; color: #ddd;"></p>
+    <p id="final-sender" style="color: #66fcf1; font-weight: bold;"></p>
+  </div>
+
+  <script>
+    let receiverName = "Friend", senderName = "Satish", customNote = "Happy Birthday!";
+    let mediaItems = [];
+
+    // Load from IndexedDB
+    function loadStoredData() {
+      return new Promise((resolve) => {
+        const req = indexedDB.open("Wish3DDB", 1);
+        req.onsuccess = (e) => {
+          const db = e.target.result;
+          if (!db.objectStoreNames.contains("mediaStore")) return resolve();
+          const tx = db.transaction("mediaStore", "readonly");
+          const getReq = tx.objectStore("mediaStore").get("currentWish");
+          getReq.onsuccess = () => {
+            if (getReq.result) {
+              receiverName = getReq.result.receiver || receiverName;
+              senderName = getReq.result.sender || senderName;
+              customNote = getReq.result.message || customNote;
+              mediaItems = getReq.result.mediaList || [];
+            }
+            resolve();
+          };
+          getReq.onerror = () => resolve();
+        };
+        req.onerror = () => resolve();
+      });
+    }
+
+    let currentStage = 1;
+    let scene, camera, renderer, cakeGroup, galleryGroup, balloonsGroup = [];
+    let candleLights = [], flameMeshes = [];
+    let isBlownOut = false;
+    let targetGalleryRotation = 0;
+    let audioContext, analyser, microphone;
+
+    window.onload = async () => {
+      await loadStoredData();
+      initThree();
+    };
+
+    function initThree() {
+      const container = document.getElementById('canvas-container');
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+      camera.position.set(0, 4, 12);
+      camera.lookAt(0, 1.2, 0);
+
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      container.appendChild(renderer.domElement);
+
+      scene.add(new THREE.AmbientLight(0xffffff, 0.85));
+      const spot = new THREE.SpotLight(0xffffff, 1.2);
+      spot.position.set(5, 12, 10);
+      scene.add(spot);
+
+      buildCake();
+      window.addEventListener('resize', onWindowResize);
+      window.addEventListener('pointerdown', onSceneClick);
+      animate();
+    }
+
+    function buildCake() {
+      cakeGroup = new THREE.Group();
+      const plate = new THREE.Mesh(new THREE.CylinderGeometry(3.6, 3.2, 0.2, 32), new THREE.MeshStandardMaterial({ color: 0xdddddd }));
+      cakeGroup.add(plate);
+
+      const tier1 = new THREE.Mesh(new THREE.CylinderGeometry(3, 3, 1.5, 32), new THREE.MeshStandardMaterial({ color: 0xff4081 }));
+      tier1.position.y = 0.85;
+      cakeGroup.add(tier1);
+
+      const tier2 = new THREE.Mesh(new THREE.CylinderGeometry(2, 2, 1.2, 32), new THREE.MeshStandardMaterial({ color: 0xfff0f5 }));
+      tier2.position.y = 2.2;
+      cakeGroup.add(tier2);
+
+      [[-0.7, 0], [0.7, 0], [0, 0.7], [0, -0.7]].forEach(([x, z]) => {
+        const stick = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.8, 16), new THREE.MeshStandardMaterial({ color: 0x48dbfb }));
+        stick.position.set(x, 3.2, z);
+        cakeGroup.add(stick);
+
+        const flame = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 16), new THREE.MeshBasicMaterial({ color: 0xffa502 }));
+        flame.scale.set(1, 1.8, 1);
+        flame.position.set(x, 3.7, z);
+        cakeGroup.add(flame);
+        flameMeshes.push(flame);
+
+        const light = new THREE.PointLight(0xff7700, 1.5, 4);
+        light.position.set(x, 3.8, z);
+        cakeGroup.add(light);
+        candleLights.push(light);
+      });
+
+      scene.add(cakeGroup);
+    }
+
+    async function startMicDetection() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = audioContext.createAnalyser();
+        microphone = audioContext.createMediaStreamSource(stream);
+        microphone.connect(analyser);
+        analyser.fftSize = 256;
+        document.getElementById('mic-btn').innerText = "Mic Active 🎙️";
+        listenAudioLevels();
+      } catch (err) {
+        alert("Mic access unavailable. Tap 'Manual Blow' instead!");
+      }
+    }
+
+    function listenAudioLevels() {
+      if (isBlownOut) return;
+      const bufferLength = analyser.frequencyBinCount;
+      const dataArray = new Uint8Array(bufferLength);
+      analyser.getByteFrequencyData(dataArray);
+      let sum = 0;
+      for (let i = 0; i < bufferLength; i++) sum += dataArray[i];
+      if (sum / bufferLength > 65) {
+        extinguishCandles();
+        return;
+      }
+      requestAnimationFrame(listenAudioLevels);
+    }
+
+    function extinguishCandles() {
+      if (isBlownOut) return;
+      isBlownOut = true;
+      flameMeshes.forEach(f => f.scale.set(0, 0, 0));
+      candleLights.forEach(l => l.intensity = 0);
+      confetti({ particleCount: 100, spread: 80, origin: { y: 0.6 } });
+      setTimeout(transitionToStage2, 1200);
+    }
+
+    function transitionToStage2() {
+      currentStage = 2;
+      document.getElementById('title-text').innerText = "Stage 2: Gallery Memories 📸";
+      document.getElementById('sub-text').innerText = "Swipe or tap Next to look at the photos/videos";
+      document.getElementById('cake-controls').style.display = 'none';
+      document.getElementById('gallery-ui').style.display = 'block';
+
+      let drop = setInterval(() => {
+        cakeGroup.position.y -= 0.15;
+        if (cakeGroup.position.y < -8) {
+          clearInterval(drop);
+          scene.remove(cakeGroup);
+          createPhotoCarousel();
+        }
+      }, 20);
+    }
+
+    function createPhotoCarousel() {
+      galleryGroup = new THREE.Group();
+      const loader = new THREE.TextureLoader();
+
+      let items = mediaItems.length > 0 ? mediaItems : [
+        { data: 'https://images.unsplash.com/photo-1513151233558-d860c5398176?w=600', isVideo: false },
+        { data: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=600', isVideo: false }
+      ];
+
+      const total = items.length;
+      const radius = Math.max(4.2, total * 0.8);
+
+      items.forEach((item, index) => {
+        const angle = (index / total) * Math.PI * 2;
+        const frame = new THREE.Group();
+
+        const border = new THREE.Mesh(new THREE.BoxGeometry(3.2, 3.2, 0.12), new THREE.MeshStandardMaterial({ color: 0xffffff }));
+        frame.add(border);
+
+        if (!item.isVideo) {
+          loader.load(item.data, (tex) => {
+            const photo = new THREE.Mesh(new THREE.PlaneGeometry(2.9, 2.9), new THREE.MeshBasicMaterial({ map: tex }));
+            photo.position.z = 0.07;
+            frame.add(photo);
+          });
+        } else {
+          const video = document.createElement('video');
+          video.src = item.data;
+          video.crossOrigin = 'anonymous';
+          video.loop = true;
+          video.muted = true;
+          video.play();
+          const videoTex = new THREE.VideoTexture(video);
+          const vidMesh = new THREE.Mesh(new THREE.PlaneGeometry(2.9, 2.9), new THREE.MeshBasicMaterial({ map: videoTex }));
+          vidMesh.position.z = 0.07;
+          frame.add(vidMesh);
+        }
+
+        frame.position.x = Math.sin(angle) * radius;
+        frame.position.z = Math.cos(angle) * radius;
+        frame.rotation.y = angle;
+        galleryGroup.add(frame);
+      });
+
+      galleryGroup.position.y = 1.2;
+      scene.add(galleryGroup);
+    }
+
+    function rotateGallery(dir) {
+      const count = mediaItems.length > 0 ? mediaItems.length : 2;
+      targetGalleryRotation += (dir * (Math.PI * 2 / count));
+    }
+
+    function finishGalleryStage() {
+      document.getElementById('gallery-ui').style.display = 'none';
+      let fadeOut = setInterval(() => {
+        galleryGroup.scale.multiplyScalar(0.9);
+        if (galleryGroup.scale.x < 0.05) {
+          clearInterval(fadeOut);
+          scene.remove(galleryGroup);
+          transitionToStage3();
+        }
+      }, 20);
+    }
+
+    function transitionToStage3() {
+      currentStage = 3;
+      document.getElementById('title-text').innerText = "Stage 3: Pop the Balloons 🎈";
+      document.getElementById('sub-text').innerText = "Tap balloons to open surprise wishes!";
+      spawnBalloons();
+    }
+
+    function spawnBalloons() {
+      const colors = [0xff4757, 0x2ed573, 0x1e90ff];
+      const wishes = [
+        "May every goal of yours turn to gold this year! 🚀",
+        "Keep smiling brighter every day! ✨",
+        "Enjoy the biggest slice of cake today! 🍰"
+      ];
+
+      [-2.8, 0, 2.8].forEach((xPos, idx) => {
+        const node = new THREE.Group();
+        const geo = new THREE.SphereGeometry(1, 32, 32);
+        geo.scale(1, 1.25, 1);
+        node.add(new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color: colors[idx], roughness: 0.25 })));
+
+        const string = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 2.2, 8), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+        string.position.y = -2;
+        node.add(string);
+
+        node.position.set(xPos, -0.2, 0);
+        node.userData = { msg: wishes[idx] };
+        scene.add(node);
+        balloonsGroup.push(node);
+      });
+    }
+
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+
+    function onSceneClick(e) {
+      if (currentStage !== 3) return;
+      mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+      raycaster.setFromCamera(mouse, camera);
+      const hits = raycaster.intersectObjects(scene.children, true);
+      if (hits.length > 0) {
+        let obj = hits[0].object;
+        while (obj.parent && obj.parent !== scene) obj = obj.parent;
+        const idx = balloonsGroup.indexOf(obj);
+        if (idx > -1) {
+          confetti({ particleCount: 50, spread: 60 });
+          document.getElementById('modal-text').innerText = obj.userData.msg;
+          document.getElementById('note-modal').classList.add('active');
+          scene.remove(obj);
+          balloonsGroup.splice(idx, 1);
+          if (balloonsGroup.length === 0) setTimeout(transitionToStage4, 1000);
+        }
+      }
+    }
+
+    function closeModal() {
+      document.getElementById('note-modal').classList.remove('active');
+    }
+
+    function transitionToStage4() {
+      currentStage = 4;
+      closeModal();
+      document.getElementById('title-text').innerText = "Happy Birthday! ✨";
+      document.getElementById('sub-text').innerText = "";
+      document.getElementById('final-receiver').innerText = `To ${receiverName},`;
+      document.getElementById('final-message').innerText = customNote;
+      document.getElementById('final-sender').innerText = `— With love, ${senderName}`;
+      document.getElementById('final-view').style.display = 'block';
+      setInterval(() => confetti({ particleCount: 25, spread: 360, startVelocity: 20 }), 1400);
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      if (currentStage === 1 && !isBlownOut) candleLights.forEach(l => l.intensity = 1.2 + Math.sin(Date.now() * 0.02) * 0.3);
+      if (currentStage === 2 && galleryGroup) galleryGroup.rotation.y += (targetGalleryRotation - galleryGroup.rotation.y) * 0.08;
+      if (currentStage === 3) balloonsGroup.forEach((b, i) => { b.position.y += Math.sin(Date.now() * 0.003 + i) * 0.005; b.rotation.y += 0.008; });
+      if (renderer) renderer.render(scene, camera);
+    }
+
+    function onWindowResize() {
+      if (!camera || !renderer) return;
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+  </script>
+</body>
+</html>
