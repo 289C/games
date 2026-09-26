@@ -117,8 +117,8 @@
       background: linear-gradient(135deg, #f7d070, #cfa030);
       color: #0b0c10;
       border: none;
-      padding: 12px 28px;
-      font-size: 0.95rem;
+      padding: 12px 24px;
+      font-size: 0.92rem;
       font-weight: 700;
       border-radius: 30px;
       cursor: pointer;
@@ -609,7 +609,9 @@
         <br><br>
         <strong>ఆ రోజులు మళ్ళీ రావు...</strong> Those golden days remain locked in our hearts forever.
       </p>
-      <button class="btn-main" onclick="goToScreen(3)">Next ➔</button>
+      <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+        <button class="btn-main" onclick="goToScreen(3)">Next ➔</button>
+      </div>
     </div>
   </section>
 
@@ -620,11 +622,14 @@
       <p class="desc-text">
         Tap below to reveal our 32 precious school memories (30 photos & 2 videos) one by one!
       </p>
-      <button class="btn-main" onclick="goToScreen(4)">Reveal Moments 📸</button>
+      <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+        <button class="btn-main" style="background: rgba(255,255,255,0.15); color: #fff;" onclick="goToScreen(2)">⬅️ Back</button>
+        <button class="btn-main" onclick="goToScreen(4)">Reveal Moments 📸</button>
+      </div>
     </div>
   </section>
 
-  <!-- ==================== SCREEN 4: 2 PER ROW TAP-TO-REVEAL (30 PHOTOS + 2 VIDEOS) ==================== -->
+  <!-- ==================== SCREEN 4: 2 PER ROW TAP-TO-REVEAL ==================== -->
   <section class="screen" id="screen-4">
     <div class="glass-card">
       <h2 class="title-gold">Tap to Reveal 📷</h2>
@@ -633,13 +638,13 @@
       <div class="reveal-grid-2col" id="revealGrid"></div>
 
       <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+        <button class="btn-main" style="background: rgba(255,255,255,0.15); color: #fff;" onclick="goToScreen(3)">⬅️ Back</button>
         <button class="btn-main" style="background: rgba(255,255,255,0.15); color: #fff;" onclick="revealAllPhotos()">Reveal All 🪄</button>
-        <button class="btn-main" onclick="goToScreen(5)">Batch Titles 🏆</button>
+        <button class="btn-main" onclick="goToScreen(5)">Batch Titles ➔</button>
       </div>
     </div>
   </section>
-
-  <!-- ==================== SCREEN 5: BATCH TITLES ==================== -->
+    <!-- ==================== SCREEN 5: BATCH TITLES ==================== -->
   <section class="screen" id="screen-5">
     <div class="glass-card" style="max-width: 560px;">
       <h2 class="title-gold">🏆 Batch Titles 🎖️</h2>
@@ -805,8 +810,9 @@
       </div>
 
       <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-        <button class="btn-main" style="background: rgba(255,255,255,0.15); color: #fff;" onclick="revealAllTitles()">Reveal All Titles 🪄</button>
-        <button class="btn-main" onclick="goToScreen('quiz')">Take the Quiz 🧠</button>
+        <button class="btn-main" style="background: rgba(255,255,255,0.15); color: #fff;" onclick="goToScreen(4)">⬅️ Back</button>
+        <button class="btn-main" style="background: rgba(255,255,255,0.15); color: #fff;" onclick="revealAllTitles()">Reveal All 🪄</button>
+        <button class="btn-main" onclick="goToScreen('quiz')">Take the Quiz ➔</button>
       </div>
     </div>
   </section>
@@ -831,16 +837,21 @@
         <div style="font-size: 3rem; margin-bottom: 8px;">🎓</div>
         <h3 id="quizScoreTitle" class="title-gold" style="font-size: 1.5rem;">Score: 4 / 4</h3>
         <p id="quizScoreDesc" class="desc-text" style="margin-bottom: 20px; font-weight: 500;"></p>
-        <button class="btn-main" onclick="goToScreen(6)">Leave a Reply / Message 💌</button>
+        <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+          <button class="btn-main" style="background: rgba(255,255,255,0.15); color: #fff;" onclick="goToScreen(5)">⬅️ Back to Titles</button>
+          <button class="btn-main" onclick="goToScreen(6)">Leave a Message 💌</button>
+        </div>
       </div>
 
+      <!-- Navigation Row with Direct Link to Review Page -->
       <div id="quizNavRow" style="margin-top: 16px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-        <button class="btn-main" style="background: rgba(255,255,255,0.15); color: #fff;" onclick="goToScreen(5)">Back to Titles 🏆</button>
+        <button class="btn-main" style="background: rgba(255,255,255,0.15); color: #fff;" onclick="goToScreen(5)">⬅️ Back to Titles</button>
         <button class="btn-main" onclick="goToScreen(6)">Go to Review ✍️</button>
       </div>
     </div>
   </section>
-    <!-- ==================== SCREEN 6: MESSAGE / REVIEW (NO EMAIL ASKED) ==================== -->
+
+  <!-- ==================== SCREEN 6: MESSAGE / REVIEW (NO EMAIL ASKED) ==================== -->
   <section class="screen" id="screen-6">
     <div class="glass-card">
       <h2 class="title-gold">Send a Message 💌</h2>
@@ -855,7 +866,10 @@
           <label>Your Message</label>
           <textarea name="message" class="review-textarea" placeholder="Say something about our 10th class memories..." required></textarea>
         </div>
-        <button type="submit" class="btn-main" style="margin-top: 6px;">Send Message 🚀</button>
+        <div style="display: flex; gap: 10px; margin-top: 6px; flex-wrap: wrap; justify-content: center;">
+          <button type="button" class="btn-main" style="background: rgba(255,255,255,0.15); color: #fff;" onclick="goToScreen('quiz')">⬅️ Back to Quiz</button>
+          <button type="submit" class="btn-main">Send Message 🚀</button>
+        </div>
       </form>
     </div>
   </section>
@@ -931,16 +945,44 @@
       }
     }
 
-    // --- 4. NAVIGATION & PASSWORD VERIFICATION ---
-    function goToScreen(screenIdentifier) {
-      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    // --- 4. NAVIGATION & PHONE / BROWSER BACK BUTTON SUPPORT ---
+    let currentActiveScreen = '1';
+
+    function goToScreen(screenIdentifier, pushToHistory = true) {
       const targetId = typeof screenIdentifier === 'number' ? `screen-${screenIdentifier}` : `screen-${screenIdentifier}`;
       const target = document.getElementById(targetId);
-      if (target) {
-        target.classList.add('active');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+      
+      if (!target) return;
+
+      closeHdModal();
+
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      target.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      const screenKey = String(screenIdentifier).replace('screen-', '');
+      currentActiveScreen = screenKey;
+
+      if (pushToHistory) {
+        history.pushState({ screen: screenKey }, '', `#screen-${screenKey}`);
       }
     }
+
+    window.addEventListener('popstate', (event) => {
+      const modal = document.getElementById('hdModal');
+      if (modal && modal.classList.contains('active')) {
+        closeHdModal();
+        return;
+      }
+
+      if (event.state && event.state.screen) {
+        goToScreen(event.state.screen, false);
+      } else {
+        goToScreen(1, false);
+      }
+    });
+
+    history.replaceState({ screen: '1' }, '', '#screen-1');
 
     function verifyPassword() {
       const pass = document.getElementById('passCode').value.trim();
@@ -1110,6 +1152,7 @@
 
     function showQuizResults() {
       document.getElementById('quizContainer').style.display = 'none';
+      document.getElementById('quizNavRow').style.display = 'none';
       const resultBox = document.getElementById('quizResultBox');
       resultBox.style.display = 'block';
 
