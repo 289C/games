@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Anniversary Love Journey</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Poppins:wght@300;400;600;700&family=Sacramento&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
+    body, html { width: 100%; min-height: 100%; background: #4a0404; color: #fff; overflow-x: hidden; }
+
+    /* Romantic Plaid Background Matching Video */
+    .plaid-bg {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 14px;
+      background-color: #580808;
+      background-image: 
+        repeating-linear-gradient(0deg, transparent, transparent 35px, rgba(0,0,0,0.18) 35px, rgba(0,0,0,0.18) 70px),
+        repeating-linear-gradient(90deg, transparent, transparent 35px, rgba(0,0,0,0.18) 35px, rgba(0,0,0,0.18) 70px);
+      position: relative;
+    }
+
+    .top-actions {
+      position: absolute; top: 16px; left: 16px; right: 16px;
+      display: flex; justify-content: space-between; z-index: 50;
+    }
+    .pill-btn {
+      background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.2);
+      color: #fff; padding: 6px 14px; border-radius: 20px; font-size: 0.78rem;
+      cursor: pointer; text-decoration: none; backdrop-filter: blur(6px);
+    }
+
+    /* Screen Card Scaffolding */
+    .app-card {
+      width: 100%; max-width: 400px;
+      background: #fff8f0; color: #2c0e12;
+      border-radius: 28px; padding: 30px 22px;
+      box-shadow: 0 20px 45px rgba(0,0,0,0.6);
+      text-align: center; position: relative;
+      animation: fadeIn 0.45s ease-out;
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+    .card-title { font-family: 'Playfair Display', serif; font-size: 1.55rem; color: #580808; margin-bottom: 6px; }
+    .card-sub { font-size: 0.78rem; color: #7d5e62; margin-bottom: 20px; }
+    .handwriting { font-family: 'Sacramento', cursive; font-size: 2.2rem; color: #800a18; }
+
+    /* SCREEN 1: PASSCODE KEYPAD */
+    .pin-dots { display: flex; justify-content: center; gap: 14px; margin: 18px 0; }
+    .pin-dot {
+      width: 14px; height: 14px; border-radius: 50%;
+      border: 2px solid #800a18; background: transparent; transition: 0.2s;
+    }
+    .pin-dot.filled { background: #800a18; transform: scale(1.15); }
+    .keypad-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+      width: 240px; margin: 0 auto;
+    }
+    .num-btn {
+      width: 60px; height: 60px; border-radius: 50%;
+      border: 1px solid rgba(128,10,24,0.18); background: #fff;
+      color: #800a18; font-size: 1.3rem; font-weight: 600;
+      cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+    }
+    .num-btn:active { background: #800a18; color: #fff; }
+
+    /* SCREEN 2: ENVELOPE PROMPT */
+    .envelope-box {
+      font-size: 5rem; cursor: pointer; display: inline-block;
+      animation: floatEnv 2.5s ease-in-out infinite alternate;
+    }
+    @keyframes floatEnv { from { transform: translateY(0); } to { transform: translateY(-10px); } }
+    .choice-row { display: flex; gap: 12px; justify-content: center; margin-top: 20px; }
+    .btn-romance {
+      background: #800a18; color: #fff; border: none; padding: 11px 24px;
+      border-radius: 20px; font-weight: 600; font-size: 0.88rem; cursor: pointer;
+    }
+    .btn-ghost {
+      background: #eeddd9; color: #663333; border: none; padding: 11px 20px;
+      border-radius: 20px; font-weight: 600; font-size: 0.88rem; cursor: pointer;
+    }
+
+    /* SCREEN 3: LOVE LETTER & 2 JARS */
+    .letter-paper {
+      background: #fff; border-left: 4px solid #800a18;
+      border-radius: 12px; padding: 18px 16px; text-align: left;
+      font-size: 0.88rem; line-height: 1.6; color: #442226;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.05); margin-bottom: 22px;
+    }
+    .jars-container { display: flex; justify-content: space-around; margin-top: 15px; }
+    .gift-jar {
+      background: #fff; border: 1.5px dashed #800a18; border-radius: 18px;
+      padding: 12px 16px; width: 45%; cursor: pointer; transition: transform 0.2s;
+    }
+    .gift-jar:hover { transform: scale(1.05); }
+
+    /* SCREEN 4: SONGS PLAYLIST */
+    .track-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; text-align: left; }
+    .track-item {
+      background: #fff; padding: 12px 14px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: space-between;
+      border: 1px solid rgba(0,0,0,0.06); cursor: pointer;
+    }
+    .track-info h4 { font-size: 0.85rem; color: #331115; }
+    .track-info p { font-size: 0.72rem; color: #775558; }
+
+    /* SCREEN 5: POLAROID PINBOARD */
+    .polaroid-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+    .polaroid-item {
+      background: #fff; padding: 8px 8px 16px 8px; border-radius: 6px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.12); transform: rotate(-2deg); cursor: pointer;
+    }
+    .polaroid-item:nth-child(even) { transform: rotate(3deg); }
+    .polaroid-item img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 4px; }
+    .polaroid-cap { font-size: 0.7rem; color: #442226; margin-top: 6px; font-weight: 600; }
+
+    /* SCREEN 6: COUPLE QUIZ */
+    .quiz-options { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+    .quiz-btn {
+      background: #fff; border: 1px solid #800a18; border-radius: 16px;
+      padding: 12px; font-weight: 600; color: #800a18; cursor: pointer;
+    }
+
+    /* SCREEN 7: FINGERPRINT SCANNER */
+    .fingerprint-touch {
+      width: 120px; height: 120px; border-radius: 50%;
+      border: 3px solid #800a18; margin: 24px auto;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 3.5rem; cursor: pointer; user-select: none;
+      transition: background 0.3s, transform 0.2s;
+    }
+    .fingerprint-touch.holding { background: rgba(128,10,24,0.15); transform: scale(0.96); }
+
+    /* SCREEN 8: 3D FLOATING RING BOX & ROSES */
+    #threejs-screen { position: fixed; inset: 0; width: 100%; height: 100%; display: none; z-index: 60; background: #280208; }
+    #canvas-box { position: absolute; inset: 0; }
+    .three-hud {
+      position: absolute; top: 22px; width: 100%; text-align: center;
+      z-index: 70; pointer-events: none;
+    }
+    .three-hud h2 { font-family: 'Playfair Display', serif; color: #ffd700; font-size: 1.7rem; }
+    .three-footer {
+      position: absolute; bottom: 35px; width: 100%; text-align: center; z-index: 70;
+    }
+
+    /* SCREEN 9: HAPPILY EVER AFTER + WHATSAPP REPLY */
+    .final-heart-box { font-size: 4rem; margin-bottom: 8px; animation: pulseHeart 1.6s infinite; }
+    @keyframes pulseHeart { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.12); } }
+    .reply-area {
+      background: #fff; padding: 14px; border-radius: 16px; margin-top: 18px; text-align: left;
+    }
+    .reply-area label { font-size: 0.78rem; font-weight: 700; color: #800a18; display: block; margin-bottom: 6px; }
+    .reply-area input {
+      width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid #ddd;
+      font-size: 0.85rem; margin-bottom: 8px; outline: none;
+    }
+    .btn-wa-send {
+      width: 100%; background: #25d366; color: #fff; border: none; padding: 11px;
+      border-radius: 20px; font-weight: bold; font-size: 0.88rem; cursor: pointer;
+    }
+
+    /* ADMIN MODAL */
+    .admin-pop {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+      display: none; align-items: center; justify-content: center; z-index: 100; padding: 16px;
+    }
+    .admin-form {
+      background: #fff; border-radius: 20px; max-width: 360px; width: 100%;
+      padding: 22px; color: #331115;
+    }
+    .admin-form input, .admin-form textarea {
+      width: 100%; padding: 8px 10px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ROMANTIC PLAID WRAPPER -->
+  <div class="plaid-bg" id="flow-container">
+    <div class="top-actions">
+      <button class="pill-btn" onclick="stepBack()">← Back</button>
+      <button class="pill-btn" onclick="openAdmin()">🔒 Edit</button>
+    </div>
+
+    <!-- SCREEN 1: PASSCODE GATE -->
+    <div class="app-card" id="screen-passcode">
+      <h2 class="card-title">Only my favourite person gets in ❤️</h2>
+      <div style="font-size: 3.5rem; margin: 10px 0;">💐</div>
+      <p class="card-sub" id="hint-text">hint: think of the date it all began for us (DD / MM)</p>
+      
+      <div class="pin-dots">
+        <span class="pin-dot" id="dot-0"></span>
+        <span class="pin-dot" id="dot-1"></span>
+        <span class="pin-dot" id="dot-2"></span>
+        <span class="pin-dot" id="dot-3"></span>
+      </div>
+
+      <div class="keypad-grid">
+        <button class="num-btn" onclick="pressKey('1')">1</button>
+        <button class="num-btn" onclick="pressKey('2')">2</button>
+        <button class="num-btn" onclick="pressKey('3')">3</button>
+        <button class="num-btn" onclick="pressKey('4')">4</button>
+        <button class="num-btn" onclick="pressKey('5')">5</button>
+        <button class="num-btn" onclick="pressKey('6')">6</button>
+        <button class="num-btn" onclick="pressKey('7')">7</button>
+        <button class="num-btn" onclick="pressKey('8')">8</button>
+        <button class="num-btn" onclick="pressKey('9')">9</button>
+        <button class="num-btn" onclick="clearPin()">✕</button>
+        <button class="num-btn" onclick="pressKey('0')">0</button>
+        <button class="num-btn" onclick="checkPin()">➔</button>
+      </div>
+    </div>
+
+    <!-- SCREEN 2: ENVELOPE PROMPT -->
+    <div class="app-card" id="screen-envelope" style="display:none;">
+      <h2 class="card-title">You have received a letter! 💌</h2>
+      <div class="envelope-box" onclick="showScreen('screen-letter')">✉️</div>
+      <p class="card-sub">open it?</p>
+      <div class="choice-row">
+        <button class="btn-romance" onclick="showScreen('screen-letter')">okay fine</button>
+        <button class="btn-ghost" id="btn-refuse" onclick="refuseLetter()">no thanks</button>
+      </div>
+    </div>
+
+    <!-- SCREEN 3: LOVE LETTER & TWO GIFTS -->
+    <div class="app-card" id="screen-letter" style="display:none;">
+      <span class="handwriting">Happy Anniversary, Love!</span>
+      <div class="letter-paper">
+        <p id="letter-content">
+          Another year of us and I still get the same sweet butterflies. Thank you for every laugh, every late-night talk, and every ordinary day you made extraordinary.<br><br>
+          I made this little corner of the internet just for you.
+        </p>
+        <p style="text-align: right; margin-top: 10px; font-weight: bold; color: #800a18;" id="letter-sign">— Always yours</p>
+      </div>
+      <p class="card-sub">two little gifts for you</p>
+      <div class="jars-container">
+        <div class="gift-jar" onclick="showScreen('screen-playlist')">
+          <div style="font-size: 2rem;">🎵</div>
+          <strong style="font-size: 0.78rem; color: #800a18;">Gift 1</strong>
+          <p style="font-size: 0.68rem; color: #777;">our songs</p>
+        </div>
+        <div class="gift-jar" onclick="showScreen('screen-polaroids')">
+          <div style="font-size: 2rem;">📸</div>
+          <strong style="font-size: 0.78rem; color: #800a18;">Gift 2</strong>
+          <p style="font-size: 0.68rem; color: #777;">memories</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN 4: ROMANTIC PLAYLIST -->
+    <div class="app-card" id="screen-playlist" style="display:none;">
+      <h2 class="card-title">songs that remind me of you 🎶</h2>
+      <div class="track-list">
+        <div class="track-item" onclick="playMusic(0)">
+          <div class="track-info">
+            <h4>01. Until I Found You</h4>
+            <p>Stephen Sanchez</p>
+          </div>
+          <span>▶️</span>
+        </div>
+        <div class="track-item" onclick="playMusic(1)">
+          <div class="track-info">
+            <h4>02. Lover</h4>
+            <p>Taylor Swift</p>
+          </div>
+          <span>▶️</span>
+        </div>
+        <div class="track-item" onclick="playMusic(2)">
+          <div class="track-info">
+            <h4>03. Perfect</h4>
+            <p>Ed Sheeran</p>
+          </div>
+          <span>▶️</span>
+        </div>
+      </div>
+      <p class="card-sub">every wave of them is a little bit about you</p>
+      <button class="btn-romance" onclick="showScreen('screen-letter')">back</button>
+      <button class="btn-romance" onclick="showScreen('screen-polaroids')" style="margin-left: 8px;">next gift ➔</button>
+    </div>
+
+    <!-- SCREEN 5: POLAROIDS REEL -->
+    <div class="app-card" id="screen-polaroids" style="display:none;">
+      <h2 class="card-title">I love you so much love! 📸</h2>
+      <div class="polaroid-grid" id="polaroid-box"></div>
+      <button class="btn-romance" onclick="showScreen('screen-quiz')">Continue to Surprise ➔</button>
+    </div>
+
+    <!-- SCREEN 6: COUPLE QUIZ -->
+    <div class="app-card" id="screen-quiz" style="display:none;">
+      <h2 class="card-title">quick question... 🤔</h2>
+      <p class="card-sub">Who said I love you first?</p>
+      <div class="quiz-options">
+        <button class="quiz-btn" onclick="wrongAnswer()">You</button>
+        <button class="quiz-btn" onclick="correctAnswer()">Me</button>
+        <button class="quiz-btn" onclick="wrongAnswer()">We both did at the same time</button>
+      </div>
+    </div>
+
+    <!-- WRONG ANSWER SAD CAT MODAL -->
+    <div class="app-card" id="screen-wrong" style="display:none;">
+      <h2 class="card-title" style="color: #c0392b;">wrong answer! 😿</h2>
+      <img src="https://images.unsplash.com/photo-1543852786-1cf6624b9987?w=400" style="width: 140px; border-radius: 50%; margin: 12px auto;" />
+      <p class="card-sub">it's okay... I still love you the most!</p>
+      <button class="btn-romance" onclick="showScreen('screen-quiz')">Try Again</button>
+      <button class="btn-ghost" onclick="correctAnswer()">Continue Anyway</button>
+    </div>
+
+    <!-- SCREEN 7: FINGERPRINT PROMISE -->
+    <div class="app-card" id="screen-promise" style="display:none;">
+      <h2 class="card-title">one last promise 💍</h2>
+      <p class="card-sub">Hold your finger to seal our promise</p>
+      <div class="fingerprint-touch" id="fp-btn">👆</div>
+      <p id="fp-status" style="font-size: 0.8rem; color: #800a18;">Hold for 2 seconds...</p>
+    </div>
+
+    <!-- SCREEN 9: HAPPILY EVER AFTER + WHATSAPP REPLY -->
+    <div class="app-card" id="screen-final" style="display:none;">
+      <div class="final-heart-box">❤️</div>
+      <h2 class="card-title">happily ever after 🎈</h2>
+      <p class="card-sub">every love story is beautiful, but ours is my favourite.</p>
+      
+      <div class="reply-area">
+        <label>Send an Anniversary Reply to Satish:</label>
+        <input type="text" id="wa-reply-input" value="Happy Anniversary! Thank you so much for this heartfelt 3D surprise! ❤️✨" />
+        <button class="btn-wa-send" onclick="sendReplyWhatsApp()">Reply on WhatsApp 📲</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 8: 3D FLOATING RING BOX & ROSES (THREE.JS) -->
+  <div id="threejs-screen">
+    <div class="three-hud">
+      <h2>Happy Anniversary! 💍</h2>
+      <p style="color:#e0d0f5; font-size:0.85rem;">Tap the Velvet Ring Box to Open!</p>
+    </div>
+    <div id="canvas-box"></div>
+    <div class="three-footer">
+      <button class="btn-romance" style="background:#ffd700; color:#4a0404;" onclick="finish3DStage()">Continue to Final Promise ➔</button>
+    </div>
+  </div>
+
+  <!-- ADMIN PASSCODE / CUSTOMIZER MODAL -->
+  <div class="admin-pop" id="admin-pop">
+    <div class="admin-form">
+      <h3 style="color:#800a18; margin-bottom: 8px;">Admin Settings 🔐</h3>
+      <input type="password" id="admin-pwd" placeholder="Enter admin password (satish123)" />
+      <div id="admin-fields" style="display:none;">
+        <label style="font-size:0.75rem;">Gate Passcode (4-digits):</label>
+        <input type="text" id="cfg-pin" value="2026" maxlength="4" />
+        <label style="font-size:0.75rem;">Love Letter Text:</label>
+        <textarea id="cfg-letter" rows="3"></textarea>
+      </div>
+      <div style="display:flex; gap:8px; margin-top:8px;">
+        <button class="btn-romance" onclick="verifyAdmin()">Unlock</button>
+        <button class="btn-ghost" onclick="closeAdmin()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- APP STATE & CONFIGURATION ---
+    let correctPin = "2026";
+    let enteredPin = "";
+    let screenStack = ['screen-passcode'];
+
+    let coupleImages = [
+      { url: "https://images.unsplash.com/photo-1519741497674-611481863552?w=500", cap: "where it began ✨" },
+      { url: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=500", cap: "my forever smile 💖" },
+      { url: "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=500", cap: "our adventures 🚗" },
+      { url: "https://images.unsplash.com/photo-1469371670807-013ccf25f16a?w=500", cap: "you & me always 🌹" }
+    ];
+
+    // --- NAVIGATION CONTROLS ---
+    function showScreen(screenId) {
+      document.querySelectorAll('.app-card').forEach(c => c.style.display = 'none');
+      document.getElementById('threejs-screen').style.display = 'none';
+      document.getElementById('flow-container').style.display = 'flex';
+      
+      const target = document.getElementById(screenId);
+      if (target) {
+        target.style.display = 'block';
+        if (screenStack[screenStack.length - 1] !== screenId) {
+          screenStack.push(screenId);
+        }
+      }
+    }
+
+    function stepBack() {
+      if (document.getElementById('threejs-screen').style.display === 'block') {
+        document.getElementById('threejs-screen').style.display = 'none';
+        showScreen('screen-promise');
+        return;
+      }
+      if (screenStack.length > 1) {
+        screenStack.pop();
+        const prev = screenStack[screenStack.length - 1];
+        showScreen(prev);
+      } else {
+        window.location.href = "index.html";
+      }
+    }
+
+    // Android/Gesture Back Listener
+    history.pushState(null, null, location.href);
+    window.onpopstate = () => stepBack();
+
+    // --- SCREEN 1: PASSCODE LOGIC ---
+    function pressKey(num) {
+      if (enteredPin.length < 4) {
+        enteredPin += num;
+        updateDots();
+        if (enteredPin.length === 4) setTimeout(checkPin, 200);
+      }
+    }
+
+    function clearPin() {
+      enteredPin = "";
+      updateDots();
+    }
+
+    function updateDots() {
+      for (let i = 0; i < 4; i++) {
+        const dot = document.getElementById(`dot-${i}`);
+        if (i < enteredPin.length) dot.classList.add('filled');
+        else dot.classList.remove('filled');
+      }
+    }
+
+    function checkPin() {
+      if (enteredPin === correctPin) {
+        confetti({ particleCount: 60, spread: 70 });
+        showScreen('screen-envelope');
+      } else {
+        alert("Oops! Incorrect date. Try again ❤️");
+        clearPin();
+      }
+    }
+
+    // --- SCREEN 2: ENVELOPE NO THANKS PLAYFUL BOUNCE ---
+    let refuseCount = 0;
+    function refuseLetter() {
+      refuseCount++;
+      const btn = document.getElementById('btn-refuse');
+      if (refuseCount === 1) btn.innerText = "are you sure? 🥺";
+      else if (refuseCount === 2) btn.innerText = "please open it! 😭";
+      else showScreen('screen-letter');
+    }
+
+    // --- SCREEN 4: MUSIC TRACKS ---
+    function playMusic(idx) {
+      alert("🎵 Playing track preview!");
+    }
+
+    // --- SCREEN 5: POLAROIDS BUILDER ---
+    function renderPolaroids() {
+      const box = document.getElementById('polaroid-box');
+      box.innerHTML = '';
+      coupleImages.forEach(img => {
+        const p = document.createElement('div');
+        p.className = 'polaroid-item';
+        p.innerHTML = `<img src="${img.url}"><div class="polaroid-cap">${img.cap}</div>`;
+        p.onclick = () => window.open(img.url, '_blank');
+        box.appendChild(p);
+      });
+    }
+
+    // --- SCREEN 6: QUIZ ACTIONS ---
+    function wrongAnswer() {
+      showScreen('screen-wrong');
+    }
+    function correctAnswer() {
+      confetti({ particleCount: 70, spread: 80 });
+      launch3DRingScreen();
+    }
+
+    // --- SCREEN 7: FINGERPRINT SCANNER ---
+    const fp = document.getElementById('fp-btn');
+    let holdTimer;
+    fp.addEventListener('pointerdown', () => {
+      fp.classList.add('holding');
+      document.getElementById('fp-status').innerText = "Hold steady... Scanning promise ❤️";
+      holdTimer = setTimeout(() => {
+        fp.classList.remove('holding');
+        confetti({ particleCount: 90, spread: 100 });
+        showScreen('screen-final');
+      }, 1500);
+    });
+    fp.addEventListener('pointerup', () => {
+      clearTimeout(holdTimer);
+      fp.classList.remove('holding');
+      document.getElementById('fp-status').innerText = "Hold for 2 seconds...";
+    });
+
+    // --- SCREEN 8: 3D THREE.JS FLOATING RING BOX & ROSES ---
+    let scene, camera, renderer, ringGroup, boxLid, roseGroup, isLidOpen = false;
+
+    function launch3DRingScreen() {
+      document.getElementById('flow-container').style.display = 'none';
+      document.getElementById('threejs-screen').style.display = 'block';
+      if (!renderer) initThreeRingBox();
+    }
+
+    function initThreeRingBox() {
+      const container = document.getElementById('canvas-box');
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+      camera.position.set(0, 3.5, 9);
+      camera.lookAt(0, 0.5, 0);
+
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      container.appendChild(renderer.domElement);
+
+      scene.add(new THREE.AmbientLight(0xffffff, 0.9));
+      const goldSpot = new THREE.PointLight(0xffd700, 2, 20);
+      goldSpot.position.set(0, 6, 6);
+      scene.add(goldSpot);
+
+      // Ring Box Assembly
+      ringGroup = new THREE.Group();
+      const velvetMat = new THREE.MeshStandardMaterial({ color: 0x54091a, roughness: 0.4 });
+      const goldMat = new THREE.MeshStandardMaterial({ color: 0xffd700, metalness: 0.9, roughness: 0.2 });
+
+      // Box Base & Trim
+      const base = new THREE.Mesh(new THREE.BoxGeometry(2.4, 1.0, 2.4), velvetMat);
+      base.position.y = 0.5;
+      ringGroup.add(base);
+
+      const trim = new THREE.Mesh(new THREE.BoxGeometry(2.44, 0.08, 2.44), goldMat);
+      trim.position.y = 1.02;
+      ringGroup.add(trim);
+
+      // Hinged Lid
+      boxLid = new THREE.Group();
+      boxLid.position.set(0, 1.04, -1.2);
+      const lidMesh = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.6, 2.4), velvetMat);
+      lidMesh.position.set(0, 0.3, 1.2);
+      boxLid.add(lidMesh);
+      ringGroup.add(boxLid);
+
+      // Two Interlocked Golden Rings
+      const ringGeom = new THREE.TorusGeometry(0.35, 0.07, 16, 32);
+      const ring1 = new THREE.Mesh(ringGeom, goldMat);
+      ring1.position.set(-0.25, 1.2, 0.1);
+      ring1.rotation.y = 0.4;
+      ringGroup.add(ring1);
+
+      const ring2 = new THREE.Mesh(ringGeom, goldMat);
+      ring2.position.set(0.25, 1.2, -0.1);
+      ring2.rotation.y = -0.4;
+      ringGroup.add(ring2);
+
+      // Floating Red Roses
+      roseGroup = new THREE.Group();
+      for (let i = 0; i < 8; i++) {
+        const petal = new THREE.Mesh(new THREE.SphereGeometry(0.22, 16, 16), new THREE.MeshStandardMaterial({ color: 0xb71540 }));
+        petal.scale.set(1, 1.4, 0.5);
+        petal.position.set(Math.sin(i) * 2.2, 0.2 + (i * 0.1), Math.cos(i) * 2.2);
+        roseGroup.add(petal);
+      }
+      ringGroup.add(roseGroup);
+      scene.add(ringGroup);
+
+      // Open on Tap
+      container.addEventListener('pointerdown', openBoxAnimate);
+
+      function anim() {
+        requestAnimationFrame(anim);
+        if (ringGroup) ringGroup.rotation.y += 0.007;
+        renderer.render(scene, camera);
+      }
+      anim();
+    }
+
+    function openBoxAnimate() {
+      if (isLidOpen) return;
+      isLidOpen = true;
+      let angle = 0;
+      const t = setInterval(() => {
+        angle += 0.09;
+        boxLid.rotation.x = -angle;
+        if (angle >= 1.6) {
+          clearInterval(t);
+          confetti({ particleCount: 70, spread: 80, colors: ['#ffd700', '#ff007f'] });
+        }
+      }, 16);
+    }
+
+    function finish3DStage() {
+      showScreen('screen-promise');
+    }
+
+    // --- SCREEN 9: WHATSAPP REPLY TO 9281267188 ---
+    function sendReplyWhatsApp() {
+      const msg = document.getElementById('wa-reply-input').value.trim();
+      if (!msg) return alert("Please type your sweet message!");
+      const text = encodeURIComponent(`Hi Satish! ❤️ ${msg}`);
+      window.open(`https://api.whatsapp.com/send?phone=919281267188&text=${text}`, '_blank');
+    }
+
+    // --- ADMIN PASSWORD PROTECTION ---
+    function openAdmin() {
+      document.getElementById('admin-pop').style.display = 'flex';
+      document.getElementById('admin-pwd').value = '';
+    }
+    function closeAdmin() {
+      document.getElementById('admin-pop').style.display = 'none';
+    }
+    function verifyAdmin() {
+      const p = document.getElementById('admin-pwd').value;
+      if (p === "satish123") {
+        document.getElementById('admin-fields').style.display = 'block';
+        document.getElementById('cfg-pin').value = correctPin;
+      } else {
+        alert("Incorrect password!");
+      }
+    }
+
+    window.onload = () => {
+      renderPolaroids();
+    };
+  </script>
+</body>
+</html>
