@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>VIP Premium Access 👑✨ | Satish Official</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    body, html {
+      width: 100%;
+      min-height: 100vh;
+      background: #09030c;
+      color: #ffffff;
+      overflow-x: hidden;
+    }
+
+    .vip-wrapper {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 16px 36px;
+      background: radial-gradient(circle at 50% 20%, #3a0823 0%, #170210 55%, #050005 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Ambient Floating Gold Particles */
+    .ambient-sparkle {
+      position: absolute;
+      pointer-events: none;
+      font-size: 1.15rem;
+      animation: floatUp 7.5s linear infinite;
+      z-index: 1;
+      filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.6));
+    }
+    @keyframes floatUp {
+      0% { transform: translateY(105vh) rotate(0deg) scale(0.6); opacity: 0; }
+      20% { opacity: 0.9; }
+      80% { opacity: 0.9; }
+      100% { transform: translateY(-8vh) rotate(360deg) scale(1.15); opacity: 0; }
+    }
+
+    /* Top Nav Bar */
+    .top-bar {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 50;
+    }
+    .pill-btn {
+      background: rgba(255, 215, 0, 0.12);
+      border: 1px solid rgba(255, 215, 0, 0.4);
+      color: #ffd700;
+      padding: 7px 16px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      text-decoration: none;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2);
+    }
+
+    /* Main Container Card */
+    .stage-card {
+      width: 100%;
+      max-width: 390px;
+      background: linear-gradient(165deg, rgba(255, 255, 255, 0.08) 0%, rgba(38, 4, 25, 0.96) 100%);
+      border: 1.8px solid #ffd700;
+      border-radius: 34px;
+      padding: 30px 20px 26px;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.85), 0 0 35px rgba(255, 215, 0, 0.25);
+      backdrop-filter: blur(16px);
+      text-align: center;
+      position: relative;
+      z-index: 10;
+      animation: popIn 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.92); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .card-heading {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.7rem;
+      color: #fff2b2;
+      margin-bottom: 6px;
+      text-shadow: 0 0 16px rgba(255, 215, 0, 0.5);
+    }
+    .card-desc {
+      font-size: 0.82rem;
+      color: #ffd6e0;
+      margin-bottom: 20px;
+      line-height: 1.45;
+    }
+
+    /* Password Input */
+    .lock-field-box { width: 100%; margin: 14px 0 16px; }
+    .lock-input {
+      width: 100%;
+      padding: 13px 16px;
+      border-radius: 20px;
+      border: 1.8px solid rgba(255, 215, 0, 0.55);
+      background: rgba(0, 0, 0, 0.5);
+      color: #fff;
+      font-size: 0.95rem;
+      text-align: center;
+      outline: none;
+      transition: all 0.25s ease;
+    }
+    .lock-input:focus {
+      border-color: #ffd700;
+      box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+    }
+    .shake-anim { animation: shakeInput 0.4s ease-in-out; }
+    @keyframes shakeInput {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
+    }
+
+    /* Action Buttons */
+    .btn-action {
+      width: 100%;
+      padding: 13px;
+      border-radius: 25px;
+      border: none;
+      background: linear-gradient(135deg, #ffd700, #ff007f);
+      color: #2b0414;
+      font-weight: 800;
+      font-size: 0.95rem;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+      transition: transform 0.15s, box-shadow 0.15s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+    .btn-action:active { transform: scale(0.97); }
+
+    /* --- PREMIUM BANNER WITH ANIMATIONS --- */
+    .vip-banner-box {
+      background: linear-gradient(135deg, rgba(255, 215, 0, 0.18) 0%, rgba(255, 0, 128, 0.25) 100%);
+      border: 2px solid #ffd700;
+      border-radius: 24px;
+      padding: 20px 16px;
+      margin: 16px 0 20px;
+      box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3), inset 0 0 20px rgba(255, 215, 0, 0.2);
+      animation: bannerGlowPulse 2.5s infinite alternate ease-in-out;
+      position: relative;
+      overflow: hidden;
+    }
+    @keyframes bannerGlowPulse {
+      0% { box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2), inset 0 0 15px rgba(255, 215, 0, 0.1); }
+      100% { box-shadow: 0 15px 40px rgba(255, 215, 0, 0.5), inset 0 0 30px rgba(255, 215, 0, 0.35); }
+    }
+
+    .banner-crown-icon {
+      font-size: 3.5rem;
+      filter: drop-shadow(0 0 16px #ffd700);
+      animation: floatCrown 2s infinite alternate ease-in-out;
+      margin-bottom: 6px;
+      display: inline-block;
+    }
+    @keyframes floatCrown {
+      0% { transform: translateY(0) rotate(-4deg); }
+      100% { transform: translateY(-8px) rotate(4deg); }
+    }
+
+    .vip-badge-tag {
+      display: inline-block;
+      padding: 4px 14px;
+      border-radius: 18px;
+      background: #ffd700;
+      color: #260418;
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .banner-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: #fff7d1;
+      margin-bottom: 6px;
+      text-shadow: 0 0 14px rgba(255, 215, 0, 0.6);
+    }
+
+    .banner-subtitle {
+      font-size: 0.8rem;
+      color: #ffccd5;
+      line-height: 1.45;
+    }
+
+    /* Creator Profile Stamp */
+    .insta-avatar-stage {
+      position: relative;
+      width: 76px;
+      height: 76px;
+      margin: 0 auto 12px;
+    }
+    .insta-ring {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      padding: 3px;
+      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      box-shadow: 0 6px 20px rgba(225, 48, 108, 0.4);
+      animation: spinRing 4s linear infinite;
+    }
+    @keyframes spinRing { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } }
+    .insta-photo {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      background: #14020c;
+      border: 2px solid #ffffff;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="vip-wrapper" id="main-wrap">
+    
+    <!-- Top Bar -->
+    <div class="top-bar">
+      <a href="../index.html" class="pill-btn">← Back to Hub</a>
+      <span class="pill-btn">👑 VIP Member</span>
+    </div>
+
+    <!-- SCREEN 1: PASSCODE PROTECTION GATE -->
+    <div class="stage-card" id="screen-gate">
+      <div style="font-size: 3.5rem; margin-bottom: 8px;">🔐👑</div>
+      <h2 class="card-heading">VIP Access Portal</h2>
+      <p class="card-desc">Enter the exclusive passkey to unlock your premium experience</p>
+
+      <div class="lock-field-box">
+        <input type="password" id="vip-pass-input" class="lock-input" placeholder="Enter VIP Passkey" autocomplete="off" />
+      </div>
+
+      <p id="gate-error" style="font-size: 0.76rem; color: #ff4d6d; min-height: 18px; margin-bottom: 8px; font-weight: 600;"></p>
+
+      <button class="btn-action" onclick="verifyVipKey()">
+        <span>Unlock Premium Experience ➔</span>
+      </button>
+    </div>
+
+    <!-- SCREEN 2: ANIMATED PREMIUM BANNER & FRIEND'S SLOT1 UNLOCK -->
+    <div class="stage-card" id="screen-banner" style="display: none;">
+      
+      <!-- Creator Avatar Stamp -->
+      <div class="insta-avatar-stage">
+        <div class="insta-ring">
+          <img src="../../../Insta.jpg" alt="Satish Kommana" class="insta-photo" onerror="this.onerror=null; this.src='/games/Insta.jpg';" />
+        </div>
+      </div>
+
+      <div class="vip-badge-tag">Verified VIP Member</div>
+
+      <!-- ANIMATED GLOWING PREMIUM BANNER -->
+      <div class="vip-banner-box">
+        <div class="banner-crown-icon">👑</div>
+        <h3 class="banner-title">Premium Access Unlocked!</h3>
+        <p class="banner-subtitle">
+          Your exclusive crush proposal experience is fully loaded and ready for celebration.
+        </p>
+      </div>
+
+      <!-- DIRECT ACCESS BUTTON TO YOUR FRIEND'S CRUSH PROPOSAL (slot1.html) -->
+      <a href="../slot1.html" class="btn-action" style="margin-bottom: 12px;">
+        <span>Open Ganesh & Devi Proposal ❤️ ➔</span>
+      </a>
+
+      <a href="https://ig.me/m/_satish_official_16" target="_blank" class="btn-action" style="background: linear-gradient(135deg, #25d366, #128c7e); color: #fff;">
+        <span>Chat on WhatsApp</span> 📲
+      </a>
+
+    </div>
+
+  </div>
+
+  <script>
+    // --- PASSCODE CONFIGURATION ---
+    const VIP_PASSKEY = "2026"; // Set your secret VIP password here
+
+    // 1. FLOATING PARTICLES
+    const wrap = document.getElementById('main-wrap');
+    const icons = ['✨', '👑', '💎', '💖', '⭐'];
+    for (let i = 0; i < 16; i++) {
+      const p = document.createElement('div');
+      p.className = 'ambient-sparkle';
+      p.innerText = icons[Math.floor(Math.random() * icons.length)];
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.animationDelay = (Math.random() * 6) + 's';
+      p.style.animationDuration = (6 + Math.random() * 4) + 's';
+      wrap.appendChild(p);
+    }
+
+    // 2. SYNTHETIC AUDIO CHIMES
+    let sfxCtx = null;
+    function playSfx(type) {
+      try {
+        if (!sfxCtx) sfxCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const now = sfxCtx.currentTime;
+        const osc = sfxCtx.createOscillator();
+        const gain = sfxCtx.createGain();
+        osc.connect(gain);
+        gain.connect(sfxCtx.destination);
+
+        if (type === 'unlock') {
+          [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+            const o = sfxCtx.createOscillator();
+            const g = sfxCtx.createGain();
+            o.connect(g); g.connect(sfxCtx.destination);
+            o.type = 'sine';
+            o.frequency.value = freq;
+            g.gain.setValueAtTime(0.2, now + (idx * 0.08));
+            g.gain.exponentialRampToValueAtTime(0.01, now + (idx * 0.08) + 0.5);
+            o.start(now + (idx * 0.08));
+            o.stop(now + (idx * 0.08) + 0.5);
+          });
+        } else if (type === 'error') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(180, now);
+          osc.frequency.setValueAtTime(120, now + 0.1);
+          gain.gain.setValueAtTime(0.25, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+          osc.start(now); osc.stop(now + 0.25);
+        }
+      } catch (e) {}
+    }
+
+    // 3. PASSCODE VERIFICATION
+    function verifyVipKey() {
+      const input = document.getElementById('vip-pass-input');
+      const errorMsg = document.getElementById('gate-error');
+      const val = input.value.trim();
+
+      if (val === VIP_PASSKEY) {
+        errorMsg.innerText = "";
+        playSfx('unlock');
+
+        // Confetti burst
+        confetti({
+          particleCount: 100,
+          spread: 85,
+          origin: { y: 0.6 },
+          colors: ['#ffd700', '#ff007f', '#ffffff']
+        });
+
+        // Transition to Premium Banner Screen
+        document.getElementById('screen-gate').style.display = 'none';
+        document.getElementById('screen-banner').style.display = 'block';
+      } else {
+        playSfx('error');
+        errorMsg.innerText = "Invalid VIP Passkey! Try again 🔒";
+        input.classList.add('shake-anim');
+        setTimeout(() => input.classList.remove('shake-anim'), 400);
+      }
+    }
+
+    document.getElementById('vip-pass-input').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') verifyVipKey();
+    });
+  </script>
+</body>
+</html>
