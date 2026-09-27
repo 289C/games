@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Occasions & Wishes Hub ✨</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
+    body, html { width: 100%; min-height: 100%; background: #0f0314; color: #fff; overflow-x: hidden; }
+
+    /* Elegant Multiverse Radial Background */
+    .hub-wrap {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px 50px;
+      background: radial-gradient(circle at 50% 12%, #2d043b 0%, #15021c 55%, #08000b 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Ambient Floating Particle Dust */
+    .ambient-particle {
+      position: absolute; pointer-events: none;
+      font-size: 1.25rem; animation: floatUp 7s linear infinite;
+      filter: drop-shadow(0 0 6px rgba(255, 105, 180, 0.5));
+    }
+    @keyframes floatUp {
+      0% { transform: translateY(105vh) rotate(0deg) scale(0.8); opacity: 0; }
+      20% { opacity: 0.9; }
+      80% { opacity: 0.9; }
+      100% { transform: translateY(-10vh) rotate(360deg) scale(1.15); opacity: 0; }
+    }
+
+    /* Top Nav Bar */
+    .top-nav {
+      width: 100%; max-width: 480px;
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 16px; z-index: 20;
+    }
+    .pill-btn {
+      background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #ffd6f4; padding: 7px 15px; border-radius: 20px; font-size: 0.8rem;
+      cursor: pointer; text-decoration: none; backdrop-filter: blur(10px);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    /* DEVELOPER PROFILE HEADER */
+    .dev-profile-card {
+      width: 100%; max-width: 480px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1.5px solid rgba(255, 105, 180, 0.35);
+      border-radius: 22px; padding: 14px 18px;
+      display: flex; align-items: center; justify-content: space-between;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 20px rgba(255, 105, 180, 0.2);
+      margin-bottom: 24px; z-index: 20;
+      text-decoration: none; color: #fff;
+      transition: transform 0.25s ease, border-color 0.25s ease;
+    }
+    .dev-profile-card:hover {
+      transform: translateY(-2px);
+      border-color: #ff007f;
+    }
+    .dev-left { display: flex; align-items: center; gap: 14px; }
+    .dev-avatar-wrap {
+      position: relative; width: 52px; height: 52px;
+      border-radius: 50%; padding: 2.5px;
+      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      animation: spinGlow 4s linear infinite;
+    }
+    @keyframes spinGlow {
+      0% { filter: hue-rotate(0deg); }
+      100% { filter: hue-rotate(360deg); }
+    }
+    .dev-avatar {
+      width: 100%; height: 100%; border-radius: 50%;
+      object-fit: cover; background: #260515; display: block;
+    }
+    .dev-info h3 { font-size: 0.95rem; font-weight: 700; color: #fff; line-height: 1.2; }
+    .dev-info p { font-size: 0.72rem; color: #ff99b6; margin-top: 2px; }
+    .insta-chip {
+      background: linear-gradient(135deg, #fd1d1d, #833ab4);
+      padding: 6px 12px; border-radius: 14px; font-size: 0.72rem;
+      font-weight: 700; display: inline-flex; align-items: center; gap: 4px;
+      box-shadow: 0 4px 12px rgba(225, 48, 108, 0.4);
+    }
+
+    /* SECTION TITLE */
+    .title-box { text-align: center; margin-bottom: 22px; z-index: 10; }
+    .title-box h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.85rem; color: #ffe6f7;
+      text-shadow: 0 0 15px rgba(255, 105, 180, 0.4);
+    }
+    .title-box p { font-size: 0.82rem; color: #e0b0db; margin-top: 4px; }
+
+    /* CATEGORIES GRID */
+    .categories-grid {
+      width: 100%; max-width: 480px;
+      display: flex; flex-direction: column; gap: 16px;
+      z-index: 10;
+    }
+    .category-card {
+      position: relative;
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
+      border: 1.5px solid rgba(255, 255, 255, 0.16);
+      border-radius: 22px; padding: 18px 20px;
+      display: flex; align-items: center; justify-content: space-between;
+      backdrop-filter: blur(12px); text-decoration: none; color: #fff;
+      cursor: pointer; transition: all 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+      overflow: hidden;
+    }
+    .category-card:hover, .category-card:active {
+      transform: translateY(-3px) scale(1.02);
+      border-color: rgba(255, 255, 255, 0.4);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+    }
+    .card-glow {
+      position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+      pointer-events: none; opacity: 0.6;
+    }
+    .category-icon-box {
+      width: 48px; height: 48px; border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem; flex-shrink: 0;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      position: relative; z-index: 2;
+    }
+    .category-info {
+      flex: 1; margin: 0 16px; position: relative; z-index: 2;
+    }
+    .category-info h3 { font-size: 1rem; font-weight: 700; color: #ffffff; }
+    .category-info p { font-size: 0.74rem; color: #e6c8e8; margin-top: 2px; }
+    .category-arrow {
+      font-size: 1.1rem; color: #ffffff; opacity: 0.7;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+      position: relative; z-index: 2;
+    }
+    .category-card:hover .category-arrow {
+      transform: translateX(4px);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="hub-wrap" id="wrap-container">
+    <div class="top-nav">
+      <a href="../index.html" class="pill-btn">← Home</a>
+      <span class="pill-btn">✨ Occasions Hub</span>
+    </div>
+
+    <!-- DEVELOPER BRANDING -->
+    <a href="https://instagram.com/_satish_official_16" target="_blank" class="dev-profile-card">
+      <div class="dev-left">
+        <div class="dev-avatar-wrap">
+          <img src="../Insta.jpg" alt="Satish Kommana" class="dev-avatar" onerror="this.onerror=null; this.src='/games/Insta.jpg';" />
+        </div>
+        <div class="dev-info">
+          <h3>Satish Kommana</h3>
+          <p>Lead Developer & Creator</p>
+        </div>
+      </div>
+      <div class="insta-chip">
+        <span>@_satish_official_16</span> ↗
+      </div>
+    </a>
+
+    <div class="title-box">
+      <h1>Celebrate Every Moment ✨</h1>
+      <p>Select an occasion category to view interactive slots</p>
+    </div>
+
+    <!-- CATEGORIES -->
+    <div class="categories-grid">
+
+      <!-- 1. CRUSH PROPOSALS -->
+      <a href="crush/index.html" class="category-card" onclick="triggerCategoryConfetti()">
+        <div class="card-glow" style="background: radial-gradient(circle, rgba(255,0,127,0.25) 0%, transparent 70%);"></div>
+        <div class="category-icon-box" style="background: linear-gradient(135deg, #ff007f, #ff4081);">
+          <span>💖</span>
+        </div>
+        <div class="category-info">
+          <h3>Crush Proposals</h3>
+          <p>Secret Passwords • Runaway No • Love Letter Envelopes</p>
+        </div>
+        <div class="category-arrow">➔</div>
+      </a>
+
+      <!-- 2. ANNIVERSARY WISHES -->
+      <a href="anniversary/index.html" class="category-card" onclick="triggerCategoryConfetti()">
+        <div class="card-glow" style="background: radial-gradient(circle, rgba(255,215,0,0.25) 0%, transparent 70%);"></div>
+        <div class="category-icon-box" style="background: linear-gradient(135deg, #d4af37, #996515);">
+          <span>🥂</span>
+        </div>
+        <div class="category-info">
+          <h3>Anniversary Wishes</h3>
+          <p>Golden Milestones • Toast Animation • 5 Custom Slots</p>
+        </div>
+        <div class="category-arrow">➔</div>
+      </a>
+
+      <!-- 3. BIRTHDAY WISHES (LINKED DIRECTLY) -->
+      <a href="birthday/index.html" class="category-card" onclick="triggerCategoryConfetti()">
+        <div class="card-glow" style="background: radial-gradient(circle, rgba(0,200,255,0.25) 0%, transparent 70%);"></div>
+        <div class="category-icon-box" style="background: linear-gradient(135deg, #00b4d8, #0077b6);">
+          <span>🎂</span>
+        </div>
+        <div class="category-info">
+          <h3>Birthday Wishes</h3>
+          <p>Interactive Cakes • Candle Blow • 5 Custom Slots</p>
+        </div>
+        <div class="category-arrow">➔</div>
+      </a>
+
+      <!-- 4. FRIENDSHIP DAY & TIES -->
+      <a href="friendship/index.html" class="category-card" onclick="triggerCategoryConfetti()">
+        <div class="card-glow" style="background: radial-gradient(circle, rgba(255,165,0,0.22) 0%, transparent 70%);"></div>
+        <div class="category-icon-box" style="background: linear-gradient(135deg, #ff9100, #ff6d00);">
+          <span>🤝</span>
+        </div>
+        <div class="category-info">
+          <h3>Friendship & Besties</h3>
+          <p>Dosti Quizzes • Memories Carousel • Group Hugs</p>
+        </div>
+        <div class="category-arrow">➔</div>
+      </a>
+
+    </div>
+  </div>
+
+  <script>
+    const wrap = document.getElementById('wrap-container');
+    const icons = ['✨', '💖', '🥂', '🎉', '🌟', '🎂'];
+    for (let i = 0; i < 16; i++) {
+      const p = document.createElement('div');
+      p.className = 'ambient-particle';
+      p.innerText = icons[Math.floor(Math.random() * icons.length)];
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.animationDelay = (Math.random() * 6) + 's';
+      p.style.animationDuration = (5 + Math.random() * 4) + 's';
+      wrap.appendChild(p);
+    }
+
+    function triggerCategoryConfetti() {
+      confetti({ particleCount: 65, spread: 75, colors: ['#ffd700', '#ff007f', '#00b4d8', '#ffffff'] });
+    }
+  </script>
+</body>
+</html>
