@@ -410,6 +410,7 @@
 </head>
 <body>
 
+  <!-- Background Music Audio Element -->
   <audio id="bg-audio" loop preload="auto">
     <source src="song5.mp3" type="audio/mpeg" />
   </audio>
@@ -420,6 +421,7 @@
       <button class="pill-btn" id="music-toggle-btn" onclick="toggleBackgroundMusic()">🎵 Music: ON</button>
     </div>
 
+    <!-- PAGE 1: THE LOCK GATE (PASSWORD: loveyoubangaram) -->
     <div class="crush-card" id="page-1">
       <h2 class="card-heading">Only for you Bangaram 🥰🤌🏻</h2>
       <div style="font-size: 3.8rem; margin: 10px 0;">💐✨</div>
@@ -432,6 +434,7 @@
       <button class="btn-action" onclick="unlockGate()">Unlock Heart ➔</button>
     </div>
 
+    <!-- PAGE 2: MESSAGE PAPER -->
     <div class="crush-card" id="page-2" style="display:none;">
       <span class="handwriting">My Dear Devi,</span>
       <div class="letter-paper">
@@ -444,17 +447,20 @@
       <button class="btn-action" onclick="goToPage('scratch')">Reveal Hidden Promise ✨ ➔</button>
     </div>
 
+    <!-- PAGE 2.5: SCRATCH CARD PROMISE -->
     <div class="crush-card" id="page-scratch" style="display:none;">
       <h2 class="card-heading">A Hidden Promise 🤫✨</h2>
       <p class="card-desc">Scratch off the sparkling layer with your finger to reveal!</p>
 
       <div class="scratch-stage">
+        <!-- Underneath Promise -->
         <div class="scratch-secret-message">
           <h4>Ganesh's Unbreakable Word 🤞🏻</h4>
           <p>“Don't misunderstand me, I want to live with you 🫶🏻😩, I will never leave you its my promise”</p>
           <span style="font-size:1.4rem; margin-top:4px;">🥰💍</span>
         </div>
 
+        <!-- Scratch Canvas Surface -->
         <canvas id="scratch-canvas" width="290" height="180"></canvas>
       </div>
 
@@ -467,6 +473,7 @@
       </button>
     </div>
 
+    <!-- PAGE 3: 3D PHOTO REEL (5 PHOTOS) -->
     <div class="crush-card" id="page-3" style="display:none;">
       <h2 class="card-heading">Special Memories ✨</h2>
       <p class="card-desc">Every smile of yours makes Ganesh's world brighter</p>
@@ -482,6 +489,7 @@
       <button class="btn-action" onclick="goToPage('promise')">Seal Our Promise 🤞🏻 ➔</button>
     </div>
 
+    <!-- PAGE 3.5: PINKY PROMISE CONTRACT SCANNER -->
     <div class="crush-card" id="page-promise" style="display:none;">
       <h2 class="card-heading">Pinky Promise Contract 🤞🏻</h2>
       <p class="card-desc">Devi, place & hold your thumb on the sensor to lock this promise with Ganesh!</p>
@@ -509,6 +517,7 @@
       </button>
     </div>
 
+    <!-- PAGE 4: DO YOU LOVE ME -->
     <div class="crush-card" id="page-4" style="display:none;">
       <div class="cute-bear">🐱💖</div>
       <h2 class="card-heading" id="ask-heading">Devi, Do you love me? 🥰</h2>
@@ -520,6 +529,7 @@
       </div>
     </div>
 
+    <!-- PAGE 5: 3D INTERACTIVE UNFOLDING LOVE ENVELOPE (HOLD TO OPEN) -->
     <div class="crush-card" id="page-5" style="display:none;">
       <h2 class="card-heading">A Special Love Letter 💌</h2>
       <p class="card-desc">Press and hold your finger on the envelope to read!</p>
@@ -882,7 +892,7 @@
     fpSensor.addEventListener('mousedown', startFingerprintScan);
     window.addEventListener('mouseup', cancelFingerprintScan);
 
-    // --- PAGE 4: RUNAWAY NO BUTTON LOGIC ---
+    // --- PAGE 4: RUNAWAY NO BUTTON LOGIC WITH TELUGU PHRASES ---
     let noCount = 0;
     const noPhrases = [
       "Please think again Devi! 🥺",
