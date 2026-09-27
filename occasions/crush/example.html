@@ -843,16 +843,17 @@
 
     // --- SCREEN 2: UNLOCK LOGIC ---
     function unlockGate() {
-      const pass = document.getElementById('pass-input').value.trim();
-      if (pass.toLowerCase() === "loveyoubangaram") {
-        playSfx('unlock');
-        startMusic();
-        confetti({ particleCount: 85, spread: 85, colors: ['#ff007f', '#ffccd5', '#ffffff', '#ffd700'] });
-        setTimeout(() => goToPage(2), 300);
-      } else {
-        alert("Wrong password! Hint is right above: loveyoubangaram 🥰");
-      }
-    }
+  const pass = document.getElementById('pass-input').value.trim();
+  if (pass.toLowerCase() === "12345678") {   // <-- CHANGE THIS VALUE
+    playSfx('unlock');
+    startMusic();
+    confetti({ particleCount: 85, spread: 85, colors: ['#ff007f', '#ffccd5', '#ffffff', '#ffd700'] });
+    setTimeout(() => goToPage(2), 300);
+  } else {
+    alert("Wrong password! Hint: 12345678 🥰");  // <-- CHANGE ALERT HINT HERE
+  }
+}
+
 
     // --- SCREEN 4: SCRATCH CANVAS LOGIC ---
     let isScratching = false;
