@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Wedding Wishes Hub 💒✨ | Satish Official</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Playfair+Display:ital,wght@0,700;1,400&family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    body, html {
+      width: 100%;
+      min-height: 100vh;
+      background: #080205;
+      color: #ffffff;
+      overflow-x: hidden;
+    }
+
+    /* Ambient Royal Wedding Background */
+    .hub-wrapper {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 60px 16px 40px;
+      background: radial-gradient(circle at 50% 20%, #3d081b 0%, #1c030c 55%, #080104 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Floating Golden Sparkles & Sacred Rice */
+    .wedding-particle {
+      position: absolute;
+      pointer-events: none;
+      font-size: 1.15rem;
+      animation: floatUp 8s linear infinite;
+      z-index: 1;
+      filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.6));
+    }
+    @keyframes floatUp {
+      0% { transform: translateY(105vh) rotate(0deg) scale(0.6); opacity: 0; }
+      20% { opacity: 0.9; }
+      80% { opacity: 0.9; }
+      100% { transform: translateY(-8vh) rotate(360deg) scale(1.15); opacity: 0; }
+    }
+
+    /* Top Nav Bar */
+    .top-nav {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 50;
+    }
+    .nav-pill {
+      background: rgba(255, 215, 0, 0.12);
+      border: 1px solid rgba(255, 215, 0, 0.4);
+      color: #ffd700;
+      padding: 7px 16px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-decoration: none;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2);
+    }
+
+    /* Hub Header Banner */
+    .hero-banner {
+      text-align: center;
+      margin-bottom: 26px;
+      z-index: 10;
+      position: relative;
+    }
+    .hero-badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      background: rgba(255, 215, 0, 0.15);
+      border: 1px solid rgba(255, 215, 0, 0.4);
+      color: #ffd700;
+      border-radius: 20px;
+      margin-bottom: 8px;
+    }
+    .hero-banner h1 {
+      font-family: 'Cinzel', serif;
+      font-size: 2rem;
+      font-weight: 900;
+      letter-spacing: 1px;
+      background: linear-gradient(180deg, #fff7d1 0%, #ffd700 50%, #d4af37 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+    }
+    .hero-banner p {
+      font-size: 0.84rem;
+      color: #ffd6e0;
+      margin-top: 4px;
+      max-width: 330px;
+    }
+
+    /* SLOTS CONTAINER */
+    .slots-container {
+      width: 100%;
+      max-width: 400px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      z-index: 10;
+      position: relative;
+    }
+
+    /* SLOT CARDS */
+    .slot-card {
+      background: linear-gradient(165deg, rgba(255, 255, 255, 0.06) 0%, rgba(38, 5, 21, 0.92) 100%);
+      border: 1.5px solid rgba(255, 215, 0, 0.35);
+      border-radius: 24px;
+      padding: 20px;
+      text-decoration: none;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 14px 35px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 215, 0, 0.15);
+      backdrop-filter: blur(14px);
+      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.2s;
+    }
+    .slot-card:active {
+      transform: scale(0.97);
+      border-color: #ffd700;
+    }
+    .slot-card.featured-card {
+      border: 1.8px solid #ffd700;
+      background: linear-gradient(165deg, rgba(255, 215, 0, 0.12) 0%, rgba(45, 6, 25, 0.95) 100%);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.75), 0 0 28px rgba(255, 215, 0, 0.3);
+    }
+
+    .slot-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .slot-icon-wrap {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      background: rgba(255, 215, 0, 0.12);
+      border: 1px solid rgba(255, 215, 0, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+    }
+    .slot-details h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      color: #fff2b2;
+      margin-bottom: 2px;
+    }
+    .slot-details p {
+      font-size: 0.74rem;
+      color: #ffccd5;
+    }
+    .slot-arrow {
+      font-size: 1.25rem;
+      color: #ffd700;
+      transition: transform 0.2s;
+    }
+    .slot-card:active .slot-arrow {
+      transform: translateX(4px);
+    }
+
+    /* FEATURES SHOWCASE BADGES */
+    .features-pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin: 22px 0 26px;
+      max-width: 390px;
+      z-index: 10;
+    }
+    .feature-tag {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 215, 0, 0.25);
+      border-radius: 14px;
+      padding: 5px 12px;
+      font-size: 0.7rem;
+      color: #ffe5ec;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* BOOKING PROMOTION CARD */
+    .booking-card {
+      width: 100%;
+      max-width: 400px;
+      background: linear-gradient(165deg, rgba(255, 255, 255, 0.05) 0%, rgba(26, 4, 15, 0.95) 100%);
+      border: 1.5px solid rgba(255, 77, 109, 0.4);
+      border-radius: 28px;
+      padding: 24px 18px;
+      text-align: center;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.8);
+      z-index: 10;
+      position: relative;
+    }
+    .insta-avatar-stage {
+      position: relative;
+      width: 78px;
+      height: 78px;
+      margin: 0 auto 10px;
+    }
+    .insta-ring {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      padding: 3px;
+      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      box-shadow: 0 6px 20px rgba(225, 48, 108, 0.4);
+      animation: spinGlow 4s linear infinite;
+    }
+    @keyframes spinGlow {
+      0% { filter: hue-rotate(0deg); }
+      100% { filter: hue-rotate(360deg); }
+    }
+    .insta-photo {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      background: #14040d;
+      border: 2px solid #ffffff;
+      display: block;
+    }
+
+    .booking-card h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.35rem;
+      color: #ffd6e0;
+      margin-bottom: 2px;
+    }
+    .booking-handle {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #ffd700;
+      margin-bottom: 10px;
+    }
+    .booking-card p {
+      font-size: 0.76rem;
+      color: #ffccd5;
+      line-height: 1.45;
+      margin-bottom: 16px;
+    }
+
+    .action-btn {
+      width: 100%;
+      padding: 12px;
+      border-radius: 22px;
+      border: none;
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+      transition: transform 0.15s;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.5);
+    }
+    .action-btn:active { transform: scale(0.97); }
+
+    .btn-ig {
+      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      margin-bottom: 10px;
+    }
+    .btn-wa {
+      background: linear-gradient(135deg, #25d366, #128c7e);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="hub-wrapper" id="main-wrap">
+    
+    <!-- Top Bar -->
+    <div class="top-nav">
+      <a href="../../index.html" class="nav-pill">← All Occasions</a>
+      <span class="nav-pill" onclick="fireBlessings(event)">✨ Blessings FX</span>
+    </div>
+
+    <!-- Header Banner -->
+    <div class="hero-banner">
+      <span class="hero-badge">Kalyanam • Wedding Vows</span>
+      <h1>WEDDING WISHES</h1>
+      <p>Interactive 3D wedding portals, sacred rituals, and unforgettable personalized love stories.</p>
+    </div>
+
+    <!-- Interactive Experience Cards -->
+    <div class="slots-container">
+
+      <!-- Example Live Demo Slot -->
+      <a href="example.html" class="slot-card featured-card">
+        <div class="slot-left">
+          <div class="slot-icon-wrap" style="background: rgba(255, 215, 0, 0.2);">💒</div>
+          <div class="slot-details">
+            <h3>Live Interactive Demo</h3>
+            <p>Varmala, Sacred Rituals & 3D Mandap</p>
+          </div>
+        </div>
+        <div class="slot-arrow">➔</div>
+      </a>
+
+      <!-- Slot 1 -->
+      <a href="slot1.html" class="slot-card">
+        <div class="slot-left">
+          <div class="slot-icon-wrap">💍</div>
+          <div class="slot-details">
+            <h3>Custom Wedding Slot 1</h3>
+            <p>Personalized bride & groom experience</p>
+          </div>
+        </div>
+        <div class="slot-arrow">➔</div>
+      </a>
+
+      <!-- Slot 2 -->
+      <a href="slot2.html" class="slot-card">
+        <div class="slot-left">
+          <div class="slot-icon-wrap">🪔</div>
+          <div class="slot-details">
+            <h3>Custom Wedding Slot 2</h3>
+            <p>Reserved for booking</p>
+          </div>
+        </div>
+        <div class="slot-arrow">➔</div>
+      </a>
+
+      <!-- Slot 3 -->
+      <a href="slot3.html" class="slot-card">
+        <div class="slot-left">
+          <div class="slot-icon-wrap">💐</div>
+          <div class="slot-details">
+            <h3>Custom Wedding Slot 3</h3>
+            <p>Reserved for booking</p>
+          </div>
+        </div>
+        <div class="slot-arrow">➔</div>
+      </a>
+
+    </div>
+
+    <!-- Features Row -->
+    <div class="features-pill-row">
+      <div class="feature-tag"><span>🌺</span> Varmala Exchange</div>
+      <div class="feature-tag"><span>📸</span> 3D Mandap Polaroids</div>
+      <div class="feature-tag"><span>✨</span> Golden Vow Scratch Card</div>
+      <div class="feature-tag"><span>🔐</span> Passcode Protected</div>
+      <div class="feature-tag"><span>🎵</span> Shehnai & Melodies</div>
+    </div>
+
+    <!-- Booking Hub Card -->
+    <div class="booking-card">
+      <div class="insta-avatar-stage">
+        <div class="insta-ring">
+          <img src="../../Insta.jpg" alt="Satish Kommana" class="insta-photo" onerror="this.onerror=null; this.src='/games/Insta.jpg';" />
+        </div>
+      </div>
+
+      <h2>Book a Custom Wedding Page</h2>
+      <div class="booking-handle">@_satish_official_16</div>
+
+      <p>Surprise the newlyweds with their private interactive wedding portal containing their photos, sacred moments, and heartfelt blessings.</p>
+
+      <a href="https://ig.me/m/_satish_official_16" target="_blank" class="action-btn btn-ig">
+        <span>DM on Instagram to Book</span> 💌
+      </a>
+
+      <a href="https://api.whatsapp.com/send?phone=919281267188&text=Hi%20Satish!%20I%20want%20to%20book%20a%20Custom%20Wedding%20Wish%20page." target="_blank" class="action-btn btn-wa">
+        <span>Chat on WhatsApp (9281267188)</span> 📲
+      </a>
+    </div>
+
+  </div>
+
+  <script>
+    // 1. FLOATING WEDDING PARTICLES
+    const wrap = document.getElementById('main-wrap');
+    const icons = ['✨', '💍', '💐', '🌺', '🪔', '💖', '👑'];
+    for (let i = 0; i < 16; i++) {
+      const p = document.createElement('div');
+      p.className = 'wedding-particle';
+      p.innerText = icons[Math.floor(Math.random() * icons.length)];
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.animationDelay = (Math.random() * 6) + 's';
+      p.style.animationDuration = (6 + Math.random() * 4) + 's';
+      wrap.appendChild(p);
+    }
+
+    // 2. CELEBRATION FX
+    function fireBlessings(e) {
+      if (e) e.preventDefault();
+      confetti({
+        particleCount: 100,
+        spread: 90,
+        origin: { y: 0.6 },
+        colors: ['#ffd700', '#ff4d6d', '#ffffff', '#ff9900']
+      });
+    }
+  </script>
+</body>
+</html>
