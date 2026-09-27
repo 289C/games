@@ -48,7 +48,7 @@
       box-shadow: 0 4px 15px rgba(255, 105, 180, 0.2);
     }
 
-    /* DEVELOPER PROFILE HEADER WITH Insta.jpg */
+    /* DEVELOPER PROFILE HEADER WITH ROOT Insta.jpg */
     .dev-profile-card {
       width: 100%; max-width: 480px;
       background: rgba(255, 255, 255, 0.06);
@@ -98,7 +98,7 @@
     }
     .title-box p { font-size: 0.82rem; color: #ffb3c6; margin-top: 4px; }
 
-    /* SLOTS GRID (SLOT 1 TO SLOT 5) */
+    /* SLOTS GRID */
     .slots-container {
       width: 100%; max-width: 480px;
       display: flex; flex-direction: column; gap: 16px;
@@ -119,6 +119,11 @@
       border-color: #ff4d80;
       box-shadow: 0 12px 30px rgba(255, 77, 128, 0.35);
     }
+    .slot-card.featured-example {
+      border: 1.5px solid #ff4081;
+      background: linear-gradient(145deg, rgba(255, 64, 129, 0.16) 0%, rgba(138, 43, 226, 0.12) 100%);
+      box-shadow: 0 10px 28px rgba(255, 64, 129, 0.35);
+    }
     .slot-left { display: flex; align-items: center; gap: 16px; }
     .slot-badge-num {
       width: 44px; height: 44px; border-radius: 14px;
@@ -136,6 +141,7 @@
       letter-spacing: 0.5px;
     }
     .status-live { background: rgba(37, 211, 102, 0.2); color: #25d366; border: 1px solid rgba(37, 211, 102, 0.5); }
+    .status-demo { background: rgba(255, 64, 129, 0.25); color: #ff80ab; border: 1px solid rgba(255, 64, 129, 0.6); }
     .status-ready { background: rgba(255, 215, 0, 0.2); color: #ffd700; border: 1px solid rgba(255, 215, 0, 0.5); }
     .status-custom { background: rgba(255, 105, 180, 0.2); color: #ff69b4; border: 1px solid rgba(255, 105, 180, 0.5); }
   </style>
@@ -143,17 +149,16 @@
 <body>
 
   <div class="menu-wrap" id="wrap-container">
-    <!-- Top Nav: Stepping back takes user to the main occasions index -->
     <div class="top-nav">
       <a href="../index.html" class="pill-btn">← Categories</a>
-      <span class="pill-btn">✨ 5 HD Slots</span>
+      <span class="pill-btn">✨ Proposal Hub</span>
     </div>
 
-    <!-- DEVELOPER BRANDING WITH Insta.jpg -->
+    <!-- DEVELOPER BRANDING WITH ROOT Insta.jpg -->
     <a href="https://instagram.com/_satish_official_16" target="_blank" class="dev-profile-card">
       <div class="dev-left">
         <div class="dev-avatar-wrap">
-          <img src="../../Insta.jpg" alt="Satish Kommana" class="dev-avatar" onerror="this.src='../../Insta.jpg'" />
+          <img src="../../Insta.jpg" alt="Satish Kommana" class="dev-avatar" onerror="this.onerror=null; this.src='/games/Insta.jpg';" />
         </div>
         <div class="dev-info">
           <h3>Satish Kommana</h3>
@@ -165,16 +170,27 @@
       </div>
     </a>
 
-    <!-- Title Header -->
     <div class="title-box">
       <h1>Crush Proposal Hub 💖</h1>
       <p>Choose an interactive proposal experience below</p>
     </div>
 
-    <!-- 5 PROPOSAL SLOTS -->
+    <!-- PROPOSAL SLOTS: EXAMPLE FIRST, THEN SLOTS 1 TO 5 -->
     <div class="slots-container">
 
-      <!-- SLOT 1: ACTIVE GANESH & DEVI PROPOSAL -->
+      <!-- TOP FEATURED: EXAMPLE / DEMO SLOT -->
+      <a href="example.html" class="slot-card featured-example" onclick="triggerConfetti()">
+        <div class="slot-left">
+          <div class="slot-badge-num" style="background: linear-gradient(135deg, #e91e63, #8e24aa);">★</div>
+          <div class="slot-details">
+            <h3>Example Proposal Demo 🎬</h3>
+            <p>Tollywood Intro • Scratch Card • Full Interactive Flow</p>
+          </div>
+        </div>
+        <span class="slot-status status-demo">Example ✨</span>
+      </a>
+
+      <!-- SLOT 1 (RENAMED TO slot1.html) -->
       <a href="slot1.html" class="slot-card" onclick="triggerConfetti()">
         <div class="slot-left">
           <div class="slot-badge-num">1</div>
@@ -186,31 +202,31 @@
         <span class="slot-status status-live">Live 🚀</span>
       </a>
 
-      <!-- SLOT 2: CUSTOM PROPOSAL SLOT -->
+      <!-- SLOT 2 (slot2.html) -->
       <a href="slot2.html" class="slot-card">
         <div class="slot-left">
           <div class="slot-badge-num" style="background: linear-gradient(135deg, #7b1fa2, #ba68c8);">2</div>
           <div class="slot-details">
             <h3>Romantic Proposal Slot 2 🌹</h3>
-            <p>Ready to customize with your own names & audio</p>
+            <p>Ready to customize with names & audio</p>
           </div>
         </div>
         <span class="slot-status status-ready">Ready ✨</span>
       </a>
 
-      <!-- SLOT 3: CUSTOM PROPOSAL SLOT -->
+      <!-- SLOT 3 (slot3.html) -->
       <a href="slot3.html" class="slot-card">
         <div class="slot-left">
           <div class="slot-badge-num" style="background: linear-gradient(135deg, #ff4081, #f50057);">3</div>
           <div class="slot-details">
             <h3>Sweet Confession Slot 3 💌</h3>
-            <p>3D Memory Carousel & Direct WhatsApp Reply</p>
+            <p>3D Memory Carousel & Dual Direct Reply</p>
           </div>
         </div>
         <span class="slot-status status-custom">Custom 💖</span>
       </a>
 
-      <!-- SLOT 4: CUSTOM PROPOSAL SLOT -->
+      <!-- SLOT 4 (slot4.html) -->
       <a href="slot4.html" class="slot-card">
         <div class="slot-left">
           <div class="slot-badge-num" style="background: linear-gradient(135deg, #f57c00, #ffb74d);">4</div>
@@ -222,7 +238,7 @@
         <span class="slot-status status-custom">Custom 💖</span>
       </a>
 
-      <!-- SLOT 5: CUSTOM PROPOSAL SLOT -->
+      <!-- SLOT 5 (slot5.html) -->
       <a href="slot5.html" class="slot-card">
         <div class="slot-left">
           <div class="slot-badge-num" style="background: linear-gradient(135deg, #00897b, #4db6ac);">5</div>
@@ -238,7 +254,6 @@
   </div>
 
   <script>
-    // Floating Romantic Petals & Stars
     const wrap = document.getElementById('wrap-container');
     const icons = ['🌸', '💖', '✨', '🌷', '💕', '🎀'];
     for (let i = 0; i < 16; i++) {
@@ -256,5 +271,4 @@
     }
   </script>
 </body>
-  </html>
-  
+</html>
