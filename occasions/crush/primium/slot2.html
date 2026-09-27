@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <title>Ganesh & Devi Happy Anniversary Celebration 💍💖</title>
+  <title>Happy Anniversary Devi 💍💖 | Ganesh</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <style>
@@ -126,16 +126,6 @@
       text-decoration: none;
     }
     .btn-action:active { transform: scale(0.97); }
-    .btn-alt {
-      background: none;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      color: #ffccd5;
-      font-size: 0.78rem;
-      padding: 8px 14px;
-      border-radius: 18px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
 
     /* SCREEN 1: PASSCODE */
     .lock-field-box { width: 100%; margin: 12px 0 16px; }
@@ -149,6 +139,12 @@
       font-size: 0.95rem;
       text-align: center;
       outline: none;
+    }
+    .shake-anim { animation: shakeInput 0.4s ease-in-out; }
+    @keyframes shakeInput {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
     }
 
     /* SCREEN 2: SLIDE THE RING */
@@ -471,18 +467,6 @@
       border: 2px solid #ffffff;
       display: block;
     }
-    .features-list {
-      background: rgba(255, 255, 255, 0.06);
-      border-radius: 18px;
-      padding: 12px 14px;
-      border: 1px solid rgba(255, 77, 109, 0.3);
-      text-align: left;
-      font-size: 0.78rem;
-      color: #ffccd5;
-      line-height: 1.6;
-      margin-bottom: 18px;
-    }
-    .features-list div { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
     .btn-dm-primary {
       background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
       box-shadow: 0 6px 20px rgba(225, 48, 108, 0.45);
@@ -499,29 +483,27 @@
       <span class="pill-btn">💍 Ganesh & Devi</span>
     </div>
 
-    <!-- SCREEN 1: PASSCODE LOCK GATE -->
+    <!-- SCREEN 1: PASSCODE LOCK GATE (NO HINTS, NO DEMO BUTTON) -->
     <div class="stage-card" id="screen-lock">
       <div style="font-size: 3.5rem; margin-bottom: 8px;">🔐💖</div>
-      <h2 class="card-heading">Ganesh & Devi</h2>
-      <p class="card-desc">Enter your secret anniversary date or passcode to enter</p>
+      <h2 class="card-heading">Happy Anniversary Devi</h2>
+      <p class="card-desc">Enter the secret passcode sent by Ganesh to open</p>
 
       <div class="lock-field-box">
-        <input type="password" id="pass-input" class="lock-input" placeholder="Enter special code (e.g. 2026)" autocomplete="off" />
+        <input type="password" id="pass-input" class="lock-input" placeholder="Enter secret passcode" autocomplete="off" />
       </div>
 
-      <button class="btn-action" onclick="unlockGate()">
-        <span>Unlock Our Hearts ➔</span>
-      </button>
+      <p id="lock-error" style="font-size: 0.76rem; color: #ff4d6d; min-height: 18px; margin-bottom: 8px; font-weight: 600;"></p>
 
-      <button class="btn-alt" onclick="quickPass()">
-        Direct Demo Entry 🔑
+      <button class="btn-action" onclick="unlockGate()">
+        <span>Unlock From Ganesh ➔</span>
       </button>
     </div>
 
     <!-- SCREEN 2: SLIDE THE WEDDING RING -->
     <div class="stage-card" id="screen-ring" style="display: none;">
-      <h2 class="card-heading">Slide the Ring! 💍✨</h2>
-      <p class="card-desc">Drag the diamond wedding ring and slide it onto the finger for Devi!</p>
+      <h2 class="card-heading">Slide the Ring, Devi! 💍✨</h2>
+      <p class="card-desc">Drag the diamond wedding ring sent by Ganesh and slide it onto your finger!</p>
 
       <div class="ring-arena" id="ring-arena">
         <div class="draggable-diamond-ring" id="drag-ring">
@@ -570,7 +552,7 @@
       </div>
 
       <p id="path-status" style="font-size: 0.8rem; color: #ffd700; font-weight: 600; min-height: 20px;">
-        Tap all 4 lanterns to illuminate their journey!
+        Tap all 4 lanterns to illuminate your journey!
       </p>
 
       <button class="btn-action" id="btn-path-next" style="display: none; margin-top: 12px;" onclick="showScreen('screen-rose')">
@@ -580,8 +562,8 @@
 
     <!-- SCREEN 4: PLUCK THE LOVE ROSE -->
     <div class="stage-card" id="screen-rose" style="display: none;">
-      <h2 class="card-heading">Reasons Ganesh Loves Devi 🌹</h2>
-      <p class="card-desc">Tap the rose to pluck petals and reveal sweet reasons!</p>
+      <h2 class="card-heading">Reasons Ganesh Loves You 🌹</h2>
+      <p class="card-desc">Tap the rose to pluck petals and reveal Ganesh's sweet feelings for Devi!</p>
 
       <div class="rose-pluck-arena">
         <div class="rose-center" id="rose-flower" onclick="pluckPetal()">🌹</div>
@@ -595,8 +577,8 @@
 
     <!-- SCREEN 5: CASSETTE MIXTAPE PLAYER -->
     <div class="stage-card" id="screen-mixtape" style="display: none;">
-      <h2 class="card-heading">Ganesh & Devi Mixtape 📼✨</h2>
-      <p class="card-desc">Tap the cassette to play your favorite anniversary melody!</p>
+      <h2 class="card-heading">Ganesh's Mixtape For Devi 📼✨</h2>
+      <p class="card-desc">Tap the cassette to play your special anniversary melody!</p>
 
       <div class="cassette-box" id="cassette-box" onclick="toggleMixtape()">
         <div class="cassette-label">Ganesh & Devi • Forever 2026</div>
@@ -624,7 +606,7 @@
 
     <!-- SCREEN 6: 3D PHOTO DECK -->
     <div class="stage-card" id="screen-photos" style="display: none;">
-      <h2 class="card-heading">Ganesh & Devi's Journey ✨</h2>
+      <h2 class="card-heading">Our Journey Together ✨</h2>
       <p class="card-desc">Tap photos or use buttons to flip through memories in 3D!</p>
 
       <div class="photo-deck-stage" id="deck-stage" onclick="nextPhoto()">
@@ -670,20 +652,20 @@
       </div>
 
       <button class="btn-action" onclick="showScreen('screen-scratch')">
-        <span>Golden Anniversary Vow 💌 ➔</span>
+        <span>Ganesh's Anniversary Vow 💌 ➔</span>
       </button>
     </div>
 
     <!-- SCREEN 7: GOLDEN SCRATCH CARD -->
     <div class="stage-card" id="screen-scratch" style="display: none;">
-      <h2 class="card-heading">Love Note Scratch Card ✨</h2>
-      <p class="card-desc">Rub your finger across the gold layer to reveal Ganesh & Devi's vow!</p>
+      <h2 class="card-heading">Ganesh's Love Note ✨</h2>
+      <p class="card-desc">Rub your finger across the gold layer to reveal Ganesh's personal vow to Devi!</p>
 
       <div class="scratch-stage-box">
         <div class="scratch-reveal-content">
           <span style="font-size: 2.2rem; margin-bottom: 4px;">💌💍</span>
           <h3>An Unbreakable Promise</h3>
-          <p>"Through every season and every dream, I promise to choose you every single day. Happy Anniversary Ganesh & Devi! 💖"</p>
+          <p>"Devi, through every season and every dream, I promise to choose you every single day. Happy Anniversary my love! — Ganesh 💖"</p>
         </div>
         <canvas id="scratch-canvas" width="280" height="190"></canvas>
       </div>
@@ -709,7 +691,7 @@
       <div style="color: #ffb3c1; font-weight: 700; font-size: 0.88rem; margin-bottom: 12px;">@_satish_official_16</div>
 
       <p class="card-desc">
-        Created with ❤️ by Satish Kommana for Ganesh & Devi's Special Milestone!
+        Created with ❤️ by Satish Kommana for Ganesh & Devi's Special Anniversary!
       </p>
 
       <a href="https://ig.me/m/_satish_official_16" target="_blank" class="btn-action btn-dm-primary">
@@ -741,6 +723,8 @@
   </script>
 
   <script>
+    const SECRET_PASSCODE = "2026"; // Set your required anniversary password/date here
+
     // 1. FLOATING PARTICLES
     const wrap = document.getElementById('main-wrap');
     const icons = ['💖', '✨', '💍', '💎', '🌹', '💌', '🌸', '🕯️'];
@@ -769,6 +753,13 @@
           osc.type = 'sine';
           osc.frequency.setValueAtTime(523.25, now);
           osc.frequency.exponentialRampToValueAtTime(1046.50, now + 0.2);
+          gain.gain.setValueAtTime(0.25, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+          osc.start(now); osc.stop(now + 0.25);
+        } else if (type === 'error') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(180, now);
+          osc.frequency.setValueAtTime(120, now + 0.1);
           gain.gain.setValueAtTime(0.25, now);
           gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
           osc.start(now); osc.stop(now + 0.25);
@@ -828,23 +819,28 @@
       if (screenId === 'screen-scratch') initScratchCanvas();
     }
 
-    // 4. SCREEN 1: UNLOCK GATE
+    // 4. SCREEN 1: UNLOCK GATE (STRICT PASSWORD CHECK, NO HINTS)
     function unlockGate() {
-      const val = document.getElementById('pass-input').value.trim();
-      if (val.length > 0) {
+      const input = document.getElementById('pass-input');
+      const errorMsg = document.getElementById('lock-error');
+      const val = input.value.trim();
+
+      if (val === SECRET_PASSCODE) {
+        errorMsg.innerText = "";
         playSfx('unlock');
         confetti({ particleCount: 75, spread: 75, origin: { y: 0.6 }, colors: ['#ff4d6d', '#ffd700', '#ffffff'] });
         setTimeout(() => showScreen('screen-ring'), 300);
       } else {
-        alert("Please enter Ganesh & Devi's anniversary date or tap Direct Demo Entry! 🥰");
+        playSfx('error');
+        errorMsg.innerText = "Incorrect passcode! Try again ❤️";
+        input.classList.add('shake-anim');
+        setTimeout(() => input.classList.remove('shake-anim'), 400);
       }
     }
 
-    function quickPass() {
-      playSfx('unlock');
-      confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 } });
-      showScreen('screen-ring');
-    }
+    document.getElementById('pass-input').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') unlockGate();
+    });
 
     // 5. SCREEN 2: SLIDE THE RING
     let isRingLocked = false;
@@ -915,7 +911,7 @@
       if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
 
       document.getElementById('ring-arena').classList.add('ring-locked');
-      document.getElementById('ring-status').innerHTML = "💍 Forever & Always! Happy Anniversary Ganesh & Devi!";
+      document.getElementById('ring-status').innerHTML = "💍 Forever & Always! Happy Anniversary Devi from Ganesh!";
       document.querySelector('.ring-drag-label').style.display = 'none';
 
       confetti({
