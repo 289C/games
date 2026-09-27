@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <title>Happy Anniversary Celebration 🥂💖</title>
+  <title>Happy Anniversary Celebration 💍💖</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <style>
@@ -159,36 +159,107 @@
       outline: none;
     }
 
-    /* SCREEN 2: INTERACTIVE CLINKING CHAMPAGNE GLASSES */
-    .toast-arena {
+    /* SCREEN 2: INTERACTIVE RING SLIP MECHANIC (IDEA 1) */
+    .ring-arena {
       position: relative;
       width: 100%;
-      height: 220px;
+      height: 250px;
       margin: 10px auto 14px;
       border-radius: 24px;
-      background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.05) 0%, rgba(0, 0, 0, 0.4) 100%);
-      border: 1.5px dashed rgba(255, 215, 0, 0.35);
+      background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.05) 0%, rgba(0, 0, 0, 0.5) 100%);
+      border: 1.5px dashed rgba(255, 215, 0, 0.4);
       overflow: hidden;
       touch-action: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
-    .glass {
-      font-size: 3.8rem;
+
+    /* Ring Finger Hand Target */
+    .finger-target-zone {
       position: absolute;
       top: 50%;
+      right: 28px;
       transform: translateY(-50%);
+      width: 110px;
+      height: 120px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+    .hand-symbol {
+      font-size: 4rem;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.6));
+    }
+    .finger-highlight-ring {
+      position: absolute;
+      top: 48px;
+      right: 48px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px dashed #ffd700;
+      animation: pulseTarget 1.8s infinite alternate ease-in-out;
+    }
+    @keyframes pulseTarget {
+      0% { transform: scale(0.9); opacity: 0.5; }
+      100% { transform: scale(1.2); opacity: 1; }
+    }
+
+    /* Draggable Diamond Ring Object */
+    .draggable-diamond-ring {
+      position: absolute;
+      top: 50%;
+      left: 32px;
+      transform: translateY(-50%);
+      width: 60px;
+      height: 60px;
       cursor: grab;
-      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      z-index: 30;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      filter: drop-shadow(0 6px 14px rgba(255, 215, 0, 0.5));
+      transition: transform 0.05s ease;
     }
-    .glass-left { left: 45px; }
-    .glass-right { right: 45px; }
-    .clink-active .glass-left {
-      transform: translateY(-50%) translateX(45px) rotate(15deg);
+    .draggable-diamond-ring:active {
+      cursor: grabbing;
+      transform: translateY(-50%) scale(1.15) rotate(-6deg);
     }
-    .clink-active .glass-right {
-      transform: translateY(-50%) translateX(-45px) rotate(-15deg);
+    .diamond-gem {
+      font-size: 1.6rem;
+      margin-bottom: -8px;
+      z-index: 2;
+      filter: drop-shadow(0 0 8px #ffffff);
+    }
+    .ring-band {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 5px solid #ffd700;
+      box-shadow: inset 0 0 6px rgba(255, 255, 255, 0.8), 0 0 10px rgba(255, 215, 0, 0.7);
+      background: transparent;
+    }
+    .ring-drag-label {
+      position: absolute;
+      bottom: -18px;
+      font-size: 0.65rem;
+      color: #ffd700;
+      white-space: nowrap;
+      font-weight: 700;
+      pointer-events: none;
+    }
+
+    /* Locked state when ring is on finger */
+    .ring-arena.ring-locked .draggable-diamond-ring {
+      left: 178px !important;
+      top: 50% !important;
+      transform: translateY(-50%) scale(1.05) !important;
+      pointer-events: none;
+      filter: drop-shadow(0 0 20px #ffd700);
+    }
+    .ring-arena.ring-locked .finger-highlight-ring {
+      display: none;
     }
 
     /* SCREEN 3: 3D POLAROID DECK */
@@ -360,21 +431,31 @@
       </button>
     </div>
 
-    <!-- SCREEN 2: DRAGGABLE TOAST CLINK -->
-    <div class="stage-card" id="screen-toast" style="display: none;">
-      <h2 class="card-heading">Cheers to Forever! 🥂</h2>
-      <p class="card-desc">Tap or drag the glasses together to make a toast!</p>
+    <!-- SCREEN 2: IDEA 1 - INTERACTIVE RING SLIP MECHANIC -->
+    <div class="stage-card" id="screen-ring" style="display: none;">
+      <h2 class="card-heading">Slide the Ring! 💍✨</h2>
+      <p class="card-desc">Drag the diamond wedding ring and slide it onto the finger!</p>
 
-      <div class="toast-arena" id="toast-arena" onclick="triggerToastClink()">
-        <div class="glass glass-left">🥂</div>
-        <div class="glass glass-right">🥂</div>
+      <div class="ring-arena" id="ring-arena">
+        <!-- Draggable Ring -->
+        <div class="draggable-diamond-ring" id="drag-ring">
+          <span class="diamond-gem">💎</span>
+          <div class="ring-band"></div>
+          <span class="ring-drag-label">✋ Drag Me</span>
+        </div>
+
+        <!-- Target Hand / Finger -->
+        <div class="finger-target-zone" id="finger-target">
+          <span class="hand-symbol">✋</span>
+          <div class="finger-highlight-ring"></div>
+        </div>
       </div>
 
-      <p id="toast-status" style="font-size: 0.8rem; color: #ffd700; font-weight: 600; min-height: 20px;">
-        ✨ Tap anywhere inside the box to clink glasses
+      <p id="ring-status" style="font-size: 0.8rem; color: #ffd700; font-weight: 600; min-height: 20px;">
+        ✨ Slide the ring onto the finger to seal our love
       </p>
 
-      <button class="btn-action" id="btn-toast-next" style="display: none; margin-top: 12px;" onclick="showScreen('screen-photos')">
+      <button class="btn-action" id="btn-ring-next" style="display: none; margin-top: 12px;" onclick="showScreen('screen-photos')">
         <span>View Romantic Memories 📸 ➔</span>
       </button>
     </div>
@@ -471,8 +552,8 @@
 
       <div class="features-list">
         <div><span>🔐</span> <strong>Secret Love Lock Passcode Protection</strong></div>
-        <div><span>🥂</span> <strong>Interactive Clinking Toast Animation</strong></div>
-        <div><span>📸</span> <strong>3D Rotating Couple Memory Reel</strong> with romantic songs</div>
+        <div><span>💍</span> <strong>Slide-the-Ring Interactive Proposal & Bells</strong></div>
+        <div><span>📸</span> <strong>3D Rotating Couple Memory Reel</strong> with music</div>
         <div><span>✨</span> <strong>Golden Scratch-Off Promise Card</strong></div>
         <div><span>📲</span> <strong>Instant WhatsApp & Instagram Reply</strong></div>
       </div>
@@ -489,9 +570,9 @@
   </div>
 
   <script>
-    // 1. FLOATING PARTICLES
+    // 1. FLOATING LOVE PARTICLES
     const wrap = document.getElementById('main-wrap');
-    const icons = ['💖', '✨', '💍', '🥂', '🌹', '💌', '🌸'];
+    const icons = ['💖', '✨', '💍', '💎', '🌹', '💌', '🌸'];
     for (let i = 0; i < 16; i++) {
       const p = document.createElement('div');
       p.className = 'love-particle';
@@ -502,7 +583,7 @@
       wrap.appendChild(p);
     }
 
-    // 2. SYNTHETIC AUDIO SFX
+    // 2. SYNTHETIC AUDIO SFX (ZERO MP3s NEEDED)
     let sfxCtx = null;
     function playSfx(type) {
       try {
@@ -520,13 +601,19 @@
           gain.gain.setValueAtTime(0.25, now);
           gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
           osc.start(now); osc.stop(now + 0.25);
-        } else if (type === 'clink') {
-          osc.type = 'triangle';
-          osc.frequency.setValueAtTime(1800, now);
-          osc.frequency.exponentialRampToValueAtTime(2400, now + 0.08);
-          gain.gain.setValueAtTime(0.3, now);
-          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
-          osc.start(now); osc.stop(now + 0.4);
+        } else if (type === 'bells') {
+          // Romantic Wedding Chime (Two-tone chord)
+          [659.25, 880, 1318.51].forEach((freq, idx) => {
+            const o = sfxCtx.createOscillator();
+            const g = sfxCtx.createGain();
+            o.connect(g); g.connect(sfxCtx.destination);
+            o.type = 'sine';
+            o.frequency.value = freq;
+            g.gain.setValueAtTime(0.2, now + (idx * 0.1));
+            g.gain.exponentialRampToValueAtTime(0.01, now + (idx * 0.1) + 0.8);
+            o.start(now + (idx * 0.1));
+            o.stop(now + (idx * 0.1) + 0.8);
+          });
         } else if (type === 'flip') {
           osc.type = 'sine';
           osc.frequency.setValueAtTime(350, now);
@@ -540,17 +627,6 @@
           gain.gain.setValueAtTime(0.08, now);
           gain.gain.exponentialRampToValueAtTime(0.01, now + 0.06);
           osc.start(now); osc.stop(now + 0.06);
-        } else if (type === 'cheer') {
-          [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
-            const o = sfxCtx.createOscillator();
-            const g = sfxCtx.createGain();
-            o.connect(g); g.connect(sfxCtx.destination);
-            o.type = 'triangle';
-            o.frequency.value = freq;
-            g.gain.setValueAtTime(0.18, now + (i * 0.08));
-            g.gain.exponentialRampToValueAtTime(0.01, now + (i * 0.08) + 0.45);
-            o.start(now + (i * 0.08)); o.stop(now + (i * 0.08) + 0.45);
-          });
         }
       } catch (e) {}
     }
@@ -563,6 +639,7 @@
         target.style.display = 'block';
         playSfx('flip');
       }
+      if (screenId === 'screen-ring') setupRingInteraction();
       if (screenId === 'screen-photos') renderDeck();
       if (screenId === 'screen-scratch') initScratchCanvas();
     }
@@ -573,7 +650,7 @@
       if (val.length > 0) {
         playSfx('unlock');
         confetti({ particleCount: 75, spread: 75, origin: { y: 0.6 }, colors: ['#ff4d6d', '#ffd700', '#ffffff'] });
-        setTimeout(() => showScreen('screen-toast'), 300);
+        setTimeout(() => showScreen('screen-ring'), 300);
       } else {
         alert("Please enter our anniversary date or tap Direct Demo Entry! 🥰");
       }
@@ -582,30 +659,97 @@
     function quickPass() {
       playSfx('unlock');
       confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 } });
-      showScreen('screen-toast');
+      showScreen('screen-ring');
     }
 
-    // 5. SCREEN 2: TOAST CLINK
-    let isClinked = false;
-    function triggerToastClink() {
-      if (isClinked) return;
-      isClinked = true;
+    // 5. SCREEN 2: INTERACTIVE RING SLIP MECHANIC (IDEA 1)
+    let isRingLocked = false;
 
-      const arena = document.getElementById('toast-arena');
-      arena.classList.add('clink-active');
-      playSfx('clink');
+    function setupRingInteraction() {
+      const ring = document.getElementById('drag-ring');
+      const arena = document.getElementById('ring-arena');
+      const finger = document.getElementById('finger-target');
 
-      if (navigator.vibrate) navigator.vibrate([60, 40, 60]);
+      let isDragging = false;
+      let startX, startY;
+      let initialLeft, initialTop;
 
-      confetti({
-        particleCount: 90,
-        spread: 85,
-        origin: { y: 0.6 },
-        colors: ['#ffd700', '#ff4d6d', '#ffffff']
+      ring.addEventListener('pointerdown', (e) => {
+        if (isRingLocked) return;
+        isDragging = true;
+        ring.setPointerCapture(e.pointerId);
+
+        startX = e.clientX;
+        startY = e.clientY;
+        initialLeft = ring.offsetLeft;
+        initialTop = ring.offsetTop;
       });
 
-      document.getElementById('toast-status').innerHTML = "🥂 Clink! Wishing both of you forever happiness!";
-      document.getElementById('btn-toast-next').style.display = 'inline-flex';
+      ring.addEventListener('pointermove', (e) => {
+        if (!isDragging || isRingLocked) return;
+
+        const deltaX = e.clientX - startX;
+        const deltaY = e.clientY - startY;
+
+        let newX = Math.max(10, Math.min(arena.clientWidth - 70, initialLeft + deltaX));
+        let newY = Math.max(10, Math.min(arena.clientHeight - 70, initialTop + deltaY));
+
+        ring.style.left = newX + 'px';
+        ring.style.top = newY + 'px';
+
+        // Check if Ring is dragged over the finger
+        const ringRect = ring.getBoundingClientRect();
+        const fingerRect = finger.getBoundingClientRect();
+
+        if (
+          ringRect.right >= fingerRect.left + 30 &&
+          ringRect.left <= fingerRect.right &&
+          ringRect.bottom >= fingerRect.top + 20 &&
+          ringRect.top <= fingerRect.bottom - 20
+        ) {
+          triggerRingLockedSuccess();
+        }
+      });
+
+      const stopDrag = (e) => {
+        if (!isDragging) return;
+        isDragging = false;
+        try { ring.releasePointerCapture(e.pointerId); } catch (err) {}
+
+        // Snap back to left if dropped without sliding on
+        if (!isRingLocked) {
+          ring.style.transition = 'top 0.3s ease, left 0.3s ease';
+          ring.style.top = '50%';
+          ring.style.left = '32px';
+          setTimeout(() => { ring.style.transition = ''; }, 300);
+        }
+      };
+
+      ring.addEventListener('pointerup', stopDrag);
+      ring.addEventListener('pointercancel', stopDrag);
+    }
+
+    function triggerRingLockedSuccess() {
+      if (isRingLocked) return;
+      isRingLocked = true;
+
+      playSfx('bells');
+      if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+
+      document.getElementById('ring-arena').classList.add('ring-locked');
+      document.getElementById('ring-status').innerHTML = "💍 Forever & Always! Happy Anniversary!";
+      document.querySelector('.ring-drag-label').style.display = 'none';
+
+      confetti({
+        particleCount: 120,
+        spread: 95,
+        origin: { y: 0.6 },
+        colors: ['#ffd700', '#ff4d6d', '#ffffff', '#ffccd5']
+      });
+
+      setTimeout(() => {
+        document.getElementById('btn-ring-next').style.display = 'inline-flex';
+      }, 400);
     }
 
     // 6. SCREEN 3: 3D PHOTO DECK
@@ -719,7 +863,6 @@
         canvas.style.opacity = '0';
         canvas.style.pointerEvents = 'none';
 
-        playSfx('cheer');
         confetti({ particleCount: 90, spread: 80, origin: { y: 0.6 }, colors: ['#ff4d6d', '#ffd700', '#ffffff'] });
         document.getElementById('scratch-status').innerHTML = "🎉 Secret Vow Revealed!";
         document.getElementById('btn-scratch-next').style.display = 'inline-flex';
