@@ -3,219 +3,206 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>3D Wishes Studio - All Categories</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&display=swap" rel="stylesheet" />
+  <title>3D Wishes Studio ✨</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
       font-family: 'Poppins', sans-serif;
+      -webkit-tap-highlight-color: transparent;
     }
+
     body {
-      background: #0d0f18;
-      color: #fff;
+      background-color: #0b0f19;
+      color: #ffffff;
       min-height: 100vh;
-      padding: 24px 14px 40px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      touch-action: pan-y;
+      padding: 20px 14px 40px;
+      overflow-x: hidden;
     }
 
-    /* Top Category Header Pill */
-    .top-header {
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      padding: 10px 24px;
+    /* Top Pill Header */
+    .header-pill {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 12px 28px;
       border-radius: 30px;
-      margin-bottom: 24px;
-      display: flex;
+      display: inline-flex;
       align-items: center;
       gap: 10px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
     }
-    .top-header h1 {
-      font-size: 1.1rem;
-      color: #66fcf1;
+
+    .header-pill h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, #ffdd59, #48dbfb, #ff9ff3);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
       letter-spacing: 0.5px;
     }
 
-    /* Game Card Grid Layout */
-    .wishes-grid {
+    /* 2-Column Responsive Grid */
+    .grid-container {
+      width: 100%;
+      max-width: 440px;
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 14px;
-      width: 100%;
-      max-width: 480px;
     }
 
-    .wish-card {
-      background: #151722;
+    /* Card Design Matching Your App Screenshot */
+    .category-card {
+      position: relative;
+      background: #111827;
       border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 20px;
-      padding: 16px 12px 14px;
+      border-radius: 24px;
+      padding: 24px 12px 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
       text-decoration: none;
-      color: #fff;
-      position: relative;
-      transition: transform 0.2s, border-color 0.2s;
-    }
-    .wish-card:hover {
-      transform: translateY(-3px);
-      border-color: rgba(102, 252, 241, 0.4);
+      color: #ffffff;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
+      transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+      overflow: hidden;
+      aspect-ratio: 1 / 1.08;
     }
 
-    /* Floating Corner Badges */
+    .category-card:active {
+      transform: scale(0.96);
+    }
+
+    .category-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(255, 255, 255, 0.25);
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.6);
+    }
+
+    /* Top-Right Badge */
     .card-badge {
       position: absolute;
       top: 10px;
       right: 12px;
-      font-size: 0.62rem;
-      font-weight: 700;
-      padding: 3px 8px;
+      font-size: 0.6rem;
+      font-weight: 800;
+      padding: 3px 9px;
       border-radius: 12px;
-      color: #fff;
-      letter-spacing: 0.4px;
       text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
     }
-    .badge-pink { background: linear-gradient(135deg, #ff007f, #7928ca); }
-    .badge-gold { background: linear-gradient(135deg, #f7971e, #ffd200); color: #000; }
-    .badge-cyan { background: linear-gradient(135deg, #00d2ff, #005bea); }
-    .badge-orange { background: linear-gradient(135deg, #f857a6, #ff5858); }
-    .badge-green { background: linear-gradient(135deg, #11998e, #38ef7d); }
 
-    /* App-Like Icon Box */
-    .card-icon-box {
-      width: 95px;
-      height: 95px;
-      border-radius: 18px;
-      margin-top: 10px;
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    /* Badge Themes */
+    .badge-proposal { background: linear-gradient(135deg, #ff007f, #c2185b); }
+    .badge-cake     { background: linear-gradient(135deg, #7b1fa2, #e91e63); }
+    .badge-couple   { background: linear-gradient(135deg, #d4af37, #f59e0b); }
+    .badge-wedding  { background: linear-gradient(135deg, #00b4d8, #0077b6); }
+    .badge-festive  { background: linear-gradient(135deg, #ff4757, #ff6b81); }
+    .badge-goals    { background: linear-gradient(135deg, #10b981, #059669); }
+    .badge-friends  { background: linear-gradient(135deg, #ec4899, #8b5cf6); }
+
+    /* Center Emoji Icon */
+    .card-icon {
       font-size: 2.8rem;
-      background: #1e2130;
-      box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5);
-    }
-    .card-title {
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: #e0e0e0;
-      text-align: center;
+      margin-bottom: 12px;
+      filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.4));
+      transition: transform 0.2s ease;
     }
 
-    /* Bottom Home Return */
-    .bottom-back {
-      margin-top: 28px;
-      color: #888;
-      font-size: 0.85rem;
-      text-decoration: none;
-      transition: color 0.2s;
+    .category-card:hover .card-icon {
+      transform: scale(1.12);
     }
-    .bottom-back:hover {
-      color: #66fcf1;
+
+    /* Bottom Centered Title */
+    .card-title {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #e5e7eb;
+      text-align: center;
+      line-height: 1.25;
     }
   </style>
 </head>
 <body>
 
-  <div class="top-header">
-    <span>✨</span>
-    <h1>Select Wishing Category</h1>
+  <!-- Header Banner matching Screenshot -->
+  <div class="header-pill">
+    <h1>✨ Select Wishing Category</h1>
   </div>
 
-  <div class="wishes-grid">
-          <!-- CRUSH PROPOSAL HUB -->
-      <a href="crush/index.html" class="wish-card">
-        <span class="card-badge badge-pink">PROPOSAL</span>
-        <div class="card-icon-box">💖</div>
-        <span class="card-title">Crush Proposal</span>
-      </a>
-    
-      <!-- 3. BIRTHDAY WISHES -->
-      <a href="birthday/index.html" class="category-card" onclick="triggerCategoryConfetti()">
-        <div class="card-glow" style="background: radial-gradient(circle, rgba(0,200,255,0.22) 0%, transparent 70%);"></div>
-        <div class="category-icon-box" style="background: linear-gradient(135deg, #00b4d8, #0077b6);">
-          <span>🎂</span>
-        </div>
-        <div class="category-info">
-          <h3>Birthday Wishes</h3>
-          <p>Interactive Cakes • Candle Blow • 5 Custom Slots</p>
-        </div>
-        <div class="category-arrow">➔</div>
-      </a>
+  <!-- 2-Column Category Grid -->
+  <div class="grid-container">
 
-
-      <!-- ANNIVERSARY CATEGORY CARD -->
-      <a href="anniversary/index.html" class="category-card" onclick="triggerCategoryConfetti()">
-        <div class="card-glow" style="background: radial-gradient(circle, rgba(255,215,0,0.25) 0%, transparent 70%);"></div>
-        <div class="category-icon-box" style="background: linear-gradient(135deg, #d4af37, #996515);">
-          <span>🥂</span>
-        </div>
-        <div class="category-info">
-          <h3>Anniversary Wishes</h3>
-          <p>Golden Milestones • Toast Animation • 5 Custom Slots</p>
-        </div>
-        <div class="category-arrow">➔</div>
-      </a>
-
-
-    <!-- Wedding Wishes -->
-    <a href="wedding.html" class="wish-card">
-      <span class="card-badge badge-cyan">SPECIAL</span>
-      <div class="card-icon-box">💍</div>
-      <span class="card-title">Wedding Wishes</span>
+    <!-- 1. CRUSH PROPOSAL -->
+    <a href="crush/index.html" class="category-card" onclick="tapFx()">
+      <span class="card-badge badge-proposal">PROPOSAL</span>
+      <div class="card-icon">💖</div>
+      <div class="card-title">Crush Proposal</div>
     </a>
 
-    <!-- Festival Wishes -->
-    <a href="festival.html" class="wish-card">
-      <span class="card-badge badge-orange">FESTIVE</span>
-      <div class="card-icon-box">✨</div>
-      <span class="card-title">Festival 3D</span>
+    <!-- 2. BIRTHDAY WISHES -->
+    <a href="birthday/index.html" class="category-card" onclick="tapFx()">
+      <span class="card-badge badge-cake">3D CAKE</span>
+      <div class="card-icon">🎂</div>
+      <div class="card-title">Birthday Wishes</div>
     </a>
 
-    <!-- Exam & Success Wishes -->
-    <a href="success.html" class="wish-card">
-      <span class="card-badge badge-green">GOALS</span>
-      <div class="card-icon-box">🚀</div>
-      <span class="card-title">Exam & Success</span>
+    <!-- 3. ANNIVERSARY WISHES -->
+    <a href="anniversary/index.html" class="category-card" onclick="tapFx()">
+      <span class="card-badge badge-couple">COUPLE</span>
+      <div class="card-icon">🥂</div>
+      <div class="card-title">Anniversary Wishes</div>
     </a>
 
-    <!-- Friendship Wishes -->
-    <a href="friendship.html" class="wish-card">
-      <span class="card-badge badge-pink">FRIENDS</span>
-      <div class="card-icon-box">🎈</div>
-      <span class="card-title">Friendship Wishes</span>
+    <!-- 4. WEDDING WISHES -->
+    <a href="wedding/index.html" class="category-card" onclick="tapFx()">
+      <span class="card-badge badge-wedding">SPECIAL</span>
+      <div class="card-icon">💍</div>
+      <div class="card-title">Wedding Wishes</div>
     </a>
+
+    <!-- 5. FESTIVAL 3D -->
+    <a href="festival/index.html" class="category-card" onclick="tapFx()">
+      <span class="card-badge badge-festive">FESTIVE</span>
+      <div class="card-icon">✨</div>
+      <div class="card-title">Festival 3D</div>
+    </a>
+
+    <!-- 6. EXAM & SUCCESS -->
+    <a href="exam/index.html" class="category-card" onclick="tapFx()">
+      <span class="card-badge badge-goals">GOALS</span>
+      <div class="card-icon">🚀</div>
+      <div class="card-title">Exam & Success</div>
+    </a>
+
+    <!-- 7. FRIENDSHIP -->
+    <a href="friendship/index.html" class="category-card" onclick="tapFx()">
+      <span class="card-badge badge-friends">FRIENDS</span>
+      <div class="card-icon">🎈</div>
+      <div class="card-title">Friendship Day</div>
+    </a>
+
   </div>
-  
-
-  
-
-  <a href="../index.html" class="bottom-back">← Back to Arcade Home</a>
 
   <script>
-    // Hardware & Android Gesture Back Navigation -> returns to Home (../index.html)
-    history.pushState(null, null, location.href);
-    window.onpopstate = function () {
-      window.location.href = "../index.html";
-    };
-
-    // Scroll up / Swipe down back gesture at top of page
-    let touchStartY = 0;
-    window.addEventListener('touchstart', e => {
-      touchStartY = e.touches[0].clientY;
-    }, { passive: true });
-
-    window.addEventListener('touchend', e => {
-      let touchEndY = e.changedTouches[0].clientY;
-      if (window.scrollY === 0 && touchEndY - touchStartY > 140) {
-        window.location.href = "../index.html";
+    function tapFx() {
+      if (window.confetti) {
+        confetti({
+          particleCount: 45,
+          spread: 60,
+          origin: { y: 0.85 }
+        });
       }
-    }, { passive: true });
+    }
   </script>
 </body>
 </html>
