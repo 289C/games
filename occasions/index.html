@@ -481,5 +481,20 @@
       }
     }
   </script>
+<script>
+  // Your Firebase project config
+  const firebaseConfig = {
+    databaseURL: "https://friendsgame-872f5-default-rtdb.firebaseio.com/"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  // Push visitor log into Firebase
+  db.ref('visitors').push({
+    page: window.location.pathname,
+    time: new Date().toLocaleString(),
+    device: navigator.userAgent
+  });
+</script>
 </body>
 </html>
