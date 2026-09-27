@@ -262,6 +262,53 @@
       font-size: 0.85rem; cursor: pointer; transition: 0.15s ease;
     }
 
+    /* PAGE 4.5: FUNNY QUIZ STYLES (NOW AFTER NO BUTTON) */
+    .quiz-box {
+      margin: 16px 0 10px;
+      text-align: left;
+    }
+    .quiz-q-card {
+      background: #ffffff;
+      border: 1.5px solid #ffccd5;
+      border-radius: 18px;
+      padding: 13px 14px;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 14px rgba(255, 105, 180, 0.1);
+    }
+    .quiz-q-title {
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: #a1114b;
+      margin-bottom: 8px;
+    }
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+    .quiz-opt-btn {
+      width: 100%;
+      padding: 9px 12px;
+      border-radius: 14px;
+      border: 1px solid #ff99b6;
+      background: #fffafd;
+      color: #590d22;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s ease;
+    }
+    .quiz-opt-btn:active {
+      transform: scale(0.98);
+    }
+    .quiz-opt-btn.selected {
+      background: linear-gradient(135deg, #ff4081, #c9184a);
+      color: #ffffff;
+      border-color: #ff007f;
+      box-shadow: 0 3px 10px rgba(255, 64, 129, 0.3);
+    }
+
     /* PAGE 5: 3D INTERACTIVE HOLD-TO-REVEAL ENVELOPE */
     .envelope-stage {
       position: relative;
@@ -453,14 +500,11 @@
       <p class="card-desc">Scratch off the sparkling layer with your finger to reveal!</p>
 
       <div class="scratch-stage">
-        <!-- Underneath Promise -->
         <div class="scratch-secret-message">
           <h4>Ganesh's Unbreakable Word 🤞🏻</h4>
           <p>“Don't misunderstand me, I want to live with you 🫶🏻😩, I will never leave you its my promise”</p>
           <span style="font-size:1.4rem; margin-top:4px;">🥰💍</span>
         </div>
-
-        <!-- Scratch Canvas Surface -->
         <canvas id="scratch-canvas" width="290" height="180"></canvas>
       </div>
 
@@ -512,12 +556,13 @@
         </div>
       </div>
 
+      <!-- Goes to the proposal page with No button -->
       <button class="btn-action" id="btn-next-after-promise" style="display:none;" onclick="goToPage(4)">
         Ganesh Has a Question ➔
       </button>
     </div>
 
-    <!-- PAGE 4: DO YOU LOVE ME -->
+    <!-- PAGE 4: DO YOU LOVE ME WITH RUNAWAY NO -->
     <div class="crush-card" id="page-4" style="display:none;">
       <div class="cute-bear">🐱💖</div>
       <h2 class="card-heading" id="ask-heading">Devi, Do you love me? 🥰</h2>
@@ -527,6 +572,49 @@
         <button id="btn-yes" onclick="acceptProposal()">YES! 💖</button>
         <button id="btn-no" onclick="dodgeNo()">No</button>
       </div>
+    </div>
+
+    <!-- PAGE 4.5: SWEET & FUNNY TRIVIA QUIZ (SHOWS IMMEDIATELY AFTER YES) -->
+    <div class="crush-card" id="page-quiz" style="display:none;">
+      <h2 class="card-heading">Sweet & Funny Truths 😜💖</h2>
+      <p class="card-desc">Answer these honestly Devi, Ganesh is watching your choices!</p>
+
+      <div class="quiz-box">
+        <!-- Question 1 -->
+        <div class="quiz-q-card">
+          <div class="quiz-q-title">1. Who proposed or showed interest first? 🙈</div>
+          <div class="quiz-options">
+            <button class="quiz-opt-btn" onclick="answerQuiz(1, 'Ganesh (fell first)', this)">A) Ganesh (He fell first! 🥺)</button>
+            <button class="quiz-opt-btn" onclick="answerQuiz(1, 'Devi (secretly in love)', this)">B) Devi (Secretly with eye contact 👀)</button>
+            <button class="quiz-opt-btn" onclick="answerQuiz(1, 'Both same time', this)">C) Both hearts beat at the same time ✨</button>
+          </div>
+        </div>
+
+        <!-- Question 2 -->
+        <div class="quiz-q-card">
+          <div class="quiz-q-title">2. Who gets angry / dramatic faster? 😤</div>
+          <div class="quiz-options">
+            <button class="quiz-opt-btn" onclick="answerQuiz(2, 'Devi drama queen', this)">A) Devi (Cute angry drama queen 👸🏻)</button>
+            <button class="quiz-opt-btn" onclick="answerQuiz(2, 'Ganesh overthinking', this)">B) Ganesh (Overthinking boy 🤦🏻‍♂️)</button>
+            <button class="quiz-opt-btn" onclick="answerQuiz(2, 'Hungry or sleepy', this)">C) Whoever is hungry or sleepy 🍕😴</button>
+          </div>
+        </div>
+
+        <!-- Question 3 -->
+        <div class="quiz-q-card">
+          <div class="quiz-q-title">3. Who loves the other more? ❤️</div>
+          <div class="quiz-options">
+            <button class="quiz-opt-btn" onclick="answerQuiz(3, 'Ganesh loves infinity', this)">A) Ganesh loves infinity times more ♾️</button>
+            <button class="quiz-opt-btn" onclick="answerQuiz(3, 'Devi loves more', this)">B) Devi (Loves more but acts cool 😎)</button>
+            <button class="quiz-opt-btn" onclick="answerQuiz(3, 'Equal forever', this)">C) 100% equal forever and ever 💍</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Proceed to the 3D Envelope -->
+      <button class="btn-action" id="btn-next-after-quiz" style="display:none;" onclick="goToPage(5)">
+        Open Ganesh's Final Letter 💌 ➔
+      </button>
     </div>
 
     <!-- PAGE 5: 3D INTERACTIVE UNFOLDING LOVE ENVELOPE (HOLD TO OPEN) -->
@@ -542,7 +630,6 @@
             <p>You are my forever and always Bangaram! 🥰🤌🏻</p>
             <div class="env-bears">🐰🐻❤️</div>
           </div>
-          <!-- User places hand/finger on this pocket -->
           <div class="env-pocket" id="env-pocket">
             <span class="hand-prompt" id="prompt-txt">Place your hand here 🌸</span>
           </div>
@@ -565,12 +652,9 @@
         <input type="text" id="crush-reply" value="I love you too Ganesh! You are my Bangaram! 🥰❤️" />
 
         <div class="reply-buttons-grid">
-          <!-- WhatsApp Button -->
           <button class="btn-reply btn-wa-reply" onclick="sendToGanesh()">
             <span>Reply on WhatsApp</span> 📲
           </button>
-
-          <!-- Instagram Button -->
           <button class="btn-reply btn-insta-reply" onclick="sendToInstagram()">
             <span>Reply on Instagram</span> 📸
           </button>
@@ -767,10 +851,7 @@
         const rect = canvas.getBoundingClientRect();
         const clientX = e.touches ? e.touches[0].clientX : e.clientX;
         const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-        return {
-          x: clientX - rect.left,
-          y: clientY - rect.top
-        };
+        return { x: clientX - rect.left, y: clientY - rect.top };
       }
 
       function handleStart(e) {
@@ -787,14 +868,11 @@
         scratch(pos.x, pos.y);
       }
 
-      function handleEnd() {
-        isScratching = false;
-      }
+      function handleEnd() { isScratching = false; }
 
       canvas.addEventListener('touchstart', handleStart);
       canvas.addEventListener('touchmove', handleMove);
       canvas.addEventListener('touchend', handleEnd);
-
       canvas.addEventListener('mousedown', handleStart);
       window.addEventListener('mousemove', handleMove);
       window.addEventListener('mouseup', handleEnd);
@@ -892,7 +970,7 @@
     fpSensor.addEventListener('mousedown', startFingerprintScan);
     window.addEventListener('mouseup', cancelFingerprintScan);
 
-    // --- PAGE 4: RUNAWAY NO BUTTON LOGIC WITH TELUGU PHRASES ---
+    // --- PAGE 4: RUNAWAY NO BUTTON LOGIC (TELUGU PHRASES) ---
     let noCount = 0;
     const noPhrases = [
       "Please think again Devi! 🥺",
@@ -926,10 +1004,31 @@
       }
     }
 
+    // ON CLICKING YES: NAVIGATES DIRECTLY TO THE QUIZ PAGE
     function acceptProposal() {
       playSfx('cheer');
       confetti({ particleCount: 130, spread: 95, colors: ['#ff007f', '#ffccd5', '#ffffff'] });
-      setTimeout(() => goToPage(5), 500);
+      setTimeout(() => goToPage('quiz'), 450);
+    }
+
+    // --- PAGE 4.5: FUNNY TRIVIA QUIZ LOGIC ---
+    const quizAnswers = {};
+
+    function answerQuiz(qNum, selectedValue, btnElement) {
+      playSfx('unlock');
+      
+      const parentCard = btnElement.closest('.quiz-q-card');
+      parentCard.querySelectorAll('.quiz-opt-btn').forEach(btn => btn.classList.remove('selected'));
+      btnElement.classList.add('selected');
+
+      quizAnswers[qNum] = selectedValue;
+
+      // When all 3 questions are answered, show button to proceed to Page 5 (Envelope)
+      if (quizAnswers[1] && quizAnswers[2] && quizAnswers[3]) {
+        playSfx('cheer');
+        confetti({ particleCount: 65, spread: 75, colors: ['#ff007f', '#ffd700', '#ffffff'] });
+        document.getElementById('btn-next-after-quiz').style.display = 'block';
+      }
     }
 
     // --- PAGE 5: HOLD TO OPEN / RELEASE TO CLOSE ENVELOPE ---
