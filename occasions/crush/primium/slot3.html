@@ -110,7 +110,68 @@
       line-height: 1.45;
     }
 
-    /* 3D CAKE & LIQUID DRIP STAGE (SCREEN 1) */
+    /* MOBILE PIN LOCK SCREEN STYLES */
+    .pin-dots-container {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      margin: 14px 0 18px;
+    }
+    .pin-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 2px solid #00b4d8;
+      background: rgba(0, 180, 216, 0.1);
+      transition: all 0.2s ease;
+    }
+    .pin-dot.filled {
+      background: #00b4d8;
+      box-shadow: 0 0 10px #00b4d8;
+      transform: scale(1.15);
+    }
+    .numeric-keypad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      max-width: 260px;
+      margin: 0 auto;
+    }
+    .key-btn {
+      width: 62px;
+      height: 62px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(0, 180, 216, 0.35);
+      background: rgba(255, 255, 255, 0.06);
+      color: #fff;
+      font-size: 1.35rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+      backdrop-filter: blur(10px);
+      transition: transform 0.1s, background 0.15s, border-color 0.15s;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    .key-btn:active {
+      transform: scale(0.92);
+      background: rgba(0, 180, 216, 0.3);
+      border-color: #00b4d8;
+    }
+    .key-action {
+      font-size: 1rem;
+      color: #ffd166;
+    }
+    .shake-anim { animation: shakeInput 0.4s ease-in-out; }
+    @keyframes shakeInput {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
+    }
+
+    /* 3D CAKE & LIQUID DRIP STAGE (SCREEN 2) */
     .cake-container {
       position: relative;
       width: 270px;
@@ -177,22 +238,13 @@
     }
     .top-cream-cap {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 18px;
+      top: 0; left: 0; width: 100%; height: 18px;
       background: #ffffff;
       border-radius: 24px 24px 0 0;
     }
     .drips-row-top {
-      position: absolute;
-      top: 14px;
-      left: 0;
-      width: 100%;
-      height: 32px;
-      display: flex;
-      justify-content: space-around;
-      pointer-events: none;
+      position: absolute; top: 14px; left: 0; width: 100%; height: 32px;
+      display: flex; justify-content: space-around; pointer-events: none;
     }
     .drip { background: #ffffff; border-radius: 0 0 10px 10px; }
     .d1 { width: 14px; height: 16px; }
@@ -213,23 +265,12 @@
       z-index: 4;
     }
     .bottom-cream-cap {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 18px;
-      background: #fff7ed;
-      border-radius: 26px 26px 0 0;
+      position: absolute; top: 0; left: 0; width: 100%; height: 18px;
+      background: #fff7ed; border-radius: 26px 26px 0 0;
     }
     .drips-row-bottom {
-      position: absolute;
-      top: 16px;
-      left: 0;
-      width: 100%;
-      height: 38px;
-      display: flex;
-      justify-content: space-around;
-      pointer-events: none;
+      position: absolute; top: 16px; left: 0; width: 100%; height: 38px;
+      display: flex; justify-content: space-around; pointer-events: none;
     }
     .drip-b { background: #fff7ed; border-radius: 0 0 12px 12px; }
     .db1 { width: 16px; height: 18px; }
@@ -244,13 +285,8 @@
     .falling-drop.slow { animation-duration: 3.2s; animation-delay: 1.2s; }
     .falling-drop::after {
       content: "";
-      position: absolute;
-      bottom: -10px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 7px;
-      height: 9px;
-      background: inherit;
+      position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%);
+      width: 7px; height: 9px; background: inherit;
       border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
       animation: dropFallAnim 2.4s ease-in-out infinite;
     }
@@ -269,16 +305,14 @@
     }
 
     .cake-plate {
-      width: 270px;
-      height: 18px;
+      width: 270px; height: 18px;
       background: linear-gradient(180deg, #f8f9fa 0%, #ced4da 45%, #6c757d 100%);
       border-radius: 50%;
       box-shadow: 0 14px 30px rgba(0, 0, 0, 0.75), inset 0 2px 4px #ffffff;
-      margin-top: -6px;
-      z-index: 3;
+      margin-top: -6px; z-index: 3;
     }
 
-    /* REALISTIC DRAGGABLE KNIFE CUTTING ARENA (SCREEN 2) */
+    /* REALISTIC DRAGGABLE KNIFE CUTTING ARENA (SCREEN 3) */
     .knife-arena {
       position: relative;
       width: 100%;
@@ -291,134 +325,74 @@
       touch-action: none;
     }
     .draggable-knife {
-      position: absolute;
-      top: 12px;
-      left: calc(50% - 22px);
-      width: 44px;
-      height: 75px;
-      cursor: grab;
-      z-index: 30;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      transition: transform 0.05s ease;
-      filter: drop-shadow(0 6px 12px rgba(0,0,0,0.6));
+      position: absolute; top: 12px; left: calc(50% - 22px);
+      width: 44px; height: 75px; cursor: grab; z-index: 30;
+      display: flex; flex-direction: column; align-items: center;
+      transition: transform 0.05s ease; filter: drop-shadow(0 6px 12px rgba(0,0,0,0.6));
     }
-    .draggable-knife:active {
-      cursor: grabbing;
-      transform: scale(1.08) rotate(-8deg);
-    }
+    .draggable-knife:active { cursor: grabbing; transform: scale(1.08) rotate(-8deg); }
     .knife-blade {
-      width: 10px;
-      height: 42px;
+      width: 10px; height: 42px;
       background: linear-gradient(90deg, #f8f9fa 0%, #ced4da 40%, #dee2e6 70%, #ffffff 100%);
       clip-path: polygon(0 0, 100% 0, 100% 80%, 50% 100%, 0 80%);
-      border-radius: 1px;
-      box-shadow: inset 1px 0 2px rgba(255,255,255,0.8);
+      border-radius: 1px; box-shadow: inset 1px 0 2px rgba(255,255,255,0.8);
     }
     .knife-handle {
-      width: 16px;
-      height: 28px;
+      width: 16px; height: 28px;
       background: linear-gradient(90deg, #5c2c16 0%, #8b4513 50%, #4a1f0d 100%);
-      border-radius: 4px 4px 6px 6px;
-      border: 1px solid #ffd700;
+      border-radius: 4px 4px 6px 6px; border: 1px solid #ffd700;
     }
     .knife-grip-hint {
-      position: absolute;
-      bottom: -16px;
-      font-size: 0.65rem;
-      color: #ffd700;
-      white-space: nowrap;
-      font-weight: 700;
-      pointer-events: none;
+      position: absolute; bottom: -16px; font-size: 0.65rem; color: #ffd700;
+      white-space: nowrap; font-weight: 700; pointer-events: none;
     }
     .realistic-cake-stage {
-      position: absolute;
-      bottom: 18px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 230px;
-      height: 125px;
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
+      position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%);
+      width: 230px; height: 125px; display: flex; justify-content: center; align-items: flex-end;
     }
     .cake-half-3d {
-      width: 100px;
-      height: 95px;
+      width: 100px; height: 95px;
       background: linear-gradient(180deg, #ff70a6 0%, #e63946 50%, #7b1126 100%);
-      position: relative;
-      transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      box-shadow: inset 0 6px 12px rgba(255, 255, 255, 0.4), 0 8px 18px rgba(0, 0, 0, 0.6);
-      z-index: 5;
+      position: relative; transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: inset 0 6px 12px rgba(255, 255, 255, 0.4), 0 8px 18px rgba(0, 0, 0, 0.6); z-index: 5;
     }
     .cake-half-3d.left { border-radius: 20px 0 0 12px; border-right: 1.5px dashed rgba(255, 255, 255, 0.5); }
     .cake-half-3d.right { border-radius: 0 20px 12px 0; }
-    .frosting-top {
-      position: absolute;
-      top: 0; left: 0; right: 0; height: 18px;
-      background: #ffffff;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-    }
+    .frosting-top { position: absolute; top: 0; left: 0; right: 0; height: 18px; background: #ffffff; box-shadow: 0 2px 6px rgba(0,0,0,0.15); }
     .cake-half-3d.left .frosting-top { border-radius: 20px 0 0 0; }
     .cake-half-3d.right .frosting-top { border-radius: 0 20px 0 0; }
-    .creamy-drips {
-      position: absolute; top: 16px; left: 0; right: 0;
-      display: flex; justify-content: space-around; pointer-events: none;
-    }
+    .creamy-drips { position: absolute; top: 16px; left: 0; right: 0; display: flex; justify-content: space-around; pointer-events: none; }
     .creamy-drips span { background: #ffffff; border-radius: 0 0 8px 8px; }
     .creamy-drips span:nth-child(1) { width: 14px; height: 16px; }
     .creamy-drips span:nth-child(2) { width: 12px; height: 24px; }
     .creamy-drips span:nth-child(3) { width: 15px; height: 12px; }
     .cut-seam-guide {
-      width: 4px; height: 95px;
-      background: rgba(255, 215, 0, 0.4);
-      box-shadow: 0 0 8px rgba(255, 215, 0, 0.7);
-      z-index: 6;
+      width: 4px; height: 95px; background: rgba(255, 215, 0, 0.4);
+      box-shadow: 0 0 8px rgba(255, 215, 0, 0.7); z-index: 6;
     }
     .cake-cut-active #cake-left { transform: translateX(-35px) rotate(-10deg); }
     .cake-cut-active #cake-right { transform: translateX(35px) rotate(10deg); }
     .cake-tray-plate {
-      position: absolute;
-      bottom: -8px; left: -15px; right: -15px; height: 16px;
+      position: absolute; bottom: -8px; left: -15px; right: -15px; height: 16px;
       background: linear-gradient(180deg, #f8f9fa 0%, #adb5bd 45%, #495057 100%);
-      border-radius: 50%;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.6);
-      z-index: 3;
+      border-radius: 50%; box-shadow: 0 10px 25px rgba(0,0,0,0.6); z-index: 3;
     }
 
-    /* 3D PHOTO DECK (SCREEN 3) */
+    /* 3D PHOTO DECK (SCREEN 4) */
     .photo-deck-stage {
-      position: relative;
-      width: 250px;
-      height: 310px;
-      margin: 12px auto 16px;
-      perspective: 1000px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      position: relative; width: 250px; height: 310px; margin: 12px auto 16px;
+      perspective: 1000px; display: flex; align-items: center; justify-content: center;
     }
     .photo-card-3d {
-      position: absolute;
-      width: 230px;
-      height: 290px;
-      border-radius: 20px;
-      overflow: hidden;
-      background: #111a2e;
-      border: 2px solid rgba(255, 215, 0, 0.65);
+      position: absolute; width: 230px; height: 290px; border-radius: 20px; overflow: hidden;
+      background: #111a2e; border: 2px solid rgba(255, 215, 0, 0.65);
       box-shadow: 0 14px 35px rgba(0,0,0,0.7), 0 0 20px rgba(0, 180, 216, 0.3);
-      cursor: pointer;
-      transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.45s ease;
-      transform-origin: 50% 100%;
-      display: flex;
-      flex-direction: column;
+      cursor: pointer; transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.45s ease;
+      transform-origin: 50% 100%; display: flex; flex-direction: column;
     }
-    .photo-card-3d img {
-      width: 100%; height: 220px; object-fit: cover; pointer-events: none;
-    }
+    .photo-card-3d img { width: 100%; height: 220px; object-fit: cover; pointer-events: none; }
     .photo-card-info {
-      flex: 1;
-      background: linear-gradient(180deg, #0d1a2d 0%, #060d17 100%);
+      flex: 1; background: linear-gradient(180deg, #0d1a2d 0%, #060d17 100%);
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       padding: 6px 10px; border-top: 1px solid rgba(255, 215, 0, 0.3);
     }
@@ -439,29 +413,17 @@
     .deck-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255, 255, 255, 0.25); transition: background 0.3s, transform 0.3s; }
     .deck-dot.active { background: #ffd700; transform: scale(1.3); }
 
-    /* GOLDEN SCRATCH CARD STAGE (SCREEN 4) */
+    /* GOLDEN SCRATCH CARD STAGE (SCREEN 5) */
     .scratch-stage-box {
-      position: relative;
-      width: 280px;
-      height: 190px;
-      margin: 10px auto 14px;
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.7);
-      border: 2px solid rgba(255, 215, 0, 0.5);
-      touch-action: none;
+      position: relative; width: 280px; height: 190px; margin: 10px auto 14px;
+      border-radius: 20px; overflow: hidden; box-shadow: 0 12px 30px rgba(0,0,0,0.7);
+      border: 2px solid rgba(255, 215, 0, 0.5); touch-action: none;
     }
     .scratch-reveal-content {
-      position: absolute;
-      inset: 0;
+      position: absolute; inset: 0;
       background: linear-gradient(135deg, #1f0d3d 0%, #11052c 100%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 14px;
-      text-align: center;
-      z-index: 1;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 14px; text-align: center; z-index: 1;
     }
     .scratch-reveal-content h3 { font-size: 1.05rem; color: #ffd700; margin-bottom: 4px; }
     .scratch-reveal-content p { font-size: 0.74rem; color: #e0aaff; line-height: 1.4; }
@@ -469,7 +431,7 @@
       position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; cursor: crosshair; transition: opacity 0.5s ease;
     }
 
-    /* 3D EXPLOSION GIFT BOX (SCREEN 5) */
+    /* 3D EXPLOSION GIFT BOX (SCREEN 6) */
     .gift-3d-viewport {
       width: 100%; height: 250px; perspective: 900px;
       display: flex; align-items: center; justify-content: center; margin: 10px 0 14px; position: relative;
@@ -532,7 +494,7 @@
       100% { transform: translate(-50%, -60%) scale(1.03); }
     }
 
-    /* ROAST & TOAST FLIP CARDS (SCREEN 6) */
+    /* ROAST & TOAST FLIP CARDS (SCREEN 7) */
     .roast-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0 18px; }
     .flip-card { background-color: transparent; height: 140px; perspective: 1000px; cursor: pointer; }
     .flip-inner {
@@ -566,13 +528,13 @@
     .btn-action:active { transform: scale(0.97); }
     .btn-alt { background: none; border: 1px solid rgba(255, 255, 255, 0.2); color: #caf0f8; font-size: 0.78rem; padding: 8px 14px; border-radius: 18px; cursor: pointer; margin-top: 10px; }
 
-    /* BALLOONS GRID (SCREEN 7) */
+    /* BALLOONS GRID (SCREEN 8) */
     .balloons-grid { display: flex; justify-content: center; gap: 12px; margin: 18px 0 20px; }
     .balloon-item { font-size: 2.8rem; cursor: pointer; transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
     .balloon-item:active { transform: scale(1.3) rotate(15deg); }
     .balloon-item.popped { pointer-events: none; opacity: 0.25; transform: scale(0.6); filter: grayscale(1); }
 
-    /* REPLY PAGE (SCREEN 8) */
+    /* REPLY PAGE (SCREEN 9) */
     .reply-textarea {
       width: 100%; height: 90px; background: rgba(0, 0, 0, 0.4);
       border: 1.5px solid rgba(0, 180, 216, 0.5); border-radius: 16px; padding: 10px 14px;
@@ -591,8 +553,39 @@
       <span class="pill-btn" id="stage-tag">🎂 Ganesh & Devi</span>
     </div>
 
-    <!-- SCREEN 1: 3D CAKE & CANDLE BLOW -->
-    <div class="stage-card" id="screen-cake">
+    <!-- SCREEN 1: MOBILE-STYLE NUMERIC PIN LOCK GATE -->
+    <div class="stage-card" id="screen-lock">
+      <div style="font-size: 3rem; margin-bottom: 6px;">🔐📱</div>
+      <h2 class="card-heading">Enter PIN</h2>
+      <p class="card-desc">Enter the secret passcode sent by Ganesh</p>
+
+      <div class="pin-dots-container" id="pin-dots">
+        <div class="pin-dot" id="dot-0"></div>
+        <div class="pin-dot" id="dot-1"></div>
+        <div class="pin-dot" id="dot-2"></div>
+        <div class="pin-dot" id="dot-3"></div>
+      </div>
+
+      <p id="lock-error" style="font-size: 0.76rem; color: #ff4d6d; min-height: 18px; margin-bottom: 8px; font-weight: 600;"></p>
+
+      <div class="numeric-keypad">
+        <button class="key-btn" onclick="pressKey('1')">1</button>
+        <button class="key-btn" onclick="pressKey('2')">2</button>
+        <button class="key-btn" onclick="pressKey('3')">3</button>
+        <button class="key-btn" onclick="pressKey('4')">4</button>
+        <button class="key-btn" onclick="pressKey('5')">5</button>
+        <button class="key-btn" onclick="pressKey('6')">6</button>
+        <button class="key-btn" onclick="pressKey('7')">7</button>
+        <button class="key-btn" onclick="pressKey('8')">8</button>
+        <button class="key-btn" onclick="pressKey('9')">9</button>
+        <button class="key-btn key-action" onclick="clearPin()">C</button>
+        <button class="key-btn" onclick="pressKey('0')">0</button>
+        <button class="key-btn key-action" onclick="deletePin()">⌫</button>
+      </div>
+    </div>
+
+    <!-- SCREEN 2: 3D CAKE & CANDLE BLOW -->
+    <div class="stage-card" id="screen-cake" style="display: none;">
       <h2 class="card-heading">Make a Wish, Devi! ✨</h2>
       <p class="card-desc" id="mic-instruction">Blow into your microphone to help Ganesh blow out the candle! 🌬️</p>
 
@@ -647,7 +640,7 @@
       </button>
     </div>
 
-    <!-- SCREEN 2: DRAGGABLE KNIFE CAKE CUTTING -->
+    <!-- SCREEN 3: DRAGGABLE KNIFE CAKE CUTTING -->
     <div class="stage-card" id="screen-cut" style="display: none;">
       <h2 class="card-heading">Cut the Birthday Cake! 🔪🎂</h2>
       <p class="card-desc">Drag the knife down to slice the cake for Ganesh & Devi!</p>
@@ -682,7 +675,7 @@
       </button>
     </div>
 
-    <!-- SCREEN 3: 3D PHOTO DECK -->
+    <!-- SCREEN 4: 3D PHOTO DECK -->
     <div class="stage-card" id="screen-3d-photos" style="display: none;">
       <h2 class="card-heading">Cherished Moments ✨</h2>
       <p class="card-desc">Tap the photo or use buttons to flip through memories in 3D!</p>
@@ -734,7 +727,7 @@
       </button>
     </div>
 
-    <!-- SCREEN 4: GOLDEN SCRATCH CARD -->
+    <!-- SCREEN 5: GOLDEN SCRATCH CARD -->
     <div class="stage-card" id="screen-scratch" style="display: none;">
       <h2 class="card-heading">Secret Message From Ganesh! ✨</h2>
       <p class="card-desc">Rub your finger across the golden layer to reveal your birthday message!</p>
@@ -757,7 +750,7 @@
       </button>
     </div>
 
-    <!-- SCREEN 5: 3D EXPLOSION GIFT BOX -->
+    <!-- SCREEN 6: 3D EXPLOSION GIFT BOX -->
     <div class="stage-card" id="screen-giftbox" style="display: none;">
       <h2 class="card-heading">Mystery Gift Box 🎁</h2>
       <p class="card-desc" id="gift-instruction">Tap the box to open your surprise from Ganesh!</p>
@@ -786,7 +779,7 @@
       </button>
     </div>
 
-    <!-- SCREEN 6: "ROAST & TOAST" 3D FLIP CARDS -->
+    <!-- SCREEN 7: "ROAST & TOAST" 3D FLIP CARDS -->
     <div class="stage-card" id="screen-roast" style="display: none;">
       <h2 class="card-heading">Roast & Toast! 🃏🔥</h2>
       <p class="card-desc">Tap each mystery card to flip & reveal fun thoughts!</p>
@@ -850,7 +843,7 @@
       </button>
     </div>
 
-    <!-- SCREEN 7: TOUCH-TO-POP BALLOONS -->
+    <!-- SCREEN 8: TOUCH-TO-POP BALLOONS -->
     <div class="stage-card" id="screen-balloons" style="display: none;">
       <h2 class="card-heading">Pop Every Balloon! 🎈</h2>
       <p class="card-desc">Touch the balloons to reveal birthday wishes hidden underneath</p>
@@ -871,7 +864,7 @@
       </button>
     </div>
 
-    <!-- SCREEN 8: REPLY CARD FOR DEVI TO RESPOND TO GANESH -->
+    <!-- SCREEN 9: REPLY CARD FOR DEVI TO RESPOND TO GANESH -->
     <div class="stage-card" id="screen-reply" style="display: none;">
       <div style="font-size: 3.5rem; margin-bottom: 8px;">🎉💖</div>
       <h2 class="card-heading">Happy Birthday!</h2>
@@ -890,7 +883,7 @@
 
   </div>
 
-  <!-- FIREBASE VISITOR TRACKER -->
+  <!-- FIREBASE VISITOR TRACKER[span_0](start_span)[span_0](end_span) -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   <script>
@@ -908,6 +901,9 @@
   </script>
 
   <script>
+    const SECRET_PIN = "1432"; // Set your 4-digit PIN code here
+    let enteredPin = "";
+
     // 1. AMBIENT PARTICLES
     const wrap = document.getElementById('main-wrap');
     const icons = ['✨', '⭐', '🎈', '🎉', '💖', '🎂', '🎁'];
@@ -932,7 +928,21 @@
         osc.connect(gain);
         gain.connect(sfxCtx.destination);
 
-        if (type === 'extinguish') {
+        if (type === 'unlock') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(523.25, now);
+          osc.frequency.exponentialRampToValueAtTime(1046.50, now + 0.2);
+          gain.gain.setValueAtTime(0.25, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+          osc.start(now); osc.stop(now + 0.25);
+        } else if (type === 'error') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(180, now);
+          osc.frequency.setValueAtTime(120, now + 0.1);
+          gain.gain.setValueAtTime(0.25, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+          osc.start(now); osc.stop(now + 0.25);
+        } else if (type === 'extinguish') {
           osc.type = 'sine';
           osc.frequency.setValueAtTime(140, now);
           osc.frequency.exponentialRampToValueAtTime(30, now + 0.35);
@@ -994,7 +1004,66 @@
       if (screenId === 'screen-scratch') initScratchCanvas();
     }
 
-    // 4. MICROPHONE CANDLE BLOW SENSOR
+    // 4. MOBILE PIN PAD LOGIC
+    function pressKey(num) {
+      if (enteredPin.length < 4) {
+        enteredPin += num;
+        updatePinDots();
+        playSfx('flip');
+
+        if (enteredPin.length === 4) {
+          setTimeout(verifyPinCode, 150);
+        }
+      }
+    }
+
+    function deletePin() {
+      if (enteredPin.length > 0) {
+        enteredPin = enteredPin.slice(0, -1);
+        updatePinDots();
+        playSfx('flip');
+      }
+    }
+
+    function clearPin() {
+      enteredPin = "";
+      updatePinDots();
+      playSfx('flip');
+    }
+
+    function updatePinDots() {
+      for (let i = 0; i < 4; i++) {
+        const dot = document.getElementById(`dot-${i}`);
+        if (i < enteredPin.length) {
+          dot.classList.add('filled');
+        } else {
+          dot.classList.remove('filled');
+        }
+      }
+    }
+
+    function verifyPinCode() {
+      const errorMsg = document.getElementById('lock-error');
+      const card = document.getElementById('screen-lock');
+
+      if (enteredPin === SECRET_PIN) {
+        errorMsg.innerText = "";
+        playSfx('unlock');
+        confetti({ particleCount: 85, spread: 85, origin: { y: 0.6 }, colors: ['#00b4d8', '#ff4081', '#ffffff'] });
+        setTimeout(() => showScreen('screen-cake'), 350);
+      } else {
+        playSfx('error');
+        errorMsg.innerText = "Incorrect PIN! Try again 🔒";
+        card.classList.add('shake-anim');
+        setTimeout(() => {
+          card.classList.remove('shake-anim');
+          enteredPin = "";
+          updatePinDots();
+        }, 400);
+      }
+    }
+
+    // 5. MICROPHONE CANDLE BLOW SENSOR
     let audioContext = null;
     let analyser = null;
     let microphone = null;
@@ -1067,7 +1136,7 @@
       }, 700);
     }
 
-    // 5. DRAGGABLE KNIFE CAKE CUTTING
+    // 6. DRAGGABLE KNIFE CAKE CUTTING
     let isCakeCutDone = false;
     function setupCakeCutInteraction() {
       const knife = document.getElementById('drag-knife');
@@ -1145,7 +1214,7 @@
       }, 400);
     }
 
-    // 6. SCREEN 3: 3D PHOTO DECK
+    // 7. SCREEN 4: 3D PHOTO DECK
     let currentPhotoIdx = 0;
     const cards = document.querySelectorAll('.photo-card-3d');
     const dots = document.querySelectorAll('.deck-dot');
@@ -1176,7 +1245,7 @@
       renderDeck();
     }
 
-    // 7. SCREEN 4: GOLDEN SCRATCH CARD LOGIC
+    // 8. SCREEN 5: GOLDEN SCRATCH CARD LOGIC
     let isScratchCompleted = false;
     let scratchInitialized = false;
 
@@ -1263,7 +1332,7 @@
       }
     }
 
-    // 8. SCREEN 5: 3D EXPLOSION GIFT BOX
+    // 9. SCREEN 6: 3D EXPLOSION GIFT BOX
     let giftStageStep = 0;
     function advanceGiftStep() {
       const cube = document.getElementById('gift-cube');
@@ -1293,13 +1362,13 @@
       }
     }
 
-    // 9. SCREEN 6: 3D CARD FLIP HANDLER
+    // 10. SCREEN 7: 3D CARD FLIP HANDLER
     function flipCard(cardEl) {
       playSfx('flip');
       cardEl.classList.toggle('flipped');
     }
 
-    // 10. SCREEN 7: BALLOON POP LOGIC
+    // 11. SCREEN 8: BALLOON POP LOGIC
     let poppedCount = 0;
     function popBalloon(id, msg) {
       const el = document.getElementById(id);
@@ -1320,7 +1389,7 @@
       }
     }
 
-    // 11. SCREEN 8: REPLY HANDLERS (WHATSAPP & INSTAGRAM)
+    // 12. SCREEN 9: REPLY HANDLERS (WHATSAPP & INSTAGRAM)
     const WHATSAPP_NUMBER = "6301798807";
     const INSTAGRAM_HANDLE = "_its_my_bad_luck_";
 
