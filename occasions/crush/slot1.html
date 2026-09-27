@@ -49,26 +49,34 @@
       display: inline-flex; align-items: center; gap: 6px;
     }
 
-    /* Developer Badge on Final Page */
+    /* Developer Badge with Insta.jpg from root */
     .dev-badge {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      background: linear-gradient(135deg, rgba(255, 105, 180, 0.15), rgba(138, 43, 226, 0.2));
-      border: 1px solid rgba(255, 105, 180, 0.4);
+      gap: 8px;
+      background: linear-gradient(135deg, rgba(255, 105, 180, 0.2), rgba(138, 43, 226, 0.25));
+      border: 1.5px solid rgba(255, 105, 180, 0.5);
       color: #ff4081;
-      padding: 5px 14px;
-      border-radius: 20px;
-      font-size: 0.72rem;
+      padding: 6px 14px 6px 8px;
+      border-radius: 25px;
+      font-size: 0.76rem;
       font-weight: 600;
       text-decoration: none;
-      margin-bottom: 12px;
-      box-shadow: 0 2px 10px rgba(255, 105, 180, 0.15);
+      margin-bottom: 14px;
+      box-shadow: 0 4px 15px rgba(255, 105, 180, 0.25);
       transition: transform 0.2s, box-shadow 0.2s;
     }
     .dev-badge:hover {
       transform: scale(1.05);
-      box-shadow: 0 4px 14px rgba(255, 105, 180, 0.35);
+      box-shadow: 0 6px 18px rgba(255, 105, 180, 0.45);
+    }
+    .dev-badge-img {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1.5px solid #ff4081;
+      display: block;
     }
 
     /* Core Cute Card */
@@ -131,22 +139,24 @@
       box-shadow: 0 8px 20px rgba(255, 182, 193, 0.3); margin-bottom: 20px;
     }
 
-    /* PAGE 3: 3D COVERFLOW MEMORY REEL */
+    /* PAGE 3: 3D COVERFLOW MEMORY REEL (5 CARDS) */
     .coverflow-wrap {
       width: 100%; height: 230px; perspective: 700px;
       display: flex; justify-content: center; align-items: center; position: relative;
       margin: 15px 0;
     }
     .cf-card {
-      width: 160px; height: 210px; border-radius: 20px;
+      width: 150px; height: 205px; border-radius: 18px;
       position: absolute; overflow: hidden; box-shadow: 0 12px 30px rgba(0,0,0,0.3);
-      transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+      transition: all 0.45s cubic-bezier(0.25, 0.8, 0.25, 1);
       border: 3px solid rgba(255, 255, 255, 0.9); cursor: pointer;
     }
     .cf-card img { width: 100%; height: 100%; object-fit: cover; }
-    .cf-prev { transform: translateX(-85px) scale(0.85) rotateY(25deg); z-index: 1; opacity: 0.7; }
-    .cf-center { transform: translateX(0) scale(1.05) rotateY(0deg); z-index: 3; opacity: 1; box-shadow: 0 0 25px rgba(255, 105, 180, 0.5); }
-    .cf-next { transform: translateX(85px) scale(0.85) rotateY(-25deg); z-index: 1; opacity: 0.7; }
+    .cf-far-prev { transform: translateX(-135px) scale(0.7) rotateY(35deg); z-index: 1; opacity: 0.45; }
+    .cf-prev     { transform: translateX(-75px) scale(0.85) rotateY(20deg); z-index: 2; opacity: 0.75; }
+    .cf-center   { transform: translateX(0) scale(1.05) rotateY(0deg); z-index: 4; opacity: 1; box-shadow: 0 0 25px rgba(255, 105, 180, 0.55); }
+    .cf-next     { transform: translateX(75px) scale(0.85) rotateY(-20deg); z-index: 2; opacity: 0.75; }
+    .cf-far-next { transform: translateX(135px) scale(0.7) rotateY(-35deg); z-index: 1; opacity: 0.45; }
 
     /* PAGE 4: PROPOSAL BUTTONS */
     .cute-bear { font-size: 4.2rem; margin: 8px 0; animation: bounceGently 1.6s infinite alternate; }
@@ -186,7 +196,6 @@
       box-shadow: 0 18px 38px rgba(0,0,0,0.35);
       cursor: pointer;
     }
-    /* Flap hinged at top */
     .env-flap {
       position: absolute;
       top: 0;
@@ -204,7 +213,6 @@
       transform: rotateX(180deg);
       z-index: 1;
     }
-    /* Front pocket that conceals the bottom of the letter */
     .env-pocket {
       position: absolute;
       bottom: 0;
@@ -228,7 +236,6 @@
       pointer-events: none;
       transition: opacity 0.3s;
     }
-    /* Letter hidden inside the pocket by default */
     .env-letter {
       position: absolute;
       bottom: 12px;
@@ -250,7 +257,6 @@
       transform: translateY(0);
       pointer-events: none;
     }
-    /* Pops up when user holds hand */
     .open-flap .env-letter {
       transform: translateY(-135px);
       z-index: 3;
@@ -273,14 +279,14 @@
       margin-top: 4px;
     }
 
-    /* PAGE 6: FINAL WHATSAPP CARD */
+    /* PAGE 6: FINAL CELEBRATION & WHATSAPP CARD */
     .big-heart { font-size: 4.2rem; animation: pulseSparkle 1.4s infinite; }
     @keyframes pulseSparkle { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
-    .reply-box {
+    .reply-area {
       margin-top: 18px; padding-top: 14px; border-top: 1px solid rgba(255, 182, 193, 0.4); text-align: left;
     }
-    .reply-box label { font-size: 0.78rem; font-weight: bold; color: #a1114b; display: block; margin-bottom: 6px; }
-    .reply-box input {
+    .reply-area label { font-size: 0.78rem; font-weight: bold; color: #a1114b; display: block; margin-bottom: 6px; }
+    .reply-area input {
       width: 100%; padding: 11px 14px; border-radius: 14px; border: 1.5px solid #ffccd5;
       font-size: 0.88rem; outline: none; margin-bottom: 8px; color: #590d22;
     }
@@ -331,15 +337,17 @@
       <button class="btn-action" onclick="goToPage(3)">See Our Moments 📸 ➔</button>
     </div>
 
-    <!-- PAGE 3: 3D PHOTO REEL -->
+    <!-- PAGE 3: 3D PHOTO REEL (5 PHOTOS) -->
     <div class="crush-card" id="page-3" style="display:none;">
       <h2 class="card-heading">Special Memories ✨</h2>
       <p class="card-desc">Every smile of yours makes Ganesh's world brighter</p>
 
       <div class="coverflow-wrap" onclick="nextReel()">
-        <div class="cf-card cf-prev" id="cf-0"><img src="https://images.unsplash.com/photo-1519741497674-611481863552?w=500" alt="Memory 1" /></div>
-        <div class="cf-card cf-center" id="cf-1"><img src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=500" alt="Memory 2" /></div>
-        <div class="cf-card cf-next" id="cf-2"><img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=500" alt="Memory 3" /></div>
+        <div class="cf-card cf-far-prev" id="cf-0"><img src="photo1.jpg" onerror="this.src='https://images.unsplash.com/photo-1519741497674-611481863552?w=500'" alt="Memory 1" /></div>
+        <div class="cf-card cf-prev" id="cf-1"><img src="photo2.jpg" onerror="this.src='https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=500'" alt="Memory 2" /></div>
+        <div class="cf-card cf-center" id="cf-2"><img src="photo3.jpg" onerror="this.src='https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=500'" alt="Memory 3" /></div>
+        <div class="cf-card cf-next" id="cf-3"><img src="photo4.jpg" onerror="this.src='https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=500'" alt="Memory 4" /></div>
+        <div class="cf-card cf-far-next" id="cf-4"><img src="photo5.jpg" onerror="this.src='https://images.unsplash.com/photo-1494774157365-9e04c6720e47?w=500'" alt="Memory 5" /></div>
       </div>
       <p style="font-size:0.75rem; color:#a1114b; margin-bottom:14px; font-weight:600;">Tap photos to cycle 🌸</p>
       <button class="btn-action" onclick="goToPage(4)">Ganesh Has a Question ➔</button>
@@ -384,10 +392,10 @@
 
     <!-- PAGE 6: FINAL CELEBRATION & DIRECT WHATSAPP TO GANESH (8688431772) -->
     <div class="crush-card" id="page-6" style="display:none;">
-      <!-- Developer Credit at the top of the card -->
       <div>
         <a href="https://instagram.com/_satish_official_16" target="_blank" class="dev-badge">
-          💻 Designed & Developed by @_satish_official_16 ↗
+          <img src="../../Insta.jpg" alt="Satish Kommana" class="dev-badge-img" onerror="this.onerror=null; this.src='/games/Insta.jpg';" />
+          <span>Developed by @_satish_official_16 ↗</span>
         </a>
       </div>
 
@@ -506,7 +514,7 @@
       h.className = 'petal-particle';
       h.innerText = cuteIcons[Math.floor(Math.random() * cuteIcons.length)];
       h.style.left = Math.random() * 100 + 'vw';
-       h.style.animationDelay = (Math.random() * 6) + 's';
+      h.style.animationDelay = (Math.random() * 6) + 's';
       h.style.animationDuration = (5 + Math.random() * 4) + 's';
       wrap.appendChild(h);
     }
@@ -551,15 +559,20 @@
       }
     }
 
-    // --- PAGE 3: 3D COVERFLOW LOGIC ---
+    // --- PAGE 3: 3D COVERFLOW LOGIC (5 CARDS) ---
     let cfIndex = 0;
-    const cfClasses = ['cf-prev', 'cf-center', 'cf-next'];
+    const cfClasses = ['cf-far-prev', 'cf-prev', 'cf-center', 'cf-next', 'cf-far-next'];
+
     function nextReel() {
       playSfx('unlock');
-      cfIndex = (cfIndex + 1) % 3;
-      document.getElementById('cf-0').className = 'cf-card ' + cfClasses[(cfIndex) % 3];
-      document.getElementById('cf-1').className = 'cf-card ' + cfClasses[(cfIndex + 1) % 3];
-      document.getElementById('cf-2').className = 'cf-card ' + cfClasses[(cfIndex + 2) % 3];
+      cfIndex = (cfIndex + 1) % 5;
+      for (let i = 0; i < 5; i++) {
+        const card = document.getElementById(`cf-${i}`);
+        if (card) {
+          const classPos = (i - cfIndex + 5) % 5;
+          card.className = 'cf-card ' + cfClasses[classPos];
+        }
+      }
     }
 
     // --- PAGE 4: RUNAWAY NO BUTTON LOGIC ---
