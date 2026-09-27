@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Only For You Bangaram 🥰🤌🏻</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Poppins:wght@300;400;600;700&family=Sacramento&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
+    body, html { width: 100%; min-height: 100%; background: #260515; color: #fff; overflow-x: hidden; }
+
+    /* Dreamy Pastel Aesthetic Background */
+    .aesthetic-wrap {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 14px 44px;
+      background: radial-gradient(circle at 50% 20%, #4a0d2f 0%, #29031a 55%, #180110 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Floating Petals & Sparkles Layer */
+    .petal-particle {
+      position: absolute; pointer-events: none;
+      font-size: 1.3rem; animation: petalDrift 7s linear infinite;
+      filter: drop-shadow(0 0 6px rgba(255, 105, 180, 0.6));
+    }
+    @keyframes petalDrift {
+      0% { transform: translateY(105vh) rotate(0deg) scale(0.7); opacity: 0; }
+      20% { opacity: 0.9; }
+      80% { opacity: 0.9; }
+      100% { transform: translateY(-10vh) rotate(420deg) scale(1.2); opacity: 0; }
+    }
+
+    /* Top Action Bar */
+    .top-bar {
+      position: absolute; top: 16px; left: 16px; right: 16px;
+      display: flex; justify-content: space-between; z-index: 50;
+    }
+    .pill-btn {
+      background: rgba(255, 182, 193, 0.15); border: 1px solid rgba(255, 192, 203, 0.4);
+      color: #ffd1dc; padding: 7px 15px; border-radius: 20px; font-size: 0.8rem;
+      cursor: pointer; text-decoration: none; backdrop-filter: blur(10px);
+      box-shadow: 0 4px 15px rgba(255, 105, 180, 0.2);
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+
+    /* Core Cute Card */
+    .crush-card {
+      width: 100%; max-width: 390px;
+      background: linear-gradient(165deg, #fffafd 0%, #fff0f6 100%);
+      color: #3b0d21; border-radius: 32px; padding: 30px 22px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.7), 0 0 30px rgba(255, 105, 180, 0.35);
+      border: 2px solid rgba(255, 192, 203, 0.6);
+      text-align: center; position: relative;
+      animation: popCard 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes popCard { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+
+    .card-heading {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.55rem; color: #a1114b; margin-bottom: 6px; line-height: 1.3;
+      text-shadow: 0 1px 2px rgba(255, 192, 203, 0.6);
+    }
+    .card-desc { font-size: 0.82rem; color: #824760; margin-bottom: 16px; }
+
+    /* PASSWORD BOX WITH SHOW / HIDE (🙈 / 👁️) */
+    .lock-field-box {
+      position: relative; width: 100%; margin: 18px 0 10px;
+      display: flex; align-items: center;
+    }
+    .lock-input {
+      width: 100%; padding: 13px 44px 13px 18px; border-radius: 20px;
+      border: 2px solid #ff758f; background: #ffffff; color: #700b33;
+      font-size: 0.95rem; font-weight: 600; outline: none; text-align: center;
+      box-shadow: inset 0 2px 8px rgba(255, 105, 180, 0.1);
+      transition: all 0.25s;
+    }
+    .lock-input:focus {
+      border-color: #ff007f;
+      box-shadow: 0 0 16px rgba(255, 0, 127, 0.35);
+    }
+    .toggle-eye-btn {
+      position: absolute; right: 14px; background: none; border: none;
+      font-size: 1.3rem; cursor: pointer; user-select: none;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+    }
+
+    /* Buttons */
+    .btn-action {
+      width: 100%; padding: 13px; border-radius: 25px; border: none;
+      background: linear-gradient(135deg, #ff4d80, #c9184a); color: #fff;
+      font-weight: 700; font-size: 0.95rem; cursor: pointer;
+      box-shadow: 0 6px 20px rgba(201, 24, 74, 0.4); margin-top: 10px;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .btn-action:active { transform: scale(0.97); }
+
+    /* PAGE 2: LOVE LETTER */
+    .handwriting { font-family: 'Sacramento', cursive; font-size: 2.3rem; color: #a1114b; }
+    .letter-paper {
+      background: #ffffff; border-left: 4px solid #ff4d80;
+      border-radius: 16px; padding: 18px 16px; text-align: left;
+      font-size: 0.88rem; line-height: 1.65; color: #4a192c;
+      box-shadow: 0 8px 20px rgba(255, 182, 193, 0.3); margin-bottom: 20px;
+    }
+
+    /* PAGE 2.5: SCRATCH CARD */
+    .scratch-stage {
+      position: relative;
+      width: 290px;
+      height: 180px;
+      margin: 16px auto;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      border: 2px solid rgba(255, 105, 180, 0.4);
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+    }
+    .scratch-secret-message {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: linear-gradient(135deg, #fff5f8 0%, #ffe4ec 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      text-align: center;
+      z-index: 1;
+    }
+    .scratch-secret-message h4 {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.95rem;
+      color: #a1114b;
+      margin-bottom: 6px;
+    }
+    .scratch-secret-message p {
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: #5a0c27;
+      line-height: 1.5;
+    }
+    #scratch-canvas {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 2;
+      cursor: grab;
+      touch-action: none;
+    }
+
+    /* PAGE 3: 3D COVERFLOW MEMORY REEL (5 CARDS) */
+    .coverflow-wrap {
+      width: 100%; height: 230px; perspective: 700px;
+      display: flex; justify-content: center; align-items: center; position: relative;
+      margin: 15px 0;
+    }
+    .cf-card {
+      width: 150px; height: 205px; border-radius: 18px;
+      position: absolute; overflow: hidden; box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+      transition: all 0.45s cubic-bezier(0.25, 0.8, 0.25, 1);
+      border: 3px solid rgba(255, 255, 255, 0.9); cursor: pointer;
+    }
+    .cf-card img { width: 100%; height: 100%; object-fit: cover; }
+    .cf-far-prev { transform: translateX(-135px) scale(0.7) rotateY(35deg); z-index: 1; opacity: 0.45; }
+    .cf-prev     { transform: translateX(-75px) scale(0.85) rotateY(20deg); z-index: 2; opacity: 0.75; }
+    .cf-center   { transform: translateX(0) scale(1.05) rotateY(0deg); z-index: 4; opacity: 1; box-shadow: 0 0 25px rgba(255, 105, 180, 0.55); }
+    .cf-next     { transform: translateX(75px) scale(0.85) rotateY(-20deg); z-index: 2; opacity: 0.75; }
+    .cf-far-next { transform: translateX(135px) scale(0.7) rotateY(-35deg); z-index: 1; opacity: 0.45; }
+
+    /* PAGE 3.5: FINGERPRINT PROMISE SCANNER */
+    .scanner-box {
+      margin: 20px auto 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .fingerprint-circle {
+      position: relative;
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,105,180,0.15) 0%, rgba(255,255,255,0.02) 70%);
+      border: 2px dashed #ff4081;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3.2rem;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+      box-shadow: 0 0 20px rgba(255, 64, 129, 0.25);
+      transition: transform 0.2s;
+    }
+    .fingerprint-circle:active { transform: scale(0.95); }
+    .scan-beam {
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, transparent, #ff007f, transparent);
+      box-shadow: 0 0 10px #ff007f;
+      display: none;
+      animation: scanMove 1.4s ease-in-out infinite alternate;
+    }
+    @keyframes scanMove { 0% { top: 10%; } 100% { top: 90%; } }
+    .scan-progress-bar-wrap {
+      width: 180px;
+      height: 8px;
+      background: rgba(255, 182, 193, 0.3);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 14px;
+    }
+    .scan-progress-bar {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #ff4081, #ff007f);
+      border-radius: 10px;
+      transition: width 0.1s linear;
+    }
+    .contract-stamp {
+      display: none;
+      margin-top: 14px;
+      padding: 10px 14px;
+      border: 2px solid #25d366;
+      border-radius: 16px;
+      background: rgba(37, 211, 102, 0.1);
+      color: #1e7e34;
+      font-weight: 700;
+      font-size: 0.82rem;
+      animation: popStamp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes popStamp {
+      0% { transform: scale(0.6) rotate(-8deg); opacity: 0; }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+
+    /* PAGE 4: PROPOSAL BUTTONS */
+    .cute-bear { font-size: 4.2rem; margin: 8px 0; animation: bounceGently 1.6s infinite alternate; }
+    @keyframes bounceGently { from { transform: translateY(0); } to { transform: translateY(-10px); } }
+    .btn-area {
+      display: flex; justify-content: center; align-items: center;
+      gap: 15px; margin-top: 24px; min-height: 80px; position: relative;
+    }
+    #btn-yes {
+      padding: 13px 32px; border-radius: 25px; border: none;
+      background: linear-gradient(135deg, #ff007f, #ff4081); color: #fff;
+      font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.25s ease;
+      box-shadow: 0 6px 20px rgba(255, 0, 127, 0.45); z-index: 10;
+    }
+    #btn-no {
+      padding: 11px 22px; border-radius: 25px; border: 1.5px solid #ffccd5;
+      background: #fff; color: #a1114b; font-weight: 600;
+      font-size: 0.85rem; cursor: pointer; transition: 0.15s ease;
+    }
+
+    /* PAGE 4.5: FUNNY QUIZ STYLES (NOW AFTER NO BUTTON) */
+    .quiz-box {
+      margin: 16px 0 10px;
+      text-align: left;
+    }
+    .quiz-q-card {
+      background: #ffffff;
+      border: 1.5px solid #ffccd5;
+      border-radius: 18px;
+      padding: 13px 14px;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 14px rgba(255, 105, 180, 0.1);
+    }
+    .quiz-q-title {
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: #a1114b;
+      margin-bottom: 8px;
+    }
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+    .quiz-opt-btn {
+      width: 100%;
+      padding: 9px 12px;
+      border-radius: 14px;
+      border: 1px solid #ff99b6;
+      background: #fffafd;
+      color: #590d22;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s ease;
+    }
+    .quiz-opt-btn:active {
+      transform: scale(0.98);
+    }
+    .quiz-opt-btn.selected {
+      background: linear-gradient(135deg, #ff4081, #c9184a);
+      color: #ffffff;
+      border-color: #ff007f;
+      box-shadow: 0 3px 10px rgba(255, 64, 129, 0.3);
+    }
+
+    /* PAGE 5: 3D INTERACTIVE HOLD-TO-REVEAL ENVELOPE */
+    .envelope-stage {
+      position: relative;
+      width: 290px;
+      height: 200px;
+      margin: 40px auto 25px;
+      perspective: 1000px;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .env-wrapper {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background: #e6c55c;
+      border-radius: 0 0 16px 16px;
+      box-shadow: 0 18px 38px rgba(0,0,0,0.35);
+      cursor: pointer;
+    }
+    .env-flap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 0;
+      border-left: 145px solid transparent;
+      border-right: 145px solid transparent;
+      border-top: 115px solid #dcb84a;
+      transform-origin: top center;
+      transition: transform 0.5s ease;
+      z-index: 5;
+    }
+    .open-flap .env-flap {
+      transform: rotateX(180deg);
+      z-index: 1;
+    }
+    .env-pocket {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 135px;
+      background: #f7d770;
+      border-radius: 0 0 16px 16px;
+      z-index: 4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 -4px 15px rgba(0,0,0,0.08);
+      touch-action: none;
+    }
+    .hand-prompt {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      color: #52350a;
+      font-weight: 700;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .env-letter {
+      position: absolute;
+      bottom: 12px;
+      left: 16px;
+      right: 16px;
+      height: 170px;
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 16px 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+      z-index: 2;
+      transition: transform 0.55s cubic-bezier(0.25, 1, 0.5, 1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      border: 1.5px dashed #ff99b6;
+      transform: translateY(0);
+      pointer-events: none;
+    }
+    .open-flap .env-letter {
+      transform: translateY(-135px);
+      z-index: 3;
+      box-shadow: 0 14px 30px rgba(255, 105, 180, 0.4);
+    }
+    .env-letter h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      color: #a1114b;
+      margin-bottom: 5px;
+      line-height: 1.3;
+    }
+    .env-letter p {
+      font-size: 0.76rem;
+      color: #662238;
+      line-height: 1.35;
+    }
+    .env-bears {
+      font-size: 1.8rem;
+      margin-top: 4px;
+    }
+
+    /* PAGE 6: FINAL CELEBRATION & DUAL WHATSAPP / INSTAGRAM CARD */
+    .big-heart { font-size: 4.2rem; animation: pulseSparkle 1.4s infinite; }
+    @keyframes pulseSparkle { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+    .reply-area {
+      margin-top: 18px; padding-top: 14px; border-top: 1px solid rgba(255, 182, 193, 0.4); text-align: left;
+    }
+    .reply-area label { font-size: 0.78rem; font-weight: bold; color: #a1114b; display: block; margin-bottom: 6px; }
+    .reply-area input {
+      width: 100%; padding: 11px 14px; border-radius: 14px; border: 1.5px solid #ffccd5;
+      font-size: 0.88rem; outline: none; margin-bottom: 8px; color: #590d22;
+    }
+    .reply-buttons-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .btn-reply {
+      width: 100%;
+      padding: 13px;
+      border-radius: 22px;
+      border: none;
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.92rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: transform 0.2s, box-shadow 0.2s;
+      text-decoration: none;
+    }
+    .btn-reply:active { transform: scale(0.98); }
+    .btn-wa-reply {
+      background: #25d366;
+      box-shadow: 0 4px 15px rgba(37, 211, 102, 0.35);
+    }
+    .btn-insta-reply {
+      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      box-shadow: 0 4px 15px rgba(225, 48, 108, 0.4);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background Music Audio Element -->
+  <audio id="bg-audio" loop preload="auto">
+    <source src="song5.mp3" type="audio/mpeg" />
+  </audio>
+
+  <div class="aesthetic-wrap" id="main-container">
+    <div class="top-bar">
+      <button class="pill-btn" onclick="stepBack()">← Back</button>
+      <button class="pill-btn" id="music-toggle-btn" onclick="toggleBackgroundMusic()">🎵 Music: ON</button>
+    </div>
+
+    <!-- PAGE 1: THE LOCK GATE (PASSWORD: loveyoubangaram) -->
+    <div class="crush-card" id="page-1">
+      <h2 class="card-heading">Only for you Bangaram 🥰🤌🏻</h2>
+      <div style="font-size: 3.8rem; margin: 10px 0;">💐✨</div>
+      <p class="card-desc">Enter the secret password to open Ganesh's heart 🔒</p>
+
+      <div class="lock-field-box">
+        <input type="password" id="pass-input" class="lock-input" placeholder="Type password here..." autocomplete="off" />
+        <button type="button" class="toggle-eye-btn" id="eye-btn" onclick="togglePasswordVisibility()">🙈</button>
+      </div>
+      <button class="btn-action" onclick="unlockGate()">Unlock Heart ➔</button>
+    </div>
+
+    <!-- PAGE 2: MESSAGE PAPER -->
+    <div class="crush-card" id="page-2" style="display:none;">
+      <span class="handwriting">My Dear Devi,</span>
+      <div class="letter-paper">
+        <p>
+          From the day you entered my life, every moment has become magical. Your smile is my daily peace, and your voice is my favorite melody.<br><br>
+          I made this tiny space in the digital universe solely to speak what my heart carries every single day.
+        </p>
+        <p style="text-align: right; margin-top: 10px; font-weight: bold; color: #a1114b;">— Truly yours, Ganesh 🌸</p>
+      </div>
+      <button class="btn-action" onclick="goToPage('scratch')">Reveal Hidden Promise ✨ ➔</button>
+    </div>
+
+    <!-- PAGE 2.5: SCRATCH CARD PROMISE -->
+    <div class="crush-card" id="page-scratch" style="display:none;">
+      <h2 class="card-heading">A Hidden Promise 🤫✨</h2>
+      <p class="card-desc">Scratch off the sparkling layer with your finger to reveal!</p>
+
+      <div class="scratch-stage">
+        <div class="scratch-secret-message">
+          <h4>Ganesh's Unbreakable Word 🤞🏻</h4>
+          <p>“Don't misunderstand me, I want to live with you 🫶🏻😩, I will never leave you its my promise”</p>
+          <span style="font-size:1.4rem; margin-top:4px;">🥰💍</span>
+        </div>
+        <canvas id="scratch-canvas" width="290" height="180"></canvas>
+      </div>
+
+      <p id="scratch-status-txt" style="font-size:0.75rem; color:#a1114b; font-weight:600;">
+        ✨ Scratch at least 45% to continue
+      </p>
+
+      <button class="btn-action" id="btn-next-scratch" style="display:none; margin-top:14px;" onclick="goToPage(3)">
+        See Our Moments 📸 ➔
+      </button>
+    </div>
+
+    <!-- PAGE 3: 3D PHOTO REEL (5 PHOTOS) -->
+    <div class="crush-card" id="page-3" style="display:none;">
+      <h2 class="card-heading">Special Memories ✨</h2>
+      <p class="card-desc">Every smile of yours makes Ganesh's world brighter</p>
+
+      <div class="coverflow-wrap" onclick="nextReel()">
+        <div class="cf-card cf-far-prev" id="cf-0"><img src="photo1.jpg" onerror="this.src='https://images.unsplash.com/photo-1519741497674-611481863552?w=500'" alt="Memory 1" /></div>
+        <div class="cf-card cf-prev" id="cf-1"><img src="photo2.jpg" onerror="this.src='https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=500'" alt="Memory 2" /></div>
+        <div class="cf-card cf-center" id="cf-2"><img src="photo3.jpg" onerror="this.src='https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=500'" alt="Memory 3" /></div>
+        <div class="cf-card cf-next" id="cf-3"><img src="photo4.jpg" onerror="this.src='https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=500'" alt="Memory 4" /></div>
+        <div class="cf-card cf-far-next" id="cf-4"><img src="photo5.jpg" onerror="this.src='https://images.unsplash.com/photo-1494774157365-9e04c6720e47?w=500'" alt="Memory 5" /></div>
+      </div>
+      <p style="font-size:0.75rem; color:#a1114b; margin-bottom:14px; font-weight:600;">Tap photos to cycle 🌸</p>
+      <button class="btn-action" onclick="goToPage('promise')">Seal Our Promise 🤞🏻 ➔</button>
+    </div>
+
+    <!-- PAGE 3.5: PINKY PROMISE CONTRACT SCANNER -->
+    <div class="crush-card" id="page-promise" style="display:none;">
+      <h2 class="card-heading">Pinky Promise Contract 🤞🏻</h2>
+      <p class="card-desc">Devi, place & hold your thumb on the sensor to lock this promise with Ganesh!</p>
+
+      <div class="scanner-box">
+        <div class="fingerprint-circle" id="fp-sensor">
+          <span>👆🏻</span>
+          <div class="scan-beam" id="scan-laser"></div>
+        </div>
+
+        <div class="scan-progress-bar-wrap">
+          <div class="scan-progress-bar" id="fp-progress"></div>
+        </div>
+        <p id="fp-status-txt" style="font-size: 0.76rem; color: #a1114b; margin-top: 8px; font-weight: 600;">
+          Hold for 2 seconds...
+        </p>
+
+        <div class="contract-stamp" id="contract-badge">
+          ✅ Sealed & Locked in Ganesh's Heart Forever ❤️
+        </div>
+      </div>
+
+      <!-- Goes to the proposal page with No button -->
+      <button class="btn-action" id="btn-next-after-promise" style="display:none;" onclick="goToPage(4)">
+        Ganesh Has a Question ➔
+      </button>
+    </div>
+
+    <!-- PAGE 4: DO YOU LOVE ME WITH RUNAWAY NO -->
+    <div class="crush-card" id="page-4" style="display:none;">
+      <div class="cute-bear">🐱💖</div>
+      <h2 class="card-heading" id="ask-heading">Devi, Do you love me? 🥰</h2>
+      <p class="card-desc" id="ask-sub">Ganesh is all yours!</p>
+
+      <div class="btn-area">
+        <button id="btn-yes" onclick="acceptProposal()">YES! 💖</button>
+        <button id="btn-no" onclick="dodgeNo()">No</button>
+      </div>
+    </div>
+
+    <!-- PAGE 4.5: SWEET & FUNNY TRIVIA QUIZ (CONFIRMED ANSWERS) -->
+    <div class="crush-card" id="page-quiz" style="display:none;">
+      <h2 class="card-heading">Sweet Truths Quiz 😜💖</h2>
+      <p class="card-desc">Choose the real truth Devi, only the correct answers unlock the letter!</p>
+
+      <div class="quiz-box">
+        <!-- Question 1: Ganesh is the only correct answer -->
+        <div class="quiz-q-card" id="card-q1">
+          <div class="quiz-q-title">1. Who fell in love / showed interest first? 🙈</div>
+          <div class="quiz-options">
+            <button class="quiz-opt-btn" onclick="checkConformAnswer(1, true, this)">A) Ganesh (He fell first! 🥺)</button>
+            <button class="quiz-opt-btn" onclick="checkConformAnswer(1, false, this)">B) Devi (Secretly with eye contact 👀)</button>
+            <button class="quiz-opt-btn" onclick="checkConformAnswer(1, false, this)">C) Random strangers 🤷🏻‍♂️</button>
+          </div>
+        </div>
+
+        <!-- Question 2: Devi is the only correct answer -->
+        <div class="quiz-q-card" id="card-q2">
+          <div class="quiz-q-title">2. Who gets angry / dramatic faster? 😤</div>
+          <div class="quiz-options">
+            <button class="quiz-opt-btn" onclick="checkConformAnswer(2, false, this)">A) Ganesh (He is super calm 😇)</button>
+            <button class="quiz-opt-btn" onclick="checkConformAnswer(2, true, this)">B) Devi (100% cute drama queen 👸🏻)</button>
+            <button class="quiz-opt-btn" onclick="checkConformAnswer(2, false, this)">C) Nobody 😌</button>
+          </div>
+        </div>
+
+        <!-- Question 3: Both is the only correct answer -->
+        <div class="quiz-q-card" id="card-q3">
+          <div class="quiz-q-title">3. Who loves the other more? ❤️</div>
+          <div class="quiz-options">
+            <button class="quiz-opt-btn" onclick="checkConformAnswer(3, false, this)">A) Only Ganesh</button>
+            <button class="quiz-opt-btn" onclick="checkConformAnswer(3, false, this)">B) Only Devi</button>
+            <button class="quiz-opt-btn" onclick="checkConformAnswer(3, true, this)">C) Both love each other equally forever! 💍♾️</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Proceed Button -->
+      <button class="btn-action" id="btn-next-after-quiz" style="display:none;" onclick="goToPage(5)">
+        Open Ganesh's Final Letter 💌 ➔
+      </button>
+    </div>
+
+    <!-- PAGE 5: 3D INTERACTIVE UNFOLDING LOVE ENVELOPE (HOLD TO OPEN) -->
+    <div class="crush-card" id="page-5" style="display:none;">
+      <h2 class="card-heading">A Special Love Letter 💌</h2>
+      <p class="card-desc">Press and hold your finger on the envelope to read!</p>
+
+      <div class="envelope-stage" id="env-box">
+        <div class="env-wrapper">
+          <div class="env-flap"></div>
+          <div class="env-letter">
+            <h3>You are one in a million feeling, Devi! ❤️</h3>
+            <p>You are my forever and always Bangaram! 🥰🤌🏻</p>
+            <div class="env-bears">🐰🐻❤️</div>
+          </div>
+          <div class="env-pocket" id="env-pocket">
+            <span class="hand-prompt" id="prompt-txt">Place your hand here 🌸</span>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-action" id="btn-goto-final" style="display:none; margin-top:20px;" onclick="goToPage(6)">
+        Send Love to Ganesh ➔
+      </button>
+    </div>
+
+    <!-- PAGE 6: FINAL CELEBRATION & DUAL WHATSAPP / INSTAGRAM REPLY -->
+    <div class="crush-card" id="page-6" style="display:none;">
+      <div class="big-heart">💖🌸</div>
+      <h2 class="card-heading">I Knew It, Devi! 🥰</h2>
+      <p class="card-desc">You are my forever and always, Bangaram. Love you to the moon and back!</p>
+
+      <div class="reply-area">
+        <label>💌 Send Your Reply to Ganesh:</label>
+        <input type="text" id="crush-reply" value="I love you too Ganesh! You are my Bangaram! 🥰❤️" />
+
+        <div class="reply-buttons-grid">
+          <button class="btn-reply btn-wa-reply" onclick="sendToGanesh()">
+            <span>Reply on WhatsApp</span> 📲
+          </button>
+          <button class="btn-reply btn-insta-reply" onclick="sendToInstagram()">
+            <span>Reply on Instagram</span> 📸
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- SHOW / HIDE PASSWORD TOGGLE ---
+    function togglePasswordVisibility() {
+      const input = document.getElementById('pass-input');
+      const eyeBtn = document.getElementById('eye-btn');
+      if (input.type === 'password') {
+        input.type = 'text';
+        eyeBtn.innerText = '👁️';
+      } else {
+        input.type = 'password';
+        eyeBtn.innerText = '🙈';
+      }
+    }
+
+    // --- BACKGROUND MUSIC LOGIC ---
+    const bgAudio = document.getElementById('bg-audio');
+    let isMusicPlaying = false;
+
+    function startMusic() {
+      if (bgAudio && !isMusicPlaying) {
+        bgAudio.play().then(() => {
+          isMusicPlaying = true;
+          document.getElementById('music-toggle-btn').innerText = "🎵 Music: ON";
+        }).catch(err => {
+          console.log("Audio waiting for user gesture:", err);
+        });
+      }
+    }
+
+    function toggleBackgroundMusic() {
+      if (!bgAudio) return;
+      if (isMusicPlaying) {
+        bgAudio.pause();
+        isMusicPlaying = false;
+        document.getElementById('music-toggle-btn').innerText = "🔇 Music: OFF";
+      } else {
+        bgAudio.play();
+        isMusicPlaying = true;
+        document.getElementById('music-toggle-btn').innerText = "🎵 Music: ON";
+      }
+    }
+
+    // --- SYNTHETIC WEB AUDIO SFX ---
+    let audioCtx = null;
+    function playSfx(type) {
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        const now = audioCtx.currentTime;
+        if (type === 'unlock') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(523.25, now);
+          osc.frequency.exponentialRampToValueAtTime(1046.50, now + 0.3);
+          gain.gain.setValueAtTime(0.25, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+          osc.start(now);
+          osc.stop(now + 0.4);
+        } else if (type === 'dodge') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(360, now);
+          osc.frequency.exponentialRampToValueAtTime(160, now + 0.2);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+          osc.start(now);
+          osc.stop(now + 0.2);
+        } else if (type === 'paper') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(440, now);
+          osc.frequency.exponentialRampToValueAtTime(880, now + 0.35);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+          osc.start(now);
+          osc.stop(now + 0.35);
+        } else if (type === 'cheer') {
+          [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+            const o = audioCtx.createOscillator();
+            const g = audioCtx.createGain();
+            o.connect(g); g.connect(audioCtx.destination);
+            o.type = 'triangle';
+            o.frequency.value = freq;
+            g.gain.setValueAtTime(0.18, now + (i * 0.08));
+            g.gain.exponentialRampToValueAtTime(0.01, now + (i * 0.08) + 0.5);
+            o.start(now + (i * 0.08));
+            o.stop(now + (i * 0.08) + 0.5);
+          });
+        }
+      } catch (e) {}
+    }
+
+    // --- FLOATING PETALS & SPARKLES LAYER ---
+    const wrap = document.getElementById('main-container');
+    const cuteIcons = ['🌸', '💖', '✨', '🌷', '💕', '🎀'];
+    for (let i = 0; i < 18; i++) {
+      const h = document.createElement('div');
+      h.className = 'petal-particle';
+      h.innerText = cuteIcons[Math.floor(Math.random() * cuteIcons.length)];
+      h.style.left = Math.random() * 100 + 'vw';
+      h.style.animationDelay = (Math.random() * 6) + 's';
+      h.style.animationDuration = (5 + Math.random() * 4) + 's';
+      wrap.appendChild(h);
+    }
+
+    // --- NAVIGATION LOGIC ---
+    let historyStack = ['page-1'];
+    function goToPage(targetId) {
+      document.querySelectorAll('.crush-card').forEach(c => c.style.display = 'none');
+      const pageKey = (typeof targetId === 'number' || !isNaN(targetId)) ? `page-${targetId}` : `page-${targetId}`;
+      const target = document.getElementById(pageKey);
+      if (target) {
+        target.style.display = 'block';
+        if (historyStack[historyStack.length - 1] !== pageKey) {
+          historyStack.push(pageKey);
+        }
+      }
+      if (pageKey === 'page-scratch') {
+        initScratchCanvas();
+      }
+    }
+
+    function stepBack() {
+      if (historyStack.length > 1) {
+        historyStack.pop();
+        const prev = historyStack[historyStack.length - 1];
+        document.querySelectorAll('.crush-card').forEach(c => c.style.display = 'none');
+        document.getElementById(prev).style.display = 'block';
+      } else {
+        window.location.href = "index.html";
+      }
+    }
+
+    history.pushState(null, null, location.href);
+    window.onpopstate = () => stepBack();
+
+    // --- PAGE 1: UNLOCK LOGIC ---
+    function unlockGate() {
+      const pass = document.getElementById('pass-input').value.trim();
+      if (pass.toLowerCase() === "loveyoubangaram") {
+        playSfx('unlock');
+        startMusic();
+        confetti({ particleCount: 85, spread: 85, colors: ['#ff007f', '#ffccd5', '#ffffff', '#ffd700'] });
+        setTimeout(() => goToPage(2), 300);
+      } else {
+        alert("Wrong password Devi! Please press properly 🥰");
+      }
+    }
+
+    // --- PAGE 2.5: SCRATCH CANVAS LOGIC ---
+    let isScratching = false;
+    let scratchInitialized = false;
+    let scratchCompleted = false;
+
+    function initScratchCanvas() {
+      if (scratchInitialized) return;
+      scratchInitialized = true;
+
+      const canvas = document.getElementById('scratch-canvas');
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width;
+      const h = canvas.height;
+
+      const grad = ctx.createLinearGradient(0, 0, w, h);
+      grad.addColorStop(0, '#ff99b6');
+      grad.addColorStop(0.5, '#ff4d80');
+      grad.addColorStop(1, '#c9184a');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, w, h);
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 15px Poppins';
+      ctx.textAlign = 'center';
+      ctx.fillText('✨ Scratch Here Bangaram ✨', w / 2, h / 2 + 5);
+
+      function scratch(x, y) {
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.beginPath();
+        ctx.arc(x, y, 22, 0, Math.PI * 2);
+        ctx.fill();
+        checkScratchPercent();
+      }
+
+      function getPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return { x: clientX - rect.left, y: clientY - rect.top };
+      }
+
+      function handleStart(e) {
+        e.preventDefault();
+        isScratching = true;
+        const pos = getPos(e);
+        scratch(pos.x, pos.y);
+      }
+
+      function handleMove(e) {
+        if (!isScratching) return;
+        e.preventDefault();
+        const pos = getPos(e);
+        scratch(pos.x, pos.y);
+      }
+
+      function handleEnd() { isScratching = false; }
+
+      canvas.addEventListener('touchstart', handleStart);
+      canvas.addEventListener('touchmove', handleMove);
+      canvas.addEventListener('touchend', handleEnd);
+      canvas.addEventListener('mousedown', handleStart);
+      window.addEventListener('mousemove', handleMove);
+      window.addEventListener('mouseup', handleEnd);
+    }
+
+    function checkScratchPercent() {
+      if (scratchCompleted) return;
+      const canvas = document.getElementById('scratch-canvas');
+      const ctx = canvas.getContext('2d');
+      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      let cleared = 0;
+
+      for (let i = 3; i < imgData.data.length; i += 16) {
+        if (imgData.data[i] === 0) cleared++;
+      }
+
+      const totalSampled = imgData.data.length / 16;
+      if (cleared / totalSampled >= 0.45) {
+        scratchCompleted = true;
+        canvas.style.transition = 'opacity 0.4s ease';
+        canvas.style.opacity = '0';
+        setTimeout(() => { canvas.style.display = 'none'; }, 400);
+
+        playSfx('cheer');
+        confetti({ particleCount: 75, spread: 80, colors: ['#ff4d80', '#ffccd5', '#ffd700'] });
+        document.getElementById('scratch-status-txt').innerText = "Promise Unlocked Forever! 💖";
+        document.getElementById('btn-next-scratch').style.display = 'block';
+      }
+    }
+
+    // --- PAGE 3: 3D COVERFLOW LOGIC (5 CARDS) ---
+    let cfIndex = 0;
+    const cfClasses = ['cf-far-prev', 'cf-prev', 'cf-center', 'cf-next', 'cf-far-next'];
+
+    function nextReel() {
+      playSfx('unlock');
+      cfIndex = (cfIndex + 1) % 5;
+      for (let i = 0; i < 5; i++) {
+        const card = document.getElementById(`cf-${i}`);
+        if (card) {
+          const classPos = (i - cfIndex + 5) % 5;
+          card.className = 'cf-card ' + cfClasses[classPos];
+        }
+      }
+    }
+
+    // --- PAGE 3.5: PINKY PROMISE CONTRACT SCANNER ---
+    const fpSensor = document.getElementById('fp-sensor');
+    const scanLaser = document.getElementById('scan-laser');
+    const fpProgress = document.getElementById('fp-progress');
+    const fpStatusTxt = document.getElementById('fp-status-txt');
+    const contractBadge = document.getElementById('contract-badge');
+    const btnNextPromise = document.getElementById('btn-next-after-promise');
+
+    let scanTimer = null;
+    let scanPercent = 0;
+
+    function startFingerprintScan(e) {
+      if (e) e.preventDefault();
+      scanLaser.style.display = 'block';
+      scanTimer = setInterval(() => {
+        scanPercent += 5;
+        fpProgress.style.width = scanPercent + '%';
+
+        if (navigator.vibrate) navigator.vibrate(40);
+
+        if (scanPercent >= 100) {
+          clearInterval(scanTimer);
+          scanLaser.style.display = 'none';
+          fpSensor.style.borderColor = '#25d366';
+          fpSensor.querySelector('span').innerText = '💍';
+          fpStatusTxt.innerText = "Contract Sealed!";
+          contractBadge.style.display = 'block';
+          btnNextPromise.style.display = 'block';
+          playSfx('cheer');
+          confetti({ particleCount: 70, spread: 75, colors: ['#ff007f', '#25d366', '#ffd700'] });
+        }
+      }, 70);
+    }
+
+    function cancelFingerprintScan() {
+      if (scanPercent < 100) {
+        clearInterval(scanTimer);
+        scanPercent = 0;
+        fpProgress.style.width = '0%';
+        scanLaser.style.display = 'none';
+        fpStatusTxt.innerText = "Hold for 2 seconds...";
+      }
+    }
+
+    fpSensor.addEventListener('touchstart', startFingerprintScan);
+    fpSensor.addEventListener('touchend', cancelFingerprintScan);
+    fpSensor.addEventListener('touchcancel', cancelFingerprintScan);
+
+    fpSensor.addEventListener('mousedown', startFingerprintScan);
+    window.addEventListener('mouseup', cancelFingerprintScan);
+
+    // --- PAGE 4: RUNAWAY NO BUTTON LOGIC (TELUGU PHRASES) ---
+    let noCount = 0;
+    const noPhrases = [
+      "Please think again Devi! 🥺",
+      "Malli Alo Sinchu Bangaram 😭",
+      "Baga Alo Sinchu Bangaram Please Please 🥺",
+      "Are you really sure? 💔",
+      "You have no choice now Devi! 😂"
+    ];
+
+    function dodgeNo() {
+      playSfx('dodge');
+      noCount++;
+      const yesBtn = document.getElementById('btn-yes');
+      const noBtn = document.getElementById('btn-no');
+
+      const currentScale = 1 + (noCount * 0.22);
+      yesBtn.style.transform = `scale(${currentScale})`;
+
+      if (noCount <= noPhrases.length) {
+        document.getElementById('ask-heading').innerText = noPhrases[noCount - 1];
+        noBtn.innerText = "No";
+      }
+
+      const randomX = (Math.random() - 0.5) * 160;
+      const randomY = (Math.random() - 0.5) * 120;
+      noBtn.style.transform = `translate(${randomX}px, ${randomY}px)`;
+
+      if (noCount >= 5) {
+        noBtn.style.display = 'none';
+        document.getElementById('ask-sub').innerText = "Now you can only click YES for Ganesh! ❤️";
+      }
+    }
+
+    // ON CLICKING YES: NAVIGATES DIRECTLY TO THE QUIZ PAGE
+    function acceptProposal() {
+      playSfx('cheer');
+      confetti({ particleCount: 130, spread: 95, colors: ['#ff007f', '#ffccd5', '#ffffff'] });
+      setTimeout(() => goToPage('quiz'), 450);
+    }
+
+    // --- CONFIRMED ANSWERS QUIZ LOGIC ---
+    const conformAnswers = { 1: false, 2: false, 3: false };
+
+    const wrongHints = {
+      1: "Nijam cheppu Devi! Ganesh fell first and hardest! 🥺 Choose Ganesh!",
+      2: "Abbo! Ganesh kadhu, cute angry drama queen nuvve Devi! 😜 Choose Devi!",
+      3: "Competition ledhu ikkada! Both love each other equally forever! 🥰 Choose Both!"
+    };
+
+    function checkConformAnswer(qNum, isCorrect, btnElement) {
+      const parentCard = document.getElementById(`card-q${qNum}`);
+      
+      if (isCorrect) {
+        playSfx('unlock');
+        parentCard.querySelectorAll('.quiz-opt-btn').forEach(btn => btn.classList.remove('selected'));
+        btnElement.classList.add('selected');
+        conformAnswers[qNum] = true;
+
+        // When all 3 confirmed answers are correct, reveal the next button
+        if (conformAnswers[1] && conformAnswers[2] && conformAnswers[3]) {
+          playSfx('cheer');
+          confetti({ particleCount: 75, spread: 80, colors: ['#ff007f', '#ffd700', '#ffffff'] });
+          document.getElementById('btn-next-after-quiz').style.display = 'block';
+        }
+      } else {
+        playSfx('dodge');
+        alert(wrongHints[qNum]);
+        btnElement.style.transform = 'translateX(6px)';
+        setTimeout(() => { btnElement.style.transform = 'translateX(0)'; }, 150);
+      }
+    }
+
+    // --- PAGE 5: HOLD TO OPEN / RELEASE TO CLOSE ENVELOPE ---
+    const envBox = document.getElementById('env-box');
+    const envPocket = document.getElementById('env-pocket');
+    const promptTxt = document.getElementById('prompt-txt');
+    const btnGotoFinal = document.getElementById('btn-goto-final');
+
+    function openEnvelope() {
+      if (!envBox.classList.contains('open-flap')) {
+        envBox.classList.add('open-flap');
+        playSfx('paper');
+        promptTxt.style.opacity = '0.4';
+        confetti({ particleCount: 50, spread: 70, colors: ['#ff007f', '#ffd700', '#ffffff'] });
+        btnGotoFinal.style.display = 'block';
+      }
+    }
+
+    function closeEnvelope() {
+      if (envBox.classList.contains('open-flap')) {
+        envBox.classList.remove('open-flap');
+        playSfx('paper');
+        promptTxt.style.opacity = '1';
+      }
+    }
+
+    envPocket.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      openEnvelope();
+    });
+    envPocket.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      closeEnvelope();
+    });
+    envPocket.addEventListener('touchcancel', (e) => {
+      e.preventDefault();
+      closeEnvelope();
+    });
+
+    envPocket.addEventListener('mousedown', openEnvelope);
+    window.addEventListener('mouseup', closeEnvelope);
+
+    // --- PAGE 6: DUAL MESSAGING ACTIONS (WHATSAPP & INSTAGRAM) ---
+    function sendToGanesh() {
+      const reply = document.getElementById('crush-reply').value.trim();
+      if (!reply) return alert("Please type your sweet message!");
+      const text = encodeURIComponent(reply);
+      window.open(`https://api.whatsapp.com/send?phone=918688431772&text=${text}`, '_blank');
+    }
+
+    function sendToInstagram() {
+      const reply = document.getElementById('crush-reply').value.trim();
+      if (!reply) return alert("Please type your sweet message!");
+
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(reply).then(() => {
+          alert("Your sweet reply was copied! 💖 Paste it in Ganesh's Instagram DM.");
+          window.open('https://www.instagram.com/mr_devil_monarche_182?stkn=MWpmcGh4Mjg0ZDdseQ==', '_blank');
+        }).catch(() => {
+          window.open('https://www.instagram.com/mr_devil_monarche_182?stkn=MWpmcGh4Mjg0ZDdseQ==', '_blank');
+        });
+      } else {
+        window.open('https://www.instagram.com/mr_devil_monarche_182?stkn=MWpmcGh4Mjg0ZDdseQ==', '_blank');
+      }
+    }
+  </script>
+</body>
+</html>
