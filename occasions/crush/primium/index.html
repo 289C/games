@@ -252,11 +252,11 @@
       <span class="pill-btn">👑 VIP Member</span>
     </div>
 
-    <!-- SCREEN 1: PASSCODE GATE -->
+    <!-- SCREEN 1: PASSCODE GATE (NO PASSWORD HINT SHOWN) -->
     <div class="stage-card" id="screen-gate">
       <div style="font-size: 3.2rem; margin-bottom: 6px;">🔐👑</div>
       <h2 class="card-heading">VIP Access Portal</h2>
-      <p class="card-desc">Enter the exclusive passkey (`@devi`) to unlock all proposal slots</p>
+      <p class="card-desc">Enter your exclusive passkey to unlock all proposal slots</p>
 
       <div class="lock-field-box">
         <input type="password" id="vip-pass-input" class="lock-input" placeholder="Enter VIP Passkey" autocomplete="off" />
@@ -269,7 +269,7 @@
       </button>
     </div>
 
-    <!-- SCREEN 2: ANIMATED PREMIUM BANNER & SLOTS 1 TO 5 -->
+    <!-- SCREEN 2: ANIMATED PREMIUM BANNER & CLEAN SLOTS 1 TO 5 -->
     <div class="stage-card" id="screen-banner" style="display: none;">
       
       <!-- Creator Avatar Stamp -->
@@ -290,9 +290,9 @@
         </p>
       </div>
 
-      <!-- SLOTS 1 TO 5 SELECTION BUTTONS -->
+      <!-- CLEAN SLOT BUTTONS (NO NAMES DISPLAYED) -->
       <a href="slot1.html" class="btn-action">
-        <span>Open Slot 1 (Renu & Pavan) ❤️</span>
+        <span>Open Slot 1 ❤️</span>
       </a>
       <a href="slot2.html" class="btn-action" style="background: linear-gradient(135deg, #ff007f, #7928ca);">
         <span>Open Slot 2 🌹</span>
@@ -384,13 +384,13 @@
           colors: ['#ffd700', '#ff007f', '#ffffff']
         });
 
-        // Show VIP Banner Screen with Slots 1 to 5
+        // Show VIP Banner Screen with clean slots
         document.getElementById('screen-gate').style.display = 'none';
         document.getElementById('screen-banner').style.display = 'block';
 
       } else {
         playSfx('error');
-        errorMsg.innerText = "Invalid VIP Passkey! Try @devi 🔒";
+        errorMsg.innerText = "Invalid VIP Passkey! Try again 🔒";
         input.classList.add('shake-anim');
         setTimeout(() => input.classList.remove('shake-anim'), 400);
       }
