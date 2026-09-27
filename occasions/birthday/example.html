@@ -110,7 +110,7 @@
       line-height: 1.45;
     }
 
-    /* 3D CAKE & LIQUID DRIP STAGE */
+    /* 3D CAKE & LIQUID DRIP STAGE (SCREEN 1) */
     .cake-container {
       position: relative;
       width: 270px;
@@ -289,66 +289,148 @@
       z-index: 3;
     }
 
-    /* IDEA 1: CAKE CUTTING SWIPE STAGE */
-    .knife-cut-box {
+    /* REALISTIC DRAGGABLE KNIFE CUTTING ARENA (SCREEN 2) */
+    .knife-arena {
       position: relative;
-      width: 260px;
-      height: 220px;
-      margin: 10px auto 14px;
-      border-radius: 20px;
+      width: 100%;
+      height: 260px;
+      margin: 8px auto 14px;
+      border-radius: 24px;
+      background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.05) 0%, rgba(0, 0, 0, 0.4) 100%);
+      border: 1.5px dashed rgba(255, 215, 0, 0.35);
       overflow: hidden;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1.5px dashed rgba(255, 215, 0, 0.4);
-      display: flex;
-      align-items: center;
-      justify-content: center;
       touch-action: none;
     }
-    .cuttable-cake {
-      position: relative;
-      width: 220px;
-      height: 140px;
-      display: flex;
-      justify-content: center;
-      transition: all 0.5s ease;
-    }
-    .cake-half {
-      width: 50%;
-      height: 100%;
-      background: linear-gradient(180deg, #ff4081 0%, #f4a261 100%);
-      border-radius: 18px;
-      box-shadow: inset 0 4px 10px rgba(255, 255, 255, 0.4), 0 8px 20px rgba(0,0,0,0.5);
-      position: relative;
-      transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
-    }
-    .cake-half.left {
-      border-top-right-radius: 0;
-      border-bottom-right-radius: 0;
-      border-right: 2px dashed rgba(255, 255, 255, 0.6);
-    }
-    .cake-half.right {
-      border-top-left-radius: 0;
-      border-bottom-left-radius: 0;
-    }
-    .cut-line {
+
+    .draggable-knife {
       position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 50%;
-      width: 3px;
-      background: #ffd700;
-      box-shadow: 0 0 10px #ffd700;
-      transform: translateX(-50%);
+      top: 12px;
+      left: calc(50% - 22px);
+      width: 44px;
+      height: 75px;
+      cursor: grab;
+      z-index: 30;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: transform 0.05s ease;
+      filter: drop-shadow(0 6px 12px rgba(0,0,0,0.6));
+    }
+    .draggable-knife:active {
+      cursor: grabbing;
+      transform: scale(1.08) rotate(-8deg);
+    }
+    .knife-blade {
+      width: 10px;
+      height: 42px;
+      background: linear-gradient(90deg, #f8f9fa 0%, #ced4da 40%, #dee2e6 70%, #ffffff 100%);
+      clip-path: polygon(0 0, 100% 0, 100% 80%, 50% 100%, 0 80%);
+      border-radius: 1px;
+      box-shadow: inset 1px 0 2px rgba(255,255,255,0.8);
+    }
+    .knife-handle {
+      width: 16px;
+      height: 28px;
+      background: linear-gradient(90deg, #5c2c16 0%, #8b4513 50%, #4a1f0d 100%);
+      border-radius: 4px 4px 6px 6px;
+      border: 1px solid #ffd700;
+    }
+    .knife-grip-hint {
+      position: absolute;
+      bottom: -16px;
+      font-size: 0.65rem;
+      color: #ffd700;
+      white-space: nowrap;
+      font-weight: 700;
       pointer-events: none;
     }
-    .slice-apart .cake-half.left {
+
+    .realistic-cake-stage {
+      position: absolute;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 230px;
+      height: 125px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+    }
+
+    .cake-half-3d {
+      width: 100px;
+      height: 95px;
+      background: linear-gradient(180deg, #ff70a6 0%, #e63946 50%, #7b1126 100%);
+      position: relative;
+      transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: inset 0 6px 12px rgba(255, 255, 255, 0.4), 0 8px 18px rgba(0, 0, 0, 0.6);
+      z-index: 5;
+    }
+    .cake-half-3d.left {
+      border-radius: 20px 0 0 12px;
+      border-right: 1.5px dashed rgba(255, 255, 255, 0.5);
+    }
+    .cake-half-3d.right {
+      border-radius: 0 20px 12px 0;
+    }
+
+    .frosting-top {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 18px;
+      background: #ffffff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+    .cake-half-3d.left .frosting-top { border-radius: 20px 0 0 0; }
+    .cake-half-3d.right .frosting-top { border-radius: 0 20px 0 0; }
+
+    .creamy-drips {
+      position: absolute;
+      top: 16px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: space-around;
+      pointer-events: none;
+    }
+    .creamy-drips span {
+      background: #ffffff;
+      border-radius: 0 0 8px 8px;
+    }
+    .creamy-drips span:nth-child(1) { width: 14px; height: 16px; }
+    .creamy-drips span:nth-child(2) { width: 12px; height: 24px; }
+    .creamy-drips span:nth-child(3) { width: 15px; height: 12px; }
+
+    .cut-seam-guide {
+      width: 4px;
+      height: 95px;
+      background: rgba(255, 215, 0, 0.4);
+      box-shadow: 0 0 8px rgba(255, 215, 0, 0.7);
+      z-index: 6;
+    }
+
+    .cake-cut-active #cake-left {
       transform: translateX(-35px) rotate(-10deg);
     }
-    .slice-apart .cake-half.right {
+    .cake-cut-active #cake-right {
       transform: translateX(35px) rotate(10deg);
     }
 
-    /* IDEA 3: ROAST & TOAST 3D FLIP CARDS GRID */
+    .cake-tray-plate {
+      position: absolute;
+      bottom: -8px;
+      left: -15px;
+      right: -15px;
+      height: 16px;
+      background: linear-gradient(180deg, #f8f9fa 0%, #adb5bd 45%, #495057 100%);
+      border-radius: 50%;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+      z-index: 3;
+    }
+
+    /* ROAST & TOAST 3D FLIP CARDS GRID (SCREEN 3) */
     .roast-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -411,7 +493,7 @@
       font-weight: 600;
     }
 
-    /* Common Components */
+    /* Common Components & Buttons */
     .meter-container {
       width: 100%;
       margin: 12px 0 14px;
@@ -468,7 +550,7 @@
       margin-top: 10px;
     }
 
-    /* BALLOONS GRID */
+    /* BALLOONS GRID (SCREEN 4) */
     .balloons-grid {
       display: flex;
       justify-content: center;
@@ -489,7 +571,7 @@
       filter: grayscale(1);
     }
 
-    /* DM PROFILE BOX */
+    /* DM PROFILE BOX (SCREEN 5) */
     .insta-avatar-stage {
       position: relative;
       width: 86px;
@@ -607,29 +689,51 @@
       </button>
     </div>
 
-    <!-- SCREEN 2: IDEA 1 - SWIPE TO CUT THE CAKE -->
+    <!-- SCREEN 2: REALISTIC DRAGGABLE KNIFE CAKE CUTTING -->
     <div class="stage-card" id="screen-cut" style="display: none;">
-      <h2 class="card-heading">Cut Your Cake! 🔪🎂</h2>
-      <p class="card-desc">Swipe your finger down the center line to make the first cut!</p>
+      <h2 class="card-heading">Cut the Cake! 🔪🎂</h2>
+      <p class="card-desc">Drag the knife from the top and slice through the cake!</p>
 
-      <div class="knife-cut-box" id="cut-area">
-        <div class="cuttable-cake" id="cuttable-cake">
-          <div class="cake-half left"></div>
-          <div class="cake-half right"></div>
-          <div class="cut-line"></div>
+      <div class="knife-arena" id="knife-arena">
+        <!-- Draggable Knife -->
+        <div class="draggable-knife" id="drag-knife">
+          <div class="knife-handle"></div>
+          <div class="knife-blade"></div>
+          <span class="knife-grip-hint">✋ Drag Me</span>
+        </div>
+
+        <!-- Realistic Cake Target -->
+        <div class="realistic-cake-stage" id="cake-target">
+          <div class="cake-half-3d left" id="cake-left">
+            <div class="frosting-top"></div>
+            <div class="creamy-drips">
+              <span></span><span></span><span></span>
+            </div>
+          </div>
+
+          <div class="cut-seam-guide" id="cut-target-seam"></div>
+
+          <div class="cake-half-3d right" id="cake-right">
+            <div class="frosting-top"></div>
+            <div class="creamy-drips">
+              <span></span><span></span><span></span>
+            </div>
+          </div>
+
+          <div class="cake-tray-plate"></div>
         </div>
       </div>
 
-      <p id="cut-status" style="font-size: 0.8rem; color: #ffd700; min-height: 22px;">
-        👇 Swipe downwards across the cake
+      <p id="cut-status" style="font-size: 0.82rem; color: #ffd700; font-weight: 600; min-height: 22px;">
+        🔪 Grab the knife & pull it down into the cake
       </p>
 
-      <button class="btn-action" id="btn-cut-next" style="display: none; margin-top: 10px;" onclick="showScreen('screen-roast')">
+      <button class="btn-action" id="btn-cut-next" style="display: none; margin-top: 12px;" onclick="showScreen('screen-roast')">
         <span>Reveal Secret Cards 🃏 ➔</span>
       </button>
     </div>
 
-    <!-- SCREEN 3: IDEA 3 - "ROAST & TOAST" 3D MYSTERY FLIP CARDS -->
+    <!-- SCREEN 3: "ROAST & TOAST" 3D MYSTERY FLIP CARDS -->
     <div class="stage-card" id="screen-roast" style="display: none;">
       <h2 class="card-heading">Roast & Toast! 🃏🔥</h2>
       <p class="card-desc">Tap each mystery card to flip & reveal what your friends think!</p>
@@ -734,7 +838,7 @@
       </p>
 
       <div class="features-list">
-        <div><span>🎂</span> <strong>Mic Blow Candle & Swipe-to-Cut Cake</strong></div>
+        <div><span>🎂</span> <strong>Mic Blow Candle & Draggable Knife Slicing</strong></div>
         <div><span>🃏</span> <strong>Roast & Toast 3D Flip Cards</strong> with photos</div>
         <div><span>🎈</span> <strong>Secret Balloon Poppers & Wishes</strong></div>
         <div><span>🎁</span> <strong>Unfolding Virtual Surprise Gift Box</strong></div>
@@ -766,7 +870,7 @@
       wrap.appendChild(p);
     }
 
-    // 2. SYNTHETIC AUDIO SFX
+    // 2. SYNTHETIC AUDIO SFX (ZERO MP3 FILES REQUIRED)
     let sfxCtx = null;
     function playSfx(type) {
       try {
@@ -795,12 +899,12 @@
           osc.stop(now + 0.12);
         } else if (type === 'slice') {
           osc.type = 'sawtooth';
-          osc.frequency.setValueAtTime(600, now);
-          osc.frequency.exponentialRampToValueAtTime(200, now + 0.25);
-          gain.gain.setValueAtTime(0.25, now);
-          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+          osc.frequency.setValueAtTime(650, now);
+          osc.frequency.exponentialRampToValueAtTime(220, now + 0.28);
+          gain.gain.setValueAtTime(0.3, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.28);
           osc.start(now);
-          osc.stop(now + 0.25);
+          osc.stop(now + 0.28);
         } else if (type === 'flip') {
           osc.type = 'sine';
           osc.frequency.setValueAtTime(350, now);
@@ -833,9 +937,12 @@
         target.style.display = 'block';
         playSfx('pop');
       }
+      if (screenId === 'screen-cut') {
+        setupCakeCutInteraction();
+      }
     }
 
-    // 4. MICROPHONE CANDLE BLOW SENSOR
+    // 4. MICROPHONE CANDLE BLOW SENSOR (SCREEN 1)
     let audioContext = null;
     let analyser = null;
     let microphone = null;
@@ -911,47 +1018,92 @@
           colors: ['#00b4d8', '#ff4081', '#ffd166', '#ffffff']
         });
         showScreen('screen-cut');
-        setupCakeCutInteraction();
       }, 700);
     }
 
-    // 5. IDEA 1: SWIPE-TO-CUT INTERACTION LOGIC
-    let isCakeCut = false;
-    function setupCakeCutInteraction() {
-      const cutArea = document.getElementById('cut-area');
-      let startY = 0;
-      let isTouching = false;
+    // 5. DRAGGABLE KNIFE CUTTING LOGIC (SCREEN 2)
+    let isCakeCutDone = false;
 
-      cutArea.addEventListener('pointerdown', (e) => {
-        if (isCakeCut) return;
-        isTouching = true;
+    function setupCakeCutInteraction() {
+      const knife = document.getElementById('drag-knife');
+      const arena = document.getElementById('knife-arena');
+      const targetCake = document.getElementById('cake-target');
+      
+      let isDragging = false;
+      let startX, startY;
+      let initialLeft, initialTop;
+
+      knife.addEventListener('pointerdown', (e) => {
+        if (isCakeCutDone) return;
+        isDragging = true;
+        knife.setPointerCapture(e.pointerId);
+
+        startX = e.clientX;
         startY = e.clientY;
+        initialLeft = knife.offsetLeft;
+        initialTop = knife.offsetTop;
       });
 
-      cutArea.addEventListener('pointermove', (e) => {
-        if (!isTouching || isCakeCut) return;
-        const diffY = e.clientY - startY;
+      knife.addEventListener('pointermove', (e) => {
+        if (!isDragging || isCakeCutDone) return;
 
-        if (diffY > 60) {
-          isCakeCut = true;
-          isTouching = false;
-          executeCakeSlice();
+        const deltaX = e.clientX - startX;
+        const deltaY = e.clientY - startY;
+
+        let newX = initialLeft + deltaX;
+        let newY = initialTop + deltaY;
+
+        newX = Math.max(10, Math.min(arena.clientWidth - 50, newX));
+        newY = Math.max(10, Math.min(arena.clientHeight - 80, newY));
+
+        knife.style.left = newX + 'px';
+        knife.style.top = newY + 'px';
+
+        const knifeRect = knife.getBoundingClientRect();
+        const targetRect = targetCake.getBoundingClientRect();
+
+        if (
+          knifeRect.bottom >= targetRect.top + 20 &&
+          knifeRect.left + knifeRect.width / 2 >= targetRect.left + 30 &&
+          knifeRect.left + knifeRect.width / 2 <= targetRect.right - 30
+        ) {
+          triggerCakeCutSuccess();
         }
       });
 
-      cutArea.addEventListener('pointerup', () => { isTouching = false; });
-      cutArea.addEventListener('pointercancel', () => { isTouching = false; });
+      const stopDrag = (e) => {
+        if (!isDragging) return;
+        isDragging = false;
+        try { knife.releasePointerCapture(e.pointerId); } catch (err) {}
+
+        if (!isCakeCutDone) {
+          knife.style.transition = 'top 0.3s ease, left 0.3s ease';
+          knife.style.top = '12px';
+          knife.style.left = 'calc(50% - 22px)';
+          setTimeout(() => { knife.style.transition = ''; }, 300);
+        }
+      };
+
+      knife.addEventListener('pointerup', stopDrag);
+      knife.addEventListener('pointercancel', stopDrag);
     }
 
-    function executeCakeSlice() {
+    function triggerCakeCutSuccess() {
+      if (isCakeCutDone) return;
+      isCakeCutDone = true;
+
       playSfx('slice');
-      document.getElementById('cuttable-cake').classList.add('slice-apart');
-      document.getElementById('cut-status').innerHTML = "🎉 First Slice Cut Successfully!";
+      if (navigator.vibrate) navigator.vibrate([80, 50, 80]);
+
+      document.getElementById('knife-arena').classList.add('cake-cut-active');
+      document.getElementById('cut-status').innerHTML = "🎉 Cake Sliced Perfectly! Happy Birthday!";
+      document.querySelector('.knife-grip-hint').style.display = 'none';
 
       confetti({
-        particleCount: 90,
-        spread: 85,
-        origin: { y: 0.6 }
+        particleCount: 110,
+        spread: 90,
+        origin: { y: 0.65 },
+        colors: ['#ffd700', '#ff007f', '#00b4d8', '#ffffff']
       });
 
       setTimeout(() => {
@@ -959,13 +1111,13 @@
       }, 400);
     }
 
-    // 6. IDEA 3: 3D CARD FLIP HANDLER
+    // 6. 3D CARD FLIP HANDLER (SCREEN 3)
     function flipCard(cardEl) {
       playSfx('flip');
       cardEl.classList.toggle('flipped');
     }
 
-    // 7. BALLOON POP LOGIC
+    // 7. BALLOON POP LOGIC (SCREEN 4)
     let poppedCount = 0;
     function popBalloon(id, msg) {
       const el = document.getElementById(id);
