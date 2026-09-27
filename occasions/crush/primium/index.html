@@ -138,13 +138,13 @@
     /* Action Buttons */
     .btn-action {
       width: 100%;
-      padding: 13px;
-      border-radius: 25px;
+      padding: 12px;
+      border-radius: 22px;
       border: none;
       background: linear-gradient(135deg, #ffd700, #ff007f);
       color: #2b0414;
       font-weight: 800;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       cursor: pointer;
       box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
       transition: transform 0.15s, box-shadow 0.15s;
@@ -153,6 +153,7 @@
       justify-content: center;
       gap: 8px;
       text-decoration: none;
+      margin-bottom: 10px;
     }
     .btn-action:active { transform: scale(0.97); }
 
@@ -160,9 +161,9 @@
     .vip-banner-box {
       background: linear-gradient(135deg, rgba(255, 215, 0, 0.18) 0%, rgba(255, 0, 128, 0.25) 100%);
       border: 2px solid #ffd700;
-      border-radius: 24px;
-      padding: 20px 16px;
-      margin: 16px 0 20px;
+      border-radius: 20px;
+      padding: 14px 12px;
+      margin: 12px 0 16px;
       box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3), inset 0 0 20px rgba(255, 215, 0, 0.2);
       animation: bannerGlowPulse 2.5s infinite alternate ease-in-out;
       position: relative;
@@ -174,51 +175,51 @@
     }
 
     .banner-crown-icon {
-      font-size: 3.5rem;
-      filter: drop-shadow(0 0 16px #ffd700);
+      font-size: 2.8rem;
+      filter: drop-shadow(0 0 12px #ffd700);
       animation: floatCrown 2s infinite alternate ease-in-out;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
       display: inline-block;
     }
     @keyframes floatCrown {
       0% { transform: translateY(0) rotate(-4deg); }
-      100% { transform: translateY(-8px) rotate(4deg); }
+      100% { transform: translateY(-6px) rotate(4deg); }
     }
 
     .vip-badge-tag {
       display: inline-block;
-      padding: 4px 14px;
+      padding: 4px 12px;
       border-radius: 18px;
       background: #ffd700;
       color: #260418;
-      font-size: 0.72rem;
+      font-size: 0.68rem;
       font-weight: 900;
       letter-spacing: 1.5px;
       text-transform: uppercase;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     .banner-title {
       font-family: 'Playfair Display', serif;
-      font-size: 1.45rem;
+      font-size: 1.3rem;
       font-weight: 800;
       color: #fff7d1;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
       text-shadow: 0 0 14px rgba(255, 215, 0, 0.6);
     }
 
     .banner-subtitle {
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       color: #ffccd5;
-      line-height: 1.45;
+      line-height: 1.4;
     }
 
     /* Creator Profile Stamp */
     .insta-avatar-stage {
       position: relative;
-      width: 76px;
-      height: 76px;
-      margin: 0 auto 12px;
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 10px;
     }
     .insta-ring {
       width: 100%;
@@ -253,9 +254,9 @@
 
     <!-- SCREEN 1: PASSCODE GATE -->
     <div class="stage-card" id="screen-gate">
-      <div style="font-size: 3.5rem; margin-bottom: 8px;">🔐👑</div>
+      <div style="font-size: 3.2rem; margin-bottom: 6px;">🔐👑</div>
       <h2 class="card-heading">VIP Access Portal</h2>
-      <p class="card-desc">Enter the exclusive passkey to unlock your premium crush proposal</p>
+      <p class="card-desc">Enter the exclusive passkey (`@devi`) to unlock all proposal slots</p>
 
       <div class="lock-field-box">
         <input type="password" id="vip-pass-input" class="lock-input" placeholder="Enter VIP Passkey" autocomplete="off" />
@@ -264,11 +265,11 @@
       <p id="gate-error" style="font-size: 0.76rem; color: #ff4d6d; min-height: 18px; margin-bottom: 8px; font-weight: 600;"></p>
 
       <button class="btn-action" onclick="verifyVipKey()">
-        <span>Unlock Premium Experience ➔</span>
+        <span>Unlock All Slots ➔</span>
       </button>
     </div>
 
-    <!-- SCREEN 2: ANIMATED PREMIUM BANNER & DIRECT LINK TO SLOT1.HTML -->
+    <!-- SCREEN 2: ANIMATED PREMIUM BANNER & SLOTS 1 TO 5 -->
     <div class="stage-card" id="screen-banner" style="display: none;">
       
       <!-- Creator Avatar Stamp -->
@@ -283,18 +284,30 @@
       <!-- ANIMATED GLOWING PREMIUM BANNER -->
       <div class="vip-banner-box">
         <div class="banner-crown-icon">👑</div>
-        <h3 class="banner-title">VIP Unlocked!</h3>
+        <h3 class="banner-title">All Slots Unlocked!</h3>
         <p class="banner-subtitle">
-          Your special crush proposal page is unlocked and ready to view.
+          Choose any slot below to open your custom interactive experiences.
         </p>
       </div>
 
-      <!-- DIRECT LINK TO SLOT1.HTML IN THE SAME FOLDER -->
-      <a href="slot1.html" class="btn-action" style="margin-bottom: 12px;">
-        <span>Open Proposal Page ❤️ ➔</span>
+      <!-- SLOTS 1 TO 5 SELECTION BUTTONS -->
+      <a href="slot1.html" class="btn-action">
+        <span>Open Slot 1 (Renu & Pavan) ❤️</span>
+      </a>
+      <a href="slot2.html" class="btn-action" style="background: linear-gradient(135deg, #ff007f, #7928ca);">
+        <span>Open Slot 2 🌹</span>
+      </a>
+      <a href="slot3.html" class="btn-action" style="background: linear-gradient(135deg, #7928ca, #4338ca);">
+        <span>Open Slot 3 💍</span>
+      </a>
+      <a href="slot4.html" class="btn-action" style="background: linear-gradient(135deg, #059669, #10b981);">
+        <span>Open Slot 4 ✨</span>
+      </a>
+      <a href="slot5.html" class="btn-action" style="background: linear-gradient(135deg, #d97706, #f59e0b);">
+        <span>Open Slot 5 💖</span>
       </a>
 
-      <a href="../index.html" class="btn-action" style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.3); color: #fff;">
+      <a href="../index.html" class="btn-action" style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.3); color: #fff; margin-top: 6px;">
         <span>← Return to Crush Hub</span>
       </a>
 
@@ -303,7 +316,7 @@
   </div>
 
   <script>
-    // --- EXACT PASSWORD SET TO @devi ---
+    // --- PASSCODE SET TO @devi ---
     const VIP_PASSKEY = "@devi";
 
     // 1. FLOATING PARTICLES
@@ -371,13 +384,13 @@
           colors: ['#ffd700', '#ff007f', '#ffffff']
         });
 
-        // Show VIP Banner Screen with the direct link to slot1.html
+        // Show VIP Banner Screen with Slots 1 to 5
         document.getElementById('screen-gate').style.display = 'none';
         document.getElementById('screen-banner').style.display = 'block';
 
       } else {
         playSfx('error');
-        errorMsg.innerText = "Invalid VIP Passkey! Try again 🔒";
+        errorMsg.innerText = "Invalid VIP Passkey! Try @devi 🔒";
         input.classList.add('shake-anim');
         setTimeout(() => input.classList.remove('shake-anim'), 400);
       }
@@ -385,6 +398,23 @@
 
     document.getElementById('vip-pass-input').addEventListener('keypress', (e) => {
       if (e.key === 'Enter') verifyVipKey();
+    });
+  </script>
+
+  <!-- FIREBASE VISITOR TRACKER -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      databaseURL: "https://friendsgame-872f5-default-rtdb.firebaseio.com/"
+    };
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    firebase.database().ref('visitors').push({
+      page: window.location.pathname,
+      time: new Date().toLocaleString(),
+      device: navigator.userAgent
     });
   </script>
 </body>
