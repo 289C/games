@@ -196,10 +196,7 @@
       justify-content: space-around;
       pointer-events: none;
     }
-    .drip {
-      background: #ffffff;
-      border-radius: 0 0 10px 10px;
-    }
+    .drip { background: #ffffff; border-radius: 0 0 10px 10px; }
     .d1 { width: 14px; height: 16px; }
     .d2 { width: 12px; height: 26px; }
     .d3 { width: 16px; height: 12px; }
@@ -236,10 +233,7 @@
       justify-content: space-around;
       pointer-events: none;
     }
-    .drip-b {
-      background: #fff7ed;
-      border-radius: 0 0 12px 12px;
-    }
+    .drip-b { background: #fff7ed; border-radius: 0 0 12px 12px; }
     .db1 { width: 16px; height: 18px; }
     .db2 { width: 13px; height: 32px; }
     .db3 { width: 18px; height: 15px; }
@@ -411,12 +405,8 @@
       z-index: 6;
     }
 
-    .cake-cut-active #cake-left {
-      transform: translateX(-35px) rotate(-10deg);
-    }
-    .cake-cut-active #cake-right {
-      transform: translateX(35px) rotate(10deg);
-    }
+    .cake-cut-active #cake-left { transform: translateX(-35px) rotate(-10deg); }
+    .cake-cut-active #cake-right { transform: translateX(35px) rotate(10deg); }
 
     .cake-tray-plate {
       position: absolute;
@@ -430,7 +420,131 @@
       z-index: 3;
     }
 
-    /* ROAST & TOAST 3D FLIP CARDS GRID (SCREEN 3) */
+    /* 3D TAP REVEAL PHOTO DECK (SCREEN 3 NEW) */
+    .photo-deck-stage {
+      position: relative;
+      width: 250px;
+      height: 310px;
+      margin: 12px auto 16px;
+      perspective: 1000px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .photo-card-3d {
+      position: absolute;
+      width: 230px;
+      height: 290px;
+      border-radius: 20px;
+      overflow: hidden;
+      background: #111a2e;
+      border: 2px solid rgba(255, 215, 0, 0.65);
+      box-shadow: 0 14px 35px rgba(0,0,0,0.7), 0 0 20px rgba(0, 180, 216, 0.3);
+      cursor: pointer;
+      transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.45s ease;
+      transform-origin: 50% 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .photo-card-3d img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      pointer-events: none;
+    }
+
+    .photo-card-info {
+      flex: 1;
+      background: linear-gradient(180deg, #0d1a2d 0%, #060d17 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 10px;
+      border-top: 1px solid rgba(255, 215, 0, 0.3);
+    }
+    .photo-card-info h4 {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #ffd700;
+    }
+    .photo-card-info p {
+      font-size: 0.7rem;
+      color: #90e0ef;
+    }
+
+    /* 3D Stack Layering Transitions */
+    .photo-card-3d.active {
+      transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+      opacity: 1;
+      z-index: 10;
+      pointer-events: auto;
+    }
+    .photo-card-3d.next-1 {
+      transform: translate3d(0, 12px, -40px) scale(0.94) rotate(3deg);
+      opacity: 0.85;
+      z-index: 8;
+      pointer-events: none;
+    }
+    .photo-card-3d.next-2 {
+      transform: translate3d(0, 22px, -80px) scale(0.88) rotate(-3deg);
+      opacity: 0.65;
+      z-index: 6;
+      pointer-events: none;
+    }
+    .photo-card-3d.hidden-back {
+      transform: translate3d(0, 32px, -120px) scale(0.82);
+      opacity: 0;
+      z-index: 2;
+      pointer-events: none;
+    }
+    .photo-card-3d.flung-away {
+      transform: translate3d(160px, -60px, 60px) rotate(35deg) scale(0.7);
+      opacity: 0;
+      z-index: 15;
+      pointer-events: none;
+    }
+
+    /* Navigation Controller for Photos */
+    .deck-nav-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 250px;
+      margin: 0 auto 14px;
+    }
+    .deck-arrow-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(0, 180, 216, 0.4);
+      color: #fff;
+      padding: 6px 14px;
+      border-radius: 16px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .deck-arrow-btn:active { transform: scale(0.92); }
+    .deck-dots {
+      display: flex;
+      gap: 6px;
+    }
+    .deck-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.25);
+      transition: background 0.3s, transform 0.3s;
+    }
+    .deck-dot.active {
+      background: #ffd700;
+      transform: scale(1.3);
+    }
+
+    /* ROAST & TOAST 3D FLIP CARDS GRID (SCREEN 4) */
     .roast-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -452,9 +566,7 @@
       transform-style: preserve-3d;
       border-radius: 16px;
     }
-    .flip-card.flipped .flip-inner {
-      transform: rotateY(180deg);
-    }
+    .flip-card.flipped .flip-inner { transform: rotateY(180deg); }
     .flip-front, .flip-back {
       position: absolute;
       width: 100%;
@@ -494,10 +606,7 @@
     }
 
     /* Common Components & Buttons */
-    .meter-container {
-      width: 100%;
-      margin: 12px 0 14px;
-    }
+    .meter-container { width: 100%; margin: 12px 0 14px; }
     .meter-bar-wrap {
       width: 180px;
       height: 7px;
@@ -550,7 +659,7 @@
       margin-top: 10px;
     }
 
-    /* BALLOONS GRID (SCREEN 4) */
+    /* BALLOONS GRID (SCREEN 5) */
     .balloons-grid {
       display: flex;
       justify-content: center;
@@ -571,7 +680,7 @@
       filter: grayscale(1);
     }
 
-    /* DM PROFILE BOX (SCREEN 5) */
+    /* DM PROFILE BOX (SCREEN 6) */
     .insta-avatar-stage {
       position: relative;
       width: 86px;
@@ -695,31 +804,22 @@
       <p class="card-desc">Drag the knife from the top and slice through the cake!</p>
 
       <div class="knife-arena" id="knife-arena">
-        <!-- Draggable Knife -->
         <div class="draggable-knife" id="drag-knife">
           <div class="knife-handle"></div>
           <div class="knife-blade"></div>
           <span class="knife-grip-hint">✋ Drag Me</span>
         </div>
 
-        <!-- Realistic Cake Target -->
         <div class="realistic-cake-stage" id="cake-target">
           <div class="cake-half-3d left" id="cake-left">
             <div class="frosting-top"></div>
-            <div class="creamy-drips">
-              <span></span><span></span><span></span>
-            </div>
+            <div class="creamy-drips"><span></span><span></span><span></span></div>
           </div>
-
           <div class="cut-seam-guide" id="cut-target-seam"></div>
-
           <div class="cake-half-3d right" id="cake-right">
             <div class="frosting-top"></div>
-            <div class="creamy-drips">
-              <span></span><span></span><span></span>
-            </div>
+            <div class="creamy-drips"><span></span><span></span><span></span></div>
           </div>
-
           <div class="cake-tray-plate"></div>
         </div>
       </div>
@@ -728,18 +828,77 @@
         🔪 Grab the knife & pull it down into the cake
       </p>
 
-      <button class="btn-action" id="btn-cut-next" style="display: none; margin-top: 12px;" onclick="showScreen('screen-roast')">
-        <span>Reveal Secret Cards 🃏 ➔</span>
+      <button class="btn-action" id="btn-cut-next" style="display: none; margin-top: 12px;" onclick="showScreen('screen-3d-photos')">
+        <span>Reveal Birthday Memories 📸 ➔</span>
       </button>
     </div>
 
-    <!-- SCREEN 3: "ROAST & TOAST" 3D MYSTERY FLIP CARDS -->
+    <!-- SCREEN 3: 3D TAP-TO-REVEAL FORWARD/BACKWARD PHOTO DECK -->
+    <div class="stage-card" id="screen-3d-photos" style="display: none;">
+      <h2 class="card-heading">Cherished Memories ✨</h2>
+      <p class="card-desc">Tap the photo or use buttons to flip through memories in 3D!</p>
+
+      <div class="photo-deck-stage" id="deck-stage" onclick="nextPhoto()">
+        <!-- Card 1 -->
+        <div class="photo-card-3d active" data-index="0">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80" alt="Memory 1" onerror="this.src='https://placehold.co/400x500/900/fff?text=Memory+1';" />
+          <div class="photo-card-info">
+            <h4>Pure Gold Moments 💖</h4>
+            <p>Every second with you is a celebration</p>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="photo-card-3d next-1" data-index="1">
+          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80" alt="Memory 2" onerror="this.src='https://placehold.co/400x500/800/fff?text=Memory+2';" />
+          <div class="photo-card-info">
+            <h4>Unstoppable Energy ⚡</h4>
+            <p>Spreading smiles everywhere you go</p>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="photo-card-3d next-2" data-index="2">
+          <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80" alt="Memory 3" onerror="this.src='https://placehold.co/400x500/700/fff?text=Memory+3';" />
+          <div class="photo-card-info">
+            <h4>Candid Smiles 😊</h4>
+            <p>The laughs we will remember forever</p>
+          </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="photo-card-3d hidden-back" data-index="3">
+          <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=600&q=80" alt="Memory 4" onerror="this.src='https://placehold.co/400x500/600/fff?text=Memory+4';" />
+          <div class="photo-card-info">
+            <h4>Boss Energy 👑</h4>
+            <p>May your future shine brighter than ever!</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Controls: Forward, Backward & Dots -->
+      <div class="deck-nav-bar">
+        <button class="deck-arrow-btn" onclick="event.stopPropagation(); prevPhoto();">◀ Prev</button>
+        <div class="deck-dots">
+          <span class="deck-dot active"></span>
+          <span class="deck-dot"></span>
+          <span class="deck-dot"></span>
+          <span class="deck-dot"></span>
+        </div>
+        <button class="deck-arrow-btn" onclick="event.stopPropagation(); nextPhoto();">Next ▶</button>
+      </div>
+
+      <button class="btn-action" onclick="showScreen('screen-roast')">
+        <span>Roast & Toast Cards 🃏 ➔</span>
+      </button>
+    </div>
+
+    <!-- SCREEN 4: "ROAST & TOAST" 3D MYSTERY FLIP CARDS -->
     <div class="stage-card" id="screen-roast" style="display: none;">
       <h2 class="card-heading">Roast & Toast! 🃏🔥</h2>
       <p class="card-desc">Tap each mystery card to flip & reveal what your friends think!</p>
 
       <div class="roast-grid">
-        <!-- Card 1 -->
         <div class="flip-card" onclick="flipCard(this)">
           <div class="flip-inner">
             <div class="flip-front">
@@ -753,7 +912,6 @@
           </div>
         </div>
 
-        <!-- Card 2 -->
         <div class="flip-card" onclick="flipCard(this)">
           <div class="flip-inner">
             <div class="flip-front">
@@ -767,7 +925,6 @@
           </div>
         </div>
 
-        <!-- Card 3 -->
         <div class="flip-card" onclick="flipCard(this)">
           <div class="flip-inner">
             <div class="flip-front">
@@ -781,7 +938,6 @@
           </div>
         </div>
 
-        <!-- Card 4 -->
         <div class="flip-card" onclick="flipCard(this)">
           <div class="flip-inner">
             <div class="flip-front">
@@ -801,7 +957,7 @@
       </button>
     </div>
 
-    <!-- SCREEN 4: TOUCH-TO-POP BALLOONS -->
+    <!-- SCREEN 5: TOUCH-TO-POP BALLOONS -->
     <div class="stage-card" id="screen-balloons" style="display: none;">
       <h2 class="card-heading">Pop Every Balloon! 🎈</h2>
       <p class="card-desc">Touch the balloons to reveal birthday wishes hidden underneath</p>
@@ -822,7 +978,7 @@
       </button>
     </div>
 
-    <!-- SCREEN 5: BOOKING / DM CARD FOR SATISH KOMMANA -->
+    <!-- SCREEN 6: BOOKING / DM CARD FOR SATISH KOMMANA -->
     <div class="stage-card" id="screen-custom" style="display: none;">
       <div class="insta-avatar-stage">
         <div class="insta-ring">
@@ -838,10 +994,10 @@
       </p>
 
       <div class="features-list">
-        <div><span>🎂</span> <strong>Mic Blow Candle & Draggable Knife Slicing</strong></div>
-        <div><span>🃏</span> <strong>Roast & Toast 3D Flip Cards</strong> with photos</div>
+        <div><span>🎂</span> <strong>Mic Candle Blow & Draggable Knife Cake Slicing</strong></div>
+        <div><span>📸</span> <strong>Interactive 3D Tap Memory Deck</strong> (Forward & Back)</div>
+        <div><span>🃏</span> <strong>Roast & Toast 3D Flip Cards</strong> with fun secrets</div>
         <div><span>🎈</span> <strong>Secret Balloon Poppers & Wishes</strong></div>
-        <div><span>🎁</span> <strong>Unfolding Virtual Surprise Gift Box</strong></div>
         <div><span>📲</span> <strong>Instant WhatsApp & Instagram Reply</strong></div>
       </div>
 
@@ -870,7 +1026,7 @@
       wrap.appendChild(p);
     }
 
-    // 2. SYNTHETIC AUDIO SFX (ZERO MP3 FILES REQUIRED)
+    // 2. SYNTHETIC AUDIO SFX (ZERO EXTERNAL MP3s NEEDED)
     let sfxCtx = null;
     function playSfx(type) {
       try {
@@ -939,6 +1095,9 @@
       }
       if (screenId === 'screen-cut') {
         setupCakeCutInteraction();
+      }
+      if (screenId === 'screen-3d-photos') {
+        renderDeck();
       }
     }
 
@@ -1111,13 +1270,62 @@
       }, 400);
     }
 
-    // 6. 3D CARD FLIP HANDLER (SCREEN 3)
+    // 6. SCREEN 3: 3D PHOTO DECK (FORWARD & BACKWARD CONTROLLER)
+    let currentPhotoIdx = 0;
+    const cards = document.querySelectorAll('.photo-card-3d');
+    const dots = document.querySelectorAll('.deck-dot');
+    const totalPhotos = cards.length;
+
+    function renderDeck() {
+      cards.forEach((card, idx) => {
+        card.className = 'photo-card-3d';
+        
+        if (idx < currentPhotoIdx) {
+          card.classList.add('flung-away');
+        } else if (idx === currentPhotoIdx) {
+          card.classList.add('active');
+        } else if (idx === currentPhotoIdx + 1) {
+          card.classList.add('next-1');
+        } else if (idx === currentPhotoIdx + 2) {
+          card.classList.add('next-2');
+        } else {
+          card.classList.add('hidden-back');
+        }
+      });
+
+      dots.forEach((dot, dIdx) => {
+        dot.classList.toggle('active', dIdx === currentPhotoIdx);
+      });
+    }
+
+    function nextPhoto() {
+      if (currentPhotoIdx < totalPhotos - 1) {
+        currentPhotoIdx++;
+      } else {
+        currentPhotoIdx = 0; // Loop back
+      }
+      playSfx('flip');
+      renderDeck();
+      confetti({ particleCount: 20, spread: 45, origin: { y: 0.6 } });
+    }
+
+    function prevPhoto() {
+      if (currentPhotoIdx > 0) {
+        currentPhotoIdx--;
+      } else {
+        currentPhotoIdx = totalPhotos - 1; // Go to last
+      }
+      playSfx('flip');
+      renderDeck();
+    }
+
+    // 7. 3D CARD FLIP HANDLER (SCREEN 4)
     function flipCard(cardEl) {
       playSfx('flip');
       cardEl.classList.toggle('flipped');
     }
 
-    // 7. BALLOON POP LOGIC (SCREEN 4)
+    // 8. BALLOON POP LOGIC (SCREEN 5)
     let poppedCount = 0;
     function popBalloon(id, msg) {
       const el = document.getElementById(id);
