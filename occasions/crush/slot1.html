@@ -49,36 +49,6 @@
       display: inline-flex; align-items: center; gap: 6px;
     }
 
-    /* Developer Badge with Insta.jpg from root */
-    .dev-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: linear-gradient(135deg, rgba(255, 105, 180, 0.2), rgba(138, 43, 226, 0.25));
-      border: 1.5px solid rgba(255, 105, 180, 0.5);
-      color: #ff4081;
-      padding: 6px 14px 6px 8px;
-      border-radius: 25px;
-      font-size: 0.76rem;
-      font-weight: 600;
-      text-decoration: none;
-      margin-bottom: 14px;
-      box-shadow: 0 4px 15px rgba(255, 105, 180, 0.25);
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .dev-badge:hover {
-      transform: scale(1.05);
-      box-shadow: 0 6px 18px rgba(255, 105, 180, 0.45);
-    }
-    .dev-badge-img {
-      width: 26px;
-      height: 26px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 1.5px solid #ff4081;
-      display: block;
-    }
-
     /* Core Cute Card */
     .crush-card {
       width: 100%; max-width: 390px;
@@ -279,7 +249,7 @@
       margin-top: 4px;
     }
 
-    /* PAGE 6: FINAL CELEBRATION & WHATSAPP CARD */
+    /* PAGE 6: FINAL CELEBRATION & DUAL WHATSAPP / INSTAGRAM CARD */
     .big-heart { font-size: 4.2rem; animation: pulseSparkle 1.4s infinite; }
     @keyframes pulseSparkle { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
     .reply-area {
@@ -290,17 +260,41 @@
       width: 100%; padding: 11px 14px; border-radius: 14px; border: 1.5px solid #ffccd5;
       font-size: 0.88rem; outline: none; margin-bottom: 8px; color: #590d22;
     }
+    .reply-buttons-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .btn-reply {
+      width: 100%;
+      padding: 13px;
+      border-radius: 22px;
+      border: none;
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.92rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: transform 0.2s, box-shadow 0.2s;
+      text-decoration: none;
+    }
+    .btn-reply:active { transform: scale(0.98); }
     .btn-wa-reply {
-      width: 100%; padding: 13px; border-radius: 22px; border: none;
-      background: #25d366; color: #fff; font-weight: 700; font-size: 0.92rem;
-      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+      background: #25d366;
       box-shadow: 0 4px 15px rgba(37, 211, 102, 0.35);
+    }
+    .btn-insta-reply {
+      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      box-shadow: 0 4px 15px rgba(225, 48, 108, 0.4);
     }
   </style>
 </head>
 <body>
 
-  <!-- Background Music Audio Element -->
   <audio id="bg-audio" loop preload="auto">
     <source src="song5.mp3" type="audio/mpeg" />
   </audio>
@@ -311,7 +305,6 @@
       <button class="pill-btn" id="music-toggle-btn" onclick="toggleBackgroundMusic()">🎵 Music: ON</button>
     </div>
 
-    <!-- PAGE 1: THE LOCK GATE (PASSWORD: loveyoubangaram) -->
     <div class="crush-card" id="page-1">
       <h2 class="card-heading">Only for you Bangaram 🥰🤌🏻</h2>
       <div style="font-size: 3.8rem; margin: 10px 0;">💐✨</div>
@@ -324,7 +317,6 @@
       <button class="btn-action" onclick="unlockGate()">Unlock Heart ➔</button>
     </div>
 
-    <!-- PAGE 2: MESSAGE PAPER -->
     <div class="crush-card" id="page-2" style="display:none;">
       <span class="handwriting">My Dear Devi,</span>
       <div class="letter-paper">
@@ -337,7 +329,6 @@
       <button class="btn-action" onclick="goToPage(3)">See Our Moments 📸 ➔</button>
     </div>
 
-    <!-- PAGE 3: 3D PHOTO REEL (5 PHOTOS) -->
     <div class="crush-card" id="page-3" style="display:none;">
       <h2 class="card-heading">Special Memories ✨</h2>
       <p class="card-desc">Every smile of yours makes Ganesh's world brighter</p>
@@ -353,7 +344,6 @@
       <button class="btn-action" onclick="goToPage(4)">Ganesh Has a Question ➔</button>
     </div>
 
-    <!-- PAGE 4: DO YOU LOVE ME -->
     <div class="crush-card" id="page-4" style="display:none;">
       <div class="cute-bear">🐱💖</div>
       <h2 class="card-heading" id="ask-heading">Devi, Do you love me? 🥰</h2>
@@ -365,7 +355,6 @@
       </div>
     </div>
 
-    <!-- PAGE 5: 3D INTERACTIVE UNFOLDING LOVE ENVELOPE (HOLD TO OPEN) -->
     <div class="crush-card" id="page-5" style="display:none;">
       <h2 class="card-heading">A Special Love Letter 💌</h2>
       <p class="card-desc">Press and hold your finger on the envelope to read!</p>
@@ -378,7 +367,6 @@
             <p>You are my forever and always Bangaram! 🥰🤌🏻</p>
             <div class="env-bears">🐰🐻❤️</div>
           </div>
-          <!-- User places hand/finger on this pocket -->
           <div class="env-pocket" id="env-pocket">
             <span class="hand-prompt" id="prompt-txt">Place your hand here 🌸</span>
           </div>
@@ -390,25 +378,24 @@
       </button>
     </div>
 
-    <!-- PAGE 6: FINAL CELEBRATION & DIRECT WHATSAPP TO GANESH (8688431772) -->
     <div class="crush-card" id="page-6" style="display:none;">
-      <div>
-        <a href="https://instagram.com/_satish_official_16" target="_blank" class="dev-badge">
-          <img src="../../Insta.jpg" alt="Satish Kommana" class="dev-badge-img" onerror="this.onerror=null; this.src='/games/Insta.jpg';" />
-          <span>Developed by @_satish_official_16 ↗</span>
-        </a>
-      </div>
-
       <div class="big-heart">💖🌸</div>
       <h2 class="card-heading">I Knew It, Devi! 🥰</h2>
       <p class="card-desc">You are my forever and always, Bangaram. Love you to the moon and back!</p>
 
       <div class="reply-area">
-        <label>💌 Send Your Reply to Ganesh (8688431772):</label>
+        <label>💌 Send Your Reply to Ganesh:</label>
         <input type="text" id="crush-reply" value="I love you too Ganesh! You are my Bangaram! 🥰❤️" />
-        <button class="btn-wa-reply" onclick="sendToGanesh()">
-          <span>Reply to Ganesh on WhatsApp</span> 📲
-        </button>
+
+        <div class="reply-buttons-grid">
+          <button class="btn-reply btn-wa-reply" onclick="sendToGanesh()">
+            <span>Reply on WhatsApp</span> 📲
+          </button>
+
+          <button class="btn-reply btn-insta-reply" onclick="sendToInstagram()">
+            <span>Reply on Instagram</span> 📸
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -579,8 +566,8 @@
     let noCount = 0;
     const noPhrases = [
       "Please think again Devi! 🥺",
-      "Malli Alo Sinchu Bangaram 😭",
-      "Bangaram please please 🥺 🥺",
+      "Ek aur baar soch lo Bangaram! 😭",
+      "Devi maan jao na! Kitna bhav khaogi 🥺",
       "Are you really sure? 💔",
       "You have no choice now Devi! 😂"
     ];
@@ -657,12 +644,29 @@
     envPocket.addEventListener('mousedown', openEnvelope);
     window.addEventListener('mouseup', closeEnvelope);
 
-    // --- PAGE 6: SEND DIRECT WHATSAPP TO GANESH (8688431772) ---
+    // --- PAGE 6: DUAL MESSAGING ACTIONS ---
     function sendToGanesh() {
       const reply = document.getElementById('crush-reply').value.trim();
       if (!reply) return alert("Please type your sweet message!");
       const text = encodeURIComponent(reply);
       window.open(`https://api.whatsapp.com/send?phone=918688431772&text=${text}`, '_blank');
+    }
+
+    function sendToInstagram() {
+      const reply = document.getElementById('crush-reply').value.trim();
+      if (!reply) return alert("Please type your sweet message!");
+
+      // Copy message to clipboard so Devi can paste it directly into Ganesh's Instagram DM
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(reply).then(() => {
+          alert("Your sweet reply was copied! 💖 Paste it in Ganesh's Instagram DM.");
+          window.open('https://www.instagram.com/mr_devil_monarche_182?stkn=MWpmcGh4Mjg0ZDdseQ==', '_blank');
+        }).catch(() => {
+          window.open('https://www.instagram.com/mr_devil_monarche_182?stkn=MWpmcGh4Mjg0ZDdseQ==', '_blank');
+        });
+      } else {
+        window.open('https://www.instagram.com/mr_devil_monarche_182?stkn=MWpmcGh4Mjg0ZDdseQ==', '_blank');
+      }
     }
   </script>
 </body>
