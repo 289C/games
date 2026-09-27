@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <title>Happy Wedding Anniversary Demo 💐💍 | Satish Official</title>
+  <title>Happy Wedding Anniversary! 💐💍 | Celebration Hub</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <style>
@@ -150,6 +150,10 @@
       text-align: center;
       outline: none;
     }
+    .lock-input:focus {
+      border-color: #ffd700;
+      box-shadow: 0 0 12px rgba(255, 215, 0, 0.4);
+    }
 
     /* SCREEN 2: BLESSING GARLAND */
     .ring-arena {
@@ -231,7 +235,7 @@
     }
     .ring-arena.ring-locked .finger-highlight-ring { display: none; }
 
-    /* SCREEN 3: CANDLELIT PATH */
+    /* SCREEN 3: CANDLELIT DIYAS */
     .candle-path-grid {
       display: flex;
       justify-content: space-around;
@@ -294,30 +298,95 @@
       justify-content: center;
     }
 
-    // 8. SCREEN 5: CASSETTE MIXTAPE
-    let isPlaying = false;
+    /* SCREEN 5: THREE RADIO 📻 PLAYERS STACK */
+    .radios-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin: 14px 0 18px;
+    }
 
-    function toggleMixtape() {
-      const box = document.getElementById('cassette-box');
-      const audio = document.getElementById('anniversary-audio');
-      const statusText = document.getElementById('tape-status');
+    .radio-card {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(18, 4, 13, 0.95) 100%);
+      border: 1.5px solid rgba(255, 77, 109, 0.35);
+      border-radius: 18px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+    }
 
-      if (!isPlaying) {
-        audio.play().then(() => {
-          isPlaying = true;
-          box.classList.add('tape-playing');
-          statusText.innerText = "🎶 Playing: Anniversary Song • For the Couple";
-          confetti({ particleCount: 25, spread: 50, origin: { y: 0.6 } });
-        }).catch((err) => {
-          console.error("Playback error:", err);
-          statusText.innerText = "⚠️ Tap again to play audio";
-        });
-      } else {
-        audio.pause();
-        isPlaying = false;
-        box.classList.remove('tape-playing');
-        statusText.innerText = "⏸ Paused. Tap to resume.";
-      }
+    .radio-card:active {
+      transform: scale(0.97);
+    }
+
+    .radio-card.radio-playing {
+      border-color: #ffd700;
+      background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(45, 6, 25, 0.98) 100%);
+      box-shadow: 0 8px 25px rgba(255, 215, 0, 0.35), 0 0 15px rgba(255, 77, 109, 0.3);
+      transform: scale(1.02);
+    }
+
+    .radio-left-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-align: left;
+    }
+
+    .radio-big-icon {
+      font-size: 2.2rem;
+      transition: transform 0.3s ease;
+    }
+    .radio-playing .radio-big-icon {
+      animation: radioBounce 0.6s infinite alternate ease-in-out;
+    }
+    @keyframes radioBounce {
+      0% { transform: rotate(-6deg) scale(1); }
+      100% { transform: rotate(6deg) scale(1.15); }
+    }
+
+    .radio-text h4 {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 2px;
+    }
+    .radio-playing .radio-text h4 {
+      color: #ffd700;
+    }
+    .radio-text p {
+      font-size: 0.7rem;
+      color: #ffb3c1;
+    }
+
+    /* Soundwave Equalizer Bars inside each radio */
+    .radio-eq-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+      height: 20px;
+    }
+    .eq-bar {
+      width: 4px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 2px;
+      transition: height 0.1s ease;
+    }
+    .radio-playing .eq-bar {
+      background: #ffd700;
+      animation: eqDance 0.4s infinite alternate ease-in-out;
+    }
+    .radio-playing .eq-bar:nth-child(2) { animation-delay: 0.12s; }
+    .radio-playing .eq-bar:nth-child(3) { animation-delay: 0.24s; }
+    .radio-playing .eq-bar:nth-child(4) { animation-delay: 0.08s; }
+    @keyframes eqDance {
+      0% { height: 4px; }
+      100% { height: 18px; }
     }
 
     /* SCREEN 6: 3D POLAROIDS */
@@ -411,7 +480,7 @@
       transition: opacity 0.5s ease;
     }
 
-    /* SCREEN 8: CELEBRATION CARD */
+    /* SCREEN 8: CELEBRATION HERO CARD */
     .hero-photo-wrap {
       width: 110px;
       height: 110px;
@@ -480,14 +549,14 @@
     <!-- Top Action Bar -->
     <div class="top-bar">
       <a href="index.html" class="pill-btn">← Back to Hub</a>
-      <span class="pill-btn">💐 Anniversary Demo</span>
+      <span class="pill-btn">💐 Anniversary Tribute</span>
     </div>
 
     <!-- SCREEN 1: PASSCODE LOCK GATE -->
     <div class="stage-card" id="screen-lock">
       <div style="font-size: 3.5rem; margin-bottom: 8px;">💌💍</div>
       <h2 class="card-heading">A Special Tribute</h2>
-      <p class="card-desc">Enter the wedding anniversary date or special year to open your surprise!</p>
+      <p class="card-desc">Enter your wedding anniversary date or year to open your surprise!</p>
 
       <div class="lock-field-box">
         <input type="password" id="pass-input" class="lock-input" placeholder="Enter special code (e.g. 2026)" autocomplete="off" />
@@ -497,7 +566,6 @@
         <span>Open Our Family's Wish ➔</span>
       </button>
 
-      <!-- DEMO BYPASS BUTTON -->
       <button class="btn-alt" onclick="quickPass()">
         Direct Demo Entry 🔑
       </button>
@@ -574,35 +642,77 @@
       </div>
 
       <button class="btn-action" id="btn-rose-next" style="display: none; margin-top: 12px;" onclick="showScreen('screen-mixtape')">
-        <span>Play Celebration Melody 🎶 ➔</span>
+        <span>Play Celebration Radios 📻 ➔</span>
       </button>
     </div>
 
-    <!-- SCREEN 5: CASSETTE MIXTAPE -->
+    <!-- SCREEN 5: THREE INTERACTIVE RADIO PLAYERS (📻 song1, song2, song3) -->
     <div class="stage-card" id="screen-mixtape" style="display: none;">
-      <h2 class="card-heading">Anniversary Tribute 🎶✨</h2>
-      <p class="card-desc">Tap the cassette to play an auspicious celebration melody for you both!</p>
+      <h2 class="card-heading">Anniversary Radios 📻✨</h2>
+      <p class="card-desc">Tap any radio station below to play that celebration melody!</p>
 
-      <!-- AUDIO ELEMENT LINKED TO YOUR REPO FILE -->
-      <audio id="anniversary-audio" src="../song1.mp3" preload="auto" loop></audio>
+      <!-- HTML5 AUDIO TAGS POINTING TO ../song1.mp3, ../song2.mp3, ../song3.mp3 -->
+      <audio id="radio-audio-1" src="../song1.mp3" preload="auto" loop></audio>
+      <audio id="radio-audio-2" src="../song2.mp3" preload="auto" loop></audio>
+      <audio id="radio-audio-3" src="../song3.mp3" preload="auto" loop></audio>
 
-      <div class="cassette-box" id="cassette-box" onclick="toggleMixtape()">
-        <div class="cassette-label">Happy Anniversary • With Love</div>
-        <div class="cassette-reels">
-          <div class="reel"></div>
-          <div class="reel"></div>
+      <div class="radios-container">
+        
+        <!-- RADIO STATION 1 -->
+        <div class="radio-card" id="radio-box-1" onclick="toggleRadioTrack(1)">
+          <div class="radio-left-info">
+            <span class="radio-big-icon">📻</span>
+            <div class="radio-text">
+              <h4>Radio Station 01</h4>
+              <p id="radio-label-1">Tap to play: Auspicious Vows</p>
+            </div>
+          </div>
+          <div class="radio-eq-bars">
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+          </div>
         </div>
-        <div class="audio-visualizer-bars">
-          <div class="v-bar"></div>
-          <div class="v-bar"></div>
-          <div class="v-bar"></div>
-          <div class="v-bar"></div>
-          <div class="v-bar"></div>
+
+        <!-- RADIO STATION 2 -->
+        <div class="radio-card" id="radio-box-2" onclick="toggleRadioTrack(2)">
+          <div class="radio-left-info">
+            <span class="radio-big-icon">📻</span>
+            <div class="radio-text">
+              <h4>Radio Station 02</h4>
+              <p id="radio-label-2">Tap to play: Golden Melodies</p>
+            </div>
+          </div>
+          <div class="radio-eq-bars">
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+          </div>
         </div>
+
+        <!-- RADIO STATION 3 -->
+        <div class="radio-card" id="radio-box-3" onclick="toggleRadioTrack(3)">
+          <div class="radio-left-info">
+            <span class="radio-big-icon">📻</span>
+            <div class="radio-text">
+              <h4>Radio Station 03</h4>
+              <p id="radio-label-3">Tap to play: Festive Celebration</p>
+            </div>
+          </div>
+          <div class="radio-eq-bars">
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+          </div>
+        </div>
+
       </div>
 
-      <p id="tape-status" style="font-size: 0.8rem; color: #ffd700; font-weight: 600; min-height: 20px;">
-        ▶ Tap cassette to start playback
+      <p id="radio-master-status" style="font-size: 0.8rem; color: #ffd700; font-weight: 600; min-height: 22px;">
+        🎵 Choose a radio station to listen together
       </p>
 
       <button class="btn-action" onclick="showScreen('screen-photos')" style="margin-top: 10px;">
@@ -610,35 +720,35 @@
       </button>
     </div>
 
-    <!-- SCREEN 6: 3D PHOTO DECK (USING MAIN ROOT ASSETS/MEM1 to ASSETS/MEM4) -->
+    <!-- SCREEN 6: 3D PHOTO DECK (USING HIGH QUALITY ONLINE IMAGES) -->
     <div class="stage-card" id="screen-photos" style="display: none;">
       <h2 class="card-heading">A Beautiful Journey ✨</h2>
       <p class="card-desc">Tap photos or use the arrows to browse your memories in 3D!</p>
 
       <div class="photo-deck-stage" id="deck-stage" onclick="nextPhoto()">
         <div class="photo-card-3d active" data-index="0">
-          <img src="../../assets/mem1.jpg" alt="Memory 1" onerror="this.onerror=null; this.src='/assets/mem1.jpg'; this.onerror=function(){this.src='https://placehold.co/400x500/800/fff?text=assets/mem1.jpg';};" />
+          <img src="https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&w=600&q=80" alt="Memory 1" />
           <div class="photo-card-info">
             <h4>An Ideal Couple 💍</h4>
             <p>Your bond inspires our entire family</p>
           </div>
         </div>
         <div class="photo-card-3d next-1" data-index="1">
-          <img src="../../assets/mem2.jpg" alt="Memory 2" onerror="this.onerror=null; this.src='/assets/mem2.jpg'; this.onerror=function(){this.src='https://placehold.co/400x500/700/fff?text=assets/mem2.jpg';};" />
+          <img src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&w=600&q=80" alt="Memory 2" />
           <div class="photo-card-info">
             <h4>Warmth & Kindness 🌸</h4>
             <p>Always spreading joy wherever you go</p>
           </div>
         </div>
         <div class="photo-card-3d next-2" data-index="2">
-          <img src="../../assets/mem3.jpg" alt="Memory 3" onerror="this.onerror=null; this.src='/assets/mem3.jpg'; this.onerror=function(){this.src='https://placehold.co/400x500/600/fff?text=assets/mem3.jpg';};" />
+          <img src="https://images.unsplash.com/photo-1469371670807-013ccf25f16a?auto=format&fit=crop&w=600&q=80" alt="Memory 3" />
           <div class="photo-card-info">
             <h4>Together Through All 🤝</h4>
             <p>A true example of mutual respect and partnership</p>
           </div>
         </div>
         <div class="photo-card-3d hidden-back" data-index="3">
-          <img src="../../assets/mem4.jpg" alt="Memory 4" onerror="this.onerror=null; this.src='/assets/mem4.jpg'; this.onerror=function(){this.src='https://placehold.co/400x500/500/fff?text=assets/mem4.jpg';};" />
+          <img src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=600&q=80" alt="Memory 4" />
           <div class="photo-card-info">
             <h4>Endless Happiness 💖</h4>
             <p>Praying for many more golden years together</p>
@@ -685,10 +795,10 @@
       </button>
     </div>
 
-    <!-- SCREEN 8: FINAL CELEBRATION CARD -->
+    <!-- SCREEN 8: FINAL CELEBRATION HERO CARD (ONLINE IMAGE) -->
     <div class="stage-card" id="screen-celebrate" style="display: none;">
       <div class="hero-photo-wrap">
-        <img src="../../assets/mem5.jpg" alt="Anniversary Couple" class="hero-photo" onerror="this.onerror=null; this.src='/assets/mem5.jpg'; this.onerror=function(){this.src='https://placehold.co/300x300/900/fff?text=assets/mem5.jpg';};" />
+        <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=600&q=80" alt="Anniversary Couple" class="hero-photo" />
       </div>
 
       <h2 class="card-heading">Happy Wedding Anniversary!</h2>
@@ -720,6 +830,7 @@
 
       <div class="features-list">
         <div><span>🔐</span> <strong>Passcode Protected Family Gate</strong></div>
+        <div><span>📻</span> <strong>Multi-Song Radio Players (song1, song2, song3)</strong></div>
         <div><span>💐</span> <strong>Blessing Garland & Diya Lighting</strong></div>
         <div><span>📸</span> <strong>3D Rotating Family Memory Polaroid Deck</strong></div>
         <div><span>✨</span> <strong>Golden Scratch-Off Blessing Card</strong></div>
@@ -730,7 +841,7 @@
         <span>DM on Instagram for Wishes</span> 💌
       </a>
 
-      <a href="https://api.whatsapp.com/send?phone=919281267188&text=Hi%20Satish!%20I%20saw%20the%20Anniversary%20demo%20and%20want%20to%20order%20a%20custom%20page." target="_blank" class="btn-action" style="background: linear-gradient(135deg, #25d366, #128c7e); margin-top: 10px;">
+      <a href="https://api.whatsapp.com/send?phone=919281267188&text=Hi%20Satish!%20I%20saw%20the%20Anniversary%20page%20and%20want%20to%20order%20a%20custom%20page." target="_blank" class="btn-action" style="background: linear-gradient(135deg, #25d366, #128c7e); margin-top: 10px;">
         <span>Chat on WhatsApp</span> 📲
       </a>
     </div>
@@ -929,7 +1040,7 @@
       }, 400);
     }
 
-    // 6. SCREEN 3: CANDLELIT PATH
+    // 6. SCREEN 3: CANDLELIT DIYAS
     let litCount = 0;
     function igniteLantern(num) {
       const flame = document.getElementById('flame-' + num);
@@ -969,23 +1080,69 @@
       }
     }
 
-    // 8. SCREEN 5: CASSETTE MIXTAPE
-    let isPlaying = false;
-    let tapeInterval = null;
-    function toggleMixtape() {
-      const box = document.getElementById('cassette-box');
-      isPlaying = !isPlaying;
-      box.classList.toggle('tape-playing', isPlaying);
+    // 8. SCREEN 5: THREE RADIO PLAYERS (📻 song1, song2, song3)
+    let currentPlayingTrack = 0; // 0 = none, 1 = song1, 2 = song2, 3 = song3
 
-      if (isPlaying) {
-        document.getElementById('tape-status').innerText = "🎶 Playing: 'Auspicious Melodies' • For the Couple";
-        tapeInterval = setInterval(() => {
-          playSfx('petal');
-        }, 1200);
-      } else {
-        document.getElementById('tape-status').innerText = "⏸ Paused. Tap to resume.";
-        clearInterval(tapeInterval);
+    const trackNames = [
+      "",
+      "Auspicious Vows",
+      "Golden Melodies",
+      "Festive Celebration"
+    ];
+
+    function toggleRadioTrack(trackNumber) {
+      const audioElements = [
+        null,
+        document.getElementById('radio-audio-1'),
+        document.getElementById('radio-audio-2'),
+        document.getElementById('radio-audio-3')
+      ];
+
+      const radioBoxes = [
+        null,
+        document.getElementById('radio-box-1'),
+        document.getElementById('radio-box-2'),
+        document.getElementById('radio-box-3')
+      ];
+
+      const statusLabels = [
+        null,
+        document.getElementById('radio-label-1'),
+        document.getElementById('radio-label-2'),
+        document.getElementById('radio-label-3')
+      ];
+
+      const masterStatus = document.getElementById('radio-master-status');
+
+      // If user tapped the currently playing radio, pause it
+      if (currentPlayingTrack === trackNumber) {
+        audioElements[trackNumber].pause();
+        radioBoxes[trackNumber].classList.remove('radio-playing');
+        statusLabels[trackNumber].innerText = "⏸ Paused: " + trackNames[trackNumber];
+        masterStatus.innerText = "⏸ Paused Radio Station 0" + trackNumber;
+        currentPlayingTrack = 0;
+        return;
       }
+
+      // Stop all playing audios and remove active classes
+      for (let i = 1; i <= 3; i++) {
+        audioElements[i].pause();
+        audioElements[i].currentTime = 0;
+        radioBoxes[i].classList.remove('radio-playing');
+        statusLabels[i].innerText = "Tap to play: " + trackNames[i];
+      }
+
+      // Play the newly selected radio track
+      audioElements[trackNumber].play().then(() => {
+        currentPlayingTrack = trackNumber;
+        radioBoxes[trackNumber].classList.add('radio-playing');
+        statusLabels[trackNumber].innerText = "🎶 Playing: " + trackNames[trackNumber];
+        masterStatus.innerText = "📻 Now Playing: Station 0" + trackNumber + " (" + trackNames[trackNumber] + ")";
+        confetti({ particleCount: 30, spread: 55, origin: { y: 0.6 } });
+      }).catch(err => {
+        console.error("Audio playback error:", err);
+        masterStatus.innerText = "⚠️ Tap radio again to allow audio playback";
+      });
     }
 
     // 9. SCREEN 6: 3D PHOTO DECK
