@@ -16,52 +16,117 @@
     }
 
     body {
-      background-color: #0b0f19;
+      background-color: #070a13;
       color: #ffffff;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 16px 14px 40px;
+      padding: 16px 14px 44px;
       overflow-x: hidden;
+      position: relative;
     }
 
-    /* Top Header Pill */
+    /* Aurora Nebula Backdrop Glows */
+    .aurora-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .aurora-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.35;
+      animation: floatOrb 12s ease-in-out infinite alternate;
+    }
+    .orb-1 { width: 280px; height: 280px; background: #9d0208; top: -50px; left: -40px; animation-duration: 9s; }
+    .orb-2 { width: 320px; height: 320px; background: #5a189a; top: 35%; right: -60px; animation-duration: 14s; }
+    .orb-3 { width: 260px; height: 260px; background: #0077b6; bottom: -40px; left: 10%; animation-duration: 11s; }
+
+    @keyframes floatOrb {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(30px, 40px) scale(1.15); }
+      100% { transform: translate(-25px, 20px) scale(0.9); }
+    }
+
+    /* Ambient Floating Stardust */
+    .stardust-particle {
+      position: absolute;
+      pointer-events: none;
+      font-size: 1.1rem;
+      animation: stardustDrift 8s linear infinite;
+      z-index: 1;
+      filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.6));
+    }
+    @keyframes stardustDrift {
+      0% { transform: translateY(105vh) rotate(0deg) scale(0.6); opacity: 0; }
+      20% { opacity: 0.85; }
+      80% { opacity: 0.85; }
+      100% { transform: translateY(-8vh) rotate(360deg) scale(1.1); opacity: 0; }
+    }
+
+    /* Header Banner Pill with Pulse Border */
     .header-pill {
+      position: relative;
+      z-index: 10;
       background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 10px 22px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 10px 24px;
       border-radius: 30px;
       display: inline-flex;
       align-items: center;
       gap: 10px;
       margin-bottom: 14px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), inset 0 0 12px rgba(255, 255, 255, 0.05);
+      animation: pulseBorder 3s infinite alternate;
+    }
+    @keyframes pulseBorder {
+      0% { border-color: rgba(255, 221, 89, 0.3); box-shadow: 0 0 15px rgba(255, 221, 89, 0.15); }
+      100% { border-color: rgba(72, 219, 251, 0.4); box-shadow: 0 0 22px rgba(72, 219, 251, 0.25); }
     }
 
     .header-pill h1 {
       font-size: 1.05rem;
       font-weight: 700;
-      background: linear-gradient(90deg, #ffdd59, #48dbfb, #ff9ff3);
+      background: linear-gradient(90deg, #ffdd59, #48dbfb, #ff9ff3, #ffdd59);
+      background-size: 200% auto;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      letter-spacing: 0.5px;
+      animation: textFlow 4s linear infinite;
+    }
+    @keyframes textFlow {
+      0% { background-position: 0% center; }
+      100% { background-position: 200% center; }
     }
 
-    /* COMPACT DM & WHATSAPP BANNER */
+    /* Interactive DM Promo Banner */
     .promo-banner {
+      position: relative;
+      z-index: 10;
       width: 100%;
       max-width: 440px;
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 0, 127, 0.08) 100%);
-      border: 1.5px dashed rgba(255, 105, 180, 0.4);
-      border-radius: 20px;
-      padding: 12px 14px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 0, 127, 0.1) 100%);
+      border: 1.5px dashed rgba(255, 105, 180, 0.55);
+      border-radius: 22px;
+      padding: 13px 15px;
       margin-bottom: 18px;
-      backdrop-filter: blur(12px);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(14px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
       display: flex;
       flex-direction: column;
       gap: 10px;
+      transition: transform 0.25s ease, border-color 0.25s ease;
+    }
+    .promo-banner:hover {
+      border-color: #ff007f;
+      transform: translateY(-2px);
     }
 
     .promo-top {
@@ -70,7 +135,6 @@
       gap: 12px;
     }
 
-    /* Circular Logo with Glow Ring */
     .promo-avatar-wrap {
       position: relative;
       width: 48px;
@@ -84,7 +148,7 @@
       border-radius: 50%;
       padding: 2.5px;
       background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
-      animation: spinGlow 4s linear infinite;
+      animation: spinGlow 3.5s linear infinite;
     }
     @keyframes spinGlow {
       0% { filter: hue-rotate(0deg); }
@@ -100,12 +164,8 @@
       display: block;
     }
 
-    .promo-text {
-      flex: 1;
-    }
-
     .promo-text h3 {
-      font-size: 0.86rem;
+      font-size: 0.88rem;
       font-weight: 700;
       color: #ffffff;
       line-height: 1.25;
@@ -117,7 +177,6 @@
       margin-top: 2px;
     }
 
-    /* Dual Action Buttons (Instagram & WhatsApp) */
     .promo-actions {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -129,31 +188,33 @@
       align-items: center;
       justify-content: center;
       gap: 6px;
-      padding: 7px 10px;
+      padding: 8px 10px;
       border-radius: 14px;
       font-size: 0.72rem;
       font-weight: 700;
       text-decoration: none;
       color: #ffffff;
-      transition: transform 0.15s ease, opacity 0.15s ease;
+      transition: transform 0.18s ease, filter 0.18s ease;
+      position: relative;
+      overflow: hidden;
     }
     .btn-contact:active {
-      transform: scale(0.96);
-      opacity: 0.9;
+      transform: scale(0.95);
     }
 
     .btn-ig {
       background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
-      box-shadow: 0 4px 12px rgba(225, 48, 108, 0.35);
+      box-shadow: 0 4px 14px rgba(225, 48, 108, 0.4);
     }
-
     .btn-wa {
       background: linear-gradient(135deg, #25d366, #128c7e);
-      box-shadow: 0 4px 12px rgba(37, 211, 102, 0.35);
+      box-shadow: 0 4px 14px rgba(37, 211, 102, 0.4);
     }
 
     /* 2-Column Responsive Grid */
     .grid-container {
+      position: relative;
+      z-index: 10;
       width: 100%;
       max-width: 440px;
       display: grid;
@@ -161,32 +222,55 @@
       gap: 14px;
     }
 
+    /* Cards with Sheen & Lift FX */
     .category-card {
       position: relative;
-      background: #111827;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 24px;
-      padding: 24px 12px 20px;
+      background: linear-gradient(155deg, rgba(255, 255, 255, 0.07) 0%, #0f1626 100%);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 26px;
+      padding: 24px 12px 18px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       text-decoration: none;
       color: #ffffff;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
-      transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
       overflow: hidden;
       aspect-ratio: 1 / 1.08;
     }
 
+    /* Dynamic Sheen Sweep on Hover */
+    .category-card::after {
+      content: "";
+      position: absolute;
+      top: -60%;
+      left: -60%;
+      width: 220%;
+      height: 220%;
+      background: linear-gradient(
+        45deg,
+        transparent 40%,
+        rgba(255, 255, 255, 0.13) 50%,
+        transparent 60%
+      );
+      transform: rotate(25deg) translateY(-100%);
+      transition: transform 0.65s ease;
+      pointer-events: none;
+    }
+    .category-card:hover::after {
+      transform: rotate(25deg) translateY(100%);
+    }
+
     .category-card:active {
-      transform: scale(0.96);
+      transform: scale(0.95);
     }
 
     .category-card:hover {
-      transform: translateY(-4px);
-      border-color: rgba(255, 255, 255, 0.25);
-      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.6);
+      transform: translateY(-5px) scale(1.02);
+      border-color: rgba(255, 255, 255, 0.35);
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.65), 0 0 20px rgba(255, 255, 255, 0.08);
     }
 
     .card-badge {
@@ -200,7 +284,7 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
       color: #ffffff;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
     }
 
     .badge-proposal { background: linear-gradient(135deg, #ff007f, #c2185b); }
@@ -211,15 +295,24 @@
     .badge-goals    { background: linear-gradient(135deg, #10b981, #059669); }
     .badge-friends  { background: linear-gradient(135deg, #ec4899, #8b5cf6); }
 
+    /* 3D Floating Emoji Animation */
     .card-icon {
-      font-size: 2.8rem;
-      margin-bottom: 12px;
-      filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.4));
-      transition: transform 0.2s ease;
+      font-size: 2.85rem;
+      margin-bottom: 10px;
+      filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.5));
+      animation: gentleFloat 3s ease-in-out infinite alternate;
+    }
+    .grid-container a:nth-child(even) .card-icon {
+      animation-delay: 1.5s;
+    }
+
+    @keyframes gentleFloat {
+      0% { transform: translateY(0px) rotate(0deg); }
+      100% { transform: translateY(-7px) rotate(3deg); }
     }
 
     .category-card:hover .card-icon {
-      transform: scale(1.12);
+      transform: scale(1.18) rotate(6deg);
     }
 
     .card-title {
@@ -228,10 +321,18 @@
       color: #e5e7eb;
       text-align: center;
       line-height: 1.25;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
     }
   </style>
 </head>
 <body>
+
+  <!-- Ambient Light Orbs -->
+  <div class="aurora-bg">
+    <div class="aurora-orb orb-1"></div>
+    <div class="aurora-orb orb-2"></div>
+    <div class="aurora-orb orb-3"></div>
+  </div>
 
   <!-- Header Banner -->
   <div class="header-pill">
@@ -254,15 +355,15 @@
     
     <div class="promo-actions">
       <!-- Direct Instagram DM Link -->
-      <a href="https://ig.me/m/_satish_official_16" target="_blank" class="btn-contact btn-ig">
+      <a href="https://ig.me/m/_satish_official_16" target="_blank" class="btn-contact btn-ig" onclick="playClickChime()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="#ffffff">
           <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
         </svg>
         <span>Instagram DM</span>
       </a>
 
-      <!-- WhatsApp with Automatic Pre-filled Message -->
-      <a href="https://api.whatsapp.com/send?phone=919281267188&text=Hi%20Satish!%20I%20want%20to%20create%20a%20custom%203D%20wish%20webpage." target="_blank" class="btn-contact btn-wa">
+      <!-- WhatsApp Direct Message -->
+      <a href="https://api.whatsapp.com/send?phone=919281267188&text=Hi%20Satish!%20I%20want%20to%20create%20a%20custom%203D%20wish%20webpage." target="_blank" class="btn-contact btn-wa" onclick="playClickChime()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="#ffffff">
           <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
         </svg>
@@ -275,49 +376,49 @@
   <div class="grid-container">
 
     <!-- 1. CRUSH PROPOSAL -->
-    <a href="crush/index.html" class="category-card" onclick="tapFx()">
+    <a href="crush/index.html" class="category-card" onclick="tapFx(event)">
       <span class="card-badge badge-proposal">PROPOSAL</span>
       <div class="card-icon">💖</div>
       <div class="card-title">Crush Proposal</div>
     </a>
 
     <!-- 2. BIRTHDAY WISHES -->
-    <a href="birthday/index.html" class="category-card" onclick="tapFx()">
+    <a href="birthday/index.html" class="category-card" onclick="tapFx(event)">
       <span class="card-badge badge-cake">3D CAKE</span>
       <div class="card-icon">🎂</div>
       <div class="card-title">Birthday Wishes</div>
     </a>
 
     <!-- 3. ANNIVERSARY WISHES -->
-    <a href="aniversary/index.html" class="category-card" onclick="tapFx()">
+    <a href="aniversary/index.html" class="category-card" onclick="tapFx(event)">
       <span class="card-badge badge-couple">COUPLE</span>
       <div class="card-icon">🥂</div>
       <div class="card-title">Anniversary Wishes</div>
     </a>
 
     <!-- 4. WEDDING WISHES -->
-    <a href="wedding/index.html" class="category-card" onclick="tapFx()">
+    <a href="wedding/index.html" class="category-card" onclick="tapFx(event)">
       <span class="card-badge badge-wedding">SPECIAL</span>
       <div class="card-icon">💍</div>
       <div class="card-title">Wedding Wishes</div>
     </a>
 
     <!-- 5. FESTIVAL 3D -->
-    <a href="festival/index.html" class="category-card" onclick="tapFx()">
+    <a href="festival/index.html" class="category-card" onclick="tapFx(event)">
       <span class="card-badge badge-festive">FESTIVE</span>
       <div class="card-icon">✨</div>
       <div class="card-title">Festival 3D</div>
     </a>
 
     <!-- 6. EXAM & SUCCESS -->
-    <a href="exam/index.html" class="category-card" onclick="tapFx()">
+    <a href="exam/index.html" class="category-card" onclick="tapFx(event)">
       <span class="card-badge badge-goals">GOALS</span>
       <div class="card-icon">🚀</div>
       <div class="card-title">Exam & Success</div>
     </a>
 
     <!-- 7. FRIENDSHIP -->
-    <a href="friendship/index.html" class="category-card" onclick="tapFx()">
+    <a href="friendship/index.html" class="category-card" onclick="tapFx(event)">
       <span class="card-badge badge-friends">FRIENDS</span>
       <div class="card-icon">🎈</div>
       <div class="card-title">Friendship Day</div>
@@ -326,12 +427,52 @@
   </div>
 
   <script>
-    function tapFx() {
+    // 1. DYNAMIC STARDUST PARTICLES GENERATOR
+    const icons = ['✨', '⭐', '🌸', '💫', '💖', '🎉'];
+    for (let i = 0; i < 16; i++) {
+      const p = document.createElement('div');
+      p.className = 'stardust-particle';
+      p.innerText = icons[Math.floor(Math.random() * icons.length)];
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.animationDelay = (Math.random() * 7) + 's';
+      p.style.animationDuration = (6 + Math.random() * 5) + 's';
+      document.body.appendChild(p);
+    }
+
+    // 2. SYNTHETIC AUDIO CHIME (NO EXTERNAL FILES REQUIRED)
+    let audioCtx = null;
+    function playClickChime() {
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        const now = audioCtx.currentTime;
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(587.33, now); // D5
+        osc.frequency.exponentialRampToValueAtTime(880, now + 0.18); // A5
+        gain.gain.setValueAtTime(0.18, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.22);
+        osc.start(now);
+        osc.stop(now + 0.22);
+      } catch (e) {}
+    }
+
+    // 3. TARGETED TOUCH CONFETTI + CHIME ON TAP
+    function tapFx(e) {
+      playClickChime();
+
       if (window.confetti) {
+        const x = e.clientX ? e.clientX / window.innerWidth : 0.5;
+        const y = e.clientY ? e.clientY / window.innerHeight : 0.7;
+
         confetti({
-          particleCount: 45,
-          spread: 60,
-          origin: { y: 0.85 }
+          particleCount: 35,
+          spread: 55,
+          origin: { x: x, y: y },
+          colors: ['#ff007f', '#00b4d8', '#ffd700', '#ffffff', '#a855f7']
         });
       }
     }
