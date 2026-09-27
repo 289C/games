@@ -156,7 +156,7 @@
     }
     .btn-action:active { transform: scale(0.97); }
 
-    /* --- PREMIUM BANNER WITH ANIMATIONS --- */
+    /* ANIMATED PREMIUM BANNER */
     .vip-banner-box {
       background: linear-gradient(135deg, rgba(255, 215, 0, 0.18) 0%, rgba(255, 0, 128, 0.25) 100%);
       border: 2px solid #ffd700;
@@ -251,11 +251,11 @@
       <span class="pill-btn">👑 VIP Member</span>
     </div>
 
-    <!-- SCREEN 1: PASSCODE PROTECTION GATE -->
+    <!-- SCREEN 1: PASSCODE GATE -->
     <div class="stage-card" id="screen-gate">
       <div style="font-size: 3.5rem; margin-bottom: 8px;">🔐👑</div>
       <h2 class="card-heading">VIP Access Portal</h2>
-      <p class="card-desc">Enter the exclusive passkey to unlock your premium experience</p>
+      <p class="card-desc">Enter the exclusive passkey to unlock your premium crush proposal</p>
 
       <div class="lock-field-box">
         <input type="password" id="vip-pass-input" class="lock-input" placeholder="Enter VIP Passkey" autocomplete="off" />
@@ -268,7 +268,7 @@
       </button>
     </div>
 
-    <!-- SCREEN 2: ANIMATED PREMIUM BANNER & FRIEND'S SLOT1 UNLOCK -->
+    <!-- SCREEN 2: ANIMATED PREMIUM BANNER & DIRECT LINK TO SLOT1.HTML -->
     <div class="stage-card" id="screen-banner" style="display: none;">
       
       <!-- Creator Avatar Stamp -->
@@ -283,19 +283,19 @@
       <!-- ANIMATED GLOWING PREMIUM BANNER -->
       <div class="vip-banner-box">
         <div class="banner-crown-icon">👑</div>
-        <h3 class="banner-title">Premium Access Unlocked!</h3>
+        <h3 class="banner-title">VIP Unlocked!</h3>
         <p class="banner-subtitle">
-          Your exclusive crush proposal experience is fully loaded and ready for celebration.
+          Your special crush proposal page is unlocked and ready to view.
         </p>
       </div>
 
-      <!-- DIRECT ACCESS BUTTON TO YOUR FRIEND'S CRUSH PROPOSAL (slot1.html) -->
+      <!-- DIRECT LINK TO SLOT1.HTML IN THE SAME FOLDER -->
       <a href="slot1.html" class="btn-action" style="margin-bottom: 12px;">
-        <span>Open Ganesh & Devi Proposal ❤️ ➔</span>
+        <span>Open Proposal Page ❤️ ➔</span>
       </a>
 
-      <a href="https://ig.me/m/_satish_official_16" target="_blank" class="btn-action" style="background: linear-gradient(135deg, #25d366, #128c7e); color: #fff;">
-        <span>Chat on WhatsApp</span> 📲
+      <a href="../index.html" class="btn-action" style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.3); color: #fff;">
+        <span>← Return to Crush Hub</span>
       </a>
 
     </div>
@@ -303,8 +303,8 @@
   </div>
 
   <script>
-    // --- PASSCODE CONFIGURATION ---
-    const VIP_PASSKEY = "@devi"; // Set your secret VIP password here
+    // --- EXACT PASSWORD SET TO @devi ---
+    const VIP_PASSKEY = "@devi";
 
     // 1. FLOATING PARTICLES
     const wrap = document.getElementById('main-wrap');
@@ -365,15 +365,16 @@
 
         // Confetti burst
         confetti({
-          particleCount: 100,
-          spread: 85,
+          particleCount: 120,
+          spread: 90,
           origin: { y: 0.6 },
           colors: ['#ffd700', '#ff007f', '#ffffff']
         });
 
-        // Transition to Premium Banner Screen
+        // Show VIP Banner Screen with the direct link to slot1.html
         document.getElementById('screen-gate').style.display = 'none';
         document.getElementById('screen-banner').style.display = 'block';
+
       } else {
         playSfx('error');
         errorMsg.innerText = "Invalid VIP Passkey! Try again 🔒";
