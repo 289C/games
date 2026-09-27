@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <title>Happy Anniversary — Customized Slot 1 💍💖</title>
+  <title>Happy Anniversary 💍💖</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <style>
@@ -126,16 +126,6 @@
       text-decoration: none;
     }
     .btn-action:active { transform: scale(0.97); }
-    .btn-alt {
-      background: none;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      color: #ffccd5;
-      font-size: 0.78rem;
-      padding: 8px 14px;
-      border-radius: 18px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
 
     /* SCREEN 1: PASSCODE */
     .lock-field-box { width: 100%; margin: 12px 0 16px; }
@@ -149,6 +139,19 @@
       font-size: 0.95rem;
       text-align: center;
       outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .lock-input:focus {
+      border-color: #ffd700;
+      box-shadow: 0 0 12px rgba(255, 215, 0, 0.4);
+    }
+    .shake-anim {
+      animation: shakeInput 0.4s ease-in-out;
+    }
+    @keyframes shakeInput {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
     }
 
     /* SCREEN 2: SLIDE THE RING */
@@ -359,7 +362,7 @@
     .v-bar:nth-child(5) { animation-delay: 0.05s; }
     @keyframes barDance { 0% { height: 6px; } 100% { height: 22px; } }
 
-    /* SCREEN 6: 3D POLAROIDS (USES CLIENT ASSETS) */
+    /* SCREEN 6: 3D POLAROIDS */
     .photo-deck-stage {
       position: relative;
       width: 250px;
@@ -450,10 +453,10 @@
       transition: opacity 0.5s ease;
     }
 
-    /* SCREEN 8: FINAL CELEBRATION CARD WITH MEM5 */
+    /* SCREEN 8: FINAL REVEAL (MEM5) */
     .hero-photo-wrap {
-      width: 100px;
-      height: 100px;
+      width: 110px;
+      height: 110px;
       margin: 0 auto 12px;
       border-radius: 50%;
       padding: 3px;
@@ -476,29 +479,27 @@
     <!-- Top Action Bar -->
     <div class="top-bar">
       <a href="../index.html" class="pill-btn">← Back to Hub</a>
-      <span class="pill-btn">💍 Slot 1</span>
+      <span class="pill-btn">💍 Anniversary Wish</span>
     </div>
 
     <!-- SCREEN 1: PASSCODE LOCK GATE -->
     <div class="stage-card" id="screen-lock">
       <div style="font-size: 3.5rem; margin-bottom: 8px;">🔐💖</div>
       <h2 class="card-heading">Our Special Day</h2>
-      <p class="card-desc">Enter our anniversary date / passcode to unlock</p>
+      <p class="card-desc">Enter our special anniversary passcode to open</p>
 
       <div class="lock-field-box">
         <input type="password" id="pass-input" class="lock-input" placeholder="Enter special code" autocomplete="off" />
       </div>
 
+      <p id="lock-error" style="font-size: 0.76rem; color: #ff4d6d; min-height: 18px; margin-bottom: 8px; font-weight: 600;"></p>
+
       <button class="btn-action" onclick="unlockGate()">
         <span>Unlock Our Hearts ➔</span>
       </button>
-
-      <button class="btn-alt" onclick="quickPass()">
-        Direct Demo Entry 🔑
-      </button>
     </div>
 
-    <!-- SCREEN 2: SLIDE THE WEDDING RING (IDEA 1) -->
+    <!-- SCREEN 2: SLIDE THE WEDDING RING -->
     <div class="stage-card" id="screen-ring" style="display: none;">
       <h2 class="card-heading">Slide the Ring! 💍✨</h2>
       <p class="card-desc">Drag the diamond wedding ring and slide it onto the finger!</p>
@@ -525,7 +526,7 @@
       </button>
     </div>
 
-    <!-- SCREEN 3: ROMANTIC CANDLELIT PATH (IDEA 5) -->
+    <!-- SCREEN 3: ROMANTIC CANDLELIT PATH -->
     <div class="stage-card" id="screen-path" style="display: none;">
       <h2 class="card-heading">Light the Romance 🕯️</h2>
       <p class="card-desc">Tap each lantern to illuminate our path together</p>
@@ -558,7 +559,7 @@
       </button>
     </div>
 
-    <!-- SCREEN 4: PLUCK THE LOVE ROSE (IDEA 3) -->
+    <!-- SCREEN 4: PLUCK THE LOVE ROSE -->
     <div class="stage-card" id="screen-rose" style="display: none;">
       <h2 class="card-heading">Reasons I Love You 🌹</h2>
       <p class="card-desc">Tap the rose to pluck petals and reveal sweet reasons!</p>
@@ -573,7 +574,7 @@
       </button>
     </div>
 
-    <!-- SCREEN 5: CASSETTE MIXTAPE PLAYER (IDEA 4) -->
+    <!-- SCREEN 5: CASSETTE MIXTAPE PLAYER -->
     <div class="stage-card" id="screen-mixtape" style="display: none;">
       <h2 class="card-heading">Our Love Tracks 📼✨</h2>
       <p class="card-desc">Tap the cassette to play our favorite anniversary melody!</p>
@@ -602,7 +603,7 @@
       </button>
     </div>
 
-    <!-- SCREEN 6: 3D PHOTO DECK (USING ASSETS/MEM1 to MEM4) -->
+    <!-- SCREEN 6: 3D PHOTO DECK (assets/mem1 to assets/mem4) -->
     <div class="stage-card" id="screen-photos" style="display: none;">
       <h2 class="card-heading">Our Journey Together ✨</h2>
       <p class="card-desc">Tap photos or use buttons to flip through memories in 3D!</p>
@@ -673,11 +674,11 @@
       </p>
 
       <button class="btn-action" id="btn-scratch-next" style="display: none; margin-top: 10px;" onclick="showScreen('screen-celebrate')">
-        <span>Our Special Photo 💖 ➔</span>
+        <span>Our Special Moment 💖 ➔</span>
       </button>
     </div>
 
-    <!-- SCREEN 8: FINAL REVEAL (USING ASSETS/MEM5) -->
+    <!-- SCREEN 8: FINAL REVEAL (assets/mem5) -->
     <div class="stage-card" id="screen-celebrate" style="display: none;">
       <div class="hero-photo-wrap">
         <img src="assets/mem5.jpg" alt="Our Special Memory" class="hero-photo" onerror="this.src='https://placehold.co/300x300/900/fff?text=assets/mem5.jpg';" />
@@ -686,16 +687,17 @@
       <h2 class="card-heading">Happy Anniversary! 💖</h2>
       <p class="card-desc">May our love story continue to grow deeper with every passing day.</p>
 
-      <div style="font-size: 2rem; margin: 12px 0;">🥂💍💐</div>
+      <div style="font-size: 2.2rem; margin: 14px 0;">🥂💍💐✨</div>
 
-      <a href="../index.html" class="btn-action">
-        <span>Return to Wish Hub 🏠</span>
-      </a>
+      <p style="font-size: 0.8rem; color: #ffd700; font-weight: 600;">Forever & Always Together</p>
     </div>
 
   </div>
 
   <script>
+    // --- CONFIGURE CLIENT PASSCODE HERE ---
+    const SECRET_PASSCODE = "2026"; // Change to the couple's special date / year
+
     // 1. FLOATING PARTICLES
     const wrap = document.getElementById('main-wrap');
     const icons = ['💖', '✨', '💍', '💎', '🌹', '💌', '🌸', '🕯️'];
@@ -709,7 +711,7 @@
       wrap.appendChild(p);
     }
 
-    // 2. SYNTHETIC AUDIO SFX (ZERO MP3s NEEDED)
+    // 2. SYNTHETIC AUDIO SFX
     let sfxCtx = null;
     function playSfx(type) {
       try {
@@ -724,6 +726,13 @@
           osc.type = 'sine';
           osc.frequency.setValueAtTime(523.25, now);
           osc.frequency.exponentialRampToValueAtTime(1046.50, now + 0.2);
+          gain.gain.setValueAtTime(0.25, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+          osc.start(now); osc.stop(now + 0.25);
+        } else if (type === 'error') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(180, now);
+          osc.frequency.setValueAtTime(130, now + 0.1);
           gain.gain.setValueAtTime(0.25, now);
           gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
           osc.start(now); osc.stop(now + 0.25);
@@ -783,25 +792,30 @@
       if (screenId === 'screen-scratch') initScratchCanvas();
     }
 
-    // 4. SCREEN 1: UNLOCK GATE
+    // 4. SCREEN 1: STRICT PASSCODE UNLOCK
     function unlockGate() {
-      const val = document.getElementById('pass-input').value.trim();
-      if (val.length > 0) {
+      const input = document.getElementById('pass-input');
+      const errorMsg = document.getElementById('lock-error');
+      const val = input.value.trim();
+
+      if (val === SECRET_PASSCODE) {
+        errorMsg.innerText = "";
         playSfx('unlock');
-        confetti({ particleCount: 75, spread: 75, origin: { y: 0.6 }, colors: ['#ff4d6d', '#ffd700', '#ffffff'] });
-        setTimeout(() => showScreen('screen-ring'), 300);
+        confetti({ particleCount: 80, spread: 80, origin: { y: 0.6 }, colors: ['#ff4d6d', '#ffd700', '#ffffff'] });
+        setTimeout(() => showScreen('screen-ring'), 350);
       } else {
-        alert("Please enter our anniversary date or tap Direct Demo Entry! 🥰");
+        playSfx('error');
+        errorMsg.innerText = "Incorrect code! Please try again ❤️";
+        input.classList.add('shake-anim');
+        setTimeout(() => input.classList.remove('shake-anim'), 400);
       }
     }
 
-    function quickPass() {
-      playSfx('unlock');
-      confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 } });
-      showScreen('screen-ring');
-    }
+    document.getElementById('pass-input').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') unlockGate();
+    });
 
-    // 5. SCREEN 2: SLIDE THE RING (IDEA 1)
+    // 5. SCREEN 2: SLIDE THE RING
     let isRingLocked = false;
     function setupRingInteraction() {
       const ring = document.getElementById('drag-ring');
@@ -885,7 +899,7 @@
       }, 400);
     }
 
-    // 6. SCREEN 3: CANDLELIT PATH (IDEA 5)
+    // 6. SCREEN 3: CANDLELIT PATH
     let litCount = 0;
     function igniteLantern(num) {
       const flame = document.getElementById('flame-' + num);
@@ -903,7 +917,7 @@
       }
     }
 
-    // 7. SCREEN 4: ROSE PETAL PLUCK (IDEA 3)
+    // 7. SCREEN 4: ROSE PETAL PLUCK
     const petalQuotes = [
       "🌸 1. Your morning smiles that make every day bright!",
       "💖 2. How you always support every single one of my dreams!",
@@ -925,7 +939,7 @@
       }
     }
 
-    // 8. SCREEN 5: CASSETTE MIXTAPE (IDEA 4)
+    // 8. SCREEN 5: CASSETTE MIXTAPE
     let isPlaying = false;
     let tapeInterval = null;
     function toggleMixtape() {
