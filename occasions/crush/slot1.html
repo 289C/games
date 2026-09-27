@@ -574,44 +574,44 @@
       </div>
     </div>
 
-    <!-- PAGE 4.5: SWEET & FUNNY TRIVIA QUIZ (SHOWS IMMEDIATELY AFTER YES) -->
+    <!-- PAGE 4.5: SWEET & FUNNY TRIVIA QUIZ (CONFIRMED ANSWERS) -->
     <div class="crush-card" id="page-quiz" style="display:none;">
-      <h2 class="card-heading">Sweet & Funny Truths 😜💖</h2>
-      <p class="card-desc">Answer these honestly Devi, Ganesh is watching your choices!</p>
+      <h2 class="card-heading">Sweet Truths Quiz 😜💖</h2>
+      <p class="card-desc">Choose the real truth Devi, only the correct answers unlock the letter!</p>
 
       <div class="quiz-box">
-        <!-- Question 1 -->
-        <div class="quiz-q-card">
-          <div class="quiz-q-title">1. Who proposed or showed interest first? 🙈</div>
+        <!-- Question 1: Ganesh is the only correct answer -->
+        <div class="quiz-q-card" id="card-q1">
+          <div class="quiz-q-title">1. Who fell in love / showed interest first? 🙈</div>
           <div class="quiz-options">
-            <button class="quiz-opt-btn" onclick="answerQuiz(1, 'Ganesh (fell first)', this)">A) Ganesh (He fell first! 🥺)</button>
-            <button class="quiz-opt-btn" onclick="answerQuiz(1, 'Devi (secretly in love)', this)">B) Devi (Secretly with eye contact 👀)</button>
-            <button class="quiz-opt-btn" onclick="answerQuiz(1, 'Both same time', this)">C) Both hearts beat at the same time ✨</button>
+            <button class="quiz-opt-btn" onclick="checkConformAnswer(1, true, this)">A) Ganesh (He fell first! 🥺)</button>
+            <button class="quiz-opt-btn" onclick="checkConformAnswer(1, false, this)">B) Devi (Secretly with eye contact 👀)</button>
+            <button class="quiz-opt-btn" onclick="checkConformAnswer(1, false, this)">C) Random strangers 🤷🏻‍♂️</button>
           </div>
         </div>
 
-        <!-- Question 2 -->
-        <div class="quiz-q-card">
+        <!-- Question 2: Devi is the only correct answer -->
+        <div class="quiz-q-card" id="card-q2">
           <div class="quiz-q-title">2. Who gets angry / dramatic faster? 😤</div>
           <div class="quiz-options">
-            <button class="quiz-opt-btn" onclick="answerQuiz(2, 'Devi drama queen', this)">A) Devi (Cute angry drama queen 👸🏻)</button>
-            <button class="quiz-opt-btn" onclick="answerQuiz(2, 'Ganesh overthinking', this)">B) Ganesh (Overthinking boy 🤦🏻‍♂️)</button>
-            <button class="quiz-opt-btn" onclick="answerQuiz(2, 'Hungry or sleepy', this)">C) Whoever is hungry or sleepy 🍕😴</button>
+            <button class="quiz-opt-btn" onclick="checkConformAnswer(2, false, this)">A) Ganesh (He is super calm 😇)</button>
+            <button class="quiz-opt-btn" onclick="checkConformAnswer(2, true, this)">B) Devi (100% cute drama queen 👸🏻)</button>
+            <button class="quiz-opt-btn" onclick="checkConformAnswer(2, false, this)">C) Nobody 😌</button>
           </div>
         </div>
 
-        <!-- Question 3 -->
-        <div class="quiz-q-card">
+        <!-- Question 3: Both is the only correct answer -->
+        <div class="quiz-q-card" id="card-q3">
           <div class="quiz-q-title">3. Who loves the other more? ❤️</div>
           <div class="quiz-options">
-            <button class="quiz-opt-btn" onclick="answerQuiz(3, 'Ganesh loves infinity', this)">A) Ganesh loves infinity times more ♾️</button>
-            <button class="quiz-opt-btn" onclick="answerQuiz(3, 'Devi loves more', this)">B) Devi (Loves more but acts cool 😎)</button>
-            <button class="quiz-opt-btn" onclick="answerQuiz(3, 'Equal forever', this)">C) 100% equal forever and ever 💍</button>
+            <button class="quiz-opt-btn" onclick="checkConformAnswer(3, false, this)">A) Only Ganesh</button>
+            <button class="quiz-opt-btn" onclick="checkConformAnswer(3, false, this)">B) Only Devi</button>
+            <button class="quiz-opt-btn" onclick="checkConformAnswer(3, true, this)">C) Both love each other equally forever! 💍♾️</button>
           </div>
         </div>
       </div>
 
-      <!-- Proceed to the 3D Envelope -->
+      <!-- Proceed Button -->
       <button class="btn-action" id="btn-next-after-quiz" style="display:none;" onclick="goToPage(5)">
         Open Ganesh's Final Letter 💌 ➔
       </button>
