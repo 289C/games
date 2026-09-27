@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Slot Available • Book Your Custom Wish Page ✨</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    body, html {
+      width: 100%;
+      min-height: 100vh;
+      background: #060914;
+      color: #ffffff;
+      overflow-x: hidden;
+    }
+
+    .booking-wrapper {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 16px 36px;
+      background: radial-gradient(circle at 50% 20%, #171d3d 0%, #0a0e24 55%, #03050c 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Ambient Floating Particles */
+    .ambient-sparkle {
+      position: absolute;
+      pointer-events: none;
+      font-size: 1.15rem;
+      animation: floatUp 8s linear infinite;
+      z-index: 1;
+      filter: drop-shadow(0 0 6px rgba(0, 180, 216, 0.5));
+    }
+    @keyframes floatUp {
+      0% { transform: translateY(105vh) rotate(0deg) scale(0.7); opacity: 0; }
+      20% { opacity: 0.9; }
+      80% { opacity: 0.9; }
+      100% { transform: translateY(-8vh) rotate(360deg) scale(1.15); opacity: 0; }
+    }
+
+    /* Top Nav Bar */
+    .top-bar {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 50;
+    }
+    .pill-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #caf0f8;
+      padding: 7px 16px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      text-decoration: none;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Booking Stage Card */
+    .stage-card {
+      width: 100%;
+      max-width: 390px;
+      background: linear-gradient(165deg, rgba(255, 255, 255, 0.06) 0%, rgba(12, 17, 38, 0.95) 100%);
+      border: 1.5px solid rgba(0, 180, 216, 0.35);
+      border-radius: 34px;
+      padding: 30px 20px 26px;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.85), 0 0 35px rgba(0, 180, 216, 0.2);
+      backdrop-filter: blur(16px);
+      text-align: center;
+      position: relative;
+      z-index: 10;
+      animation: popIn 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.92); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* Available Status Badge */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(46, 213, 115, 0.15);
+      border: 1px solid #2ed573;
+      color: #2ed573;
+      padding: 5px 14px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #2ed573;
+      box-shadow: 0 0 10px #2ed573;
+      animation: pulseDot 1.5s infinite alternate ease-in-out;
+    }
+    @keyframes pulseDot {
+      0% { transform: scale(0.9); opacity: 0.6; }
+      100% { transform: scale(1.3); opacity: 1; }
+    }
+
+    /* Profile Avatar */
+    .insta-avatar-stage {
+      position: relative;
+      width: 86px;
+      height: 86px;
+      margin: 0 auto 12px;
+    }
+    .insta-ring {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      padding: 3px;
+      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      box-shadow: 0 8px 24px rgba(225, 48, 108, 0.4);
+      animation: spinGlow 4s linear infinite;
+    }
+    @keyframes spinGlow {
+      0% { filter: hue-rotate(0deg); }
+      100% { filter: hue-rotate(360deg); }
+    }
+    .insta-photo {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      background: #081124;
+      border: 2px solid #ffffff;
+      display: block;
+    }
+
+    .card-heading {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.55rem;
+      color: #fff2b2;
+      margin-bottom: 4px;
+      text-shadow: 0 0 16px rgba(255, 215, 0, 0.4);
+    }
+    .creator-handle {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #00b4d8;
+      margin-bottom: 12px;
+    }
+    .card-desc {
+      font-size: 0.8rem;
+      color: #caf0f8;
+      margin-bottom: 18px;
+      line-height: 1.5;
+    }
+
+    /* Features Included Box */
+    .features-card {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      padding: 14px 16px;
+      border: 1px solid rgba(0, 180, 216, 0.25);
+      text-align: left;
+      font-size: 0.78rem;
+      color: #e0f2fe;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+    .feature-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 7px;
+    }
+    .feature-item:last-child {
+      margin-bottom: 0;
+    }
+    .feature-icon {
+      font-size: 1.15rem;
+      flex-shrink: 0;
+    }
+
+    /* Buttons */
+    .btn-action {
+      width: 100%;
+      padding: 13px;
+      border-radius: 24px;
+      border: none;
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.92rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .btn-action:active {
+      transform: scale(0.97);
+    }
+
+    .btn-ig {
+      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      box-shadow: 0 6px 20px rgba(225, 48, 108, 0.45);
+      margin-bottom: 12px;
+    }
+    .btn-wa {
+      background: linear-gradient(135deg, #25d366, #128c7e);
+      box-shadow: 0 6px 20px rgba(37, 211, 102, 0.35);
+    }
+
+    .guarantee-note {
+      font-size: 0.72rem;
+      color: #94a3b8;
+      margin-top: 14px;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="booking-wrapper" id="main-wrap">
+    
+    <!-- Top Nav Bar -->
+    <div class="top-bar">
+      <a href="index.html" class="pill-btn">← Back to Hub</a>
+      <span class="pill-btn" onclick="fireParty(event)">✨ Satish Official</span>
+    </div>
+
+    <!-- Main Card -->
+    <div class="stage-card">
+
+      <!-- Status Indicator -->
+      <div class="status-badge">
+        <span class="status-dot"></span>
+        <span>Slot Available For Booking</span>
+      </div>
+
+      <!-- Avatar Stage -->
+      <div class="insta-avatar-stage">
+        <div class="insta-ring">
+          <img src="../../Insta.jpg" alt="Satish Kommana" class="insta-photo" onerror="this.onerror=null; this.src='/games/Insta.jpg';" />
+        </div>
+      </div>
+
+      <h1 class="card-heading">This Slot is Open! ✨</h1>
+      <div class="creator-handle">Crafted by @_satish_official_16</div>
+
+      <p class="card-desc">
+        Want to surprise your partner, bestie, or family with a customized interactive 3D wish webpage? Claim this slot right now!
+      </p>
+
+      <!-- Included Features -->
+      <div class="features-card">
+        <div class="feature-item">
+          <span class="feature-icon">🔐</span>
+          <span><strong>Custom Passcode Protection</strong> (Your secret date/code)</span>
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon">📸</span>
+          <span><strong>3D Interactive Memory Deck</strong> with your personal photos</span>
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon">✨</span>
+          <span><strong>Golden Scratch-Off Reveal Card</strong> with personal letter</span>
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon">🎵</span>
+          <span><strong>Custom Song or Audio Tracks</strong> playing in background</span>
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon">⚡</span>
+          <span><strong>Fast 24-Hour Delivery</strong> & live shareable web link</span>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <a href="https://ig.me/m/_satish_official_16" target="_blank" class="btn-action btn-ig">
+        <span>DM on Instagram to Book</span> 💌
+      </a>
+
+      <a href="https://api.whatsapp.com/send?phone=919281267188&text=Hi%20Satish!%20I%20saw%20this%20slot%20is%20available%20and%20want%20to%20book%20a%20custom%20wish%20webpage." target="_blank" class="btn-action btn-wa">
+        <span>Book Instantly on WhatsApp</span> 📲
+      </a>
+
+      <div class="guarantee-note">
+        💬 Send your photos, favorite song, and message to get your personalized link within hours.
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    // 1. FLOATING PARTICLES
+    const wrap = document.getElementById('main-wrap');
+    const icons = ['✨', '⭐', '🎈', '🎉', '💖', '💐', '👑'];
+    for (let i = 0; i < 16; i++) {
+      const p = document.createElement('div');
+      p.className = 'ambient-sparkle';
+      p.innerText = icons[Math.floor(Math.random() * icons.length)];
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.animationDelay = (Math.random() * 6) + 's';
+      p.style.animationDuration = (6 + Math.random() * 4) + 's';
+      wrap.appendChild(p);
+    }
+
+    // 2. CELEBRATION EFFECT
+    function fireParty(e) {
+      if (e) e.preventDefault();
+      confetti({
+        particleCount: 80,
+        spread: 80,
+        origin: { y: 0.6 },
+        colors: ['#00b4d8', '#ff4d6d', '#ffd700', '#2ed573']
+      });
+    }
+  </script>
+</body>
+</html>
