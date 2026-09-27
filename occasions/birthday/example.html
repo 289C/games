@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Make a Wish & Blow the Candle! 🎂✨</title>
+  <title>Birthday Wish Example Demo 🎂✨</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <style>
@@ -17,7 +17,6 @@
 
     body, html {
       width: 100%;
-      height: 100%;
       min-height: 100vh;
       background: #060914;
       color: #ffffff;
@@ -26,15 +25,31 @@
 
     /* Ambient Festive Radial Glow */
     .party-wrapper {
-      width: 100%;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 60px 16px 30px;
-      background: radial-gradient(circle at 50% 30%, #15203d 0%, #0a1122 55%, #03060d 100%);
+      padding: 60px 16px 36px;
+      background: radial-gradient(circle at 50% 20%, #10213d 0%, #071120 55%, #03060c 100%);
       position: relative;
+      overflow: hidden;
+    }
+
+    /* Floating Ambient Particles */
+    .ambient-particle {
+      position: absolute;
+      pointer-events: none;
+      font-size: 1.15rem;
+      animation: floatDrift 7.5s linear infinite;
+      z-index: 1;
+      filter: drop-shadow(0 0 6px rgba(0, 180, 216, 0.5));
+    }
+    @keyframes floatDrift {
+      0% { transform: translateY(105vh) rotate(0deg) scale(0.7); opacity: 0; }
+      20% { opacity: 0.9; }
+      80% { opacity: 0.9; }
+      100% { transform: translateY(-8vh) rotate(360deg) scale(1.15); opacity: 0; }
     }
 
     /* Top Nav Bar */
@@ -45,6 +60,7 @@
       right: 16px;
       display: flex;
       justify-content: space-between;
+      align-items: center;
       z-index: 50;
     }
     .pill-btn {
@@ -60,63 +76,62 @@
       box-shadow: 0 4px 15px rgba(0, 180, 216, 0.2);
     }
 
-    /* Perfectly Centered Stage Card */
-    .cake-stage-card {
+    /* STAGE CARD CONTAINER */
+    .stage-card {
       width: 100%;
-      max-width: 400px;
-      background: linear-gradient(165deg, rgba(255, 255, 255, 0.05) 0%, rgba(10, 20, 40, 0.85) 100%);
-      border: 1.5px solid rgba(255, 215, 0, 0.25);
-      border-radius: 36px;
-      padding: 30px 20px 24px;
-      box-shadow: 0 25px 60px rgba(0,0,0,0.85), 0 0 40px rgba(255, 182, 193, 0.15);
+      max-width: 390px;
+      background: linear-gradient(165deg, rgba(255, 255, 255, 0.05) 0%, rgba(10, 22, 44, 0.9) 100%);
+      border: 1.5px solid rgba(0, 180, 216, 0.35);
+      border-radius: 34px;
+      padding: 30px 20px 26px;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.85), 0 0 35px rgba(0, 180, 216, 0.2);
       backdrop-filter: blur(16px);
       text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      animation: popCard 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      z-index: 10;
+      animation: popIn 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
-    @keyframes popCard {
+    @keyframes popIn {
       from { opacity: 0; transform: scale(0.92); }
       to { opacity: 1; transform: scale(1); }
     }
 
     .card-heading {
       font-family: 'Playfair Display', serif;
-      font-size: 1.65rem;
+      font-size: 1.7rem;
       color: #fff2b2;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
       text-shadow: 0 0 16px rgba(255, 215, 0, 0.4);
     }
     .card-desc {
-      font-size: 0.8rem;
+      font-size: 0.82rem;
       color: #90e0ef;
       margin-bottom: 18px;
+      line-height: 1.45;
     }
 
-    /* 3D CAKE CONTAINER - CENTERED */
+    /* 3D CAKE & LIQUID DRIP STAGE */
     .cake-container {
       position: relative;
-      width: 260px;
-      height: 230px;
-      margin: 10px auto 16px;
+      width: 270px;
+      height: 235px;
+      margin: 8px auto 16px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: flex-end;
     }
 
-    /* Candle Element */
+    /* Candle */
     .candle {
       position: absolute;
-      top: 10px;
+      top: 14px;
       width: 14px;
       height: 48px;
       background: repeating-linear-gradient(45deg, #ff2a7a, #ff2a7a 6px, #ffffff 6px, #ffffff 12px);
       border-radius: 6px 6px 0 0;
       box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-      z-index: 10;
+      z-index: 12;
     }
     .wick {
       position: absolute;
@@ -127,8 +142,6 @@
       background: #2b2b2b;
       border-radius: 2px;
     }
-
-    /* Vibrant Glowing Flame */
     .flame {
       position: absolute;
       top: -30px;
@@ -146,7 +159,6 @@
       0% { transform: scale(1) rotate(-3deg); }
       100% { transform: scale(1.12) rotate(3deg); }
     }
-
     .smoke {
       position: absolute;
       top: -32px;
@@ -157,67 +169,137 @@
       transition: opacity 0.5s ease;
     }
 
-    /* TOP TIER: STRAWBERRY CREAM + CHOCOLATE GANACHE */
+    /* TOP TIER: STRAWBERRY GANACHE */
     .cake-tier-top {
-      width: 145px;
-      height: 56px;
-      background: linear-gradient(180deg, #ff70a6 0%, #e63946 100%);
-      border-radius: 20px 20px 8px 8px;
-      box-shadow: inset 0 6px 12px rgba(255, 255, 255, 0.45), 0 6px 14px rgba(0, 0, 0, 0.4);
+      width: 154px;
+      height: 60px;
+      background: linear-gradient(180deg, #ff5e97 0%, #d81159 100%);
+      border-radius: 24px 24px 10px 10px;
+      box-shadow: inset 0 4px 10px rgba(255, 255, 255, 0.4), 0 6px 16px rgba(0, 0, 0, 0.5);
       position: relative;
       z-index: 5;
     }
-    /* Ganache drips & Sprinkles */
-    .cake-tier-top::before {
-      content: "•  •  •  •  •";
-      color: #ffd166;
-      font-size: 14px;
-      letter-spacing: 12px;
+    .top-cream-cap {
       position: absolute;
-      top: 6px;
-      left: 14px;
-      opacity: 0.9;
-    }
-    .cake-tier-top::after {
-      content: "";
-      position: absolute;
-      bottom: -6px;
+      top: 0;
       left: 0;
-      right: 0;
-      height: 12px;
-      background: radial-gradient(circle, #541d1d 65%, transparent 70%);
-      background-size: 22px 14px;
+      width: 100%;
+      height: 18px;
+      background: #ffffff;
+      border-radius: 24px 24px 0 0;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
     }
+    .drips-row-top {
+      position: absolute;
+      top: 14px;
+      left: 0;
+      width: 100%;
+      height: 32px;
+      display: flex;
+      justify-content: space-around;
+      pointer-events: none;
+    }
+    .drip {
+      background: #ffffff;
+      border-radius: 0 0 10px 10px;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
+    }
+    .d1 { width: 14px; height: 16px; }
+    .d2 { width: 12px; height: 26px; }
+    .d3 { width: 16px; height: 12px; }
+    .d4 { width: 13px; height: 24px; }
+    .d5 { width: 15px; height: 18px; }
+    .d6 { width: 12px; height: 14px; }
 
-    /* BOTTOM TIER: HONEY VANILLA WITH ICING STRIPES */
+    /* BOTTOM TIER: HONEY-VANILLA */
     .cake-tier-bottom {
-      width: 215px;
-      height: 72px;
-      background: linear-gradient(180deg, #ffd166 0%, #f4a261 50%, #e76f51 100%);
-      border-radius: 22px 22px 12px 12px;
-      box-shadow: inset 0 8px 14px rgba(255, 255, 255, 0.4), 0 10px 24px rgba(0, 0, 0, 0.5);
+      width: 228px;
+      height: 76px;
+      background: linear-gradient(180deg, #ffc857 0%, #f4a261 50%, #e76f51 100%);
+      border-radius: 26px 26px 14px 14px;
+      box-shadow: inset 0 4px 12px rgba(255, 255, 255, 0.35), 0 10px 24px rgba(0, 0, 0, 0.55);
       margin-top: -6px;
       position: relative;
       z-index: 4;
     }
-    .cake-tier-bottom::after {
+    .bottom-cream-cap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 18px;
+      background: #fff7ed;
+      border-radius: 26px 26px 0 0;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+    }
+    .drips-row-bottom {
+      position: absolute;
+      top: 16px;
+      left: 0;
+      width: 100%;
+      height: 38px;
+      display: flex;
+      justify-content: space-around;
+      pointer-events: none;
+    }
+    .drip-b {
+      background: #fff7ed;
+      border-radius: 0 0 12px 12px;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.22);
+    }
+    .db1 { width: 16px; height: 18px; }
+    .db2 { width: 13px; height: 32px; }
+    .db3 { width: 18px; height: 15px; }
+    .db4 { width: 14px; height: 36px; }
+    .db5 { width: 15px; height: 20px; }
+    .db6 { width: 17px; height: 16px; }
+    .db7 { width: 12px; height: 28px; }
+
+    /* LIQUID FALLING DROPLETS */
+    .falling-drop {
+      position: relative;
+      animation: dripPinch 2.4s ease-in-out infinite;
+    }
+    .falling-drop.slow {
+      animation-duration: 3.2s;
+      animation-delay: 1.2s;
+    }
+    .falling-drop::after {
       content: "";
       position: absolute;
-      bottom: -7px;
-      left: 0;
-      right: 0;
-      height: 14px;
-      background: radial-gradient(circle, #ffffff 65%, transparent 70%);
-      background-size: 24px 15px;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 7px;
+      height: 9px;
+      background: inherit;
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      animation: dropFallAnim 2.4s ease-in-out infinite;
+    }
+    .falling-drop.slow::after {
+      animation-duration: 3.2s;
+      animation-delay: 1.2s;
+    }
+    @keyframes dripPinch {
+      0% { transform: scaleY(1); }
+      40% { transform: scaleY(1.18); }
+      70% { transform: scaleY(0.95); }
+      100% { transform: scaleY(1); }
+    }
+    @keyframes dropFallAnim {
+      0% { opacity: 0; transform: translate(-50%, 0) scale(0.6); }
+      45% { opacity: 1; transform: translate(-50%, 6px) scale(1); }
+      80% { opacity: 1; transform: translate(-50%, 18px) scale(0.85); }
+      100% { opacity: 0; transform: translate(-50%, 28px) scale(0.2); }
     }
 
-    /* METALLIC PEDESTAL PLATE */
+    /* CAKE PLATTER */
     .cake-plate {
-      width: 260px;
+      width: 270px;
       height: 18px;
-      background: linear-gradient(180deg, #f8f9fa 0%, #adb5bd 45%, #495057 100%);
+      background: linear-gradient(180deg, #f8f9fa 0%, #ced4da 45%, #6c757d 100%);
       border-radius: 50%;
-      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.7), inset 0 2px 4px #ffffff;
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.75), inset 0 2px 4px #ffffff;
       margin-top: -6px;
       z-index: 3;
     }
@@ -266,9 +348,9 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
+      text-decoration: none;
     }
     .btn-action:active { transform: scale(0.97); }
-
     .btn-alt {
       background: none;
       border: 1px solid rgba(255, 255, 255, 0.2);
@@ -280,77 +362,231 @@
       margin-top: 10px;
     }
 
-    /* SUCCESS CELEBRATION BOX */
-    #celebration-box {
-      display: none;
-      animation: popCard 0.45s ease forwards;
+    /* BALLOON POPPING INTERACTIVE STAGE */
+    .balloons-grid {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin: 18px 0 20px;
+    }
+    .balloon-item {
+      font-size: 2.8rem;
+      cursor: pointer;
+      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      user-select: none;
+    }
+    .balloon-item:active {
+      transform: scale(1.3) rotate(15deg);
+    }
+    .balloon-item.popped {
+      pointer-events: none;
+      opacity: 0.25;
+      transform: scale(0.6);
+      filter: grayscale(1);
+    }
+
+    /* DEVELOPER DM / CUSTOM WISH CARD */
+    .insta-avatar-stage {
+      position: relative;
+      width: 86px;
+      height: 86px;
+      margin: 0 auto 12px;
+    }
+    .insta-ring {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      padding: 3px;
+      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      box-shadow: 0 8px 24px rgba(225, 48, 108, 0.4);
+      animation: spinGlow 4s linear infinite;
+    }
+    @keyframes spinGlow {
+      0% { filter: hue-rotate(0deg); }
+      100% { filter: hue-rotate(360deg); }
+    }
+    .insta-photo {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      background: #081a33;
+      border: 2px solid #ffffff;
+      display: block;
+    }
+    .features-list {
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 18px;
+      padding: 12px 14px;
+      border: 1px solid rgba(0, 180, 216, 0.25);
+      text-align: left;
+      font-size: 0.78rem;
+      color: #caf0f8;
+      line-height: 1.6;
+      margin-bottom: 18px;
+    }
+    .features-list div {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 5px;
+    }
+    .btn-dm-primary {
+      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      box-shadow: 0 6px 20px rgba(225, 48, 108, 0.45);
     }
   </style>
 </head>
 <body>
 
-  <div class="party-wrapper">
+  <div class="party-wrapper" id="main-wrap">
+    
+    <!-- Top Action Bar -->
     <div class="top-bar">
       <a href="index.html" class="pill-btn">← Back to Hub</a>
-      <span class="pill-btn">🎂 Slot 1</span>
+      <span class="pill-btn" id="stage-tag">✨ Example Demo</span>
     </div>
 
-    <!-- MAIN CENTERED CAKE CARD -->
-    <div class="cake-stage-card" id="cake-card">
+    <!-- SCREEN 1: 3D CAKE & MICROPHONE CANDLE BLOW -->
+    <div class="stage-card" id="screen-cake">
       <h2 class="card-heading">Make a Secret Wish! ✨</h2>
       <p class="card-desc" id="mic-instruction">Blow into your microphone to blow out the candle! 🌬️</p>
 
-      <!-- 3D LAYERED CAKE (CENTER) -->
+      <!-- 3D LAYERED CAKE WITH RUNNING DRIP CREAM -->
       <div class="cake-container">
         <div class="candle">
           <div class="wick"></div>
           <div class="flame" id="flame-element"></div>
           <div class="smoke" id="smoke-element">💨</div>
         </div>
-        <div class="cake-tier-top"></div>
-        <div class="cake-tier-bottom"></div>
+
+        <div class="cake-tier-top">
+          <div class="top-cream-cap"></div>
+          <div class="drips-row-top">
+            <span class="drip d1"></span>
+            <span class="drip d2 falling-drop"></span>
+            <span class="drip d3"></span>
+            <span class="drip d4 falling-drop slow"></span>
+            <span class="drip d5"></span>
+            <span class="drip d6"></span>
+          </div>
+        </div>
+
+        <div class="cake-tier-bottom">
+          <div class="bottom-cream-cap"></div>
+          <div class="drips-row-bottom">
+            <span class="drip-b db1"></span>
+            <span class="drip-b db2 falling-drop"></span>
+            <span class="drip-b db3"></span>
+            <span class="drip-b db4 falling-drop slow"></span>
+            <span class="drip-b db5"></span>
+            <span class="drip-b db6"></span>
+            <span class="drip-b db7 falling-drop"></span>
+          </div>
+        </div>
+
         <div class="cake-plate"></div>
       </div>
 
-      <!-- AUDIO LEVEL GAUGE -->
-      <div class="meter-container" id="meter-box">
+      <!-- AUDIO SENSOR GAUGE -->
+      <div class="meter-container">
         <div class="meter-bar-wrap">
           <div class="meter-fill" id="meter-fill"></div>
         </div>
         <p class="status-text" id="status-label">Tap button below to start microphone</p>
       </div>
 
-      <!-- PRIMARY ACTION BUTTON -->
       <button class="btn-action" id="btn-mic-toggle" onclick="initMicSensor()">
         <span>🎙️ Enable Mic to Blow</span>
       </button>
 
-      <!-- MANUAL FALLBACK BUTTON -->
       <button class="btn-alt" onclick="blowCandleManual()">
         Tap to blow manually 👆
       </button>
     </div>
 
-    <!-- CELEBRATION CARD -->
-    <div class="cake-stage-card" id="celebration-box">
-      <div style="font-size: 4rem; margin-bottom: 8px;">🎉🥳🎂</div>
+    <!-- SCREEN 2: WISH SEALED FOREVER CELEBRATION -->
+    <div class="stage-card" id="screen-sealed" style="display: none;">
+      <div style="font-size: 3.8rem; margin-bottom: 8px;">🎉🥳🎂</div>
       <h2 class="card-heading">Wish Sealed Forever!</h2>
       <p class="card-desc">May your year ahead be loaded with smiles, success, and endless joy! 💖</p>
-      
-      <a href="slot2.html" class="btn-action" style="text-decoration: none; margin-top: 10px;">
-        <span>Open Birthday Gift 🎁 ➔</span>
+
+      <button class="btn-action" onclick="showScreen('screen-balloons')">
+        <span>Pop Birthday Balloons 🎈 ➔</span>
+      </button>
+    </div>
+
+    <!-- SCREEN 3: TOUCH-TO-POP BALLOONS & GIFT REVEAL -->
+    <div class="stage-card" id="screen-balloons" style="display: none;">
+      <h2 class="card-heading">Pop Every Balloon! 🎈</h2>
+      <p class="card-desc">Touch the balloons to reveal birthday wishes hidden underneath</p>
+
+      <div class="balloons-grid">
+        <div class="balloon-item" id="b1" onclick="popBalloon('b1', 'Good Luck & Success! 🚀')">🎈</div>
+        <div class="balloon-item" id="b2" onclick="popBalloon('b2', 'Endless Smiles! 😊')">🎈</div>
+        <div class="balloon-item" id="b3" onclick="popBalloon('b3', 'True Friend Forever! 💖')">🎈</div>
+        <div class="balloon-item" id="b4" onclick="popBalloon('b4', 'All Dreams Come True! 🌟')">🎈</div>
+      </div>
+
+      <p id="balloon-message" style="font-size: 0.82rem; color: #ffd166; font-weight: 600; min-height: 24px; margin-bottom: 16px;">
+        Tap any balloon above to pop it!
+      </p>
+
+      <button class="btn-action" id="btn-gift" style="display: none;" onclick="showScreen('screen-custom')">
+        <span>View Custom Wish Card 🎁 ➔</span>
+      </button>
+    </div>
+
+    <!-- SCREEN 4: BOOKING / DM CARD FOR SATISH KOMMANA -->
+    <div class="stage-card" id="screen-custom" style="display: none;">
+      <div class="insta-avatar-stage">
+        <div class="insta-ring">
+          <img src="../../Insta.jpg" alt="Satish Kommana" class="insta-photo" onerror="this.onerror=null; this.src='/games/Insta.jpg';" />
+        </div>
+      </div>
+
+      <h2 class="card-heading">Custom Birthday Wish</h2>
+      <div style="color: #90e0ef; font-weight: 700; font-size: 0.88rem; margin-bottom: 12px;">@_satish_official_16</div>
+
+      <p class="card-desc">
+        Surprise your bestie or special someone with their personalized interactive webpage! 💖
+      </p>
+
+      <div class="features-list">
+        <div><span>🎂</span> <strong>Mic Blow Candle & Dripping Cake</strong></div>
+        <div><span>📸</span> <strong>3D Rotating Photo Carousel</strong> with music</div>
+        <div><span>🎈</span> <strong>Secret Balloon Poppers & Wishes</strong></div>
+        <div><span>🎁</span> <strong>Unfolding Virtual Surprise Gift Box</strong></div>
+        <div><span>📲</span> <strong>Instant WhatsApp & Instagram Reply</strong></div>
+      </div>
+
+      <!-- Action Buttons -->
+      <a href="https://ig.me/m/_satish_official_16" target="_blank" class="btn-action btn-dm-primary">
+        <span>DM on Instagram for Wishes</span> 💌
+      </a>
+
+      <a href="https://api.whatsapp.com/send?phone=919281267188&text=Hi%20Satish!%20I%20saw%20the%20Birthday%20example%20page%20and%20want%20to%20create%20a%20custom%20wish." target="_blank" class="btn-action" style="background: linear-gradient(135deg, #25d366, #128c7e); margin-top: 10px;">
+        <span>Chat on WhatsApp</span> 📲
       </a>
     </div>
+
   </div>
 
   <script>
-    let audioContext = null;
-    let analyser = null;
-    let microphone = null;
-    let isCandleLit = true;
-    let isListening = false;
+    // 1. FLOATING AMBIENT PARTICLES
+    const wrap = document.getElementById('main-wrap');
+    const icons = ['✨', '⭐', '🎈', '🎉', '💖', '🎂'];
+    for (let i = 0; i < 16; i++) {
+      const p = document.createElement('div');
+      p.className = 'ambient-particle';
+      p.innerText = icons[Math.floor(Math.random() * icons.length)];
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.animationDelay = (Math.random() * 6) + 's';
+      p.style.animationDuration = (6 + Math.random() * 4) + 's';
+      wrap.appendChild(p);
+    }
 
-    // --- SYNTHETIC WEB AUDIO SFX ---
+    // 2. SYNTHETIC AUDIO SFX (ZERO EXTERNAL MP3s NEEDED)
     let sfxCtx = null;
     function playSfx(type) {
       try {
@@ -364,11 +600,19 @@
         if (type === 'extinguish') {
           osc.type = 'sine';
           osc.frequency.setValueAtTime(140, now);
-          osc.frequency.exponentialRampToValueAtTime(40, now + 0.3);
+          osc.frequency.exponentialRampToValueAtTime(30, now + 0.35);
           gain.gain.setValueAtTime(0.3, now);
-          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
           osc.start(now);
-          osc.stop(now + 0.3);
+          osc.stop(now + 0.35);
+        } else if (type === 'pop') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(450, now);
+          osc.frequency.exponentialRampToValueAtTime(80, now + 0.12);
+          gain.gain.setValueAtTime(0.25, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+          osc.start(now);
+          osc.stop(now + 0.12);
         } else if (type === 'cheer') {
           [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
             const o = sfxCtx.createOscillator();
@@ -376,19 +620,35 @@
             o.connect(g); g.connect(sfxCtx.destination);
             o.type = 'triangle';
             o.frequency.value = freq;
-            g.gain.setValueAtTime(0.18, now + (i * 0.09));
-            g.gain.exponentialRampToValueAtTime(0.01, now + (i * 0.09) + 0.5);
-            o.start(now + (i * 0.09));
-            o.stop(now + (i * 0.09) + 0.5);
+            g.gain.setValueAtTime(0.18, now + (i * 0.08));
+            g.gain.exponentialRampToValueAtTime(0.01, now + (i * 0.08) + 0.45);
+                    g.exponentialRampToValueAtTime(0.01, now + (i * 0.08) + 0.45);
+            o.start(now + (i * 0.08));
+            o.stop(now + (i * 0.08) + 0.45);
           });
         }
       } catch (e) {}
     }
 
-    // --- MICROPHONE DETECTION LOGIC ---
+    // 3. SCREEN SWITCHER
+    function showScreen(screenId) {
+      document.querySelectorAll('.stage-card').forEach(card => card.style.display = 'none');
+      const target = document.getElementById(screenId);
+      if (target) {
+        target.style.display = 'block';
+        playSfx('pop');
+      }
+    }
+
+    // 4. MICROPHONE CANDLE BLOW SENSOR
+    let audioContext = null;
+    let analyser = null;
+    let microphone = null;
+    let isCandleLit = true;
+    let isListening = false;
+
     async function initMicSensor() {
       if (isListening || !isCandleLit) return;
-
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -400,11 +660,11 @@
 
         isListening = true;
         document.getElementById('btn-mic-toggle').style.display = 'none';
-        document.getElementById('status-label').innerText = "Now BLOW hard into your mic! 🌬️";
+        document.getElementById('status-label').innerText = "Now BLOW into your microphone! 🌬️";
 
         monitorMicVolume();
       } catch (err) {
-        alert("Microphone permission denied. You can tap the manual button below!");
+        alert("Microphone access blocked. Tap the manual button below!");
         document.getElementById('status-label').innerText = "Mic blocked. Use manual button below.";
       }
     }
@@ -419,16 +679,14 @@
       for (let i = 0; i < dataArray.length; i++) {
         sum += dataArray[i];
       }
-      const averageVolume = sum / dataArray.length;
+      const avgVol = sum / dataArray.length;
+      const fillPct = Math.min(100, (avgVol / 45) * 100);
+      document.getElementById('meter-fill').style.width = fillPct + '%';
 
-      const percent = Math.min(100, (averageVolume / 45) * 100);
-      document.getElementById('meter-fill').style.width = percent + '%';
-
-      if (averageVolume > 48) {
+      if (avgVol > 46) {
         extinguishCandle();
         return;
       }
-
       requestAnimationFrame(monitorMicVolume);
     }
 
@@ -448,20 +706,43 @@
       smoke.style.opacity = '1';
 
       playSfx('extinguish');
-
       if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
 
       setTimeout(() => {
         playSfx('cheer');
         confetti({
           particleCount: 130,
-          spread: 95,
-          colors: ['#00b4d8', '#f72585', '#ffd166', '#ffffff']
+          spread: 90,
+          colors: ['#00b4d8', '#ff4081', '#ffd166', '#ffffff']
         });
-
-        document.getElementById('cake-card').style.display = 'none';
-        document.getElementById('celebration-box').style.display = 'block';
+        showScreen('screen-sealed');
       }, 700);
+    }
+
+    // 5. BALLOON POP LOGIC
+    let poppedCount = 0;
+    function popBalloon(id, msg) {
+      const el = document.getElementById(id);
+      if (el.classList.contains('popped')) return;
+
+      el.classList.add('popped');
+      poppedCount++;
+      playSfx('pop');
+
+      confetti({
+        particleCount: 25,
+        spread: 45,
+        origin: { y: 0.6 }
+      });
+
+      document.getElementById('balloon-message').innerText = msg;
+
+      if (poppedCount >= 4) {
+        setTimeout(() => {
+          document.getElementById('balloon-message').innerText = "🎉 All Wishes Unlocked!";
+          document.getElementById('btn-gift').style.display = 'inline-flex';
+        }, 300);
+      }
     }
   </script>
 </body>
