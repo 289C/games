@@ -2,338 +2,410 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Crush Proposal Slots Hub 💖</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Crush Proposal Hub 💖✨ | Satish Official</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
-    body, html { width: 100%; min-height: 100%; background: #1a0410; color: #fff; overflow-x: hidden; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
 
-    /* Dreamy Romantic Background */
-    .menu-wrap {
+    body, html {
+      width: 100%;
+      min-height: 100vh;
+      background: #09030c;
+      color: #ffffff;
+      overflow-x: hidden;
+    }
+
+    /* Ambient Dynamic Animated Background */
+    .hub-wrapper {
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 24px 16px 50px;
-      background: radial-gradient(circle at 50% 10%, #4a092b 0%, #200416 60%, #12010c 100%);
+      padding: 50px 16px 40px;
+      background: radial-gradient(circle at 50% 15%, #42082b 0%, #1c0213 50%, #070005 100%);
       position: relative;
       overflow: hidden;
     }
 
-    /* Floating Petals/Hearts */
-    .bg-particle {
-      position: absolute; pointer-events: none;
-      font-size: 1.3rem; animation: floatUpward 7s linear infinite;
-      filter: drop-shadow(0 0 6px rgba(255, 105, 180, 0.5));
+    /* Floating Particle Trail */
+    .ambient-sparkle {
+      position: absolute;
+      pointer-events: none;
+      font-size: 1.15rem;
+      animation: floatParticles 7s linear infinite;
+      z-index: 1;
+      filter: drop-shadow(0 0 8px rgba(255, 105, 180, 0.6));
     }
-    @keyframes floatUpward {
-      0% { transform: translateY(105vh) rotate(0deg) scale(0.8); opacity: 0; }
+    @keyframes floatParticles {
+      0% { transform: translateY(105vh) rotate(0deg) scale(0.6); opacity: 0; }
       20% { opacity: 0.9; }
       80% { opacity: 0.9; }
-      100% { transform: translateY(-10vh) rotate(360deg) scale(1.15); opacity: 0; }
+      100% { transform: translateY(-8vh) rotate(360deg) scale(1.2); opacity: 0; }
     }
 
-    /* Top Nav Bar */
-    .top-nav {
-      width: 100%; max-width: 480px;
-      display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 16px; z-index: 20;
+    /* Single Clean Top Action Bar */
+    .top-nav-bar {
+      width: 100%;
+      max-width: 390px;
+      margin: 0 auto 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      padding: 0 4px;
+      box-sizing: border-box;
+      z-index: 50;
+      position: relative;
     }
-    .pill-btn {
-      background: rgba(255, 182, 193, 0.15); border: 1px solid rgba(255, 192, 203, 0.35);
-      color: #ffd1dc; padding: 7px 15px; border-radius: 20px; font-size: 0.8rem;
-      cursor: pointer; text-decoration: none; backdrop-filter: blur(10px);
-      box-shadow: 0 4px 15px rgba(255, 105, 180, 0.2);
+
+    .top-pill-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #ffd6e0;
+      padding: 6px 12px;
+      border-radius: 16px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-decoration: none;
+      backdrop-filter: blur(8px);
+      white-space: nowrap;
+      cursor: pointer;
+      transition: background 0.2s;
     }
-    /* Top Nav Bar Layout */
-.top-nav-bar {
-  width: 100%;
-  max-width: 420px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 20px;
-  z-index: 50;
-  position: relative;
-}
+    .top-pill-btn:active { background: rgba(255, 255, 255, 0.2); }
 
-/* Default Top Pill Buttons */
-.top-pill-btn {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #ffd6e0;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 0.74rem;
-  font-weight: 600;
-  text-decoration: none;
-  backdrop-filter: blur(10px);
-  white-space: nowrap;
-}
+    /* Glowing Top Premium Pill Button */
+    .premium-top-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 12px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(255, 215, 0, 0.25) 0%, rgba(255, 0, 128, 0.35) 100%);
+      border: 1.2px solid #ffd700;
+      color: #fff2b2;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-decoration: none;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 0 12px rgba(255, 215, 0, 0.4), 0 3px 10px rgba(0, 0, 0, 0.4);
+      animation: premiumGlowPulse 2s infinite alternate ease-in-out;
+      white-space: nowrap;
+    }
+    @keyframes premiumGlowPulse {
+      0% { box-shadow: 0 0 8px rgba(255, 215, 0, 0.3); transform: scale(1); }
+      100% { box-shadow: 0 0 18px rgba(255, 215, 0, 0.7), 0 0 6px rgba(255, 0, 128, 0.5); transform: scale(1.02); }
+    }
+    .premium-top-pill:active { transform: scale(0.94); }
 
-/* Glowing Top Premium Pill */
-.premium-top-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 6px 14px;
-  border-radius: 20px;
-  background: linear-gradient(135deg, rgba(255, 215, 0, 0.22) 0%, rgba(255, 0, 128, 0.3) 100%);
-  border: 1.2px solid #ffd700;
-  color: #fff2b2;
-  font-size: 0.74rem;
-  font-weight: 700;
-  text-decoration: none;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 0 12px rgba(255, 215, 0, 0.35), 0 3px 10px rgba(0, 0, 0, 0.4);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-  white-space: nowrap;
-}
-
-.premium-top-pill:active {
-  transform: scale(0.93);
-  box-shadow: 0 0 6px rgba(255, 215, 0, 0.2);
-}
-    
-
-    /* DEVELOPER PROFILE HEADER WITH ROOT Insta.jpg */
+    /* Developer Profile Card with Neon Aura */
     .dev-profile-card {
-      width: 100%; max-width: 480px;
-      background: rgba(255, 255, 255, 0.06);
+      width: 100%;
+      max-width: 390px;
+      background: linear-gradient(165deg, rgba(255, 255, 255, 0.07) 0%, rgba(35, 4, 22, 0.9) 100%);
       border: 1.5px solid rgba(255, 105, 180, 0.35);
-      border-radius: 22px; padding: 14px 18px;
-      display: flex; align-items: center; justify-content: space-between;
+      border-radius: 24px;
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 14px 35px rgba(0,0,0,0.6), 0 0 25px rgba(255, 105, 180, 0.15);
       backdrop-filter: blur(14px);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 20px rgba(255, 105, 180, 0.25);
-      margin-bottom: 24px; z-index: 20;
-      text-decoration: none; color: #fff;
-      transition: transform 0.25s ease, border-color 0.25s ease;
+      margin-bottom: 22px;
+      z-index: 10;
+      position: relative;
     }
-    .dev-profile-card:hover {
-      transform: translateY(-2px);
-      border-color: #ff007f;
+
+    .dev-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
-    .dev-left { display: flex; align-items: center; gap: 14px; }
+
     .dev-avatar-wrap {
-      position: relative; width: 52px; height: 52px;
-      border-radius: 50%; padding: 2.5px;
-      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
-      animation: spinGlow 4s linear infinite;
-    }
-    @keyframes spinGlow {
-      0% { filter: hue-rotate(0deg); }
-      100% { filter: hue-rotate(360deg); }
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      padding: 2px;
+      background: linear-gradient(45deg, #ff4d6d, #ffd700);
+      box-shadow: 0 0 12px rgba(255, 77, 109, 0.5);
     }
     .dev-avatar {
-      width: 100%; height: 100%; border-radius: 50%;
-      object-fit: cover; background: #260515; display: block;
-    }
-    .dev-info h3 { font-size: 0.95rem; font-weight: 700; color: #fff; line-height: 1.2; }
-    .dev-info p { font-size: 0.72rem; color: #ff99b6; margin-top: 2px; }
-    .insta-chip {
-      background: linear-gradient(135deg, #fd1d1d, #833ab4);
-      padding: 6px 12px; border-radius: 14px; font-size: 0.72rem;
-      font-weight: 700; display: inline-flex; align-items: center; gap: 4px;
-      box-shadow: 0 4px 12px rgba(225, 48, 108, 0.4);
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      background: #14020c;
+      display: block;
     }
 
-    /* SECTION TITLE */
-    .title-box { text-align: center; margin-bottom: 22px; z-index: 10; }
-    .title-box h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.8rem; color: #ffd7e5;
-      text-shadow: 0 0 15px rgba(255, 105, 180, 0.5);
+    .dev-info h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #fff2b2;
+      margin-bottom: 1px;
     }
-    .title-box p { font-size: 0.82rem; color: #ffb3c6; margin-top: 4px; }
+    .dev-info p {
+      font-size: 0.7rem;
+      color: #ffccd5;
+    }
 
-    /* SLOTS GRID */
-    .slots-container {
-      width: 100%; max-width: 480px;
-      display: flex; flex-direction: column; gap: 16px;
+    .dev-badge-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: linear-gradient(135deg, #ff4d6d, #c9184a);
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 16px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-decoration: none;
+      box-shadow: 0 4px 15px rgba(255, 77, 109, 0.4);
+      transition: transform 0.15s;
+    }
+    .dev-badge-link:active { transform: scale(0.94); }
+
+    /* Hero Banner Header */
+    .hero-banner {
+      text-align: center;
+      margin-bottom: 22px;
       z-index: 10;
-    }
-    .slot-card {
       position: relative;
-      background: linear-gradient(145deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 105, 180, 0.06) 100%);
-      border: 1.5px solid rgba(255, 192, 203, 0.25);
-      border-radius: 20px; padding: 18px 20px;
-      display: flex; align-items: center; justify-content: space-between;
-      backdrop-filter: blur(12px); text-decoration: none; color: #fff;
-      cursor: pointer; transition: all 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.35);
     }
-    .slot-card:hover, .slot-card:active {
-      transform: translateY(-3px) scale(1.02);
-      border-color: #ff4d80;
-      box-shadow: 0 12px 30px rgba(255, 77, 128, 0.35);
+    .hero-banner h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.85rem;
+      font-weight: 800;
+      color: #ffd6e0;
+      margin-bottom: 4px;
+      text-shadow: 0 0 20px rgba(255, 77, 109, 0.5);
     }
-    .slot-card.featured-example {
-      border: 1.5px solid #ff4081;
-      background: linear-gradient(145deg, rgba(255, 64, 129, 0.16) 0%, rgba(138, 43, 226, 0.12) 100%);
-      box-shadow: 0 10px 28px rgba(255, 64, 129, 0.35);
+    .hero-banner p {
+      font-size: 0.78rem;
+      color: #ffccd5;
+      max-width: 320px;
+      margin: 0 auto;
     }
-    .slot-left { display: flex; align-items: center; gap: 16px; }
-    .slot-badge-num {
-      width: 44px; height: 44px; border-radius: 14px;
-      background: linear-gradient(135deg, #ff4081, #c2185b);
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 700; font-size: 1.1rem; color: #fff;
-      box-shadow: 0 4px 15px rgba(255, 64, 129, 0.4);
+
+    /* PROPOSAL SLOTS CONTAINER */
+    .slots-container {
+      width: 100%;
+      max-width: 390px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      z-index: 10;
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    /* Interactive Slot Card */
+    .slot-card {
+      background: linear-gradient(165deg, rgba(255, 255, 255, 0.06) 0%, rgba(30, 4, 18, 0.94) 100%);
+      border: 1.5px solid rgba(255, 77, 109, 0.35);
+      border-radius: 24px;
+      padding: 16px 18px;
+      text-decoration: none;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 77, 109, 0.15);
+      backdrop-filter: blur(14px);
+      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.2s, box-shadow 0.2s;
+    }
+    .slot-card:active {
+      transform: scale(0.97);
+      border-color: #ffd700;
+      box-shadow: 0 0 25px rgba(255, 215, 0, 0.3);
+    }
+    .slot-card.featured-demo {
+      border: 1.8px solid #ffd700;
+      background: linear-gradient(165deg, rgba(255, 215, 0, 0.1) 0%, rgba(45, 6, 25, 0.96) 100%);
+      box-shadow: 0 14px 35px rgba(0, 0, 0, 0.7), 0 0 25px rgba(255, 215, 0, 0.25);
+    }
+
+    .slot-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .slot-icon-box {
+      width: 50px;
+      height: 50px;
+      border-radius: 16px;
+      background: rgba(255, 77, 109, 0.18);
+      border: 1px solid rgba(255, 77, 109, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
       flex-shrink: 0;
     }
-    .slot-details h3 { font-size: 0.98rem; font-weight: 700; color: #ffffff; }
-    .slot-details p { font-size: 0.74rem; color: #ffccd5; margin-top: 2px; }
-    .slot-status {
-      padding: 5px 10px; border-radius: 12px;
-      font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 0.5px;
+    .featured-demo .slot-icon-box {
+      background: rgba(255, 215, 0, 0.2);
+      border-color: rgba(255, 215, 0, 0.5);
     }
-    .status-live { background: rgba(37, 211, 102, 0.2); color: #25d366; border: 1px solid rgba(37, 211, 102, 0.5); }
-    .status-demo { background: rgba(255, 64, 129, 0.25); color: #ff80ab; border: 1px solid rgba(255, 64, 129, 0.6); }
-    .status-ready { background: rgba(255, 215, 0, 0.2); color: #ffd700; border: 1px solid rgba(255, 215, 0, 0.5); }
-    .status-custom { background: rgba(255, 105, 180, 0.2); color: #ff69b4; border: 1px solid rgba(255, 105, 180, 0.5); }
+
+    .slot-details h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.08rem;
+      color: #ffd6e0;
+      margin-bottom: 2px;
+    }
+    .featured-demo .slot-details h3 { color: #fff2b2; }
+
+    .slot-details p {
+      font-size: 0.72rem;
+      color: #ffccd5;
+      line-height: 1.35;
+    }
+
+    .slot-tag {
+      font-size: 0.65rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 12px;
+      background: rgba(255, 77, 109, 0.2);
+      border: 1px solid rgba(255, 77, 109, 0.4);
+      color: #ffb3c1;
+      white-space: nowrap;
+    }
+    .slot-tag.tag-live { background: rgba(46, 213, 115, 0.2); border-color: #2ed573; color: #2ed573; }
+    .slot-tag.tag-ready { background: rgba(255, 165, 2, 0.2); border-color: #ffa502; color: #ffa502; }
+    .slot-tag.tag-demo { background: rgba(255, 215, 0, 0.2); border-color: #ffd700; color: #ffd700; }
   </style>
 </head>
 <body>
 
-  <div class="menu-wrap" id="wrap-container">
-    <div class="top-nav">
-      <a href="../index.html" class="pill-btn">← Categories</a>
-      <span class="pill-btn">✨ Proposal Hub</span>
+  <div class="hub-wrapper" id="main-wrap">
+    
+    <!-- Single Clean Top Action Bar -->
+    <div class="top-nav-bar">
+      <a href="../index.html" class="top-pill-btn">← Back</a>
+      
+      <!-- VIP Premium Option Button -->
+      <a href="primium/index.html" class="premium-top-pill">
+        <span>👑</span>
+        <span>Premium Option</span>
+        <span>✅</span>
+      </a>
+
+      <span class="top-pill-btn" onclick="fireParty(event)">✨ Hub</span>
     </div>
 
-<!-- TOP ACTION BAR WITH PREMIUM OPTION -->
-<div class="top-nav-bar">
-  <a href="../index.html" class="top-pill-btn">← Categories</a>
-  
-  <!-- PREMIUM OPTION BUTTON -->
-  <a href="primium/index.html" class="premium-top-pill">
-    <span>👑</span>
-    <span>Premium Option</span>
-    <span>✅</span>
-  </a>
-
-  <span class="top-pill-btn">✨ Proposal Hub</span>
-</div>
-    
-
-    <!-- DEVELOPER BRANDING WITH ROOT Insta.jpg -->
-    <a href="https://instagram.com/_satish_official_16" target="_blank" class="dev-profile-card">
+    <!-- Developer Profile Card -->
+    <div class="dev-profile-card">
       <div class="dev-left">
         <div class="dev-avatar-wrap">
           <img src="../../Insta.jpg" alt="Satish Kommana" class="dev-avatar" onerror="this.onerror=null; this.src='/games/Insta.jpg';" />
         </div>
         <div class="dev-info">
           <h3>Satish Kommana</h3>
-          <p>Lead Developer & Creator</p>
+          <p>Creator & Developer</p>
         </div>
       </div>
-      <div class="insta-chip">
-        <span>@_satish_official_16</span> ↗
-      </div>
-    </a>
-
-    <div class="title-box">
-      <h1>Crush Proposal Hub 💖</h1>
-      <p>Choose an interactive proposal experience below</p>
+      <a href="https://ig.me/m/_satish_official_16" target="_blank" class="dev-badge-link">
+        <span>@_satish_official_16 ↗</span>
+      </a>
     </div>
 
-    <!-- PROPOSAL SLOTS: EXAMPLE FIRST, THEN SLOTS 1 TO 5 -->
+    <!-- Header Banner -->
+    <div class="hero-banner">
+      <h1>Crush Proposal Hub 💖</h1>
+      <p>Choose an interactive proposal experience or custom slot below</p>
+    </div>
+
+    <!-- PROPOSAL SLOTS CONTAINER -->
     <div class="slots-container">
 
-      <!-- TOP FEATURED: EXAMPLE / DEMO SLOT -->
-      <a href="example.html" class="slot-card featured-example" onclick="triggerConfetti()">
+      <!-- Example Live Demo Slot -->
+      <a href="example.html" class="slot-card featured-demo">
         <div class="slot-left">
-          <div class="slot-badge-num" style="background: linear-gradient(135deg, #e91e63, #8e24aa);">★</div>
+          <div class="slot-icon-box">⭐</div>
           <div class="slot-details">
             <h3>Example Proposal Demo 🎬</h3>
             <p>Tollywood Intro • Scratch Card • Full Interactive Flow</p>
           </div>
         </div>
-        <span class="slot-status status-demo">Example ✨</span>
+        <div class="slot-tag tag-demo">DEMO</div>
       </a>
 
-      <!-- SLOT 1 (RENAMED TO slot1.html) -->
-      <a href="slot1.html" class="slot-card" onclick="triggerConfetti()">
+      <!-- Slot 1 (Ganesh & Devi Special) -->
+      <a href="slot1.html" class="slot-card">
         <div class="slot-left">
-          <div class="slot-badge-num">1</div>
+          <div class="slot-icon-box">💖</div>
           <div class="slot-details">
-            <h3>Romantic Proposal 🥰</h3>
+            <h3>Ganesh & Devi Special 🥰</h3>
             <p>Password Lock • Runaway No • 3D Envelope</p>
           </div>
         </div>
-        <span class="slot-status status-live">Live 🚀</span>
+        <div class="slot-tag tag-live">LIVE</div>
       </a>
 
-      <!-- SLOT 2 (slot2.html) -->
+      <!-- Slot 2 -->
       <a href="slot2.html" class="slot-card">
         <div class="slot-left">
-          <div class="slot-badge-num" style="background: linear-gradient(135deg, #7b1fa2, #ba68c8);">2</div>
+          <div class="slot-icon-box">🌹</div>
           <div class="slot-details">
-            <h3>Romantic Proposal Slot 2 🌹</h3>
+            <h3>Romantic Proposal Slot 2</h3>
             <p>Ready to customize with names & audio</p>
           </div>
         </div>
-        <span class="slot-status status-ready">Ready ✨</span>
+        <div class="slot-tag tag-ready">READY</div>
       </a>
 
-      <!-- SLOT 3 (slot3.html) -->
+      <!-- Slot 3 -->
       <a href="slot3.html" class="slot-card">
         <div class="slot-left">
-          <div class="slot-badge-num" style="background: linear-gradient(135deg, #ff4081, #f50057);">3</div>
+          <div class="slot-icon-box">💍</div>
           <div class="slot-details">
-            <h3>Sweet Confession Slot 3 💌</h3>
-            <p>3D Memory Carousel & Dual Direct Reply</p>
+            <h3>Sweet Confession Slot 3</h3>
+            <p>Reserved for custom booking</p>
           </div>
         </div>
-        <span class="slot-status status-custom">Custom 💖</span>
-      </a>
-
-      <!-- SLOT 4 (slot4.html) -->
-      <a href="slot4.html" class="slot-card">
-        <div class="slot-left">
-          <div class="slot-badge-num" style="background: linear-gradient(135deg, #f57c00, #ffb74d);">4</div>
-          <div class="slot-details">
-            <h3>Love Letter Envelope Slot 4 ✉️</h3>
-            <p>Unfolding Letter & Touch Fingerprint Promise</p>
-          </div>
-        </div>
-        <span class="slot-status status-custom">Custom 💖</span>
-      </a>
-
-      <!-- SLOT 5 (slot5.html) -->
-      <a href="slot5.html" class="slot-card">
-        <div class="slot-left">
-          <div class="slot-badge-num" style="background: linear-gradient(135deg, #00897b, #4db6ac);">5</div>
-          <div class="slot-details">
-            <h3>Midnight Romance Slot 5 🌙</h3>
-            <p>Full 3D Floating Box & Interactive Effects</p>
-          </div>
-        </div>
-        <span class="slot-status status-ready">Ready ✨</span>
+        <div class="slot-tag tag-ready">OPEN</div>
       </a>
 
     </div>
+
   </div>
 
   <script>
-    const wrap = document.getElementById('wrap-container');
-    const icons = ['🌸', '💖', '✨', '🌷', '💕', '🎀'];
+    // 1. FLOATING PARTICLES
+    const wrap = document.getElementById('main-wrap');
+    const icons = ['💖', '✨', '🌹', '💍', '⭐', '🎈'];
     for (let i = 0; i < 16; i++) {
       const p = document.createElement('div');
-      p.className = 'bg-particle';
+      p.className = 'ambient-sparkle';
       p.innerText = icons[Math.floor(Math.random() * icons.length)];
       p.style.left = Math.random() * 100 + 'vw';
       p.style.animationDelay = (Math.random() * 6) + 's';
-      p.style.animationDuration = (5 + Math.random() * 4) + 's';
+      p.style.animationDuration = (6 + Math.random() * 4) + 's';
       wrap.appendChild(p);
     }
 
-    function triggerConfetti() {
-      confetti({ particleCount: 70, spread: 80, colors: ['#ff007f', '#ffccd5', '#ffd700'] });
+    // 2. CELEBRATION CONFETTI
+    function fireParty(e) {
+      if (e) e.preventDefault();
+      confetti({
+        particleCount: 90,
+        spread: 85,
+        origin: { y: 0.6 },
+        colors: ['#ff4d6d', '#ffd700', '#ffffff', '#ff007f']
+      });
     }
   </script>
 </body>
