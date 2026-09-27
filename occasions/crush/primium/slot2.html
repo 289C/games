@@ -446,31 +446,21 @@
       transition: opacity 0.5s ease;
     }
 
-    /* SCREEN 8: PROMO CARD */
-    .insta-avatar-stage { position: relative; width: 86px; height: 86px; margin: 0 auto 12px; }
-    .insta-ring {
+    /* SCREEN 8: FINAL REPLY CARD */
+    .reply-textarea {
       width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      padding: 3px;
-      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
-      box-shadow: 0 8px 24px rgba(225, 48, 108, 0.4);
-      animation: spinGlow 4s linear infinite;
+      height: 90px;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1.5px solid rgba(255, 77, 109, 0.5);
+      border-radius: 16px;
+      padding: 10px 14px;
+      color: #fff;
+      font-size: 0.85rem;
+      outline: none;
+      resize: none;
+      margin-bottom: 12px;
     }
-    @keyframes spinGlow { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } }
-    .insta-photo {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      object-fit: cover;
-      background: #14040d;
-      border: 2px solid #ffffff;
-      display: block;
-    }
-    .btn-dm-primary {
-      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
-      box-shadow: 0 6px 20px rgba(225, 48, 108, 0.45);
-    }
+    .reply-textarea:focus { border-color: #ffd700; }
   </style>
 </head>
 <body>
@@ -483,7 +473,7 @@
       <span class="pill-btn">💍 Ganesh & Devi</span>
     </div>
 
-    <!-- SCREEN 1: PASSCODE LOCK GATE (NO HINTS, NO DEMO BUTTON) -->
+    <!-- SCREEN 1: PASSCODE LOCK GATE -->
     <div class="stage-card" id="screen-lock">
       <div style="font-size: 3.5rem; margin-bottom: 8px;">🔐💖</div>
       <h2 class="card-heading">Happy Anniversary Devi</h2>
@@ -674,32 +664,25 @@
         ✨ Scratch at least 45% to unlock
       </p>
 
-      <button class="btn-action" id="btn-scratch-next" style="display: none; margin-top: 10px;" onclick="showScreen('screen-custom')">
-        <span>Creator Contact 🎁 ➔</span>
+      <button class="btn-action" id="btn-scratch-next" style="display: none; margin-top: 10px;" onclick="showScreen('screen-reply')">
+        <span>Send Reply to Ganesh 🎁 ➔</span>
       </button>
     </div>
 
-    <!-- SCREEN 8: CREATOR CONTACT HUB -->
-    <div class="stage-card" id="screen-custom" style="display: none;">
-      <div class="insta-avatar-stage">
-        <div class="insta-ring">
-          <img src="../../Insta.jpg" alt="Satish Kommana" class="insta-photo" onerror="this.onerror=null; this.src='/games/Insta.jpg';" />
-        </div>
-      </div>
+    <!-- SCREEN 8: REPLY & CONTACT CARD FOR DEVI TO REPLY TO GANESH -->
+    <div class="stage-card" id="screen-reply" style="display: none;">
+      <div style="font-size: 3.5rem; margin-bottom: 8px;">🎉💖</div>
+      <h2 class="card-heading">Happy Anniversary!</h2>
+      <p class="card-desc">Send your sweet reply directly back to Ganesh:</p>
 
-      <h2 class="card-heading">Satish Kommana</h2>
-      <div style="color: #ffb3c1; font-weight: 700; font-size: 0.88rem; margin-bottom: 12px;">@_satish_official_16</div>
+      <textarea id="anniversary-reply" class="reply-textarea" placeholder="Type your reply to Ganesh here... (e.g. Love you too Ganesh! Happy Anniversary!)">Happy Anniversary to my forever love, Ganesh! ❤️</textarea>
 
-      <p class="card-desc">
-        Created with ❤️ by Satish Kommana for Ganesh & Devi's Special Anniversary!
-      </p>
-
-      <a href="https://ig.me/m/_satish_official_16" target="_blank" class="btn-action btn-dm-primary">
-        <span>DM on Instagram</span> 💌
+      <a href="#" target="_blank" class="btn-action" style="background: linear-gradient(135deg, #25d366, #128c7e); margin-bottom: 10px;" onclick="sendWhatsAppReply()">
+        <span>Send Reply on WhatsApp</span> 📲
       </a>
 
-      <a href="https://api.whatsapp.com/send?phone=919281267188&text=Hi%20Satish!%20I%20loved%20the%20Anniversary%20page." target="_blank" class="btn-action" style="background: linear-gradient(135deg, #25d366, #128c7e); margin-top: 10px;">
-        <span>Chat on WhatsApp (6301798807)</span> 📲
+      <a href="#" target="_blank" class="btn-action" style="background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);" onclick="sendInstagramReply()">
+        <span>Send on Instagram (@_its_my_bad_luck_)</span> 💌
       </a>
     </div>
 
@@ -723,7 +706,7 @@
   </script>
 
   <script>
-    const SECRET_PASSCODE = "2026"; // Set your required anniversary password/date here
+    const SECRET_PASSCODE = "2026"; // Set your secret anniversary passcode here
 
     // 1. FLOATING PARTICLES
     const wrap = document.getElementById('main-wrap');
@@ -819,7 +802,7 @@
       if (screenId === 'screen-scratch') initScratchCanvas();
     }
 
-    // 4. SCREEN 1: UNLOCK GATE (STRICT PASSWORD CHECK, NO HINTS)
+    // 4. SCREEN 1: UNLOCK GATE
     function unlockGate() {
       const input = document.getElementById('pass-input');
       const errorMsg = document.getElementById('lock-error');
@@ -1100,6 +1083,25 @@
         document.getElementById('scratch-status').innerHTML = "🎉 Secret Vow Revealed!";
         document.getElementById('btn-scratch-next').style.display = 'inline-flex';
       }
+    }
+
+    // 11. SCREEN 8: REPLY HANDLERS (WHATSAPP & INSTAGRAM)
+    const WHATSAPP_NUMBER = "6301798807";
+    const INSTAGRAM_HANDLE = "_its_my_bad_luck_";
+
+    function sendWhatsAppReply() {
+      const msg = document.getElementById('anniversary-reply').value.trim() || "Happy Anniversary Ganesh! ❤️";
+      const url = `https://api.whatsapp.com/send?phone=${WHATSAPP_NUMBER}&text=${encodeURIComponent(msg)}`;
+      window.open(url, '_blank');
+    }
+
+    function sendInstagramReply() {
+      const msg = document.getElementById('anniversary-reply').value.trim() || "Happy Anniversary Ganesh! ❤️";
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(msg);
+      }
+      const url = `https://ig.me/m/${INSTAGRAM_HANDLE}`;
+      window.open(url, '_blank');
     }
   </script>
 </body>
