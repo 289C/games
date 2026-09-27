@@ -49,6 +49,28 @@
       display: inline-flex; align-items: center; gap: 6px;
     }
 
+    /* Developer Badge on Final Page */
+    .dev-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, rgba(255, 105, 180, 0.15), rgba(138, 43, 226, 0.2));
+      border: 1px solid rgba(255, 105, 180, 0.4);
+      color: #ff4081;
+      padding: 5px 14px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-decoration: none;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 10px rgba(255, 105, 180, 0.15);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .dev-badge:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 14px rgba(255, 105, 180, 0.35);
+    }
+
     /* Core Cute Card */
     .crush-card {
       width: 100%; max-width: 390px;
@@ -145,57 +167,111 @@
       font-size: 0.85rem; cursor: pointer; transition: 0.15s ease;
     }
 
-    /* PAGE 5: 3D INTERACTIVE ENVELOPE (VIDEO REPLICA) */
+    /* PAGE 5: 3D INTERACTIVE HOLD-TO-REVEAL ENVELOPE */
     .envelope-stage {
-      position: relative; width: 280px; height: 210px; margin: 30px auto 20px;
-      perspective: 800px;
+      position: relative;
+      width: 290px;
+      height: 200px;
+      margin: 40px auto 25px;
+      perspective: 1000px;
+      user-select: none;
+      -webkit-user-select: none;
     }
     .env-wrapper {
-      position: relative; width: 100%; height: 100%;
-      background: #f7d770; border-radius: 0 0 16px 16px;
-      box-shadow: 0 16px 35px rgba(0,0,0,0.25);
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background: #e6c55c;
+      border-radius: 0 0 16px 16px;
+      box-shadow: 0 18px 38px rgba(0,0,0,0.35);
       cursor: pointer;
     }
-    /* Top Triangular Flap */
+    /* Flap hinged at top */
     .env-flap {
-      position: absolute; top: 0; left: 0; width: 0; height: 0;
-      border-left: 140px solid transparent; border-right: 140px solid transparent;
-      border-top: 115px solid #ebd068; transform-origin: top;
-      transition: transform 0.6s ease; z-index: 5;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 0;
+      border-left: 145px solid transparent;
+      border-right: 145px solid transparent;
+      border-top: 115px solid #dcb84a;
+      transform-origin: top center;
+      transition: transform 0.5s ease;
+      z-index: 5;
     }
     .open-flap .env-flap {
-      transform: rotateX(180deg); z-index: 1;
+      transform: rotateX(180deg);
+      z-index: 1;
     }
-    /* Pocket Front with "Place your hand here" */
+    /* Front pocket that conceals the bottom of the letter */
     .env-pocket {
-      position: absolute; inset: 0; z-index: 4;
-      display: flex; align-items: center; justify-content: center;
-      background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.05) 100%);
-      border-radius: 0 0 16px 16px; pointer-events: none;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 135px;
+      background: #f7d770;
+      border-radius: 0 0 16px 16px;
+      z-index: 4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 -4px 15px rgba(0,0,0,0.08);
+      touch-action: none;
     }
     .hand-prompt {
-      font-family: 'Playfair Display', serif; font-size: 1.15rem; color: #4a2e0a;
-      font-weight: 600; text-shadow: 0 1px 2px rgba(255,255,255,0.6);
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      color: #52350a;
+      font-weight: 700;
+      pointer-events: none;
+      transition: opacity 0.3s;
     }
-    /* Sliding Letter Card Inside */
+    /* Letter hidden inside the pocket by default */
     .env-letter {
-      position: absolute; top: 12px; left: 16px; right: 16px; height: 175px;
-      background: #ffffff; border-radius: 12px; padding: 16px 14px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.12); z-index: 2;
-      transition: transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      text-align: center; border: 1px dashed #ff99b6;
+      position: absolute;
+      bottom: 12px;
+      left: 16px;
+      right: 16px;
+      height: 170px;
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 16px 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+      z-index: 2;
+      transition: transform 0.55s cubic-bezier(0.25, 1, 0.5, 1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      border: 1.5px dashed #ff99b6;
+      transform: translateY(0);
+      pointer-events: none;
     }
+    /* Pops up when user holds hand */
     .open-flap .env-letter {
-      transform: translateY(-110px); z-index: 6;
-      box-shadow: 0 12px 30px rgba(255, 105, 180, 0.45);
+      transform: translateY(-135px);
+      z-index: 3;
+      box-shadow: 0 14px 30px rgba(255, 105, 180, 0.4);
     }
     .env-letter h3 {
-      font-family: 'Playfair Display', serif; font-size: 1.05rem; color: #a1114b;
-      margin-bottom: 6px; line-height: 1.35;
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      color: #a1114b;
+      margin-bottom: 5px;
+      line-height: 1.3;
     }
-    .env-letter p { font-size: 0.78rem; color: #662238; line-height: 1.35; }
-    .env-bears { font-size: 1.9rem; margin-top: 5px; }
+    .env-letter p {
+      font-size: 0.76rem;
+      color: #662238;
+      line-height: 1.35;
+    }
+    .env-bears {
+      font-size: 1.8rem;
+      margin-top: 4px;
+    }
 
     /* PAGE 6: FINAL WHATSAPP CARD */
     .big-heart { font-size: 4.2rem; animation: pulseSparkle 1.4s infinite; }
@@ -281,12 +357,12 @@
       </div>
     </div>
 
-    <!-- PAGE 5: 3D INTERACTIVE UNFOLDING LOVE ENVELOPE (VIDEO STYLE) -->
+    <!-- PAGE 5: 3D INTERACTIVE UNFOLDING LOVE ENVELOPE (HOLD TO OPEN) -->
     <div class="crush-card" id="page-5" style="display:none;">
       <h2 class="card-heading">A Special Love Letter 💌</h2>
-      <p class="card-desc">Tap the envelope to unveil your hidden love slogan!</p>
+      <p class="card-desc">Press and hold your finger on the envelope to read!</p>
 
-      <div class="envelope-stage" id="env-box" onclick="toggleEnvelope()">
+      <div class="envelope-stage" id="env-box">
         <div class="env-wrapper">
           <div class="env-flap"></div>
           <div class="env-letter">
@@ -294,8 +370,9 @@
             <p>You are my forever and always Bangaram! 🥰🤌🏻</p>
             <div class="env-bears">🐰🐻❤️</div>
           </div>
-          <div class="env-pocket">
-            <span class="hand-prompt">Place your hand here 🌸</span>
+          <!-- User places hand/finger on this pocket -->
+          <div class="env-pocket" id="env-pocket">
+            <span class="hand-prompt" id="prompt-txt">Place your hand here 🌸</span>
           </div>
         </div>
       </div>
@@ -307,11 +384,18 @@
 
     <!-- PAGE 6: FINAL CELEBRATION & DIRECT WHATSAPP TO GANESH (8688431772) -->
     <div class="crush-card" id="page-6" style="display:none;">
+      <!-- Developer Credit at the top of the card -->
+      <div>
+        <a href="https://instagram.com/_satish_official_16" target="_blank" class="dev-badge">
+          💻 Designed & Developed by @_satish_official_16 ↗
+        </a>
+      </div>
+
       <div class="big-heart">💖🌸</div>
       <h2 class="card-heading">I Knew It, Devi! 🥰</h2>
       <p class="card-desc">You are my forever and always, Bangaram. Love you to the moon and back!</p>
 
-      <div class="reply-box">
+      <div class="reply-area">
         <label>💌 Send Your Reply to Ganesh (8688431772):</label>
         <input type="text" id="crush-reply" value="I love you too Ganesh! You are my Bangaram! 🥰❤️" />
         <button class="btn-wa-reply" onclick="sendToGanesh()">
@@ -391,7 +475,6 @@
           osc.start(now);
           osc.stop(now + 0.2);
         } else if (type === 'paper') {
-          // Soft rustle chime
           osc.type = 'triangle';
           osc.frequency.setValueAtTime(440, now);
           osc.frequency.exponentialRampToValueAtTime(880, now + 0.35);
@@ -423,7 +506,7 @@
       h.className = 'petal-particle';
       h.innerText = cuteIcons[Math.floor(Math.random() * cuteIcons.length)];
       h.style.left = Math.random() * 100 + 'vw';
-      h.style.animationDelay = (Math.random() * 6) + 's';
+       h.style.animationDelay = (Math.random() * 6) + 's';
       h.style.animationDuration = (5 + Math.random() * 4) + 's';
       wrap.appendChild(h);
     }
@@ -519,21 +602,47 @@
       setTimeout(() => goToPage(5), 500);
     }
 
-    // --- PAGE 5: 3D ENVELOPE UNFOLD INTERACTION ---
-    let envelopeOpen = false;
-    function toggleEnvelope() {
-      const box = document.getElementById('env-box');
-      envelopeOpen = !envelopeOpen;
-      playSfx('paper');
+    // --- PAGE 5: HOLD TO OPEN / RELEASE TO CLOSE ENVELOPE ---
+    const envBox = document.getElementById('env-box');
+    const envPocket = document.getElementById('env-pocket');
+    const promptTxt = document.getElementById('prompt-txt');
+    const btnGotoFinal = document.getElementById('btn-goto-final');
 
-      if (envelopeOpen) {
-        box.classList.add('open-flap');
-        confetti({ particleCount: 70, spread: 75, colors: ['#ff007f', '#ffd700', '#ffffff'] });
-        document.getElementById('btn-goto-final').style.display = 'block';
-      } else {
-        box.classList.remove('open-flap');
+    function openEnvelope() {
+      if (!envBox.classList.contains('open-flap')) {
+        envBox.classList.add('open-flap');
+        playSfx('paper');
+        promptTxt.style.opacity = '0.4';
+        confetti({ particleCount: 50, spread: 70, colors: ['#ff007f', '#ffd700', '#ffffff'] });
+        btnGotoFinal.style.display = 'block';
       }
     }
+
+    function closeEnvelope() {
+      if (envBox.classList.contains('open-flap')) {
+        envBox.classList.remove('open-flap');
+        playSfx('paper');
+        promptTxt.style.opacity = '1';
+      }
+    }
+
+    // Touch events for mobile phones
+    envPocket.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      openEnvelope();
+    });
+    envPocket.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      closeEnvelope();
+    });
+    envPocket.addEventListener('touchcancel', (e) => {
+      e.preventDefault();
+      closeEnvelope();
+    });
+
+    // Mouse events for desktop/testing
+    envPocket.addEventListener('mousedown', openEnvelope);
+    window.addEventListener('mouseup', closeEnvelope);
 
     // --- PAGE 6: SEND DIRECT WHATSAPP TO GANESH (8688431772) ---
     function sendToGanesh() {
