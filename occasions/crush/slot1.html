@@ -1011,23 +1011,35 @@
       setTimeout(() => goToPage('quiz'), 450);
     }
 
-    // --- PAGE 4.5: FUNNY TRIVIA QUIZ LOGIC ---
-    const quizAnswers = {};
+    // --- CONFIRMED ANSWERS QUIZ LOGIC ---
+    const conformAnswers = { 1: false, 2: false, 3: false };
 
-    function answerQuiz(qNum, selectedValue, btnElement) {
-      playSfx('unlock');
+    const wrongHints = {
+      1: "Nijam cheppu Devi! Ganesh fell first and hardest! 🥺 Choose Ganesh!",
+      2: "Abbo! Ganesh kadhu, cute angry drama queen nuvve Devi! 😜 Choose Devi!",
+      3: "Competition ledhu ikkada! Both love each other equally forever! 🥰 Choose Both!"
+    };
+
+    function checkConformAnswer(qNum, isCorrect, btnElement) {
+      const parentCard = document.getElementById(`card-q${qNum}`);
       
-      const parentCard = btnElement.closest('.quiz-q-card');
-      parentCard.querySelectorAll('.quiz-opt-btn').forEach(btn => btn.classList.remove('selected'));
-      btnElement.classList.add('selected');
+      if (isCorrect) {
+        playSfx('unlock');
+        parentCard.querySelectorAll('.quiz-opt-btn').forEach(btn => btn.classList.remove('selected'));
+        btnElement.classList.add('selected');
+        conformAnswers[qNum] = true;
 
-      quizAnswers[qNum] = selectedValue;
-
-      // When all 3 questions are answered, show button to proceed to Page 5 (Envelope)
-      if (quizAnswers[1] && quizAnswers[2] && quizAnswers[3]) {
-        playSfx('cheer');
-        confetti({ particleCount: 65, spread: 75, colors: ['#ff007f', '#ffd700', '#ffffff'] });
-        document.getElementById('btn-next-after-quiz').style.display = 'block';
+        // When all 3 confirmed answers are correct, reveal the next button
+        if (conformAnswers[1] && conformAnswers[2] && conformAnswers[3]) {
+          playSfx('cheer');
+          confetti({ particleCount: 75, spread: 80, colors: ['#ff007f', '#ffd700', '#ffffff'] });
+          document.getElementById('btn-next-after-quiz').style.display = 'block';
+        }
+      } else {
+        playSfx('dodge');
+        alert(wrongHints[qNum]);
+        btnElement.style.transform = 'translateX(6px)';
+        setTimeout(() => { btnElement.style.transform = 'translateX(0)'; }, 150);
       }
     }
 
