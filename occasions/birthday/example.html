@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
   <title>Birthday Wish Example Demo 🎂✨</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Playfair+Display:ital,wght@0,700;1,400&family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <style>
     * {
@@ -13,6 +13,7 @@
       box-sizing: border-box;
       font-family: 'Poppins', sans-serif;
       -webkit-tap-highlight-color: transparent;
+      user-select: none;
     }
 
     body, html {
@@ -23,7 +24,6 @@
       overflow-x: hidden;
     }
 
-    /* Ambient Festive Radial Glow */
     .party-wrapper {
       min-height: 100vh;
       display: flex;
@@ -36,7 +36,7 @@
       overflow: hidden;
     }
 
-    /* Floating Ambient Particles */
+    /* Ambient Floating Particles */
     .ambient-particle {
       position: absolute;
       pointer-events: none;
@@ -98,7 +98,7 @@
 
     .card-heading {
       font-family: 'Playfair Display', serif;
-      font-size: 1.7rem;
+      font-size: 1.65rem;
       color: #fff2b2;
       margin-bottom: 6px;
       text-shadow: 0 0 16px rgba(255, 215, 0, 0.4);
@@ -185,7 +185,6 @@
       height: 18px;
       background: #ffffff;
       border-radius: 24px 24px 0 0;
-      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
     }
     .drips-row-top {
       position: absolute;
@@ -200,7 +199,6 @@
     .drip {
       background: #ffffff;
       border-radius: 0 0 10px 10px;
-      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
     }
     .d1 { width: 14px; height: 16px; }
     .d2 { width: 12px; height: 26px; }
@@ -227,7 +225,6 @@
       height: 18px;
       background: #fff7ed;
       border-radius: 26px 26px 0 0;
-      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
     }
     .drips-row-bottom {
       position: absolute;
@@ -242,7 +239,6 @@
     .drip-b {
       background: #fff7ed;
       border-radius: 0 0 12px 12px;
-      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.22);
     }
     .db1 { width: 16px; height: 18px; }
     .db2 { width: 13px; height: 32px; }
@@ -256,10 +252,7 @@
       position: relative;
       animation: dripPinch 2.4s ease-in-out infinite;
     }
-    .falling-drop.slow {
-      animation-duration: 3.2s;
-      animation-delay: 1.2s;
-    }
+    .falling-drop.slow { animation-duration: 3.2s; animation-delay: 1.2s; }
     .falling-drop::after {
       content: "";
       position: absolute;
@@ -272,10 +265,7 @@
       border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
       animation: dropFallAnim 2.4s ease-in-out infinite;
     }
-    .falling-drop.slow::after {
-      animation-duration: 3.2s;
-      animation-delay: 1.2s;
-    }
+    .falling-drop.slow::after { animation-duration: 3.2s; animation-delay: 1.2s; }
     @keyframes dripPinch {
       0% { transform: scaleY(1); }
       40% { transform: scaleY(1.18); }
@@ -299,6 +289,129 @@
       z-index: 3;
     }
 
+    /* IDEA 1: CAKE CUTTING SWIPE STAGE */
+    .knife-cut-box {
+      position: relative;
+      width: 260px;
+      height: 220px;
+      margin: 10px auto 14px;
+      border-radius: 20px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1.5px dashed rgba(255, 215, 0, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      touch-action: none;
+    }
+    .cuttable-cake {
+      position: relative;
+      width: 220px;
+      height: 140px;
+      display: flex;
+      justify-content: center;
+      transition: all 0.5s ease;
+    }
+    .cake-half {
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(180deg, #ff4081 0%, #f4a261 100%);
+      border-radius: 18px;
+      box-shadow: inset 0 4px 10px rgba(255, 255, 255, 0.4), 0 8px 20px rgba(0,0,0,0.5);
+      position: relative;
+      transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .cake-half.left {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+      border-right: 2px dashed rgba(255, 255, 255, 0.6);
+    }
+    .cake-half.right {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+    .cut-line {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 3px;
+      background: #ffd700;
+      box-shadow: 0 0 10px #ffd700;
+      transform: translateX(-50%);
+      pointer-events: none;
+    }
+    .slice-apart .cake-half.left {
+      transform: translateX(-35px) rotate(-10deg);
+    }
+    .slice-apart .cake-half.right {
+      transform: translateX(35px) rotate(10deg);
+    }
+
+    /* IDEA 3: ROAST & TOAST 3D FLIP CARDS GRID */
+    .roast-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 14px 0 18px;
+    }
+    .flip-card {
+      background-color: transparent;
+      height: 140px;
+      perspective: 1000px;
+      cursor: pointer;
+    }
+    .flip-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+      transform-style: preserve-3d;
+      border-radius: 16px;
+    }
+    .flip-card.flipped .flip-inner {
+      transform: rotateY(180deg);
+    }
+    .flip-front, .flip-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    }
+    .flip-front {
+      background: linear-gradient(145deg, #12233f, #091322);
+      border: 1.5px solid rgba(0, 180, 216, 0.4);
+      color: #fff;
+    }
+    .flip-front .badge {
+      font-size: 0.62rem;
+      padding: 2px 8px;
+      border-radius: 8px;
+      background: rgba(255, 215, 0, 0.2);
+      color: #ffd700;
+      font-weight: 700;
+      margin-top: 6px;
+    }
+    .flip-back {
+      background: linear-gradient(145deg, #ff4081, #7209b7);
+      border: 1.5px solid #ff70a6;
+      color: white;
+      transform: rotateY(180deg);
+      font-size: 0.72rem;
+      line-height: 1.35;
+      font-weight: 600;
+    }
+
+    /* Common Components */
     .meter-container {
       width: 100%;
       margin: 12px 0 14px;
@@ -355,56 +468,6 @@
       margin-top: 10px;
     }
 
-    /* 3D CAROUSEL COMPONENT (SCREEN 3) */
-    .viewport-3d-box {
-      width: 100%;
-      height: 290px;
-      perspective: 900px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 10px 0 14px;
-      position: relative;
-    }
-    .carousel-3d-ring {
-      position: relative;
-      width: 140px;
-      height: 200px;
-      transform-style: preserve-3d;
-      transition: transform 0.1s ease-out;
-    }
-    .card-3d-item {
-      position: absolute;
-      width: 140px;
-      height: 200px;
-      border-radius: 16px;
-      overflow: hidden;
-      border: 2px solid rgba(255, 215, 0, 0.7);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.8), 0 0 20px rgba(255, 60, 0, 0.35);
-      background: #110204;
-      cursor: pointer;
-      -webkit-box-reflect: below 6px linear-gradient(transparent 70%, rgba(0,0,0,0.35));
-    }
-    .card-3d-item img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      pointer-events: none;
-    }
-    .card-3d-caption {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      padding: 16px 4px 6px;
-      background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.92) 100%);
-      font-size: 0.7rem;
-      font-weight: 700;
-      color: #ffd700;
-      letter-spacing: 0.5px;
-    }
-
     /* BALLOONS GRID */
     .balloons-grid {
       display: flex;
@@ -418,9 +481,7 @@
       transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       user-select: none;
     }
-    .balloon-item:active {
-      transform: scale(1.3) rotate(15deg);
-    }
+    .balloon-item:active { transform: scale(1.3) rotate(15deg); }
     .balloon-item.popped {
       pointer-events: none;
       opacity: 0.25;
@@ -546,63 +607,97 @@
       </button>
     </div>
 
-    <!-- SCREEN 2: WISH SEALED FOREVER CELEBRATION -->
-    <div class="stage-card" id="screen-sealed" style="display: none;">
-      <div style="font-size: 3.8rem; margin-bottom: 8px;">🎉🥳🎂</div>
-      <h2 class="card-heading">Wish Sealed Forever!</h2>
-      <p class="card-desc">May your year ahead be loaded with smiles, success, and endless joy! 💖</p>
+    <!-- SCREEN 2: IDEA 1 - SWIPE TO CUT THE CAKE -->
+    <div class="stage-card" id="screen-cut" style="display: none;">
+      <h2 class="card-heading">Cut Your Cake! 🔪🎂</h2>
+      <p class="card-desc">Swipe your finger down the center line to make the first cut!</p>
 
-      <button class="btn-action" onclick="showScreen('screen-3d-images')">
-        <span>View 3D Celebration Reel 🎬 ➔</span>
+      <div class="knife-cut-box" id="cut-area">
+        <div class="cuttable-cake" id="cuttable-cake">
+          <div class="cake-half left"></div>
+          <div class="cake-half right"></div>
+          <div class="cut-line"></div>
+        </div>
+      </div>
+
+      <p id="cut-status" style="font-size: 0.8rem; color: #ffd700; min-height: 22px;">
+        👇 Swipe downwards across the cake
+      </p>
+
+      <button class="btn-action" id="btn-cut-next" style="display: none; margin-top: 10px;" onclick="showScreen('screen-roast')">
+        <span>Reveal Secret Cards 🃏 ➔</span>
       </button>
     </div>
 
-    <!-- SCREEN 3: 3D CYLINDER ROTATING IMAGES (PSPK SPECIAL) -->
-    <div class="stage-card" id="screen-3d-images" style="display: none; padding-top: 22px;">
-      <h2 class="card-heading" style="font-family: 'Cinzel', serif; font-size: 1.45rem; color: #ffdd59;">POWER STAR 3D REEL 🔥</h2>
-      <p class="card-desc" style="margin-bottom: 4px;">Swipe left or right to rotate images in 360° space</p>
+    <!-- SCREEN 3: IDEA 3 - "ROAST & TOAST" 3D MYSTERY FLIP CARDS -->
+    <div class="stage-card" id="screen-roast" style="display: none;">
+      <h2 class="card-heading">Roast & Toast! 🃏🔥</h2>
+      <p class="card-desc">Tap each mystery card to flip & reveal what your friends think!</p>
 
-      <div class="viewport-3d-box" id="viewport-touch">
-        <div class="carousel-3d-ring" id="carousel-ring">
-          <!-- Image 1 -->
-          <div class="card-3d-item" onclick="cardCelebration('The Leader 🔥')">
-            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=500&q=80" alt="PSPK 1" onerror="this.src='https://placehold.co/400x600/900/fff?text=PSPK+1';" />
-            <div class="card-3d-caption">OG • They Call Him OG</div>
+      <div class="roast-grid">
+        <!-- Card 1 -->
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front">
+              <span style="font-size: 1.8rem;">👑</span>
+              <span style="font-size: 0.8rem; font-weight: 700; margin-top: 4px;">Best Quality</span>
+              <span class="badge">TAP TO FLIP</span>
+            </div>
+            <div class="flip-back">
+              <span>Always shows up with maximum energy & unlimited smiles! 💖</span>
+            </div>
           </div>
-          <!-- Image 2 -->
-          <div class="card-3d-item" onclick="cardCelebration('Power In Blood ⚡')">
-            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=500&q=80" alt="PSPK 2" onerror="this.src='https://placehold.co/400x600/800/fff?text=PSPK+2';" />
-            <div class="card-3d-caption">Ustaad Bhagat Singh</div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front">
+              <span style="font-size: 1.8rem;">🤫</span>
+              <span style="font-size: 0.8rem; font-weight: 700; margin-top: 4px;">Secret Talent</span>
+              <span class="badge">TAP TO FLIP</span>
+            </div>
+            <div class="flip-back">
+              <span>Can sleep for 14 hours straight without moving a finger! 😴🍕</span>
+            </div>
           </div>
-          <!-- Image 3 -->
-          <div class="card-3d-item" onclick="cardCelebration('Mass Euphoria 🦁')">
-            <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=500&q=80" alt="PSPK 3" onerror="this.src='https://placehold.co/400x600/700/fff?text=PSPK+3';" />
-            <div class="card-3d-caption">Hari Hara Veera Mallu</div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front">
+              <span style="font-size: 1.8rem;">🤪</span>
+              <span style="font-size: 0.8rem; font-weight: 700; margin-top: 4px;">Dumb Memory</span>
+              <span class="badge">TAP TO FLIP</span>
+            </div>
+            <div class="flip-back">
+              <span>That one time you laughed so hard the juice came out your nose! 🥤😂</span>
+            </div>
           </div>
-          <!-- Image 4 -->
-          <div class="card-3d-item" onclick="cardCelebration('Icon of Masses 🌟')">
-            <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=500&q=80" alt="PSPK 4" onerror="this.src='https://placehold.co/400x600/600/fff?text=PSPK+4';" />
-            <div class="card-3d-caption">Gabbar Singh Era</div>
-          </div>
-          <!-- Image 5 -->
-          <div class="card-3d-item" onclick="cardCelebration('Senani Pride 🚩')">
-            <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=500&q=80" alt="PSPK 5" onerror="this.src='https://placehold.co/400x600/500/fff?text=PSPK+5';" />
-            <div class="card-3d-caption">Jana Senani</div>
-          </div>
-          <!-- Image 6 -->
-          <div class="card-3d-item" onclick="cardCelebration('The Revolution 💥')">
-            <img src="https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&w=500&q=80" alt="PSPK 6" onerror="this.src='https://placehold.co/400x600/400/fff?text=PSPK+6';" />
-            <div class="card-3d-caption">Power Star Forever</div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="flip-card" onclick="flipCard(this)">
+          <div class="flip-inner">
+            <div class="flip-front">
+              <span style="font-size: 1.8rem;">🌟</span>
+              <span style="font-size: 0.8rem; font-weight: 700; margin-top: 4px;">Final Toast</span>
+              <span class="badge">TAP TO FLIP</span>
+            </div>
+            <div class="flip-back">
+              <span>May this year bring massive success, money, & pure peace! 🚀🥂</span>
+            </div>
           </div>
         </div>
       </div>
 
-      <button class="btn-action" onclick="showScreen('screen-balloons')" style="margin-top: 8px;">
+      <button class="btn-action" onclick="showScreen('screen-balloons')">
         <span>Pop Birthday Balloons 🎈 ➔</span>
       </button>
     </div>
 
-    <!-- SCREEN 4: TOUCH-TO-POP BALLOONS & GIFT REVEAL -->
+    <!-- SCREEN 4: TOUCH-TO-POP BALLOONS -->
     <div class="stage-card" id="screen-balloons" style="display: none;">
       <h2 class="card-heading">Pop Every Balloon! 🎈</h2>
       <p class="card-desc">Touch the balloons to reveal birthday wishes hidden underneath</p>
@@ -639,8 +734,8 @@
       </p>
 
       <div class="features-list">
-        <div><span>🎂</span> <strong>Mic Blow Candle & Dripping Cake</strong></div>
-        <div><span>📸</span> <strong>3D Rotating Photo Reel</strong> with music</div>
+        <div><span>🎂</span> <strong>Mic Blow Candle & Swipe-to-Cut Cake</strong></div>
+        <div><span>🃏</span> <strong>Roast & Toast 3D Flip Cards</strong> with photos</div>
         <div><span>🎈</span> <strong>Secret Balloon Poppers & Wishes</strong></div>
         <div><span>🎁</span> <strong>Unfolding Virtual Surprise Gift Box</strong></div>
         <div><span>📲</span> <strong>Instant WhatsApp & Instagram Reply</strong></div>
@@ -671,7 +766,7 @@
       wrap.appendChild(p);
     }
 
-    // 2. SYNTHETIC AUDIO SFX (ZERO EXTERNAL MP3s NEEDED)
+    // 2. SYNTHETIC AUDIO SFX
     let sfxCtx = null;
     function playSfx(type) {
       try {
@@ -698,6 +793,22 @@
           gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
           osc.start(now);
           osc.stop(now + 0.12);
+        } else if (type === 'slice') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(600, now);
+          osc.frequency.exponentialRampToValueAtTime(200, now + 0.25);
+          gain.gain.setValueAtTime(0.25, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+          osc.start(now);
+          osc.stop(now + 0.25);
+        } else if (type === 'flip') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(350, now);
+          osc.frequency.exponentialRampToValueAtTime(700, now + 0.15);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+          osc.start(now);
+          osc.stop(now + 0.15);
         } else if (type === 'cheer') {
           [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
             const o = sfxCtx.createOscillator();
@@ -721,9 +832,6 @@
       if (target) {
         target.style.display = 'block';
         playSfx('pop');
-      }
-      if (screenId === 'screen-3d-images') {
-        setup3DCarousel();
       }
     }
 
@@ -798,78 +906,66 @@
       setTimeout(() => {
         playSfx('cheer');
         confetti({
-          particleCount: 130,
-          spread: 90,
+          particleCount: 100,
+          spread: 80,
           colors: ['#00b4d8', '#ff4081', '#ffd166', '#ffffff']
         });
-        showScreen('screen-sealed');
+        showScreen('screen-cut');
+        setupCakeCutInteraction();
       }, 700);
     }
 
-    // 5. SCREEN 3: 3D CYLINDER INITIALIZATION & SWIPE LOGIC
-    let carouselInitialized = false;
-    let currentAngle = 0;
-    let autoSpin = true;
-    let isTouching = false;
-    let touchStartX = 0;
+    // 5. IDEA 1: SWIPE-TO-CUT INTERACTION LOGIC
+    let isCakeCut = false;
+    function setupCakeCutInteraction() {
+      const cutArea = document.getElementById('cut-area');
+      let startY = 0;
+      let isTouching = false;
 
-    function setup3DCarousel() {
-      if (carouselInitialized) return;
-      carouselInitialized = true;
-
-      const ring = document.getElementById('carousel-ring');
-      const items = document.querySelectorAll('.card-3d-item');
-      const total = items.length;
-      const radius = 190; // 3D depth inside mobile card
-      const step = 360 / total;
-
-      items.forEach((item, idx) => {
-        const theta = idx * step;
-        item.style.transform = `rotateY(${theta}deg) translateZ(${radius}px)`;
-      });
-
-      function spinStep() {
-        if (autoSpin) {
-          currentAngle += 0.3;
-          ring.style.transform = `rotateY(${currentAngle}deg)`;
-        }
-        requestAnimationFrame(spinStep);
-      }
-      spinStep();
-
-      const viewport = document.getElementById('viewport-touch');
-      viewport.addEventListener('pointerdown', (e) => {
+      cutArea.addEventListener('pointerdown', (e) => {
+        if (isCakeCut) return;
         isTouching = true;
-        autoSpin = false;
-        touchStartX = e.clientX;
+        startY = e.clientY;
       });
 
-      window.addEventListener('pointermove', (e) => {
-        if (!isTouching) return;
-        const delta = e.clientX - touchStartX;
-        currentAngle += delta * 0.55;
-        ring.style.transform = `rotateY(${currentAngle}deg)`;
-        touchStartX = e.clientX;
+      cutArea.addEventListener('pointermove', (e) => {
+        if (!isTouching || isCakeCut) return;
+        const diffY = e.clientY - startY;
+
+        if (diffY > 60) {
+          isCakeCut = true;
+          isTouching = false;
+          executeCakeSlice();
+        }
       });
 
-      window.addEventListener('pointerup', () => {
-        if (!isTouching) return;
-        isTouching = false;
-        setTimeout(() => { autoSpin = true; }, 2500);
-      });
+      cutArea.addEventListener('pointerup', () => { isTouching = false; });
+      cutArea.addEventListener('pointercancel', () => { isTouching = false; });
     }
 
-    function cardCelebration(title) {
-      playSfx('pop');
+    function executeCakeSlice() {
+      playSfx('slice');
+      document.getElementById('cuttable-cake').classList.add('slice-apart');
+      document.getElementById('cut-status').innerHTML = "🎉 First Slice Cut Successfully!";
+
       confetti({
-        particleCount: 45,
-        spread: 60,
-        origin: { y: 0.6 },
-        colors: ['#ffdd59', '#ff3838', '#ffffff']
+        particleCount: 90,
+        spread: 85,
+        origin: { y: 0.6 }
       });
+
+      setTimeout(() => {
+        document.getElementById('btn-cut-next').style.display = 'inline-flex';
+      }, 400);
     }
 
-    // 6. SCREEN 4: BALLOON POP LOGIC
+    // 6. IDEA 3: 3D CARD FLIP HANDLER
+    function flipCard(cardEl) {
+      playSfx('flip');
+      cardEl.classList.toggle('flipped');
+    }
+
+    // 7. BALLOON POP LOGIC
     let poppedCount = 0;
     function popBalloon(id, msg) {
       const el = document.getElementById(id);
