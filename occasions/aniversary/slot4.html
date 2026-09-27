@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Book Your Anniversary Wish Slot 🥂💍</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body, html {
+      width: 100%;
+      min-height: 100%;
+      background: #140b02;
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    .booking-wrap {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 14px 44px;
+      background: radial-gradient(circle at 50% 15%, #422606 0%, #1f1202 55%, #0d0600 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Floating Golden Sparkles */
+    .gold-particle {
+      position: absolute;
+      pointer-events: none;
+      font-size: 1.3rem;
+      animation: goldDrift 7s linear infinite;
+      filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.5));
+    }
+    @keyframes goldDrift {
+      0% { transform: translateY(105vh) rotate(0deg) scale(0.8); opacity: 0; }
+      20% { opacity: 0.9; }
+      80% { opacity: 0.9; }
+      100% { transform: translateY(-10vh) rotate(360deg) scale(1.15); opacity: 0; }
+    }
+
+    /* Top Action Bar */
+    .top-bar {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      justify-content: space-between;
+      z-index: 50;
+    }
+
+    .pill-btn {
+      background: rgba(255, 215, 0, 0.15);
+      border: 1px solid rgba(255, 215, 0, 0.35);
+      color: #ffe899;
+      padding: 7px 16px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      text-decoration: none;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Main Showcase Card */
+    .booking-card {
+      width: 100%;
+      max-width: 390px;
+      background: linear-gradient(165deg, #fffdf8 0%, #fff7eb 100%);
+      color: #3d2403;
+      border-radius: 32px;
+      padding: 32px 22px 26px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.7), 0 0 35px rgba(212, 175, 55, 0.35);
+      border: 2px solid rgba(255, 215, 0, 0.6);
+      text-align: center;
+      position: relative;
+      animation: popCard 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes popCard {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* Slot Badge */
+    .slot-tag {
+      display: inline-block;
+      background: rgba(212, 175, 55, 0.15);
+      border: 1px dashed #d4af37;
+      color: #8c6307;
+      padding: 5px 14px;
+      border-radius: 16px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      margin-bottom: 14px;
+    }
+
+    /* INSTAGRAM AVATAR WITH ANIMATED GRADIENT RING */
+    .insta-avatar-stage {
+      position: relative;
+      width: 96px;
+      height: 96px;
+      margin: 0 auto 12px;
+    }
+
+    .insta-ring {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      padding: 3.5px;
+      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      box-shadow: 0 8px 24px rgba(225, 48, 108, 0.4);
+      animation: spinRing 4s linear infinite;
+    }
+    @keyframes spinRing {
+      0% { filter: hue-rotate(0deg); }
+      100% { filter: hue-rotate(360deg); }
+    }
+
+    .insta-photo {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      background: #1f1202;
+      border: 2.5px solid #ffffff;
+      display: block;
+    }
+
+    .insta-badge-icon {
+      position: absolute;
+      bottom: -2px;
+      right: 0px;
+      background: #ffffff;
+      border-radius: 50%;
+      padding: 3px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+    }
+
+    .insta-badge-icon svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .card-heading {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.45rem;
+      color: #8c6307;
+      margin-bottom: 6px;
+      line-height: 1.3;
+    }
+
+    .handle-pill {
+      display: inline-block;
+      color: #b38600;
+      font-weight: 700;
+      font-size: 0.9rem;
+      margin-bottom: 12px;
+    }
+
+    .card-desc {
+      font-size: 0.84rem;
+      color: #5c3f09;
+      line-height: 1.5;
+      margin-bottom: 18px;
+    }
+
+    /* What's included preview */
+    .features-list {
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 14px 16px;
+      border: 1px solid #ffe899;
+      text-align: left;
+      font-size: 0.78rem;
+      color: #452c04;
+      line-height: 1.6;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 14px rgba(212, 175, 55, 0.15);
+    }
+
+    .features-list div {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .features-list div:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Action Buttons */
+    .btn-dm-primary {
+      width: 100%;
+      padding: 14px;
+      border-radius: 25px;
+      border: none;
+      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(225, 48, 108, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .btn-dm-primary:active {
+      transform: scale(0.97);
+    }
+
+    .btn-copy-handle {
+      width: 100%;
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 20px;
+      border: 1.5px solid #ffe899;
+      background: #ffffff;
+      color: #8c6307;
+      font-weight: 600;
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="booking-wrap" id="main-container">
+    <div class="top-bar">
+      <a href="index.html" class="pill-btn">← Back to Slots</a>
+      <span class="pill-btn">💍 Slot 4</span>
+    </div>
+
+    <!-- MAIN CARD -->
+    <div class="booking-card">
+      <span class="slot-tag">🥂 SLOT 4 AVAILABLE</span>
+
+      <!-- INSTAGRAM LOGO & AVATAR -->
+      <div class="insta-avatar-stage">
+        <div class="insta-ring">
+          <img src="../../Insta.jpg" alt="Satish Kommana" class="insta-photo" onerror="this.onerror=null; this.src='/games/Insta.jpg';" />
+        </div>
+        <div class="insta-badge-icon">
+          <svg viewBox="0 0 24 24">
+            <path fill="url(#ig-grad)" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+            <defs>
+              <linearGradient id="ig-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#f09433"/>
+                <stop offset="30%" stop-color="#e6683c"/>
+                <stop offset="60%" stop-color="#dc2743"/>
+                <stop offset="80%" stop-color="#cc2366"/>
+                <stop offset="100%" stop-color="#bc1888"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+      </div>
+
+      <h2 class="card-heading">Custom Anniversary Wish</h2>
+      <div class="handle-pill">@_satish_official_16</div>
+
+      <p class="card-desc">
+        Celebrate your special milestone or parents' anniversary! 🥂✨<br>
+        Send a direct message on Instagram to customize this interactive experience.
+      </p>
+
+      <!-- WHAT'S INCLUDED IN ANNIVERSARY WISH -->
+      <div class="features-list">
+        <div><span>⏳</span> <strong>Years Together Counter</strong> (Years • Months • Days)</div>
+        <div><span>📸</span> <strong>3D Couple Photo Carousel</strong> with background music</div>
+        <div><span>🥂</span> <strong>Virtual Champagne Toast</strong> & Sparklers FX</div>
+        <div><span>💌</span> <strong>Unfolding Love Letter</strong> & WhatsApp reply</div>
+        <div><span>🔒</span> <strong>Wedding Date / Secret Gate</strong> password</div>
+      </div>
+
+      <!-- MAIN ACTION: OPEN INSTAGRAM DM -->
+      <a href="https://ig.me/m/_satish_official_16" target="_blank" class="btn-dm-primary" onclick="launchConfetti()">
+        <span>DM on Instagram for Wishes</span> 💌
+      </a>
+
+      <!-- SECONDARY ACTION: COPY USERNAME -->
+      <button class="btn-copy-handle" onclick="copyHandle()">
+        📋 Copy Instagram: @_satish_official_16
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // Floating Golden Particles
+    const wrap = document.getElementById('main-container');
+    const icons = ['✨', '🥂', '💍', '💐', '💖', '⭐'];
+    for (let i = 0; i < 16; i++) {
+      const p = document.createElement('div');
+      p.className = 'gold-particle';
+      p.innerText = icons[Math.floor(Math.random() * icons.length)];
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.animationDelay = (Math.random() * 6) + 's';
+      p.style.animationDuration = (5 + Math.random() * 4) + 's';
+      wrap.appendChild(p);
+    }
+
+    function launchConfetti() {
+      if (window.confetti) {
+        confetti({
+          particleCount: 80,
+          spread: 85,
+          colors: ['#ffd700', '#ffaa00', '#ffffff', '#ff69b4']
+        });
+      }
+    }
+
+    function copyHandle() {
+      const handle = "@_satish_official_16";
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(handle).then(() => {
+          alert("Instagram handle copied: @_satish_official_16\nOpen Instagram and send a DM!");
+        }).catch(() => {
+          alert("Instagram: @_satish_official_16");
+        });
+      } else {
+        alert("Instagram: @_satish_official_16");
+      }
+    }
+  </script>
+</body>
+</html>
