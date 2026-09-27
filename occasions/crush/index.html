@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crush Proposal Slots Hub 💖</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
+    body, html { width: 100%; min-height: 100%; background: #1a0410; color: #fff; overflow-x: hidden; }
+
+    /* Dreamy Romantic Background */
+    .menu-wrap {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px 50px;
+      background: radial-gradient(circle at 50% 10%, #4a092b 0%, #200416 60%, #12010c 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Floating Petals/Hearts */
+    .bg-particle {
+      position: absolute; pointer-events: none;
+      font-size: 1.3rem; animation: floatUpward 7s linear infinite;
+      filter: drop-shadow(0 0 6px rgba(255, 105, 180, 0.5));
+    }
+    @keyframes floatUpward {
+      0% { transform: translateY(105vh) rotate(0deg) scale(0.8); opacity: 0; }
+      20% { opacity: 0.9; }
+      80% { opacity: 0.9; }
+      100% { transform: translateY(-10vh) rotate(360deg) scale(1.15); opacity: 0; }
+    }
+
+    /* Top Nav Bar */
+    .top-nav {
+      width: 100%; max-width: 480px;
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 16px; z-index: 20;
+    }
+    .pill-btn {
+      background: rgba(255, 182, 193, 0.15); border: 1px solid rgba(255, 192, 203, 0.35);
+      color: #ffd1dc; padding: 7px 15px; border-radius: 20px; font-size: 0.8rem;
+      cursor: pointer; text-decoration: none; backdrop-filter: blur(10px);
+      box-shadow: 0 4px 15px rgba(255, 105, 180, 0.2);
+    }
+
+    /* DEVELOPER PROFILE HEADER WITH Insta.jpg */
+    .dev-profile-card {
+      width: 100%; max-width: 480px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1.5px solid rgba(255, 105, 180, 0.35);
+      border-radius: 22px; padding: 14px 18px;
+      display: flex; align-items: center; justify-content: space-between;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 20px rgba(255, 105, 180, 0.25);
+      margin-bottom: 24px; z-index: 20;
+      text-decoration: none; color: #fff;
+      transition: transform 0.25s ease, border-color 0.25s ease;
+    }
+    .dev-profile-card:hover {
+      transform: translateY(-2px);
+      border-color: #ff007f;
+    }
+    .dev-left { display: flex; align-items: center; gap: 14px; }
+    .dev-avatar-wrap {
+      position: relative; width: 52px; height: 52px;
+      border-radius: 50%; padding: 2.5px;
+      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      animation: spinGlow 4s linear infinite;
+    }
+    @keyframes spinGlow {
+      0% { filter: hue-rotate(0deg); }
+      100% { filter: hue-rotate(360deg); }
+    }
+    .dev-avatar {
+      width: 100%; height: 100%; border-radius: 50%;
+      object-fit: cover; background: #260515; display: block;
+    }
+    .dev-info h3 { font-size: 0.95rem; font-weight: 700; color: #fff; line-height: 1.2; }
+    .dev-info p { font-size: 0.72rem; color: #ff99b6; margin-top: 2px; }
+    .insta-chip {
+      background: linear-gradient(135deg, #fd1d1d, #833ab4);
+      padding: 6px 12px; border-radius: 14px; font-size: 0.72rem;
+      font-weight: 700; display: inline-flex; align-items: center; gap: 4px;
+      box-shadow: 0 4px 12px rgba(225, 48, 108, 0.4);
+    }
+
+    /* SECTION TITLE */
+    .title-box { text-align: center; margin-bottom: 22px; z-index: 10; }
+    .title-box h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem; color: #ffd7e5;
+      text-shadow: 0 0 15px rgba(255, 105, 180, 0.5);
+    }
+    .title-box p { font-size: 0.82rem; color: #ffb3c6; margin-top: 4px; }
+
+    /* SLOTS GRID (SLOT 1 TO SLOT 5) */
+    .slots-container {
+      width: 100%; max-width: 480px;
+      display: flex; flex-direction: column; gap: 16px;
+      z-index: 10;
+    }
+    .slot-card {
+      position: relative;
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 105, 180, 0.06) 100%);
+      border: 1.5px solid rgba(255, 192, 203, 0.25);
+      border-radius: 20px; padding: 18px 20px;
+      display: flex; align-items: center; justify-content: space-between;
+      backdrop-filter: blur(12px); text-decoration: none; color: #fff;
+      cursor: pointer; transition: all 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+    }
+    .slot-card:hover, .slot-card:active {
+      transform: translateY(-3px) scale(1.02);
+      border-color: #ff4d80;
+      box-shadow: 0 12px 30px rgba(255, 77, 128, 0.35);
+    }
+    .slot-left { display: flex; align-items: center; gap: 16px; }
+    .slot-badge-num {
+      width: 44px; height: 44px; border-radius: 14px;
+      background: linear-gradient(135deg, #ff4081, #c2185b);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 1.1rem; color: #fff;
+      box-shadow: 0 4px 15px rgba(255, 64, 129, 0.4);
+      flex-shrink: 0;
+    }
+    .slot-details h3 { font-size: 0.98rem; font-weight: 700; color: #ffffff; }
+    .slot-details p { font-size: 0.74rem; color: #ffccd5; margin-top: 2px; }
+    .slot-status {
+      padding: 5px 10px; border-radius: 12px;
+      font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .status-live { background: rgba(37, 211, 102, 0.2); color: #25d366; border: 1px solid rgba(37, 211, 102, 0.5); }
+    .status-ready { background: rgba(255, 215, 0, 0.2); color: #ffd700; border: 1px solid rgba(255, 215, 0, 0.5); }
+    .status-custom { background: rgba(255, 105, 180, 0.2); color: #ff69b4; border: 1px solid rgba(255, 105, 180, 0.5); }
+  </style>
+</head>
+<body>
+
+  <div class="menu-wrap" id="wrap-container">
+    <!-- Top Nav: Stepping back takes user to the main occasions index -->
+    <div class="top-nav">
+      <a href="../index.html" class="pill-btn">← Categories</a>
+      <span class="pill-btn">✨ 5 HD Slots</span>
+    </div>
+
+    <!-- DEVELOPER BRANDING WITH Insta.jpg -->
+    <a href="https://instagram.com/_satish_official_16" target="_blank" class="dev-profile-card">
+      <div class="dev-left">
+        <div class="dev-avatar-wrap">
+          <img src="Insta.jpg" alt="Satish Kommana" class="dev-avatar" onerror="this.src='../Insta.jpg'" />
+        </div>
+        <div class="dev-info">
+          <h3>Satish Kommana</h3>
+          <p>Lead Developer & Creator</p>
+        </div>
+      </div>
+      <div class="insta-chip">
+        <span>@_satish_official_16</span> ↗
+      </div>
+    </a>
+
+    <!-- Title Header -->
+    <div class="title-box">
+      <h1>Crush Proposal Hub 💖</h1>
+      <p>Choose an interactive proposal experience below</p>
+    </div>
+
+    <!-- 5 PROPOSAL SLOTS -->
+    <div class="slots-container">
+
+      <!-- SLOT 1: ACTIVE GANESH & DEVI PROPOSAL -->
+      <a href="crush.html" class="slot-card" onclick="triggerConfetti()">
+        <div class="slot-left">
+          <div class="slot-badge-num">1</div>
+          <div class="slot-details">
+            <h3>Ganesh & Devi Special 🥰</h3>
+            <p>Password Lock • Runaway No • 3D Envelope</p>
+          </div>
+        </div>
+        <span class="slot-status status-live">Live 🚀</span>
+      </a>
+
+      <!-- SLOT 2: CUSTOM PROPOSAL SLOT -->
+      <a href="crush.html" class="slot-card">
+        <div class="slot-left">
+          <div class="slot-badge-num" style="background: linear-gradient(135deg, #7b1fa2, #ba68c8);">2</div>
+          <div class="slot-details">
+            <h3>Romantic Proposal Slot 2 🌹</h3>
+            <p>Ready to customize with your own names & audio</p>
+          </div>
+        </div>
+        <span class="slot-status status-ready">Ready ✨</span>
+      </a>
+
+      <!-- SLOT 3: CUSTOM PROPOSAL SLOT -->
+      <a href="crush.html" class="slot-card">
+        <div class="slot-left">
+          <div class="slot-badge-num" style="background: linear-gradient(135deg, #ff4081, #f50057);">3</div>
+          <div class="slot-details">
+            <h3>Sweet Confession Slot 3 💌</h3>
+            <p>3D Memory Carousel & Direct WhatsApp Reply</p>
+          </div>
+        </div>
+        <span class="slot-status status-custom">Custom 💖</span>
+      </a>
+
+      <!-- SLOT 4: CUSTOM PROPOSAL SLOT -->
+      <a href="crush.html" class="slot-card">
+        <div class="slot-left">
+          <div class="slot-badge-num" style="background: linear-gradient(135deg, #f57c00, #ffb74d);">4</div>
+          <div class="slot-details">
+            <h3>Love Letter Envelope Slot 4 ✉️</h3>
+            <p>Unfolding Letter & Touch Fingerprint Promise</p>
+          </div>
+        </div>
+        <span class="slot-status status-custom">Custom 💖</span>
+      </a>
+
+      <!-- SLOT 5: CUSTOM PROPOSAL SLOT -->
+      <a href="crush.html" class="slot-card">
+        <div class="slot-left">
+          <div class="slot-badge-num" style="background: linear-gradient(135deg, #00897b, #4db6ac);">5</div>
+          <div class="slot-details">
+            <h3>Midnight Romance Slot 5 🌙</h3>
+            <p>Full 3D Floating Box & Interactive Effects</p>
+          </div>
+        </div>
+        <span class="slot-status status-ready">Ready ✨</span>
+      </a>
+
+    </div>
+  </div>
+
+  <script>
+    // Floating Romantic Petals & Stars
+    const wrap = document.getElementById('wrap-container');
+    const icons = ['🌸', '💖', '✨', '🌷', '💕', '🎀'];
+    for (let i = 0; i < 16; i++) {
+      const p = document.createElement('div');
+      p.className = 'bg-particle';
+      p.innerText = icons[Math.floor(Math.random() * icons.length)];
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.animationDelay = (Math.random() * 6) + 's';
+      p.style.animationDuration = (5 + Math.random() * 4) + 's';
+      wrap.appendChild(p);
+    }
+
+    function triggerConfetti() {
+      confetti({ particleCount: 70, spread: 80, colors: ['#ff007f', '#ffccd5', '#ffd700'] });
+    }
+  </script>
+</body>
+  </html>
+  
