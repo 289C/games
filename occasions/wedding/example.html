@@ -2,253 +2,1009 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Occasions & Wishes Hub ✨</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Shubh Vivah — Wedding Celebration Demo 💒✨</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Playfair+Display:ital,wght@0,700;1,400&family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
-    body, html { width: 100%; min-height: 100%; background: #0f0314; color: #fff; overflow-x: hidden; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
 
-    /* Elegant Multiverse Radial Background */
-    .hub-wrap {
+    body, html {
+      width: 100%;
+      min-height: 100vh;
+      background: #080205;
+      color: #ffffff;
+      overflow-x: hidden;
+    }
+
+    .wedding-wrapper {
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 24px 16px 50px;
-      background: radial-gradient(circle at 50% 12%, #2d043b 0%, #15021c 55%, #08000b 100%);
+      justify-content: center;
+      padding: 60px 16px 36px;
+      background: radial-gradient(circle at 50% 25%, #42081d 0%, #1e030e 55%, #080104 100%);
       position: relative;
       overflow: hidden;
     }
 
-    /* Ambient Floating Particle Dust */
-    .ambient-particle {
-      position: absolute; pointer-events: none;
-      font-size: 1.25rem; animation: floatUp 7s linear infinite;
-      filter: drop-shadow(0 0 6px rgba(255, 105, 180, 0.5));
+    /* Ambient Sacred Rice & Floral Particles */
+    .sacred-particle {
+      position: absolute;
+      pointer-events: none;
+      font-size: 1.15rem;
+      animation: floatSacred 8s linear infinite;
+      z-index: 1;
+      filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.6));
     }
-    @keyframes floatUp {
-      0% { transform: translateY(105vh) rotate(0deg) scale(0.8); opacity: 0; }
+    @keyframes floatSacred {
+      0% { transform: translateY(105vh) rotate(0deg) scale(0.7); opacity: 0; }
       20% { opacity: 0.9; }
       80% { opacity: 0.9; }
-      100% { transform: translateY(-10vh) rotate(360deg) scale(1.15); opacity: 0; }
+      100% { transform: translateY(-8vh) rotate(360deg) scale(1.15); opacity: 0; }
     }
 
     /* Top Nav Bar */
-    .top-nav {
-      width: 100%; max-width: 480px;
-      display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 16px; z-index: 20;
+    .top-bar {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 50;
     }
     .pill-btn {
-      background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.25);
-      color: #ffd6f4; padding: 7px 15px; border-radius: 20px; font-size: 0.8rem;
-      cursor: pointer; text-decoration: none; backdrop-filter: blur(10px);
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      background: rgba(255, 215, 0, 0.15);
+      border: 1px solid rgba(255, 215, 0, 0.45);
+      color: #ffd700;
+      padding: 7px 16px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      text-decoration: none;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 15px rgba(255, 215, 0, 0.25);
     }
 
-    /* DEVELOPER PROFILE HEADER */
-    .dev-profile-card {
-      width: 100%; max-width: 480px;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1.5px solid rgba(255, 105, 180, 0.35);
-      border-radius: 22px; padding: 14px 18px;
-      display: flex; align-items: center; justify-content: space-between;
-      backdrop-filter: blur(14px);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 20px rgba(255, 105, 180, 0.2);
-      margin-bottom: 24px; z-index: 20;
-      text-decoration: none; color: #fff;
-      transition: transform 0.25s ease, border-color 0.25s ease;
+    /* Main Stage Card */
+    .stage-card {
+      width: 100%;
+      max-width: 390px;
+      background: linear-gradient(165deg, rgba(255, 255, 255, 0.07) 0%, rgba(38, 5, 20, 0.94) 100%);
+      border: 1.5px solid rgba(255, 215, 0, 0.35);
+      border-radius: 34px;
+      padding: 30px 20px 26px;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.85), 0 0 35px rgba(255, 215, 0, 0.2);
+      backdrop-filter: blur(16px);
+      text-align: center;
+      position: relative;
+      z-index: 10;
+      animation: popIn 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
-    .dev-profile-card:hover {
-      transform: translateY(-2px);
-      border-color: #ff007f;
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.92); }
+      to { opacity: 1; transform: scale(1); }
     }
-    .dev-left { display: flex; align-items: center; gap: 14px; }
-    .dev-avatar-wrap {
-      position: relative; width: 52px; height: 52px;
-      border-radius: 50%; padding: 2.5px;
+
+    .card-heading {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.65rem;
+      color: #fff2b2;
+      margin-bottom: 6px;
+      text-shadow: 0 0 16px rgba(255, 215, 0, 0.5);
+    }
+    .card-desc {
+      font-size: 0.82rem;
+      color: #ffd6e0;
+      margin-bottom: 18px;
+      line-height: 1.45;
+    }
+
+    /* Buttons */
+    .btn-action {
+      width: 100%;
+      padding: 13px;
+      border-radius: 25px;
+      border: none;
+      background: linear-gradient(135deg, #d4af37, #b8860b);
+      color: #2b0414;
+      font-weight: 800;
+      font-size: 0.95rem;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+      transition: transform 0.15s, box-shadow 0.15s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+    .btn-action:active { transform: scale(0.97); }
+    .btn-alt {
+      background: none;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #ffd6e0;
+      font-size: 0.78rem;
+      padding: 8px 14px;
+      border-radius: 18px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    /* SCREEN 1: PASSCODE INPUT */
+    .lock-field-box { width: 100%; margin: 12px 0 16px; }
+    .lock-input {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 20px;
+      border: 1.5px solid rgba(255, 215, 0, 0.5);
+      background: rgba(0, 0, 0, 0.4);
+      color: #fff;
+      font-size: 0.95rem;
+      text-align: center;
+      outline: none;
+    }
+
+    /* SCREEN 2: VARMALA GARLAND EXCHANGE */
+    .varmala-arena {
+      position: relative;
+      width: 100%;
+      height: 240px;
+      margin: 10px auto 14px;
+      border-radius: 24px;
+      background: radial-gradient(circle at 50% 50%, rgba(255, 215, 0, 0.08) 0%, rgba(0, 0, 0, 0.5) 100%);
+      border: 1.5px dashed rgba(255, 215, 0, 0.45);
+      overflow: hidden;
+      touch-action: none;
+    }
+
+    .couple-silhouette {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .groom-side { right: 35px; }
+    .couple-avatar { font-size: 3.5rem; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.6)); }
+    .couple-label { font-size: 0.72rem; color: #ffd700; font-weight: 700; margin-top: -4px; }
+
+    .garland-target-zone {
+      position: absolute;
+      top: 35px;
+      right: 32px;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: 2px dashed #ffd700;
+      animation: pulseGarland 1.8s infinite alternate ease-in-out;
+      pointer-events: none;
+    }
+    @keyframes pulseGarland {
+      0% { transform: scale(0.9); opacity: 0.4; }
+      100% { transform: scale(1.15); opacity: 1; }
+    }
+
+    .draggable-garland {
+      position: absolute;
+      top: 50%;
+      left: 35px;
+      transform: translateY(-50%);
+      width: 65px;
+      height: 65px;
+      cursor: grab;
+      z-index: 30;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      filter: drop-shadow(0 6px 14px rgba(255, 215, 0, 0.6));
+      transition: transform 0.05s ease;
+    }
+    .draggable-garland:active {
+      cursor: grabbing;
+      transform: translateY(-50%) scale(1.15) rotate(-6deg);
+    }
+    .garland-visual { font-size: 2.8rem; }
+    .garland-drag-label {
+      position: absolute;
+      bottom: -16px;
+      font-size: 0.65rem;
+      color: #ffd700;
+      white-space: nowrap;
+      font-weight: 700;
+      pointer-events: none;
+    }
+
+    .varmala-arena.varmala-locked .draggable-garland {
+      left: 195px !important;
+      top: 50% !important;
+      transform: translateY(-50%) scale(1.1) !important;
+      pointer-events: none;
+      filter: drop-shadow(0 0 20px #ffd700);
+    }
+    .varmala-arena.varmala-locked .garland-target-zone { display: none; }
+
+    /* SCREEN 3: SAPTAPADI 7 SACRED VOWS */
+    .sacred-fire-box {
+      position: relative;
+      width: 100%;
+      height: 190px;
+      margin: 12px auto 14px;
+      background: radial-gradient(circle at 50% 60%, rgba(255, 120, 0, 0.2) 0%, rgba(0, 0, 0, 0.5) 100%);
+      border-radius: 24px;
+      border: 1px solid rgba(255, 215, 0, 0.35);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .sacred-flame {
+      font-size: 3.5rem;
+      filter: drop-shadow(0 0 16px #ff7700);
+      animation: flameWobble 0.14s infinite alternate;
+    }
+    @keyframes flameWobble {
+      0% { transform: scale(1) rotate(-3deg); }
+      100% { transform: scale(1.1) rotate(3deg); }
+    }
+    .havan-kund { font-size: 2.8rem; margin-top: -16px; }
+    .vow-stepper-dots {
+      display: flex;
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .vow-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      transition: background 0.3s, transform 0.3s;
+    }
+    .vow-dot.completed {
+      background: #ffd700;
+      transform: scale(1.2);
+    }
+    .vow-text-card {
+      min-height: 48px;
+      font-size: 0.8rem;
+      color: #ffd700;
+      font-weight: 600;
+      padding: 0 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* SCREEN 4: 3D POLAROIDS */
+    .photo-deck-stage {
+      position: relative;
+      width: 250px;
+      height: 310px;
+      margin: 12px auto 16px;
+      perspective: 1000px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .photo-card-3d {
+      position: absolute;
+      width: 230px;
+      height: 290px;
+      border-radius: 20px;
+      overflow: hidden;
+      background: #240514;
+      border: 2px solid rgba(255, 215, 0, 0.65);
+      box-shadow: 0 14px 35px rgba(0,0,0,0.7), 0 0 20px rgba(255, 215, 0, 0.25);
+      cursor: pointer;
+      transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.45s ease;
+      transform-origin: 50% 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    .photo-card-3d img { width: 100%; height: 220px; object-fit: cover; pointer-events: none; }
+    .photo-card-info {
+      flex: 1;
+      background: linear-gradient(180deg, #32071c 0%, #17020d 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 10px;
+      border-top: 1px solid rgba(255, 215, 0, 0.3);
+    }
+    .photo-card-info h4 { font-size: 0.85rem; font-weight: 700; color: #ffd700; }
+    .photo-card-info p { font-size: 0.7rem; color: #ffd6e0; }
+    .photo-card-3d.active { transform: translate3d(0, 0, 0) scale(1) rotate(0deg); opacity: 1; z-index: 10; pointer-events: auto; }
+    .photo-card-3d.next-1 { transform: translate3d(0, 12px, -40px) scale(0.94) rotate(3deg); opacity: 0.85; z-index: 8; pointer-events: none; }
+    .photo-card-3d.next-2 { transform: translate3d(0, 22px, -80px) scale(0.88) rotate(-3deg); opacity: 0.65; z-index: 6; pointer-events: none; }
+    .photo-card-3d.hidden-back { transform: translate3d(0, 32px, -120px) scale(0.82); opacity: 0; z-index: 2; pointer-events: none; }
+    .photo-card-3d.flung-away { transform: translate3d(160px, -60px, 60px) rotate(35deg) scale(0.7); opacity: 0; z-index: 15; pointer-events: none; }
+    .deck-nav-bar { display: flex; align-items: center; justify-content: space-between; width: 100%; max-width: 250px; margin: 0 auto 14px; }
+    .deck-arrow-btn {
+      background: rgba(255, 215, 0, 0.12); border: 1px solid rgba(255, 215, 0, 0.45);
+      color: #ffd700; padding: 6px 14px; border-radius: 16px; font-size: 0.76rem; font-weight: 700; cursor: pointer;
+    }
+    .deck-arrow-btn:active { transform: scale(0.92); }
+    .deck-dots { display: flex; gap: 6px; }
+    .deck-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255, 255, 255, 0.25); transition: background 0.3s, transform 0.3s; }
+    .deck-dot.active { background: #ffd700; transform: scale(1.3); }
+
+    /* SCREEN 5: GOLDEN SCRATCH CARD */
+    .scratch-stage-box {
+      position: relative;
+      width: 280px;
+      height: 190px;
+      margin: 10px auto 14px;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.7);
+      border: 2px solid rgba(255, 215, 0, 0.5);
+      touch-action: none;
+    }
+    .scratch-reveal-content {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, #32071c 0%, #15020d 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+      text-align: center;
+      z-index: 1;
+    }
+    .scratch-reveal-content h3 { font-size: 1.05rem; color: #ffd700; margin-bottom: 4px; }
+    .scratch-reveal-content p { font-size: 0.75rem; color: #ffccd5; line-height: 1.4; }
+    #scratch-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 5;
+      cursor: crosshair;
+      transition: opacity 0.5s ease;
+    }
+
+    /* SCREEN 6: AKSHAT & FLOWER SHOWER */
+    .kalash-box {
+      width: 100%;
+      height: 180px;
+      margin: 12px 0 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .kalash-icon {
+      font-size: 4.8rem;
+      filter: drop-shadow(0 6px 20px rgba(255, 215, 0, 0.5));
+      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .kalash-icon:active { transform: scale(1.18) rotate(-10deg); }
+
+    /* SCREEN 7: BOOKING HUB CARD */
+    .insta-avatar-stage { position: relative; width: 86px; height: 86px; margin: 0 auto 12px; }
+    .insta-ring {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      padding: 3px;
       background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      box-shadow: 0 8px 24px rgba(225, 48, 108, 0.4);
       animation: spinGlow 4s linear infinite;
     }
-    @keyframes spinGlow {
-      0% { filter: hue-rotate(0deg); }
-      100% { filter: hue-rotate(360deg); }
+    @keyframes spinGlow { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } }
+    .insta-photo {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      background: #14040d;
+      border: 2px solid #ffffff;
+      display: block;
     }
-    .dev-avatar {
-      width: 100%; height: 100%; border-radius: 50%;
-      object-fit: cover; background: #260515; display: block;
+    .features-list {
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 18px;
+      padding: 12px 14px;
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      text-align: left;
+      font-size: 0.78rem;
+      color: #ffccd5;
+      line-height: 1.6;
+      margin-bottom: 18px;
     }
-    .dev-info h3 { font-size: 0.95rem; font-weight: 700; color: #fff; line-height: 1.2; }
-    .dev-info p { font-size: 0.72rem; color: #ff99b6; margin-top: 2px; }
-    .insta-chip {
-      background: linear-gradient(135deg, #fd1d1d, #833ab4);
-      padding: 6px 12px; border-radius: 14px; font-size: 0.72rem;
-      font-weight: 700; display: inline-flex; align-items: center; gap: 4px;
-      box-shadow: 0 4px 12px rgba(225, 48, 108, 0.4);
-    }
-
-    /* SECTION TITLE */
-    .title-box { text-align: center; margin-bottom: 22px; z-index: 10; }
-    .title-box h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.85rem; color: #ffe6f7;
-      text-shadow: 0 0 15px rgba(255, 105, 180, 0.4);
-    }
-    .title-box p { font-size: 0.82rem; color: #e0b0db; margin-top: 4px; }
-
-    /* CATEGORIES GRID */
-    .categories-grid {
-      width: 100%; max-width: 480px;
-      display: flex; flex-direction: column; gap: 16px;
-      z-index: 10;
-    }
-    .category-card {
-      position: relative;
-      background: linear-gradient(145deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
-      border: 1.5px solid rgba(255, 255, 255, 0.16);
-      border-radius: 22px; padding: 18px 20px;
-      display: flex; align-items: center; justify-content: space-between;
-      backdrop-filter: blur(12px); text-decoration: none; color: #fff;
-      cursor: pointer; transition: all 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.35);
-      overflow: hidden;
-    }
-    .category-card:hover, .category-card:active {
-      transform: translateY(-3px) scale(1.02);
-      border-color: rgba(255, 255, 255, 0.4);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
-    }
-    .card-glow {
-      position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-      pointer-events: none; opacity: 0.6;
-    }
-    .category-icon-box {
-      width: 48px; height: 48px; border-radius: 16px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.5rem; flex-shrink: 0;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-      position: relative; z-index: 2;
-    }
-    .category-info {
-      flex: 1; margin: 0 16px; position: relative; z-index: 2;
-    }
-    .category-info h3 { font-size: 1rem; font-weight: 700; color: #ffffff; }
-    .category-info p { font-size: 0.74rem; color: #e6c8e8; margin-top: 2px; }
-    .category-arrow {
-      font-size: 1.1rem; color: #ffffff; opacity: 0.7;
-      transition: transform 0.2s ease, opacity 0.2s ease;
-      position: relative; z-index: 2;
-    }
-    .category-card:hover .category-arrow {
-      transform: translateX(4px);
-      opacity: 1;
+    .features-list div { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+    .btn-dm-primary {
+      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      box-shadow: 0 6px 20px rgba(225, 48, 108, 0.45);
+      color: #ffffff;
     }
   </style>
 </head>
 <body>
 
-  <div class="hub-wrap" id="wrap-container">
-    <div class="top-nav">
-      <a href="../index.html" class="pill-btn">← Home</a>
-      <span class="pill-btn">✨ Occasions Hub</span>
+  <div class="wedding-wrapper" id="main-wrap">
+    
+    <!-- Top Action Bar -->
+    <div class="top-bar">
+      <a href="index.html" class="pill-btn">← Wedding Hub</a>
+      <span class="pill-btn">💒 Live Demo</span>
     </div>
 
-    <!-- DEVELOPER BRANDING -->
-    <a href="https://instagram.com/_satish_official_16" target="_blank" class="dev-profile-card">
-      <div class="dev-left">
-        <div class="dev-avatar-wrap">
-          <img src="../Insta.jpg" alt="Satish Kommana" class="dev-avatar" onerror="this.onerror=null; this.src='/games/Insta.jpg';" />
+    <!-- SCREEN 1: SHUBH MUHURTHAM GATE -->
+    <div class="stage-card" id="screen-lock">
+      <div style="font-size: 3.5rem; margin-bottom: 8px;">🪔💒</div>
+      <h2 class="card-heading">Shubh Vivah</h2>
+      <p class="card-desc">Enter the sacred wedding passcode or date to begin</p>
+
+      <div class="lock-field-box">
+        <input type="password" id="pass-input" class="lock-input" placeholder="Enter wedding code (e.g. 2026)" autocomplete="off" />
+      </div>
+
+      <button class="btn-action" onclick="unlockGate()">
+        <span>Enter Wedding Portal ➔</span>
+      </button>
+
+      <button class="btn-alt" onclick="quickPass()">
+        Direct Demo Entry 🔑
+      </button>
+    </div>
+
+    <!-- SCREEN 2: VARMALA GARLAND EXCHANGE -->
+    <div class="stage-card" id="screen-varmala" style="display: none;">
+      <h2 class="card-heading">Varmala Exchange 🌺</h2>
+      <p class="card-desc">Drag the sacred garland from bride to groom to unite!</p>
+
+      <div class="varmala-arena" id="varmala-arena">
+        <!-- Bride Silhouette -->
+        <div class="couple-silhouette" style="left: 28px;">
+          <div class="couple-avatar">👰</div>
+          <div class="couple-label">Bride</div>
         </div>
-        <div class="dev-info">
-          <h3>Satish Kommana</h3>
-          <p>Lead Developer & Creator</p>
+
+        <!-- Draggable Garland -->
+        <div class="draggable-garland" id="drag-garland">
+          <span class="garland-visual">🌸</span>
+          <span class="garland-drag-label">✋ Drag Garland</span>
+        </div>
+
+        <!-- Target Groom Silhouette -->
+        <div class="couple-silhouette groom-side" id="groom-target">
+          <div class="couple-avatar">🤵</div>
+          <div class="couple-label">Groom</div>
+        </div>
+
+        <div class="garland-target-zone"></div>
+      </div>
+
+      <p id="varmala-status" style="font-size: 0.8rem; color: #ffd700; font-weight: 600; min-height: 20px;">
+        🌺 Drag garland onto the groom
+      </p>
+
+      <button class="btn-action" id="btn-varmala-next" style="display: none; margin-top: 12px;" onclick="showScreen('screen-vows')">
+        <span>7 Sacred Vows (Saptapadi) 🔥 ➔</span>
+      </button>
+    </div>
+
+    <!-- SCREEN 3: 7 SACRED VOWS (SAPTAPADI) -->
+    <div class="stage-card" id="screen-vows" style="display: none;">
+      <h2 class="card-heading">7 Sacred Vows 🔥</h2>
+      <p class="card-desc">Tap the sacred fire to take each phera together!</p>
+
+      <div class="sacred-fire-box" onclick="takePheraStep()">
+        <div class="sacred-flame">🔥</div>
+        <div class="havan-kund">🪔</div>
+        <div class="vow-stepper-dots" id="vow-dots">
+          <span class="vow-dot"></span>
+          <span class="vow-dot"></span>
+          <span class="vow-dot"></span>
+          <span class="vow-dot"></span>
+          <span class="vow-dot"></span>
+          <span class="vow-dot"></span>
+          <span class="vow-dot"></span>
         </div>
       </div>
-      <div class="insta-chip">
-        <span>@_satish_official_16</span> ↗
+
+      <div class="vow-text-card" id="vow-text">Tap the sacred flame to start the 1st Phera</div>
+
+      <button class="btn-action" id="btn-vows-next" style="display: none; margin-top: 12px;" onclick="showScreen('screen-photos')">
+        <span>View Mandap Memories 📸 ➔</span>
+      </button>
+    </div>
+
+    <!-- SCREEN 4: 3D MANDAP MEMORY POLAROIDS -->
+    <div class="stage-card" id="screen-photos" style="display: none;">
+      <h2 class="card-heading">Mandap Moments ✨</h2>
+      <p class="card-desc">Tap photos or use controls to browse wedding memories in 3D!</p>
+
+      <div class="photo-deck-stage" id="deck-stage" onclick="nextPhoto()">
+        <div class="photo-card-3d active" data-index="0">
+          <img src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=600&q=80" alt="Haldi Moment" onerror="this.src='https://placehold.co/400x500/800/fff?text=Haldi+Moment';" />
+          <div class="photo-card-info">
+            <h4>Haldi & Glow 💛</h4>
+            <p>Golden laughter and blessings</p>
+          </div>
+        </div>
+        <div class="photo-card-3d next-1" data-index="1">
+          <img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=600&q=80" alt="Mehendi" onerror="this.src='https://placehold.co/400x500/700/fff?text=Mehendi+Eve';" />
+          <div class="photo-card-info">
+            <h4>Mehendi Colors 🌿</h4>
+            <p>Intricate designs etched in love</p>
+          </div>
+        </div>
+        <div class="photo-card-3d next-2" data-index="2">
+          <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=600&q=80" alt="Muhurtham" onerror="this.src='https://placehold.co/400x500/600/fff?text=Muhurtham';" />
+          <div class="photo-card-info">
+            <h4>The Sacred Muhurtham 🪔</h4>
+            <p>Tied together for seven lifetimes</p>
+          </div>
+        </div>
+        <div class="photo-card-3d hidden-back" data-index="3">
+          <img src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=600&q=80" alt="Reception" onerror="this.src='https://placehold.co/400x500/500/fff?text=Reception+Gala';" />
+          <div class="photo-card-info">
+            <h4>Forever One 👑</h4>
+            <p>Beginning our greatest adventure</p>
+          </div>
+        </div>
       </div>
-    </a>
 
-    <div class="title-box">
-      <h1>Celebrate Every Moment ✨</h1>
-      <p>Select an occasion category to view interactive slots</p>
+      <div class="deck-nav-bar">
+        <button class="deck-arrow-btn" onclick="event.stopPropagation(); prevPhoto();">◀ Prev</button>
+        <div class="deck-dots">
+          <span class="deck-dot active"></span>
+          <span class="deck-dot"></span>
+          <span class="deck-dot"></span>
+          <span class="deck-dot"></span>
+        </div>
+        <button class="deck-arrow-btn" onclick="event.stopPropagation(); nextPhoto();">Next ▶</button>
+      </div>
+
+      <button class="btn-action" onclick="showScreen('screen-scratch')">
+        <span>Golden Wedding Blessing 📜 ➔</span>
+      </button>
     </div>
 
-    <!-- CATEGORIES -->
-    <div class="categories-grid">
+    <!-- SCREEN 5: GOLDEN WEDDING BLESSING SCRATCH CARD -->
+    <div class="stage-card" id="screen-scratch" style="display: none;">
+      <h2 class="card-heading">Sacred Blessing Card ✨</h2>
+      <p class="card-desc">Rub your finger across the gold layer to reveal wedding wishes!</p>
 
-      <!-- 1. CRUSH PROPOSALS -->
-      <a href="crush/index.html" class="category-card" onclick="triggerCategoryConfetti()">
-        <div class="card-glow" style="background: radial-gradient(circle, rgba(255,0,127,0.25) 0%, transparent 70%);"></div>
-        <div class="category-icon-box" style="background: linear-gradient(135deg, #ff007f, #ff4081);">
-          <span>💖</span>
+      <div class="scratch-stage-box">
+        <div class="scratch-reveal-content">
+          <span style="font-size: 2.2rem; margin-bottom: 4px;">🪔💐</span>
+          <h3>Kalyana Ashirvadam</h3>
+          <p>"May your union be blessed with immense joy, everlasting peace, good fortune, and love that blooms stronger every year! 💖"</p>
         </div>
-        <div class="category-info">
-          <h3>Crush Proposals</h3>
-          <p>Secret Passwords • Runaway No • Love Letter Envelopes</p>
-        </div>
-        <div class="category-arrow">➔</div>
-      </a>
+        <canvas id="scratch-canvas" width="280" height="190"></canvas>
+      </div>
 
-      <!-- 2. ANNIVERSARY WISHES -->
-      <a href="anniversary/index.html" class="category-card" onclick="triggerCategoryConfetti()">
-        <div class="card-glow" style="background: radial-gradient(circle, rgba(255,215,0,0.25) 0%, transparent 70%);"></div>
-        <div class="category-icon-box" style="background: linear-gradient(135deg, #d4af37, #996515);">
-          <span>🥂</span>
-        </div>
-        <div class="category-info">
-          <h3>Anniversary Wishes</h3>
-          <p>Golden Milestones • Toast Animation • 5 Custom Slots</p>
-        </div>
-        <div class="category-arrow">➔</div>
-      </a>
+      <p id="scratch-status" style="font-size: 0.78rem; color: #ffd700; font-weight: 600; min-height: 20px;">
+        ✨ Scratch at least 45% to unlock
+      </p>
 
-      <!-- 3. BIRTHDAY WISHES (LINKED DIRECTLY) -->
-      <a href="birthday/index.html" class="category-card" onclick="triggerCategoryConfetti()">
-        <div class="card-glow" style="background: radial-gradient(circle, rgba(0,200,255,0.25) 0%, transparent 70%);"></div>
-        <div class="category-icon-box" style="background: linear-gradient(135deg, #00b4d8, #0077b6);">
-          <span>🎂</span>
-        </div>
-        <div class="category-info">
-          <h3>Birthday Wishes</h3>
-          <p>Interactive Cakes • Candle Blow • 5 Custom Slots</p>
-        </div>
-        <div class="category-arrow">➔</div>
-      </a>
-
-      <!-- 4. FRIENDSHIP DAY & TIES -->
-      <a href="friendship/index.html" class="category-card" onclick="triggerCategoryConfetti()">
-        <div class="card-glow" style="background: radial-gradient(circle, rgba(255,165,0,0.22) 0%, transparent 70%);"></div>
-        <div class="category-icon-box" style="background: linear-gradient(135deg, #ff9100, #ff6d00);">
-          <span>🤝</span>
-        </div>
-        <div class="category-info">
-          <h3>Friendship & Besties</h3>
-          <p>Dosti Quizzes • Memories Carousel • Group Hugs</p>
-        </div>
-        <div class="category-arrow">➔</div>
-      </a>
-
+      <button class="btn-action" id="btn-scratch-next" style="display: none; margin-top: 10px;" onclick="showScreen('screen-akshat')">
+        <span>Shower Sacred Akshat 🌾 ➔</span>
+      </button>
     </div>
+
+    <!-- SCREEN 6: SHOWER SACRED AKSHAT & FLOWERS -->
+    <div class="stage-card" id="screen-akshat" style="display: none;">
+      <h2 class="card-heading">Akshat Shower 🌾</h2>
+      <p class="card-desc">Tap the golden Kalash to shower sacred grains and blessings!</p>
+
+      <div class="kalash-box" onclick="showerAkshatFX()">
+        <div class="kalash-icon">🏺</div>
+        <p style="font-size: 0.76rem; color: #ffd700; font-weight: 700; margin-top: 10px;">Tap Kalash to Bless the Couple</p>
+      </div>
+
+      <button class="btn-action" onclick="showScreen('screen-custom')">
+        <span>Order Custom Wedding Page 🎁 ➔</span>
+      </button>
+    </div>
+
+    <!-- SCREEN 7: BOOKING HUB CARD -->
+    <div class="stage-card" id="screen-custom" style="display: none;">
+      <div class="insta-avatar-stage">
+        <div class="insta-ring">
+          <img src="../../Insta.jpg" alt="Satish Kommana" class="insta-photo" onerror="this.onerror=null; this.src='/games/Insta.jpg';" />
+        </div>
+      </div>
+
+      <h2 class="card-heading">Custom Wedding Page</h2>
+      <div style="color: #ffd700; font-weight: 700; font-size: 0.88rem; margin-bottom: 12px;">@_satish_official_16</div>
+
+      <p class="card-desc">
+        Create an unforgettable, interactive wedding website complete with rituals, photo mandaps, and digital guest blessings! 💖
+      </p>
+
+      <div class="features-list">
+        <div><span>🌺</span> <strong>Interactive Varmala Exchange Ritual</strong></div>
+        <div><span>🔥</span> <strong>Saptapadi 7 Vows Step-by-Step Experience</strong></div>
+        <div><span>📸</span> <strong>3D Rotating Mandap Polaroid Deck</strong></div>
+        <div><span>🌾</span> <strong>Interactive Sacred Akshat & Petal Shower</strong></div>
+        <div><span>📲</span> <strong>Instant WhatsApp & Instagram Reply</strong></div>
+      </div>
+
+      <a href="https://ig.me/m/_satish_official_16" target="_blank" class="btn-action btn-dm-primary">
+        <span>DM on Instagram to Order</span> 💌
+      </a>
+
+      <a href="https://api.whatsapp.com/send?phone=919281267188&text=Hi%20Satish!%20I%20want%20to%20order%20a%20Custom%20Wedding%20page." target="_blank" class="btn-action" style="background: linear-gradient(135deg, #25d366, #128c7e); color: #fff; margin-top: 10px;">
+        <span>Chat on WhatsApp</span> 📲
+      </a>
+    </div>
+
   </div>
 
   <script>
-    const wrap = document.getElementById('wrap-container');
-    const icons = ['✨', '💖', '🥂', '🎉', '🌟', '🎂'];
+    // 1. FLOATING PARTICLES
+    const wrap = document.getElementById('main-wrap');
+    const icons = ['✨', '🌾', '🪔', '🌺', '💍', '💐', '💖', '👑'];
     for (let i = 0; i < 16; i++) {
       const p = document.createElement('div');
-      p.className = 'ambient-particle';
+      p.className = 'sacred-particle';
       p.innerText = icons[Math.floor(Math.random() * icons.length)];
       p.style.left = Math.random() * 100 + 'vw';
       p.style.animationDelay = (Math.random() * 6) + 's';
-      p.style.animationDuration = (5 + Math.random() * 4) + 's';
+      p.style.animationDuration = (6 + Math.random() * 4) + 's';
       wrap.appendChild(p);
     }
 
-    function triggerCategoryConfetti() {
-      confetti({ particleCount: 65, spread: 75, colors: ['#ffd700', '#ff007f', '#00b4d8', '#ffffff'] });
+    // 2. SYNTHETIC AUDIO SFX (ZERO EXTERNAL MP3s NEEDED)
+    let sfxCtx = null;
+    function playSfx(type) {
+      try {
+        if (!sfxCtx) sfxCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const now = sfxCtx.currentTime;
+        const osc = sfxCtx.createOscillator();
+        const gain = sfxCtx.createGain();
+        osc.connect(gain);
+        gain.connect(sfxCtx.destination);
+
+        if (type === 'unlock') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(523.25, now);
+          osc.frequency.exponentialRampToValueAtTime(1046.50, now + 0.2);
+          gain.gain.setValueAtTime(0.25, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+          osc.start(now); osc.stop(now + 0.25);
+        } else if (type === 'shehnai') {
+          [587.33, 739.99, 880, 1174.66].forEach((freq, idx) => {
+            const o = sfxCtx.createOscillator();
+            const g = sfxCtx.createGain();
+            o.connect(g); g.connect(sfxCtx.destination);
+            o.type = 'triangle';
+            o.frequency.value = freq;
+            g.gain.setValueAtTime(0.18, now + (idx * 0.09));
+            g.gain.exponentialRampToValueAtTime(0.01, now + (idx * 0.09) + 0.7);
+            o.start(now + (idx * 0.09));
+            o.stop(now + (idx * 0.09) + 0.7);
+          });
+        } else if (type === 'fire') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(260, now);
+          osc.frequency.exponentialRampToValueAtTime(520, now + 0.16);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.22);
+          osc.start(now); osc.stop(now + 0.22);
+        } else if (type === 'flip') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(350, now);
+          osc.frequency.exponentialRampToValueAtTime(700, now + 0.15);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+          osc.start(now); osc.stop(now + 0.15);
+        } else if (type === 'scratch') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(900 + Math.random() * 200, now);
+          gain.gain.setValueAtTime(0.08, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.06);
+          osc.start(now); osc.stop(now + 0.06);
+        } else if (type === 'akshat') {
+          [880, 1046.5, 1318.5, 1567.98].forEach((freq, i) => {
+            const o = sfxCtx.createOscillator();
+            const g = sfxCtx.createGain();
+            o.connect(g); g.connect(sfxCtx.destination);
+            o.type = 'sine';
+            o.frequency.value = freq;
+            g.gain.setValueAtTime(0.15, now + (i * 0.05));
+            g.gain.exponentialRampToValueAtTime(0.01, now + (i * 0.05) + 0.4);
+            o.start(now + (i * 0.05));
+            o.stop(now + (i * 0.05) + 0.4);
+          });
+        }
+      } catch (e) {}
+    }
+
+    // 3. SCREEN SWITCHER
+    function showScreen(screenId) {
+      document.querySelectorAll('.stage-card').forEach(card => card.style.display = 'none');
+      const target = document.getElementById(screenId);
+      if (target) {
+        target.style.display = 'block';
+        playSfx('flip');
+      }
+      if (screenId === 'screen-varmala') setupVarmalaInteraction();
+      if (screenId === 'screen-photos') renderDeck();
+      if (screenId === 'screen-scratch') initScratchCanvas();
+    }
+
+    // 4. SCREEN 1: UNLOCK GATE
+    function unlockGate() {
+      const val = document.getElementById('pass-input').value.trim();
+      if (val.length > 0) {
+        playSfx('unlock');
+        confetti({ particleCount: 80, spread: 80, origin: { y: 0.6 }, colors: ['#ffd700', '#ff4d6d', '#ffffff'] });
+        setTimeout(() => showScreen('screen-varmala'), 300);
+      } else {
+        alert("Please enter the wedding passcode or tap Direct Demo Entry! 🪔");
+      }
+    }
+
+    function quickPass() {
+      playSfx('unlock');
+      confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 } });
+      showScreen('screen-varmala');
+    }
+
+    // 5. SCREEN 2: VARMALA GARLAND INTERACTION
+    let isVarmalaLocked = false;
+    function setupVarmalaInteraction() {
+      const garland = document.getElementById('drag-garland');
+      const arena = document.getElementById('varmala-arena');
+      const groom = document.getElementById('groom-target');
+
+      let isDragging = false;
+      let startX, startY, initialLeft, initialTop;
+
+      garland.addEventListener('pointerdown', (e) => {
+        if (isVarmalaLocked) return;
+        isDragging = true;
+        garland.setPointerCapture(e.pointerId);
+        startX = e.clientX;
+        startY = e.clientY;
+        initialLeft = garland.offsetLeft;
+        initialTop = garland.offsetTop;
+      });
+
+      garland.addEventListener('pointermove', (e) => {
+        if (!isDragging || isVarmalaLocked) return;
+        const deltaX = e.clientX - startX;
+        const deltaY = e.clientY - startY;
+
+        let newX = Math.max(10, Math.min(arena.clientWidth - 70, initialLeft + deltaX));
+        let newY = Math.max(10, Math.min(arena.clientHeight - 70, initialTop + deltaY));
+
+        garland.style.left = newX + 'px';
+        garland.style.top = newY + 'px';
+
+        const garlandRect = garland.getBoundingClientRect();
+        const groomRect = groom.getBoundingClientRect();
+
+        if (
+          garlandRect.right >= groomRect.left + 20 &&
+          garlandRect.left <= groomRect.right &&
+          garlandRect.bottom >= groomRect.top + 20 &&
+          garlandRect.top <= groomRect.bottom - 20
+        ) {
+          triggerVarmalaSuccess();
+        }
+      });
+
+      const stopDrag = (e) => {
+        if (!isDragging) return;
+        isDragging = false;
+        try { garland.releasePointerCapture(e.pointerId); } catch (err) {}
+
+        if (!isVarmalaLocked) {
+          garland.style.transition = 'top 0.3s ease, left 0.3s ease';
+          garland.style.top = '50%';
+          garland.style.left = '35px';
+          setTimeout(() => { garland.style.transition = ''; }, 300);
+        }
+      };
+
+      garland.addEventListener('pointerup', stopDrag);
+      garland.addEventListener('pointercancel', stopDrag);
+    }
+
+    function triggerVarmalaSuccess() {
+      if (isVarmalaLocked) return;
+      isVarmalaLocked = true;
+
+      playSfx('shehnai');
+      if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+
+      document.getElementById('varmala-arena').classList.add('varmala-locked');
+      document.getElementById('varmala-status').innerHTML = "🌺 Varmala United! Shubh Vivah!";
+      document.querySelector('.garland-drag-label').style.display = 'none';
+
+      confetti({
+        particleCount: 130,
+        spread: 95,
+        origin: { y: 0.6 },
+        colors: ['#ffd700', '#ff4d6d', '#ffffff', '#ff9900']
+      });
+
+      setTimeout(() => {
+        document.getElementById('btn-varmala-next').style.display = 'inline-flex';
+      }, 400);
+    }
+
+    // 6. SCREEN 3: 7 SACRED VOWS (SAPTAPADI)
+    const weddingVows = [
+      "🔥 1st Phera: May we nourish each other with respect and pure love.",
+      "🔥 2nd Phera: May we stand strong together through all joy and adversity.",
+      "🔥 3rd Phera: May we walk in harmony and share prosperity together.",
+      "🔥 4th Phera: May we bring knowledge, happiness, and peace into our home.",
+      "🔥 5th Phera: May we cherish and pray for the health and joy of our family.",
+      "🔥 6th Phera: May we live in true friendship and mutual understanding.",
+      "🔥 7th Phera: May we remain inseparable soulmates for all eternity! 💖"
+    ];
+    let currentVow = 0;
+
+    function takePheraStep() {
+      if (currentVow < weddingVows.length) {
+        document.getElementById('vow-text').innerText = weddingVows[currentVow];
+        
+        const dots = document.querySelectorAll('.vow-dot');
+        if (dots[currentVow]) dots[currentVow].classList.add('completed');
+        
+        currentVow++;
+        playSfx('fire');
+        confetti({ particleCount: 30, spread: 50, origin: { y: 0.6 }, colors: ['#ffd700', '#ff7700', '#ffffff'] });
+
+        if (currentVow >= weddingVows.length) {
+          document.getElementById('btn-vows-next').style.display = 'inline-flex';
+        }
+      }
+    }
+
+    // 7. SCREEN 4: 3D PHOTO DECK
+    let currentPhotoIdx = 0;
+    const cards = document.querySelectorAll('.photo-card-3d');
+    const dots = document.querySelectorAll('.deck-dot');
+    const totalPhotos = cards.length;
+
+    function renderDeck() {
+      cards.forEach((card, idx) => {
+        card.className = 'photo-card-3d';
+        if (idx < currentPhotoIdx) card.classList.add('flung-away');
+        else if (idx === currentPhotoIdx) card.classList.add('active');
+        else if (idx === currentPhotoIdx + 1) card.classList.add('next-1');
+        else if (idx === currentPhotoIdx + 2) card.classList.add('next-2');
+        else card.classList.add('hidden-back');
+      });
+      dots.forEach((dot, dIdx) => dot.classList.toggle('active', dIdx === currentPhotoIdx));
+    }
+
+    function nextPhoto() {
+      currentPhotoIdx = (currentPhotoIdx < totalPhotos - 1) ? currentPhotoIdx + 1 : 0;
+      playSfx('flip');
+      renderDeck();
+      confetti({ particleCount: 20, spread: 45, origin: { y: 0.6 } });
+    }
+
+    function prevPhoto() {
+      currentPhotoIdx = (currentPhotoIdx > 0) ? currentPhotoIdx - 1 : totalPhotos - 1;
+      playSfx('flip');
+      renderDeck();
+    }
+
+    // 8. SCREEN 5: GOLDEN WEDDING BLESSING SCRATCH CARD
+    let isScratchCompleted = false;
+    let scratchInitialized = false;
+
+    function initScratchCanvas() {
+      if (scratchInitialized) return;
+      scratchInitialized = true;
+
+      const canvas = document.getElementById('scratch-canvas');
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width;
+      const h = canvas.height;
+
+      const grad = ctx.createLinearGradient(0, 0, w, h);
+      grad.addColorStop(0, '#ffd700');
+      grad.addColorStop(0.3, '#f39c12');
+      grad.addColorStop(0.6, '#ffeaa7');
+      grad.addColorStop(1, '#d4af37');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, w, h);
+
+      ctx.fillStyle = '#4a2800';
+      ctx.font = 'bold 15px Poppins';
+      ctx.textAlign = 'center';
+      ctx.fillText('✨ Scratch to Reveal Blessing ✨', w / 2, h / 2 + 5);
+
+      let isDrawing = false;
+
+      function scratchAt(x, y) {
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.beginPath();
+        ctx.arc(x, y, 22, 0, Math.PI * 2);
+        ctx.fill();
+        playSfx('scratch');
+        checkScratchPercentage();
+      }
+
+      function getPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        return {
+          x: (e.clientX - rect.left) * (canvas.width / rect.width),
+          y: (e.clientY - rect.top) * (canvas.height / rect.height)
+        };
+      }
+
+      canvas.addEventListener('pointerdown', (e) => {
+        if (isScratchCompleted) return;
+        isDrawing = true;
+        const pos = getPos(e);
+        scratchAt(pos.x, pos.y);
+      });
+
+      canvas.addEventListener('pointermove', (e) => {
+        if (!isDrawing || isScratchCompleted) return;
+        const pos = getPos(e);
+        scratchAt(pos.x, pos.y);
+      });
+
+      window.addEventListener('pointerup', () => { isDrawing = false; });
+      window.addEventListener('pointercancel', () => { isDrawing = false; });
+    }
+
+    function checkScratchPercentage() {
+      if (isScratchCompleted) return;
+      const canvas = document.getElementById('scratch-canvas');
+      const ctx = canvas.getContext('2d');
+      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      let transparentPixels = 0;
+      const totalPixels = imgData.data.length / 4;
+
+      for (let i = 3; i < imgData.data.length; i += 16) {
+        if (imgData.data[i] === 0) transparentPixels++;
+      }
+
+      const percent = (transparentPixels / (totalPixels / 4)) * 100;
+      if (percent > 42) {
+        isScratchCompleted = true;
+        canvas.style.opacity = '0';
+        canvas.style.pointerEvents = 'none';
+
+        playSfx('shehnai');
+        confetti({ particleCount: 90, spread: 80, origin: { y: 0.6 }, colors: ['#ffd700', '#ff4d6d', '#ffffff'] });
+        document.getElementById('scratch-status').innerHTML = "🎉 Sacred Blessing Unveiled!";
+        document.getElementById('btn-scratch-next').style.display = 'inline-flex';
+      }
+    }
+
+    // 9. SCREEN 6: AKSHAT & FLOWER SHOWER
+    function showerAkshatFX() {
+      playSfx('akshat');
+      if (navigator.vibrate) navigator.vibrate([60, 40, 60]);
+
+      confetti({
+        particleCount: 120,
+        spread: 100,
+        origin: { y: 0.55 },
+        colors: ['#ffd700', '#ffff66', '#ff4d6d', '#ffffff', '#ff9900']
+      });
     }
   </script>
 </body>
