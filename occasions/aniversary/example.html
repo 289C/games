@@ -36,7 +36,6 @@
       overflow: hidden;
     }
 
-    /* Floating Love Particles */
     .love-particle {
       position: absolute;
       pointer-events: none;
@@ -52,7 +51,6 @@
       100% { transform: translateY(-8vh) rotate(360deg) scale(1.15); opacity: 0; }
     }
 
-    /* Top Nav Bar */
     .top-bar {
       position: absolute;
       top: 16px;
@@ -76,7 +74,6 @@
       box-shadow: 0 4px 15px rgba(255, 77, 109, 0.25);
     }
 
-    /* Main Stage Card */
     .stage-card {
       width: 100%;
       max-width: 390px;
@@ -110,7 +107,6 @@
       line-height: 1.45;
     }
 
-    /* Buttons */
     .btn-action {
       width: 100%;
       padding: 13px;
@@ -141,12 +137,8 @@
       margin-top: 10px;
     }
 
-    /* SCREEN 1: PASSCODE INPUT */
-    .lock-field-box {
-      width: 100%;
-      margin: 12px 0 16px;
-      position: relative;
-    }
+    /* SCREEN 1: PASSCODE */
+    .lock-field-box { width: 100%; margin: 12px 0 16px; }
     .lock-input {
       width: 100%;
       padding: 12px 16px;
@@ -159,11 +151,11 @@
       outline: none;
     }
 
-    /* SCREEN 2: INTERACTIVE RING SLIP MECHANIC (IDEA 1) */
+    /* SCREEN 2: SLIDE THE RING */
     .ring-arena {
       position: relative;
       width: 100%;
-      height: 250px;
+      height: 230px;
       margin: 10px auto 14px;
       border-radius: 24px;
       background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.05) 0%, rgba(0, 0, 0, 0.5) 100%);
@@ -171,8 +163,6 @@
       overflow: hidden;
       touch-action: none;
     }
-
-    /* Ring Finger Hand Target */
     .finger-target-zone {
       position: absolute;
       top: 50%;
@@ -181,15 +171,11 @@
       width: 110px;
       height: 120px;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
       pointer-events: none;
     }
-    .hand-symbol {
-      font-size: 4rem;
-      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.6));
-    }
+    .hand-symbol { font-size: 4rem; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.6)); }
     .finger-highlight-ring {
       position: absolute;
       top: 48px;
@@ -204,8 +190,6 @@
       0% { transform: scale(0.9); opacity: 0.5; }
       100% { transform: scale(1.2); opacity: 1; }
     }
-
-    /* Draggable Diamond Ring Object */
     .draggable-diamond-ring {
       position: absolute;
       top: 50%;
@@ -226,19 +210,13 @@
       cursor: grabbing;
       transform: translateY(-50%) scale(1.15) rotate(-6deg);
     }
-    .diamond-gem {
-      font-size: 1.6rem;
-      margin-bottom: -8px;
-      z-index: 2;
-      filter: drop-shadow(0 0 8px #ffffff);
-    }
+    .diamond-gem { font-size: 1.6rem; margin-bottom: -8px; z-index: 2; filter: drop-shadow(0 0 8px #ffffff); }
     .ring-band {
       width: 44px;
       height: 44px;
       border-radius: 50%;
       border: 5px solid #ffd700;
       box-shadow: inset 0 0 6px rgba(255, 255, 255, 0.8), 0 0 10px rgba(255, 215, 0, 0.7);
-      background: transparent;
     }
     .ring-drag-label {
       position: absolute;
@@ -249,8 +227,6 @@
       font-weight: 700;
       pointer-events: none;
     }
-
-    /* Locked state when ring is on finger */
     .ring-arena.ring-locked .draggable-diamond-ring {
       left: 178px !important;
       top: 50% !important;
@@ -258,11 +234,132 @@
       pointer-events: none;
       filter: drop-shadow(0 0 20px #ffd700);
     }
-    .ring-arena.ring-locked .finger-highlight-ring {
-      display: none;
+    .ring-arena.ring-locked .finger-highlight-ring { display: none; }
+
+    /* SCREEN 3: CANDLELIT PATH */
+    .candle-path-grid {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      margin: 20px 0 24px;
+      padding: 16px 10px;
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 20px;
+      border: 1px solid rgba(255, 215, 0, 0.3);
+    }
+    .lantern-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .lantern-item:active { transform: scale(1.15); }
+    .lantern-flame {
+      font-size: 1.5rem;
+      opacity: 0.2;
+      filter: grayscale(1);
+      transition: all 0.4s ease;
+    }
+    .lantern-flame.ignited {
+      opacity: 1;
+      filter: grayscale(0) drop-shadow(0 0 10px #ffd700);
+      animation: flameWobble 0.15s infinite alternate;
+    }
+    @keyframes flameWobble {
+      0% { transform: scale(1) rotate(-3deg); }
+      100% { transform: scale(1.12) rotate(3deg); }
+    }
+    .lantern-base { font-size: 1.8rem; margin-top: -6px; }
+
+    /* SCREEN 4: ROSE PETAL PLUCK */
+    .rose-pluck-arena {
+      position: relative;
+      width: 100%;
+      height: 220px;
+      margin: 10px auto 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.35);
+      border-radius: 24px;
+      border: 1px dashed rgba(255, 77, 109, 0.4);
+    }
+    .rose-center { font-size: 4.5rem; cursor: pointer; transition: transform 0.2s; }
+    .rose-center:active { transform: scale(0.9); }
+    .petal-note-box {
+      min-height: 48px;
+      font-size: 0.8rem;
+      color: #ffd700;
+      font-weight: 600;
+      padding: 0 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    /* SCREEN 3: 3D POLAROID DECK */
+    /* SCREEN 5: CASSETTE MIXTAPE */
+    .cassette-box {
+      width: 250px;
+      height: 155px;
+      margin: 14px auto 16px;
+      background: #1e0515;
+      border: 3px solid #ff4d6d;
+      border-radius: 14px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-around;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+      cursor: pointer;
+    }
+    .cassette-label {
+      background: #ffd6e0;
+      color: #3a0823;
+      padding: 4px 14px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      margin-top: 8px;
+    }
+    .cassette-reels {
+      display: flex;
+      gap: 50px;
+      align-items: center;
+    }
+    .reel {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 4px dashed #ffd700;
+      background: #11020c;
+    }
+    .tape-playing .reel { animation: spinTape 2s linear infinite; }
+    @keyframes spinTape { 100% { transform: rotate(360deg); } }
+    .audio-visualizer-bars {
+      display: flex;
+      gap: 4px;
+      height: 24px;
+      align-items: flex-end;
+      margin-bottom: 6px;
+    }
+    .v-bar {
+      width: 6px;
+      height: 6px;
+      background: #ff4d6d;
+      border-radius: 3px;
+      transition: height 0.1s ease;
+    }
+    .tape-playing .v-bar { animation: barDance 0.4s infinite alternate ease-in-out; }
+    .v-bar:nth-child(2) { animation-delay: 0.1s; }
+    .v-bar:nth-child(3) { animation-delay: 0.2s; }
+    .v-bar:nth-child(4) { animation-delay: 0.15s; }
+    .v-bar:nth-child(5) { animation-delay: 0.05s; }
+    @keyframes barDance { 0% { height: 6px; } 100% { height: 22px; } }
+
+    /* SCREEN 6: 3D POLAROIDS */
     .photo-deck-stage {
       position: relative;
       width: 250px;
@@ -288,12 +385,7 @@
       display: flex;
       flex-direction: column;
     }
-    .photo-card-3d img {
-      width: 100%;
-      height: 220px;
-      object-fit: cover;
-      pointer-events: none;
-    }
+    .photo-card-3d img { width: 100%; height: 220px; object-fit: cover; pointer-events: none; }
     .photo-card-info {
       flex: 1;
       background: linear-gradient(180deg, #2b081e 0%, #15020e 100%);
@@ -321,7 +413,7 @@
     .deck-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255, 255, 255, 0.25); transition: background 0.3s, transform 0.3s; }
     .deck-dot.active { background: #ffd700; transform: scale(1.3); }
 
-    /* SCREEN 4: GOLDEN SCRATCH CARD */
+    /* SCREEN 7: GOLDEN SCRATCH CARD */
     .scratch-stage-box {
       position: relative;
       width: 280px;
@@ -358,13 +450,8 @@
       transition: opacity 0.5s ease;
     }
 
-    /* SCREEN 5: DM PROMO CARD */
-    .insta-avatar-stage {
-      position: relative;
-      width: 86px;
-      height: 86px;
-      margin: 0 auto 12px;
-    }
+    /* SCREEN 8: PROMO CARD */
+    .insta-avatar-stage { position: relative; width: 86px; height: 86px; margin: 0 auto 12px; }
     .insta-ring {
       width: 100%;
       height: 100%;
@@ -412,7 +499,7 @@
       <span class="pill-btn">💍 Anniversary Demo</span>
     </div>
 
-    <!-- SCREEN 1: THE LOVE LOCK -->
+    <!-- SCREEN 1: PASSCODE LOCK GATE -->
     <div class="stage-card" id="screen-lock">
       <div style="font-size: 3.5rem; margin-bottom: 8px;">🔐💖</div>
       <h2 class="card-heading">Our Special Day</h2>
@@ -431,20 +518,18 @@
       </button>
     </div>
 
-    <!-- SCREEN 2: IDEA 1 - INTERACTIVE RING SLIP MECHANIC -->
+    <!-- SCREEN 2: SLIDE THE WEDDING RING (IDEA 1) -->
     <div class="stage-card" id="screen-ring" style="display: none;">
       <h2 class="card-heading">Slide the Ring! 💍✨</h2>
       <p class="card-desc">Drag the diamond wedding ring and slide it onto the finger!</p>
 
       <div class="ring-arena" id="ring-arena">
-        <!-- Draggable Ring -->
         <div class="draggable-diamond-ring" id="drag-ring">
           <span class="diamond-gem">💎</span>
           <div class="ring-band"></div>
           <span class="ring-drag-label">✋ Drag Me</span>
         </div>
 
-        <!-- Target Hand / Finger -->
         <div class="finger-target-zone" id="finger-target">
           <span class="hand-symbol">✋</span>
           <div class="finger-highlight-ring"></div>
@@ -455,15 +540,92 @@
         ✨ Slide the ring onto the finger to seal our love
       </p>
 
-      <button class="btn-action" id="btn-ring-next" style="display: none; margin-top: 12px;" onclick="showScreen('screen-photos')">
-        <span>View Romantic Memories 📸 ➔</span>
+      <button class="btn-action" id="btn-ring-next" style="display: none; margin-top: 12px;" onclick="showScreen('screen-path')">
+        <span>Light Candlelit Path 🕯️ ➔</span>
       </button>
     </div>
 
-    <!-- SCREEN 3: 3D PHOTO DECK -->
+    <!-- SCREEN 3: ROMANTIC CANDLELIT PATH (IDEA 5) -->
+    <div class="stage-card" id="screen-path" style="display: none;">
+      <h2 class="card-heading">Light the Romance 🕯️</h2>
+      <p class="card-desc">Tap each lantern to ignite our path together</p>
+
+      <div class="candle-path-grid">
+        <div class="lantern-item" onclick="igniteLantern(1)">
+          <div class="lantern-flame" id="flame-1">🔥</div>
+          <div class="lantern-base">🏮</div>
+        </div>
+        <div class="lantern-item" onclick="igniteLantern(2)">
+          <div class="lantern-flame" id="flame-2">🔥</div>
+          <div class="lantern-base">🏮</div>
+        </div>
+        <div class="lantern-item" onclick="igniteLantern(3)">
+          <div class="lantern-flame" id="flame-3">🔥</div>
+          <div class="lantern-base">🏮</div>
+        </div>
+        <div class="lantern-item" onclick="igniteLantern(4)">
+          <div class="lantern-flame" id="flame-4">🔥</div>
+          <div class="lantern-base">🏮</div>
+        </div>
+      </div>
+
+      <p id="path-status" style="font-size: 0.8rem; color: #ffd700; font-weight: 600; min-height: 20px;">
+        Tap all 4 lanterns to illuminate our journey!
+      </p>
+
+      <button class="btn-action" id="btn-path-next" style="display: none; margin-top: 12px;" onclick="showScreen('screen-rose')">
+        <span>Pluck the Love Rose 🌹 ➔</span>
+      </button>
+    </div>
+
+    <!-- SCREEN 4: PLUCK THE LOVE ROSE (IDEA 3) -->
+    <div class="stage-card" id="screen-rose" style="display: none;">
+      <h2 class="card-heading">Reasons I Love You 🌹</h2>
+      <p class="card-desc">Tap the rose to pluck petals and reveal sweet reasons!</p>
+
+      <div class="rose-pluck-arena">
+        <div class="rose-center" id="rose-flower" onclick="pluckPetal()">🌹</div>
+        <div class="petal-note-box" id="petal-note">Tap the rose above to start plucking!</div>
+      </div>
+
+      <button class="btn-action" id="btn-rose-next" style="display: none; margin-top: 12px;" onclick="showScreen('screen-mixtape')">
+        <span>Play Our Love Mixtape 📼 ➔</span>
+      </button>
+    </div>
+
+    <!-- SCREEN 5: CASSETTE MIXTAPE PLAYER (IDEA 4) -->
+    <div class="stage-card" id="screen-mixtape" style="display: none;">
+      <h2 class="card-heading">Our Love Tracks 📼✨</h2>
+      <p class="card-desc">Tap the cassette to play our favorite anniversary melody!</p>
+
+      <div class="cassette-box" id="cassette-box" onclick="toggleMixtape()">
+        <div class="cassette-label">Our Forever Songs • 2026</div>
+        <div class="cassette-reels">
+          <div class="reel"></div>
+          <div class="reel"></div>
+        </div>
+        <div class="audio-visualizer-bars">
+          <div class="v-bar"></div>
+          <div class="v-bar"></div>
+          <div class="v-bar"></div>
+          <div class="v-bar"></div>
+          <div class="v-bar"></div>
+        </div>
+      </div>
+
+      <p id="tape-status" style="font-size: 0.8rem; color: #ffd700; font-weight: 600; min-height: 20px;">
+        ▶ Tap cassette to start playback
+      </p>
+
+      <button class="btn-action" onclick="showScreen('screen-photos')" style="margin-top: 10px;">
+        <span>Our 3D Journey 📸 ➔</span>
+      </button>
+    </div>
+
+    <!-- SCREEN 6: 3D PHOTO DECK -->
     <div class="stage-card" id="screen-photos" style="display: none;">
       <h2 class="card-heading">Our Journey Together ✨</h2>
-      <p class="card-desc">Tap the photos or use buttons to flip through memories in 3D!</p>
+      <p class="card-desc">Tap photos or use buttons to flip through memories in 3D!</p>
 
       <div class="photo-deck-stage" id="deck-stage" onclick="nextPhoto()">
         <div class="photo-card-3d active" data-index="0">
@@ -512,7 +674,7 @@
       </button>
     </div>
 
-    <!-- SCREEN 4: GOLDEN SCRATCH CARD -->
+    <!-- SCREEN 7: GOLDEN SCRATCH CARD -->
     <div class="stage-card" id="screen-scratch" style="display: none;">
       <h2 class="card-heading">Love Note Scratch Card ✨</h2>
       <p class="card-desc">Rub your finger across the gold layer to reveal our anniversary vow!</p>
@@ -535,7 +697,7 @@
       </button>
     </div>
 
-    <!-- SCREEN 5: DIRECT BOOKING HUB -->
+    <!-- SCREEN 8: DIRECT BOOKING HUB -->
     <div class="stage-card" id="screen-custom" style="display: none;">
       <div class="insta-avatar-stage">
         <div class="insta-ring">
@@ -553,7 +715,10 @@
       <div class="features-list">
         <div><span>🔐</span> <strong>Secret Love Lock Passcode Protection</strong></div>
         <div><span>💍</span> <strong>Slide-the-Ring Interactive Proposal & Bells</strong></div>
-        <div><span>📸</span> <strong>3D Rotating Couple Memory Reel</strong> with music</div>
+        <div><span>🕯️</span> <strong>Interactive Candlelit Path Illumination</strong></div>
+        <div><span>🌹</span> <strong>Rose Petal Pluck with Sweet Reasons</strong></div>
+        <div><span>📼</span> <strong>Vintage Cassette Mixtape Player</strong></div>
+        <div><span>📸</span> <strong>3D Rotating Couple Memory Reel</strong></div>
         <div><span>✨</span> <strong>Golden Scratch-Off Promise Card</strong></div>
         <div><span>📲</span> <strong>Instant WhatsApp & Instagram Reply</strong></div>
       </div>
@@ -570,9 +735,9 @@
   </div>
 
   <script>
-    // 1. FLOATING LOVE PARTICLES
+    // 1. FLOATING PARTICLES
     const wrap = document.getElementById('main-wrap');
-    const icons = ['💖', '✨', '💍', '💎', '🌹', '💌', '🌸'];
+    const icons = ['💖', '✨', '💍', '💎', '🌹', '💌', '🌸', '🕯️'];
     for (let i = 0; i < 16; i++) {
       const p = document.createElement('div');
       p.className = 'love-particle';
@@ -602,7 +767,6 @@
           gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
           osc.start(now); osc.stop(now + 0.25);
         } else if (type === 'bells') {
-          // Romantic Wedding Chime (Two-tone chord)
           [659.25, 880, 1318.51].forEach((freq, idx) => {
             const o = sfxCtx.createOscillator();
             const g = sfxCtx.createGain();
@@ -614,6 +778,20 @@
             o.start(now + (idx * 0.1));
             o.stop(now + (idx * 0.1) + 0.8);
           });
+        } else if (type === 'fire') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(300, now);
+          osc.frequency.exponentialRampToValueAtTime(600, now + 0.15);
+          gain.gain.setValueAtTime(0.15, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+          osc.start(now); osc.stop(now + 0.2);
+        } else if (type === 'petal') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(600, now);
+          osc.frequency.exponentialRampToValueAtTime(900, now + 0.12);
+          gain.gain.setValueAtTime(0.18, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+          osc.start(now); osc.stop(now + 0.15);
         } else if (type === 'flip') {
           osc.type = 'sine';
           osc.frequency.setValueAtTime(350, now);
@@ -662,23 +840,20 @@
       showScreen('screen-ring');
     }
 
-    // 5. SCREEN 2: INTERACTIVE RING SLIP MECHANIC (IDEA 1)
+    // 5. SCREEN 2: SLIDE THE RING (IDEA 1)
     let isRingLocked = false;
-
     function setupRingInteraction() {
       const ring = document.getElementById('drag-ring');
       const arena = document.getElementById('ring-arena');
       const finger = document.getElementById('finger-target');
 
       let isDragging = false;
-      let startX, startY;
-      let initialLeft, initialTop;
+      let startX, startY, initialLeft, initialTop;
 
       ring.addEventListener('pointerdown', (e) => {
         if (isRingLocked) return;
         isDragging = true;
         ring.setPointerCapture(e.pointerId);
-
         startX = e.clientX;
         startY = e.clientY;
         initialLeft = ring.offsetLeft;
@@ -687,7 +862,6 @@
 
       ring.addEventListener('pointermove', (e) => {
         if (!isDragging || isRingLocked) return;
-
         const deltaX = e.clientX - startX;
         const deltaY = e.clientY - startY;
 
@@ -697,7 +871,6 @@
         ring.style.left = newX + 'px';
         ring.style.top = newY + 'px';
 
-        // Check if Ring is dragged over the finger
         const ringRect = ring.getBoundingClientRect();
         const fingerRect = finger.getBoundingClientRect();
 
@@ -716,7 +889,6 @@
         isDragging = false;
         try { ring.releasePointerCapture(e.pointerId); } catch (err) {}
 
-        // Snap back to left if dropped without sliding on
         if (!isRingLocked) {
           ring.style.transition = 'top 0.3s ease, left 0.3s ease';
           ring.style.top = '50%';
@@ -752,7 +924,67 @@
       }, 400);
     }
 
-    // 6. SCREEN 3: 3D PHOTO DECK
+    // 6. SCREEN 3: CANDLELIT PATH (IDEA 5)
+    let litCount = 0;
+    function igniteLantern(num) {
+      const flame = document.getElementById('flame-' + num);
+      if (flame.classList.contains('ignited')) return;
+
+      flame.classList.add('ignited');
+      litCount++;
+      playSfx('fire');
+
+      confetti({ particleCount: 20, spread: 40, origin: { y: 0.6 } });
+
+      if (litCount >= 4) {
+        document.getElementById('path-status').innerHTML = "✨ Our Path is Fully Illuminated Forever!";
+        document.getElementById('btn-path-next').style.display = 'inline-flex';
+      }
+    }
+
+    // 7. SCREEN 4: ROSE PETAL PLUCK (IDEA 3)
+    const petalQuotes = [
+      "🌸 1. Your morning smiles that make every day bright!",
+      "💖 2. How you always support every single one of my dreams!",
+      "🌹 3. That cute laugh whenever we watch movies together!",
+      "💍 4. I would choose you over and over in every lifetime!"
+    ];
+    let petalIndex = 0;
+    function pluckPetal() {
+      if (petalIndex < petalQuotes.length) {
+        document.getElementById('petal-note').innerText = petalQuotes[petalIndex];
+        petalIndex++;
+        playSfx('petal');
+        confetti({ particleCount: 30, spread: 60, origin: { y: 0.6 }, colors: ['#ff4d6d', '#ff758f', '#ffffff'] });
+
+        if (petalIndex >= petalQuotes.length) {
+          document.getElementById('rose-flower').innerText = '🥀';
+          document.getElementById('btn-rose-next').style.display = 'inline-flex';
+        }
+      }
+    }
+
+    // 8. SCREEN 5: CASSETTE MIXTAPE (IDEA 4)
+    let isPlaying = false;
+    let tapeInterval = null;
+    function toggleMixtape() {
+      const box = document.getElementById('cassette-box');
+      isPlaying = !isPlaying;
+      box.classList.toggle('tape-playing', isPlaying);
+
+      if (isPlaying) {
+        document.getElementById('tape-status').innerText = "🎶 Playing: 'Forever with You' • Anniversary Track";
+        tapeInterval = setInterval(() => {
+          [523.25, 659.25, 783.99, 880][Math.floor(Math.random() * 4)];
+          playSfx('petal');
+        }, 1200);
+      } else {
+        document.getElementById('tape-status').innerText = "⏸ Paused. Tap to resume.";
+        clearInterval(tapeInterval);
+      }
+    }
+
+    // 9. SCREEN 6: 3D PHOTO DECK
     let currentPhotoIdx = 0;
     const cards = document.querySelectorAll('.photo-card-3d');
     const dots = document.querySelectorAll('.deck-dot');
@@ -783,7 +1015,7 @@
       renderDeck();
     }
 
-    // 7. SCREEN 4: GOLDEN SCRATCH CARD
+    // 10. SCREEN 7: GOLDEN SCRATCH CARD
     let isScratchCompleted = false;
     let scratchInitialized = false;
 
