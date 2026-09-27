@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <title>Happy Anniversary 💍💖</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Book Your Anniversary Wish Slot 🥂💍</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <style>
     * {
@@ -13,44 +13,44 @@
       box-sizing: border-box;
       font-family: 'Poppins', sans-serif;
       -webkit-tap-highlight-color: transparent;
-      user-select: none;
     }
 
     body, html {
       width: 100%;
-      min-height: 100vh;
-      background: #090308;
-      color: #ffffff;
+      min-height: 100%;
+      background: #140b02;
+      color: #fff;
       overflow-x: hidden;
     }
 
-    .anniversary-wrapper {
+    .booking-wrap {
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 60px 16px 36px;
-      background: radial-gradient(circle at 50% 25%, #3a0823 0%, #1a0311 55%, #080106 100%);
+      padding: 24px 14px 44px;
+      background: radial-gradient(circle at 50% 15%, #422606 0%, #1f1202 55%, #0d0600 100%);
       position: relative;
       overflow: hidden;
     }
 
-    .love-particle {
+    /* Floating Golden Sparkles */
+    .gold-particle {
       position: absolute;
       pointer-events: none;
-      font-size: 1.15rem;
-      animation: floatHeart 7.5s linear infinite;
-      z-index: 1;
-      filter: drop-shadow(0 0 6px rgba(255, 77, 109, 0.6));
+      font-size: 1.3rem;
+      animation: goldDrift 7s linear infinite;
+      filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.5));
     }
-    @keyframes floatHeart {
-      0% { transform: translateY(105vh) rotate(0deg) scale(0.7); opacity: 0; }
+    @keyframes goldDrift {
+      0% { transform: translateY(105vh) rotate(0deg) scale(0.8); opacity: 0; }
       20% { opacity: 0.9; }
       80% { opacity: 0.9; }
-      100% { transform: translateY(-8vh) rotate(360deg) scale(1.15); opacity: 0; }
+      100% { transform: translateY(-10vh) rotate(360deg) scale(1.15); opacity: 0; }
     }
 
+    /* Top Action Bar */
     .top-bar {
       position: absolute;
       top: 16px;
@@ -58,1020 +58,290 @@
       right: 16px;
       display: flex;
       justify-content: space-between;
-      align-items: center;
       z-index: 50;
     }
+
     .pill-btn {
-      background: rgba(255, 77, 109, 0.15);
-      border: 1px solid rgba(255, 77, 109, 0.45);
-      color: #ffb3c1;
+      background: rgba(255, 215, 0, 0.15);
+      border: 1px solid rgba(255, 215, 0, 0.35);
+      color: #ffe899;
       padding: 7px 16px;
       border-radius: 20px;
       font-size: 0.8rem;
       cursor: pointer;
       text-decoration: none;
       backdrop-filter: blur(10px);
-      box-shadow: 0 4px 15px rgba(255, 77, 109, 0.25);
+      box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
 
-    .stage-card {
+    /* Main Showcase Card */
+    .booking-card {
       width: 100%;
       max-width: 390px;
-      background: linear-gradient(165deg, rgba(255, 255, 255, 0.06) 0%, rgba(30, 4, 18, 0.92) 100%);
-      border: 1.5px solid rgba(255, 77, 109, 0.35);
-      border-radius: 34px;
-      padding: 30px 20px 26px;
-      box-shadow: 0 25px 60px rgba(0,0,0,0.85), 0 0 35px rgba(255, 77, 109, 0.25);
-      backdrop-filter: blur(16px);
+      background: linear-gradient(165deg, #fffdf8 0%, #fff7eb 100%);
+      color: #3d2403;
+      border-radius: 32px;
+      padding: 32px 22px 26px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.7), 0 0 35px rgba(212, 175, 55, 0.35);
+      border: 2px solid rgba(255, 215, 0, 0.6);
       text-align: center;
       position: relative;
-      z-index: 10;
-      animation: popIn 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      animation: popCard 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
-    @keyframes popIn {
-      from { opacity: 0; transform: scale(0.92); }
+    @keyframes popCard {
+      from { opacity: 0; transform: scale(0.9); }
       to { opacity: 1; transform: scale(1); }
     }
 
-    .card-heading {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.65rem;
-      color: #ffd6e0;
-      margin-bottom: 6px;
-      text-shadow: 0 0 16px rgba(255, 77, 109, 0.5);
-    }
-    .card-desc {
-      font-size: 0.82rem;
-      color: #ffccd5;
-      margin-bottom: 18px;
-      line-height: 1.45;
-    }
-
-    .btn-action {
-      width: 100%;
-      padding: 13px;
-      border-radius: 25px;
-      border: none;
-      background: linear-gradient(135deg, #ff4d6d, #c9184a);
-      color: #fff;
+    /* Slot Badge */
+    .slot-tag {
+      display: inline-block;
+      background: rgba(212, 175, 55, 0.15);
+      border: 1px dashed #d4af37;
+      color: #8c6307;
+      padding: 5px 14px;
+      border-radius: 16px;
+      font-size: 0.74rem;
       font-weight: 700;
-      font-size: 0.95rem;
-      cursor: pointer;
-      box-shadow: 0 6px 20px rgba(255, 77, 109, 0.4);
-      transition: transform 0.15s, box-shadow 0.15s;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      text-decoration: none;
-    }
-    .btn-action:active { transform: scale(0.97); }
-
-    /* SCREEN 1: PASSCODE */
-    .lock-field-box { width: 100%; margin: 12px 0 16px; }
-    .lock-input {
-      width: 100%;
-      padding: 12px 16px;
-      border-radius: 20px;
-      border: 1.5px solid rgba(255, 77, 109, 0.5);
-      background: rgba(0, 0, 0, 0.4);
-      color: #fff;
-      font-size: 0.95rem;
-      text-align: center;
-      outline: none;
-      transition: border-color 0.2s, box-shadow 0.2s;
-    }
-    .lock-input:focus {
-      border-color: #ffd700;
-      box-shadow: 0 0 12px rgba(255, 215, 0, 0.4);
-    }
-    .shake-anim {
-      animation: shakeInput 0.4s ease-in-out;
-    }
-    @keyframes shakeInput {
-      0%, 100% { transform: translateX(0); }
-      20%, 60% { transform: translateX(-8px); }
-      40%, 80% { transform: translateX(8px); }
+      letter-spacing: 0.5px;
+      margin-bottom: 14px;
     }
 
-    /* SCREEN 2: SLIDE THE RING */
-    .ring-arena {
+    /* INSTAGRAM AVATAR WITH ANIMATED GRADIENT RING */
+    .insta-avatar-stage {
       position: relative;
-      width: 100%;
-      height: 230px;
-      margin: 10px auto 14px;
-      border-radius: 24px;
-      background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.05) 0%, rgba(0, 0, 0, 0.5) 100%);
-      border: 1.5px dashed rgba(255, 215, 0, 0.4);
-      overflow: hidden;
-      touch-action: none;
-    }
-    .finger-target-zone {
-      position: absolute;
-      top: 50%;
-      right: 28px;
-      transform: translateY(-50%);
-      width: 110px;
-      height: 120px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      pointer-events: none;
-    }
-    .hand-symbol { font-size: 4rem; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.6)); }
-    .finger-highlight-ring {
-      position: absolute;
-      top: 48px;
-      right: 48px;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      border: 2px dashed #ffd700;
-      animation: pulseTarget 1.8s infinite alternate ease-in-out;
-    }
-    @keyframes pulseTarget {
-      0% { transform: scale(0.9); opacity: 0.5; }
-      100% { transform: scale(1.2); opacity: 1; }
-    }
-    .draggable-diamond-ring {
-      position: absolute;
-      top: 50%;
-      left: 32px;
-      transform: translateY(-50%);
-      width: 60px;
-      height: 60px;
-      cursor: grab;
-      z-index: 30;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      filter: drop-shadow(0 6px 14px rgba(255, 215, 0, 0.5));
-      transition: transform 0.05s ease;
-    }
-    .draggable-diamond-ring:active {
-      cursor: grabbing;
-      transform: translateY(-50%) scale(1.15) rotate(-6deg);
-    }
-    .diamond-gem { font-size: 1.6rem; margin-bottom: -8px; z-index: 2; filter: drop-shadow(0 0 8px #ffffff); }
-    .ring-band {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      border: 5px solid #ffd700;
-      box-shadow: inset 0 0 6px rgba(255, 255, 255, 0.8), 0 0 10px rgba(255, 215, 0, 0.7);
-    }
-    .ring-drag-label {
-      position: absolute;
-      bottom: -18px;
-      font-size: 0.65rem;
-      color: #ffd700;
-      white-space: nowrap;
-      font-weight: 700;
-      pointer-events: none;
-    }
-    .ring-arena.ring-locked .draggable-diamond-ring {
-      left: 178px !important;
-      top: 50% !important;
-      transform: translateY(-50%) scale(1.05) !important;
-      pointer-events: none;
-      filter: drop-shadow(0 0 20px #ffd700);
-    }
-    .ring-arena.ring-locked .finger-highlight-ring { display: none; }
-
-    /* SCREEN 3: CANDLELIT PATH */
-    .candle-path-grid {
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      margin: 20px 0 24px;
-      padding: 16px 10px;
-      background: rgba(0, 0, 0, 0.4);
-      border-radius: 20px;
-      border: 1px solid rgba(255, 215, 0, 0.3);
-    }
-    .lantern-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      cursor: pointer;
-      transition: transform 0.2s;
-    }
-    .lantern-item:active { transform: scale(1.15); }
-    .lantern-flame {
-      font-size: 1.5rem;
-      opacity: 0.2;
-      filter: grayscale(1);
-      transition: all 0.4s ease;
-    }
-    .lantern-flame.ignited {
-      opacity: 1;
-      filter: grayscale(0) drop-shadow(0 0 10px #ffd700);
-      animation: flameWobble 0.15s infinite alternate;
-    }
-    @keyframes flameWobble {
-      0% { transform: scale(1) rotate(-3deg); }
-      100% { transform: scale(1.12) rotate(3deg); }
-    }
-    .lantern-base { font-size: 1.8rem; margin-top: -6px; }
-
-    /* SCREEN 4: ROSE PETAL PLUCK */
-    .rose-pluck-arena {
-      position: relative;
-      width: 100%;
-      height: 220px;
-      margin: 10px auto 14px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background: rgba(0, 0, 0, 0.35);
-      border-radius: 24px;
-      border: 1px dashed rgba(255, 77, 109, 0.4);
-    }
-    .rose-center { font-size: 4.5rem; cursor: pointer; transition: transform 0.2s; }
-    .rose-center:active { transform: scale(0.9); }
-    .petal-note-box {
-      min-height: 48px;
-      font-size: 0.8rem;
-      color: #ffd700;
-      font-weight: 600;
-      padding: 0 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      width: 96px;
+      height: 96px;
+      margin: 0 auto 12px;
     }
 
-    /* SCREEN 5: CASSETTE MIXTAPE */
-    .cassette-box {
-      width: 250px;
-      height: 155px;
-      margin: 14px auto 16px;
-      background: #1e0515;
-      border: 3px solid #ff4d6d;
-      border-radius: 14px;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: space-around;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.6);
-      cursor: pointer;
-    }
-    .cassette-label {
-      background: #ffd6e0;
-      color: #3a0823;
-      padding: 4px 14px;
-      border-radius: 6px;
-      font-size: 0.72rem;
-      font-weight: 800;
-      margin-top: 8px;
-    }
-    .cassette-reels {
-      display: flex;
-      gap: 50px;
-      align-items: center;
-    }
-    .reel {
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      border: 4px dashed #ffd700;
-      background: #11020c;
-    }
-    .tape-playing .reel { animation: spinTape 2s linear infinite; }
-    @keyframes spinTape { 100% { transform: rotate(360deg); } }
-    .audio-visualizer-bars {
-      display: flex;
-      gap: 4px;
-      height: 24px;
-      align-items: flex-end;
-      margin-bottom: 6px;
-    }
-    .v-bar {
-      width: 6px;
-      height: 6px;
-      background: #ff4d6d;
-      border-radius: 3px;
-      transition: height 0.1s ease;
-    }
-    .tape-playing .v-bar { animation: barDance 0.4s infinite alternate ease-in-out; }
-    .v-bar:nth-child(2) { animation-delay: 0.1s; }
-    .v-bar:nth-child(3) { animation-delay: 0.2s; }
-    .v-bar:nth-child(4) { animation-delay: 0.15s; }
-    .v-bar:nth-child(5) { animation-delay: 0.05s; }
-    @keyframes barDance { 0% { height: 6px; } 100% { height: 22px; } }
-
-    /* SCREEN 6: 3D POLAROIDS */
-    .photo-deck-stage {
-      position: relative;
-      width: 250px;
-      height: 310px;
-      margin: 12px auto 16px;
-      perspective: 1000px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .photo-card-3d {
-      position: absolute;
-      width: 230px;
-      height: 290px;
-      border-radius: 20px;
-      overflow: hidden;
-      background: #1e0515;
-      border: 2px solid rgba(255, 215, 0, 0.65);
-      box-shadow: 0 14px 35px rgba(0,0,0,0.7), 0 0 20px rgba(255, 77, 109, 0.3);
-      cursor: pointer;
-      transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.45s ease;
-      transform-origin: 50% 100%;
-      display: flex;
-      flex-direction: column;
-    }
-    .photo-card-3d img { width: 100%; height: 220px; object-fit: cover; pointer-events: none; }
-    .photo-card-info {
-      flex: 1;
-      background: linear-gradient(180deg, #2b081e 0%, #15020e 100%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 6px 10px;
-      border-top: 1px solid rgba(255, 215, 0, 0.3);
-    }
-    .photo-card-info h4 { font-size: 0.85rem; font-weight: 700; color: #ffd700; }
-    .photo-card-info p { font-size: 0.7rem; color: #ffccd5; }
-    .photo-card-3d.active { transform: translate3d(0, 0, 0) scale(1) rotate(0deg); opacity: 1; z-index: 10; pointer-events: auto; }
-    .photo-card-3d.next-1 { transform: translate3d(0, 12px, -40px) scale(0.94) rotate(3deg); opacity: 0.85; z-index: 8; pointer-events: none; }
-    .photo-card-3d.next-2 { transform: translate3d(0, 22px, -80px) scale(0.88) rotate(-3deg); opacity: 0.65; z-index: 6; pointer-events: none; }
-    .photo-card-3d.hidden-back { transform: translate3d(0, 32px, -120px) scale(0.82); opacity: 0; z-index: 2; pointer-events: none; }
-    .photo-card-3d.flung-away { transform: translate3d(160px, -60px, 60px) rotate(35deg) scale(0.7); opacity: 0; z-index: 15; pointer-events: none; }
-    .deck-nav-bar { display: flex; align-items: center; justify-content: space-between; width: 100%; max-width: 250px; margin: 0 auto 14px; }
-    .deck-arrow-btn {
-      background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 77, 109, 0.4);
-      color: #fff; padding: 6px 14px; border-radius: 16px; font-size: 0.76rem; font-weight: 700; cursor: pointer;
-    }
-    .deck-arrow-btn:active { transform: scale(0.92); }
-    .deck-dots { display: flex; gap: 6px; }
-    .deck-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255, 255, 255, 0.25); transition: background 0.3s, transform 0.3s; }
-    .deck-dot.active { background: #ffd700; transform: scale(1.3); }
-
-    /* SCREEN 7: GOLDEN SCRATCH CARD */
-    .scratch-stage-box {
-      position: relative;
-      width: 280px;
-      height: 190px;
-      margin: 10px auto 14px;
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.7);
-      border: 2px solid rgba(255, 215, 0, 0.5);
-      touch-action: none;
-    }
-    .scratch-reveal-content {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, #2c091f 0%, #15020e 100%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 14px;
-      text-align: center;
-      z-index: 1;
-    }
-    .scratch-reveal-content h3 { font-size: 1.05rem; color: #ffd700; margin-bottom: 4px; }
-    .scratch-reveal-content p { font-size: 0.75rem; color: #ffb3c1; line-height: 1.4; }
-    #scratch-canvas {
-      position: absolute;
-      top: 0;
-      left: 0;
+    .insta-ring {
       width: 100%;
       height: 100%;
-      z-index: 5;
-      cursor: crosshair;
-      transition: opacity 0.5s ease;
+      border-radius: 50%;
+      padding: 3.5px;
+      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      box-shadow: 0 8px 24px rgba(225, 48, 108, 0.4);
+      animation: spinRing 4s linear infinite;
+    }
+    @keyframes spinRing {
+      0% { filter: hue-rotate(0deg); }
+      100% { filter: hue-rotate(360deg); }
     }
 
-    /* SCREEN 8: FINAL REVEAL (MEM5) */
-    .hero-photo-wrap {
-      width: 110px;
-      height: 110px;
-      margin: 0 auto 12px;
-      border-radius: 50%;
-      padding: 3px;
-      background: linear-gradient(45deg, #ffd700, #ff4d6d);
-      box-shadow: 0 8px 24px rgba(255, 77, 109, 0.4);
-    }
-    .hero-photo {
+    .insta-photo {
       width: 100%;
       height: 100%;
       border-radius: 50%;
       object-fit: cover;
+      background: #1f1202;
+      border: 2.5px solid #ffffff;
       display: block;
+    }
+
+    .insta-badge-icon {
+      position: absolute;
+      bottom: -2px;
+      right: 0px;
+      background: #ffffff;
+      border-radius: 50%;
+      padding: 3px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+    }
+
+    .insta-badge-icon svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .card-heading {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.45rem;
+      color: #8c6307;
+      margin-bottom: 6px;
+      line-height: 1.3;
+    }
+
+    .handle-pill {
+      display: inline-block;
+      color: #b38600;
+      font-weight: 700;
+      font-size: 0.9rem;
+      margin-bottom: 12px;
+    }
+
+    .card-desc {
+      font-size: 0.84rem;
+      color: #5c3f09;
+      line-height: 1.5;
+      margin-bottom: 18px;
+    }
+
+    /* What's included preview */
+    .features-list {
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 14px 16px;
+      border: 1px solid #ffe899;
+      text-align: left;
+      font-size: 0.78rem;
+      color: #452c04;
+      line-height: 1.6;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 14px rgba(212, 175, 55, 0.15);
+    }
+
+    .features-list div {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .features-list div:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Action Buttons */
+    .btn-dm-primary {
+      width: 100%;
+      padding: 14px;
+      border-radius: 25px;
+      border: none;
+      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(225, 48, 108, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .btn-dm-primary:active {
+      transform: scale(0.97);
+    }
+
+    .btn-copy-handle {
+      width: 100%;
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 20px;
+      border: 1.5px solid #ffe899;
+      background: #ffffff;
+      color: #8c6307;
+      font-weight: 600;
+      font-size: 0.8rem;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
 
-  <div class="anniversary-wrapper" id="main-wrap">
-    
-    <!-- Top Action Bar -->
+  <div class="booking-wrap" id="main-container">
     <div class="top-bar">
-      <a href="../index.html" class="pill-btn">← Back to Hub</a>
-      <span class="pill-btn">💍 Anniversary Wish</span>
+      <a href="index.html" class="pill-btn">← Back to Slots</a>
+      <span class="pill-btn">💍 Slot 1</span>
     </div>
 
-    <!-- SCREEN 1: PASSCODE LOCK GATE -->
-    <div class="stage-card" id="screen-lock">
-      <div style="font-size: 3.5rem; margin-bottom: 8px;">🔐💖</div>
-      <h2 class="card-heading">Our Special Day</h2>
-      <p class="card-desc">Enter our special anniversary passcode to open</p>
+    <!-- MAIN CARD -->
+    <div class="booking-card">
+      <span class="slot-tag">🥂 SLOT 1 AVAILABLE</span>
 
-      <div class="lock-field-box">
-        <input type="password" id="pass-input" class="lock-input" placeholder="Enter special code" autocomplete="off" />
-      </div>
-
-      <p id="lock-error" style="font-size: 0.76rem; color: #ff4d6d; min-height: 18px; margin-bottom: 8px; font-weight: 600;"></p>
-
-      <button class="btn-action" onclick="unlockGate()">
-        <span>Unlock Our Hearts ➔</span>
-      </button>
-    </div>
-
-    <!-- SCREEN 2: SLIDE THE WEDDING RING -->
-    <div class="stage-card" id="screen-ring" style="display: none;">
-      <h2 class="card-heading">Slide the Ring! 💍✨</h2>
-      <p class="card-desc">Drag the diamond wedding ring and slide it onto the finger!</p>
-
-      <div class="ring-arena" id="ring-arena">
-        <div class="draggable-diamond-ring" id="drag-ring">
-          <span class="diamond-gem">💎</span>
-          <div class="ring-band"></div>
-          <span class="ring-drag-label">✋ Drag Me</span>
+      <!-- INSTAGRAM LOGO & AVATAR -->
+      <div class="insta-avatar-stage">
+        <div class="insta-ring">
+          <img src="../../Insta.jpg" alt="Satish Kommana" class="insta-photo" onerror="this.onerror=null; this.src='/games/Insta.jpg';" />
         </div>
-
-        <div class="finger-target-zone" id="finger-target">
-          <span class="hand-symbol">✋</span>
-          <div class="finger-highlight-ring"></div>
+        <div class="insta-badge-icon">
+          <svg viewBox="0 0 24 24">
+            <path fill="url(#ig-grad)" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+            <defs>
+              <linearGradient id="ig-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#f09433"/>
+                <stop offset="30%" stop-color="#e6683c"/>
+                <stop offset="60%" stop-color="#dc2743"/>
+                <stop offset="80%" stop-color="#cc2366"/>
+                <stop offset="100%" stop-color="#bc1888"/>
+              </linearGradient>
+            </defs>
+          </svg>
         </div>
       </div>
 
-      <p id="ring-status" style="font-size: 0.8rem; color: #ffd700; font-weight: 600; min-height: 20px;">
-        ✨ Slide the ring onto the finger to seal our love
+      <h2 class="card-heading">Custom Anniversary Wish</h2>
+      <div class="handle-pill">@_satish_official_16</div>
+
+      <p class="card-desc">
+        Celebrate your special milestone or parents' anniversary! 🥂✨<br>
+        Send a direct message on Instagram to customize this interactive experience.
       </p>
 
-      <button class="btn-action" id="btn-ring-next" style="display: none; margin-top: 12px;" onclick="showScreen('screen-path')">
-        <span>Light Candlelit Path 🕯️ ➔</span>
+      <!-- WHAT'S INCLUDED IN ANNIVERSARY WISH -->
+      <div class="features-list">
+        <div><span>⏳</span> <strong>Years Together Counter</strong> (Years • Months • Days)</div>
+        <div><span>📸</span> <strong>3D Couple Photo Carousel</strong> with background music</div>
+        <div><span>🥂</span> <strong>Virtual Champagne Toast</strong> & Sparklers FX</div>
+        <div><span>💌</span> <strong>Unfolding Love Letter</strong> & WhatsApp reply</div>
+        <div><span>🔒</span> <strong>Wedding Date / Secret Gate</strong> password</div>
+      </div>
+
+      <!-- MAIN ACTION: OPEN INSTAGRAM DM -->
+      <a href="https://ig.me/m/_satish_official_16" target="_blank" class="btn-dm-primary" onclick="launchConfetti()">
+        <span>DM on Instagram for Wishes</span> 💌
+      </a>
+
+      <!-- SECONDARY ACTION: COPY USERNAME -->
+      <button class="btn-copy-handle" onclick="copyHandle()">
+        📋 Copy Instagram: @_satish_official_16
       </button>
     </div>
-
-    <!-- SCREEN 3: ROMANTIC CANDLELIT PATH -->
-    <div class="stage-card" id="screen-path" style="display: none;">
-      <h2 class="card-heading">Light the Romance 🕯️</h2>
-      <p class="card-desc">Tap each lantern to illuminate our path together</p>
-
-      <div class="candle-path-grid">
-        <div class="lantern-item" onclick="igniteLantern(1)">
-          <div class="lantern-flame" id="flame-1">🔥</div>
-          <div class="lantern-base">🏮</div>
-        </div>
-        <div class="lantern-item" onclick="igniteLantern(2)">
-          <div class="lantern-flame" id="flame-2">🔥</div>
-          <div class="lantern-base">🏮</div>
-        </div>
-        <div class="lantern-item" onclick="igniteLantern(3)">
-          <div class="lantern-flame" id="flame-3">🔥</div>
-          <div class="lantern-base">🏮</div>
-        </div>
-        <div class="lantern-item" onclick="igniteLantern(4)">
-          <div class="lantern-flame" id="flame-4">🔥</div>
-          <div class="lantern-base">🏮</div>
-        </div>
-      </div>
-
-      <p id="path-status" style="font-size: 0.8rem; color: #ffd700; font-weight: 600; min-height: 20px;">
-        Tap all 4 lanterns to illuminate our journey!
-      </p>
-
-      <button class="btn-action" id="btn-path-next" style="display: none; margin-top: 12px;" onclick="showScreen('screen-rose')">
-        <span>Pluck the Love Rose 🌹 ➔</span>
-      </button>
-    </div>
-
-    <!-- SCREEN 4: PLUCK THE LOVE ROSE -->
-    <div class="stage-card" id="screen-rose" style="display: none;">
-      <h2 class="card-heading">Reasons I Love You 🌹</h2>
-      <p class="card-desc">Tap the rose to pluck petals and reveal sweet reasons!</p>
-
-      <div class="rose-pluck-arena">
-        <div class="rose-center" id="rose-flower" onclick="pluckPetal()">🌹</div>
-        <div class="petal-note-box" id="petal-note">Tap the rose above to start plucking!</div>
-      </div>
-
-      <button class="btn-action" id="btn-rose-next" style="display: none; margin-top: 12px;" onclick="showScreen('screen-mixtape')">
-        <span>Play Our Love Mixtape 📼 ➔</span>
-      </button>
-    </div>
-
-    <!-- SCREEN 5: CASSETTE MIXTAPE PLAYER -->
-    <div class="stage-card" id="screen-mixtape" style="display: none;">
-      <h2 class="card-heading">Our Love Tracks 📼✨</h2>
-      <p class="card-desc">Tap the cassette to play our favorite anniversary melody!</p>
-
-      <div class="cassette-box" id="cassette-box" onclick="toggleMixtape()">
-        <div class="cassette-label">Our Forever Songs • 2026</div>
-        <div class="cassette-reels">
-          <div class="reel"></div>
-          <div class="reel"></div>
-        </div>
-        <div class="audio-visualizer-bars">
-          <div class="v-bar"></div>
-          <div class="v-bar"></div>
-          <div class="v-bar"></div>
-          <div class="v-bar"></div>
-          <div class="v-bar"></div>
-        </div>
-      </div>
-
-      <p id="tape-status" style="font-size: 0.8rem; color: #ffd700; font-weight: 600; min-height: 20px;">
-        ▶ Tap cassette to start playback
-      </p>
-
-      <button class="btn-action" onclick="showScreen('screen-photos')" style="margin-top: 10px;">
-        <span>Our 3D Journey 📸 ➔</span>
-      </button>
-    </div>
-
-    <!-- SCREEN 6: 3D PHOTO DECK (assets/mem1 to assets/mem4) -->
-    <div class="stage-card" id="screen-photos" style="display: none;">
-      <h2 class="card-heading">Our Journey Together ✨</h2>
-      <p class="card-desc">Tap photos or use buttons to flip through memories in 3D!</p>
-
-      <div class="photo-deck-stage" id="deck-stage" onclick="nextPhoto()">
-        <div class="photo-card-3d active" data-index="0">
-          <img src="assets/mem1.jpg" alt="Memory 1" onerror="this.src='https://placehold.co/400x500/800/fff?text=assets/mem1.jpg';" />
-          <div class="photo-card-info">
-            <h4>Day We Began 💍</h4>
-            <p>The moment our forever started</p>
-          </div>
-        </div>
-        <div class="photo-card-3d next-1" data-index="1">
-          <img src="assets/mem2.jpg" alt="Memory 2" onerror="this.src='https://placehold.co/400x500/700/fff?text=assets/mem2.jpg';" />
-          <div class="photo-card-info">
-            <h4>Endless Laughter 🌸</h4>
-            <p>Smiles that make everything brighter</p>
-          </div>
-        </div>
-        <div class="photo-card-3d next-2" data-index="2">
-          <img src="assets/mem3.jpg" alt="Memory 3" onerror="this.src='https://placehold.co/400x500/600/fff?text=assets/mem3.jpg';" />
-          <div class="photo-card-info">
-            <h4>Hand in Hand 🤝</h4>
-            <p>Walking through every phase of life together</p>
-          </div>
-        </div>
-        <div class="photo-card-3d hidden-back" data-index="3">
-          <img src="assets/mem4.jpg" alt="Memory 4" onerror="this.src='https://placehold.co/400x500/500/fff?text=assets/mem4.jpg';" />
-          <div class="photo-card-info">
-            <h4>Forever & Always 💖</h4>
-            <p>To many more decades of pure love</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="deck-nav-bar">
-        <button class="deck-arrow-btn" onclick="event.stopPropagation(); prevPhoto();">◀ Prev</button>
-        <div class="deck-dots">
-          <span class="deck-dot active"></span>
-          <span class="deck-dot"></span>
-          <span class="deck-dot"></span>
-          <span class="deck-dot"></span>
-        </div>
-        <button class="deck-arrow-btn" onclick="event.stopPropagation(); nextPhoto();">Next ▶</button>
-      </div>
-
-      <button class="btn-action" onclick="showScreen('screen-scratch')">
-        <span>Golden Anniversary Vow 💌 ➔</span>
-      </button>
-    </div>
-
-    <!-- SCREEN 7: GOLDEN SCRATCH CARD -->
-    <div class="stage-card" id="screen-scratch" style="display: none;">
-      <h2 class="card-heading">Love Note Scratch Card ✨</h2>
-      <p class="card-desc">Rub your finger across the gold layer to reveal our anniversary vow!</p>
-
-      <div class="scratch-stage-box">
-        <div class="scratch-reveal-content">
-          <span style="font-size: 2.2rem; margin-bottom: 4px;">💌💍</span>
-          <h3>An Unbreakable Promise</h3>
-          <p>"Through every season and every dream, I promise to choose you every single day. Happy Anniversary my love! 💖"</p>
-        </div>
-        <canvas id="scratch-canvas" width="280" height="190"></canvas>
-      </div>
-
-      <p id="scratch-status" style="font-size: 0.78rem; color: #ffd700; font-weight: 600; min-height: 20px;">
-        ✨ Scratch at least 45% to unlock
-      </p>
-
-      <button class="btn-action" id="btn-scratch-next" style="display: none; margin-top: 10px;" onclick="showScreen('screen-celebrate')">
-        <span>Our Special Moment 💖 ➔</span>
-      </button>
-    </div>
-
-    <!-- SCREEN 8: FINAL REVEAL (assets/mem5) -->
-    <div class="stage-card" id="screen-celebrate" style="display: none;">
-      <div class="hero-photo-wrap">
-        <img src="assets/mem5.jpg" alt="Our Special Memory" class="hero-photo" onerror="this.src='https://placehold.co/300x300/900/fff?text=assets/mem5.jpg';" />
-      </div>
-
-      <h2 class="card-heading">Happy Anniversary! 💖</h2>
-      <p class="card-desc">May our love story continue to grow deeper with every passing day.</p>
-
-      <div style="font-size: 2.2rem; margin: 14px 0;">🥂💍💐✨</div>
-
-      <p style="font-size: 0.8rem; color: #ffd700; font-weight: 600;">Forever & Always Together</p>
-    </div>
-
   </div>
 
   <script>
-    // --- CONFIGURE CLIENT PASSCODE HERE ---
-    const SECRET_PASSCODE = "2026"; // Change to the couple's special date / year
-
-    // 1. FLOATING PARTICLES
-    const wrap = document.getElementById('main-wrap');
-    const icons = ['💖', '✨', '💍', '💎', '🌹', '💌', '🌸', '🕯️'];
+    // Floating Golden Particles
+    const wrap = document.getElementById('main-container');
+    const icons = ['✨', '🥂', '💍', '💐', '💖', '⭐'];
     for (let i = 0; i < 16; i++) {
       const p = document.createElement('div');
-      p.className = 'love-particle';
+      p.className = 'gold-particle';
       p.innerText = icons[Math.floor(Math.random() * icons.length)];
       p.style.left = Math.random() * 100 + 'vw';
       p.style.animationDelay = (Math.random() * 6) + 's';
-      p.style.animationDuration = (6 + Math.random() * 4) + 's';
+      p.style.animationDuration = (5 + Math.random() * 4) + 's';
       wrap.appendChild(p);
     }
 
-    // 2. SYNTHETIC AUDIO SFX
-    let sfxCtx = null;
-    function playSfx(type) {
-      try {
-        if (!sfxCtx) sfxCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const now = sfxCtx.currentTime;
-        const osc = sfxCtx.createOscillator();
-        const gain = sfxCtx.createGain();
-        osc.connect(gain);
-        gain.connect(sfxCtx.destination);
-
-        if (type === 'unlock') {
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(523.25, now);
-          osc.frequency.exponentialRampToValueAtTime(1046.50, now + 0.2);
-          gain.gain.setValueAtTime(0.25, now);
-          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
-          osc.start(now); osc.stop(now + 0.25);
-        } else if (type === 'error') {
-          osc.type = 'sawtooth';
-          osc.frequency.setValueAtTime(180, now);
-          osc.frequency.setValueAtTime(130, now + 0.1);
-          gain.gain.setValueAtTime(0.25, now);
-          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
-          osc.start(now); osc.stop(now + 0.25);
-        } else if (type === 'bells') {
-          [659.25, 880, 1318.51].forEach((freq, idx) => {
-            const o = sfxCtx.createOscillator();
-            const g = sfxCtx.createGain();
-            o.connect(g); g.connect(sfxCtx.destination);
-            o.type = 'sine';
-            o.frequency.value = freq;
-            g.gain.setValueAtTime(0.2, now + (idx * 0.1));
-            g.gain.exponentialRampToValueAtTime(0.01, now + (idx * 0.1) + 0.8);
-            o.start(now + (idx * 0.1));
-            o.stop(now + (idx * 0.1) + 0.8);
-          });
-        } else if (type === 'fire') {
-          osc.type = 'triangle';
-          osc.frequency.setValueAtTime(300, now);
-          osc.frequency.exponentialRampToValueAtTime(600, now + 0.15);
-          gain.gain.setValueAtTime(0.15, now);
-          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
-          osc.start(now); osc.stop(now + 0.2);
-        } else if (type === 'petal') {
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(600, now);
-          osc.frequency.exponentialRampToValueAtTime(900, now + 0.12);
-          gain.gain.setValueAtTime(0.18, now);
-          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
-          osc.start(now); osc.stop(now + 0.15);
-        } else if (type === 'flip') {
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(350, now);
-          osc.frequency.exponentialRampToValueAtTime(700, now + 0.15);
-          gain.gain.setValueAtTime(0.2, now);
-          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
-          osc.start(now); osc.stop(now + 0.15);
-        } else if (type === 'scratch') {
-          osc.type = 'triangle';
-          osc.frequency.setValueAtTime(900 + Math.random() * 200, now);
-          gain.gain.setValueAtTime(0.08, now);
-          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.06);
-          osc.start(now); osc.stop(now + 0.06);
-        }
-      } catch (e) {}
-    }
-
-    // 3. SCREEN SWITCHER
-    function showScreen(screenId) {
-      document.querySelectorAll('.stage-card').forEach(card => card.style.display = 'none');
-      const target = document.getElementById(screenId);
-      if (target) {
-        target.style.display = 'block';
-        playSfx('flip');
+    function launchConfetti() {
+      if (window.confetti) {
+        confetti({
+          particleCount: 80,
+          spread: 85,
+          colors: ['#ffd700', '#ffaa00', '#ffffff', '#ff69b4']
+        });
       }
-      if (screenId === 'screen-ring') setupRingInteraction();
-      if (screenId === 'screen-photos') renderDeck();
-      if (screenId === 'screen-scratch') initScratchCanvas();
     }
 
-    // 4. SCREEN 1: STRICT PASSCODE UNLOCK
-    function unlockGate() {
-      const input = document.getElementById('pass-input');
-      const errorMsg = document.getElementById('lock-error');
-      const val = input.value.trim();
-
-      if (val === SECRET_PASSCODE) {
-        errorMsg.innerText = "";
-        playSfx('unlock');
-        confetti({ particleCount: 80, spread: 80, origin: { y: 0.6 }, colors: ['#ff4d6d', '#ffd700', '#ffffff'] });
-        setTimeout(() => showScreen('screen-ring'), 350);
+    function copyHandle() {
+      const handle = "@_satish_official_16";
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(handle).then(() => {
+          alert("Instagram handle copied: @_satish_official_16\nOpen Instagram and send a DM!");
+        }).catch(() => {
+          alert("Instagram: @_satish_official_16");
+        });
       } else {
-        playSfx('error');
-        errorMsg.innerText = "Incorrect code! Please try again ❤️";
-        input.classList.add('shake-anim');
-        setTimeout(() => input.classList.remove('shake-anim'), 400);
-      }
-    }
-
-    document.getElementById('pass-input').addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') unlockGate();
-    });
-
-    // 5. SCREEN 2: SLIDE THE RING
-    let isRingLocked = false;
-    function setupRingInteraction() {
-      const ring = document.getElementById('drag-ring');
-      const arena = document.getElementById('ring-arena');
-      const finger = document.getElementById('finger-target');
-
-      let isDragging = false;
-      let startX, startY, initialLeft, initialTop;
-
-      ring.addEventListener('pointerdown', (e) => {
-        if (isRingLocked) return;
-        isDragging = true;
-        ring.setPointerCapture(e.pointerId);
-        startX = e.clientX;
-        startY = e.clientY;
-        initialLeft = ring.offsetLeft;
-        initialTop = ring.offsetTop;
-      });
-
-      ring.addEventListener('pointermove', (e) => {
-        if (!isDragging || isRingLocked) return;
-        const deltaX = e.clientX - startX;
-        const deltaY = e.clientY - startY;
-
-        let newX = Math.max(10, Math.min(arena.clientWidth - 70, initialLeft + deltaX));
-        let newY = Math.max(10, Math.min(arena.clientHeight - 70, initialTop + deltaY));
-
-        ring.style.left = newX + 'px';
-        ring.style.top = newY + 'px';
-
-        const ringRect = ring.getBoundingClientRect();
-        const fingerRect = finger.getBoundingClientRect();
-
-        if (
-          ringRect.right >= fingerRect.left + 30 &&
-          ringRect.left <= fingerRect.right &&
-          ringRect.bottom >= fingerRect.top + 20 &&
-          ringRect.top <= fingerRect.bottom - 20
-        ) {
-          triggerRingLockedSuccess();
-        }
-      });
-
-      const stopDrag = (e) => {
-        if (!isDragging) return;
-        isDragging = false;
-        try { ring.releasePointerCapture(e.pointerId); } catch (err) {}
-
-        if (!isRingLocked) {
-          ring.style.transition = 'top 0.3s ease, left 0.3s ease';
-          ring.style.top = '50%';
-          ring.style.left = '32px';
-          setTimeout(() => { ring.style.transition = ''; }, 300);
-        }
-      };
-
-      ring.addEventListener('pointerup', stopDrag);
-      ring.addEventListener('pointercancel', stopDrag);
-    }
-
-    function triggerRingLockedSuccess() {
-      if (isRingLocked) return;
-      isRingLocked = true;
-
-      playSfx('bells');
-      if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
-
-      document.getElementById('ring-arena').classList.add('ring-locked');
-      document.getElementById('ring-status').innerHTML = "💍 Forever & Always! Happy Anniversary!";
-      document.querySelector('.ring-drag-label').style.display = 'none';
-
-      confetti({
-        particleCount: 120,
-        spread: 95,
-        origin: { y: 0.6 },
-        colors: ['#ffd700', '#ff4d6d', '#ffffff', '#ffccd5']
-      });
-
-      setTimeout(() => {
-        document.getElementById('btn-ring-next').style.display = 'inline-flex';
-      }, 400);
-    }
-
-    // 6. SCREEN 3: CANDLELIT PATH
-    let litCount = 0;
-    function igniteLantern(num) {
-      const flame = document.getElementById('flame-' + num);
-      if (flame.classList.contains('ignited')) return;
-
-      flame.classList.add('ignited');
-      litCount++;
-      playSfx('fire');
-
-      confetti({ particleCount: 20, spread: 40, origin: { y: 0.6 } });
-
-      if (litCount >= 4) {
-        document.getElementById('path-status').innerHTML = "✨ Our Path is Fully Illuminated Forever!";
-        document.getElementById('btn-path-next').style.display = 'inline-flex';
-      }
-    }
-
-    // 7. SCREEN 4: ROSE PETAL PLUCK
-    const petalQuotes = [
-      "🌸 1. Your morning smiles that make every day bright!",
-      "💖 2. How you always support every single one of my dreams!",
-      "🌹 3. That cute laugh whenever we watch movies together!",
-      "💍 4. I would choose you over and over in every lifetime!"
-    ];
-    let petalIndex = 0;
-    function pluckPetal() {
-      if (petalIndex < petalQuotes.length) {
-        document.getElementById('petal-note').innerText = petalQuotes[petalIndex];
-        petalIndex++;
-        playSfx('petal');
-        confetti({ particleCount: 30, spread: 60, origin: { y: 0.6 }, colors: ['#ff4d6d', '#ff758f', '#ffffff'] });
-
-        if (petalIndex >= petalQuotes.length) {
-          document.getElementById('rose-flower').innerText = '🥀';
-          document.getElementById('btn-rose-next').style.display = 'inline-flex';
-        }
-      }
-    }
-
-    // 8. SCREEN 5: CASSETTE MIXTAPE
-    let isPlaying = false;
-    let tapeInterval = null;
-    function toggleMixtape() {
-      const box = document.getElementById('cassette-box');
-      isPlaying = !isPlaying;
-      box.classList.toggle('tape-playing', isPlaying);
-
-      if (isPlaying) {
-        document.getElementById('tape-status').innerText = "🎶 Playing: 'Forever with You' • Anniversary Track";
-        tapeInterval = setInterval(() => {
-          playSfx('petal');
-        }, 1200);
-      } else {
-        document.getElementById('tape-status').innerText = "⏸ Paused. Tap to resume.";
-        clearInterval(tapeInterval);
-      }
-    }
-
-    // 9. SCREEN 6: 3D PHOTO DECK
-    let currentPhotoIdx = 0;
-    const cards = document.querySelectorAll('.photo-card-3d');
-    const dots = document.querySelectorAll('.deck-dot');
-    const totalPhotos = cards.length;
-
-    function renderDeck() {
-      cards.forEach((card, idx) => {
-        card.className = 'photo-card-3d';
-        if (idx < currentPhotoIdx) card.classList.add('flung-away');
-        else if (idx === currentPhotoIdx) card.classList.add('active');
-        else if (idx === currentPhotoIdx + 1) card.classList.add('next-1');
-        else if (idx === currentPhotoIdx + 2) card.classList.add('next-2');
-        else card.classList.add('hidden-back');
-      });
-      dots.forEach((dot, dIdx) => dot.classList.toggle('active', dIdx === currentPhotoIdx));
-    }
-
-    function nextPhoto() {
-      currentPhotoIdx = (currentPhotoIdx < totalPhotos - 1) ? currentPhotoIdx + 1 : 0;
-      playSfx('flip');
-      renderDeck();
-      confetti({ particleCount: 20, spread: 45, origin: { y: 0.6 } });
-    }
-
-    function prevPhoto() {
-      currentPhotoIdx = (currentPhotoIdx > 0) ? currentPhotoIdx - 1 : totalPhotos - 1;
-      playSfx('flip');
-      renderDeck();
-    }
-
-    // 10. SCREEN 7: GOLDEN SCRATCH CARD
-    let isScratchCompleted = false;
-    let scratchInitialized = false;
-
-    function initScratchCanvas() {
-      if (scratchInitialized) return;
-      scratchInitialized = true;
-
-      const canvas = document.getElementById('scratch-canvas');
-      const ctx = canvas.getContext('2d');
-      const w = canvas.width;
-      const h = canvas.height;
-
-      const grad = ctx.createLinearGradient(0, 0, w, h);
-      grad.addColorStop(0, '#ffd700');
-      grad.addColorStop(0.3, '#f39c12');
-      grad.addColorStop(0.6, '#ffeaa7');
-      grad.addColorStop(1, '#d4af37');
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, w, h);
-
-      ctx.fillStyle = '#4a2800';
-      ctx.font = 'bold 15px Poppins';
-      ctx.textAlign = 'center';
-      ctx.fillText('✨ Scratch to Reveal Vow ✨', w / 2, h / 2 + 5);
-
-      let isDrawing = false;
-
-      function scratchAt(x, y) {
-        ctx.globalCompositeOperation = 'destination-out';
-        ctx.beginPath();
-        ctx.arc(x, y, 22, 0, Math.PI * 2);
-        ctx.fill();
-        playSfx('scratch');
-        checkScratchPercentage();
-      }
-
-      function getPos(e) {
-        const rect = canvas.getBoundingClientRect();
-        return {
-          x: (e.clientX - rect.left) * (canvas.width / rect.width),
-          y: (e.clientY - rect.top) * (canvas.height / rect.height)
-        };
-      }
-
-      canvas.addEventListener('pointerdown', (e) => {
-        if (isScratchCompleted) return;
-        isDrawing = true;
-        const pos = getPos(e);
-        scratchAt(pos.x, pos.y);
-      });
-
-      canvas.addEventListener('pointermove', (e) => {
-        if (!isDrawing || isScratchCompleted) return;
-        const pos = getPos(e);
-        scratchAt(pos.x, pos.y);
-      });
-
-      window.addEventListener('pointerup', () => { isDrawing = false; });
-      window.addEventListener('pointercancel', () => { isDrawing = false; });
-    }
-
-    function checkScratchPercentage() {
-      if (isScratchCompleted) return;
-      const canvas = document.getElementById('scratch-canvas');
-      const ctx = canvas.getContext('2d');
-      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      let transparentPixels = 0;
-      const totalPixels = imgData.data.length / 4;
-
-      for (let i = 3; i < imgData.data.length; i += 16) {
-        if (imgData.data[i] === 0) transparentPixels++;
-      }
-
-      const percent = (transparentPixels / (totalPixels / 4)) * 100;
-      if (percent > 42) {
-        isScratchCompleted = true;
-        canvas.style.opacity = '0';
-        canvas.style.pointerEvents = 'none';
-
-        confetti({ particleCount: 90, spread: 80, origin: { y: 0.6 }, colors: ['#ff4d6d', '#ffd700', '#ffffff'] });
-        document.getElementById('scratch-status').innerHTML = "🎉 Secret Vow Revealed!";
-        document.getElementById('btn-scratch-next').style.display = 'inline-flex';
+        alert("Instagram: @_satish_official_16");
       }
     }
   </script>
