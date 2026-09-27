@@ -47,6 +47,57 @@
       cursor: pointer; text-decoration: none; backdrop-filter: blur(10px);
       box-shadow: 0 4px 15px rgba(255, 105, 180, 0.2);
     }
+    /* Top Nav Bar Layout */
+.top-nav-bar {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 20px;
+  z-index: 50;
+  position: relative;
+}
+
+/* Default Top Pill Buttons */
+.top-pill-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffd6e0;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  text-decoration: none;
+  backdrop-filter: blur(10px);
+  white-space: nowrap;
+}
+
+/* Glowing Top Premium Pill */
+.premium-top-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.22) 0%, rgba(255, 0, 128, 0.3) 100%);
+  border: 1.2px solid #ffd700;
+  color: #fff2b2;
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-decoration: none;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.35), 0 3px 10px rgba(0, 0, 0, 0.4);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  white-space: nowrap;
+}
+
+.premium-top-pill:active {
+  transform: scale(0.93);
+  box-shadow: 0 0 6px rgba(255, 215, 0, 0.2);
+}
+    
 
     /* DEVELOPER PROFILE HEADER WITH ROOT Insta.jpg */
     .dev-profile-card {
