@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
   <title>Birthday Wish Example Demo 🎂✨</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Playfair+Display:ital,wght@0,700;1,400&family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <style>
     * {
@@ -122,7 +122,6 @@
       justify-content: flex-end;
     }
 
-    /* Candle */
     .candle {
       position: absolute;
       top: 14px;
@@ -169,7 +168,6 @@
       transition: opacity 0.5s ease;
     }
 
-    /* TOP TIER: STRAWBERRY GANACHE */
     .cake-tier-top {
       width: 154px;
       height: 60px;
@@ -211,7 +209,6 @@
     .d5 { width: 15px; height: 18px; }
     .d6 { width: 12px; height: 14px; }
 
-    /* BOTTOM TIER: HONEY-VANILLA */
     .cake-tier-bottom {
       width: 228px;
       height: 76px;
@@ -255,7 +252,6 @@
     .db6 { width: 17px; height: 16px; }
     .db7 { width: 12px; height: 28px; }
 
-    /* LIQUID FALLING DROPLETS */
     .falling-drop {
       position: relative;
       animation: dripPinch 2.4s ease-in-out infinite;
@@ -293,7 +289,6 @@
       100% { opacity: 0; transform: translate(-50%, 28px) scale(0.2); }
     }
 
-    /* CAKE PLATTER */
     .cake-plate {
       width: 270px;
       height: 18px;
@@ -304,7 +299,6 @@
       z-index: 3;
     }
 
-    /* Audio Meter Bar */
     .meter-container {
       width: 100%;
       margin: 12px 0 14px;
@@ -331,7 +325,6 @@
       margin-top: 8px;
     }
 
-    /* Buttons */
     .btn-action {
       width: 100%;
       padding: 13px;
@@ -362,7 +355,57 @@
       margin-top: 10px;
     }
 
-    /* BALLOON POPPING INTERACTIVE STAGE */
+    /* 3D CAROUSEL COMPONENT (SCREEN 3) */
+    .viewport-3d-box {
+      width: 100%;
+      height: 290px;
+      perspective: 900px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 10px 0 14px;
+      position: relative;
+    }
+    .carousel-3d-ring {
+      position: relative;
+      width: 140px;
+      height: 200px;
+      transform-style: preserve-3d;
+      transition: transform 0.1s ease-out;
+    }
+    .card-3d-item {
+      position: absolute;
+      width: 140px;
+      height: 200px;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 2px solid rgba(255, 215, 0, 0.7);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.8), 0 0 20px rgba(255, 60, 0, 0.35);
+      background: #110204;
+      cursor: pointer;
+      -webkit-box-reflect: below 6px linear-gradient(transparent 70%, rgba(0,0,0,0.35));
+    }
+    .card-3d-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      pointer-events: none;
+    }
+    .card-3d-caption {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 16px 4px 6px;
+      background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.92) 100%);
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #ffd700;
+      letter-spacing: 0.5px;
+    }
+
+    /* BALLOONS GRID */
     .balloons-grid {
       display: flex;
       justify-content: center;
@@ -385,7 +428,7 @@
       filter: grayscale(1);
     }
 
-    /* DEVELOPER DM / CUSTOM WISH CARD */
+    /* DM PROFILE BOX */
     .insta-avatar-stage {
       position: relative;
       width: 86px;
@@ -452,7 +495,6 @@
       <h2 class="card-heading">Make a Secret Wish! ✨</h2>
       <p class="card-desc" id="mic-instruction">Blow into your microphone to blow out the candle! 🌬️</p>
 
-      <!-- 3D LAYERED CAKE WITH RUNNING DRIP CREAM -->
       <div class="cake-container">
         <div class="candle">
           <div class="wick"></div>
@@ -488,7 +530,6 @@
         <div class="cake-plate"></div>
       </div>
 
-      <!-- AUDIO SENSOR GAUGE -->
       <div class="meter-container">
         <div class="meter-bar-wrap">
           <div class="meter-fill" id="meter-fill"></div>
@@ -511,12 +552,57 @@
       <h2 class="card-heading">Wish Sealed Forever!</h2>
       <p class="card-desc">May your year ahead be loaded with smiles, success, and endless joy! 💖</p>
 
-      <button class="btn-action" onclick="showScreen('screen-balloons')">
+      <button class="btn-action" onclick="showScreen('screen-3d-images')">
+        <span>View 3D Celebration Reel 🎬 ➔</span>
+      </button>
+    </div>
+
+    <!-- SCREEN 3: 3D CYLINDER ROTATING IMAGES (PSPK SPECIAL) -->
+    <div class="stage-card" id="screen-3d-images" style="display: none; padding-top: 22px;">
+      <h2 class="card-heading" style="font-family: 'Cinzel', serif; font-size: 1.45rem; color: #ffdd59;">POWER STAR 3D REEL 🔥</h2>
+      <p class="card-desc" style="margin-bottom: 4px;">Swipe left or right to rotate images in 360° space</p>
+
+      <div class="viewport-3d-box" id="viewport-touch">
+        <div class="carousel-3d-ring" id="carousel-ring">
+          <!-- Image 1 -->
+          <div class="card-3d-item" onclick="cardCelebration('The Leader 🔥')">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=500&q=80" alt="PSPK 1" onerror="this.src='https://placehold.co/400x600/900/fff?text=PSPK+1';" />
+            <div class="card-3d-caption">OG • They Call Him OG</div>
+          </div>
+          <!-- Image 2 -->
+          <div class="card-3d-item" onclick="cardCelebration('Power In Blood ⚡')">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=500&q=80" alt="PSPK 2" onerror="this.src='https://placehold.co/400x600/800/fff?text=PSPK+2';" />
+            <div class="card-3d-caption">Ustaad Bhagat Singh</div>
+          </div>
+          <!-- Image 3 -->
+          <div class="card-3d-item" onclick="cardCelebration('Mass Euphoria 🦁')">
+            <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=500&q=80" alt="PSPK 3" onerror="this.src='https://placehold.co/400x600/700/fff?text=PSPK+3';" />
+            <div class="card-3d-caption">Hari Hara Veera Mallu</div>
+          </div>
+          <!-- Image 4 -->
+          <div class="card-3d-item" onclick="cardCelebration('Icon of Masses 🌟')">
+            <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=500&q=80" alt="PSPK 4" onerror="this.src='https://placehold.co/400x600/600/fff?text=PSPK+4';" />
+            <div class="card-3d-caption">Gabbar Singh Era</div>
+          </div>
+          <!-- Image 5 -->
+          <div class="card-3d-item" onclick="cardCelebration('Senani Pride 🚩')">
+            <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=500&q=80" alt="PSPK 5" onerror="this.src='https://placehold.co/400x600/500/fff?text=PSPK+5';" />
+            <div class="card-3d-caption">Jana Senani</div>
+          </div>
+          <!-- Image 6 -->
+          <div class="card-3d-item" onclick="cardCelebration('The Revolution 💥')">
+            <img src="https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&w=500&q=80" alt="PSPK 6" onerror="this.src='https://placehold.co/400x600/400/fff?text=PSPK+6';" />
+            <div class="card-3d-caption">Power Star Forever</div>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-action" onclick="showScreen('screen-balloons')" style="margin-top: 8px;">
         <span>Pop Birthday Balloons 🎈 ➔</span>
       </button>
     </div>
 
-    <!-- SCREEN 3: TOUCH-TO-POP BALLOONS & GIFT REVEAL -->
+    <!-- SCREEN 4: TOUCH-TO-POP BALLOONS & GIFT REVEAL -->
     <div class="stage-card" id="screen-balloons" style="display: none;">
       <h2 class="card-heading">Pop Every Balloon! 🎈</h2>
       <p class="card-desc">Touch the balloons to reveal birthday wishes hidden underneath</p>
@@ -537,7 +623,7 @@
       </button>
     </div>
 
-    <!-- SCREEN 4: BOOKING / DM CARD FOR SATISH KOMMANA -->
+    <!-- SCREEN 5: BOOKING / DM CARD FOR SATISH KOMMANA -->
     <div class="stage-card" id="screen-custom" style="display: none;">
       <div class="insta-avatar-stage">
         <div class="insta-ring">
@@ -554,13 +640,12 @@
 
       <div class="features-list">
         <div><span>🎂</span> <strong>Mic Blow Candle & Dripping Cake</strong></div>
-        <div><span>📸</span> <strong>3D Rotating Photo Carousel</strong> with music</div>
+        <div><span>📸</span> <strong>3D Rotating Photo Reel</strong> with music</div>
         <div><span>🎈</span> <strong>Secret Balloon Poppers & Wishes</strong></div>
         <div><span>🎁</span> <strong>Unfolding Virtual Surprise Gift Box</strong></div>
         <div><span>📲</span> <strong>Instant WhatsApp & Instagram Reply</strong></div>
       </div>
 
-      <!-- Action Buttons -->
       <a href="https://ig.me/m/_satish_official_16" target="_blank" class="btn-action btn-dm-primary">
         <span>DM on Instagram for Wishes</span> 💌
       </a>
@@ -622,7 +707,6 @@
             o.frequency.value = freq;
             g.gain.setValueAtTime(0.18, now + (i * 0.08));
             g.gain.exponentialRampToValueAtTime(0.01, now + (i * 0.08) + 0.45);
-                    g.exponentialRampToValueAtTime(0.01, now + (i * 0.08) + 0.45);
             o.start(now + (i * 0.08));
             o.stop(now + (i * 0.08) + 0.45);
           });
@@ -637,6 +721,9 @@
       if (target) {
         target.style.display = 'block';
         playSfx('pop');
+      }
+      if (screenId === 'screen-3d-images') {
+        setup3DCarousel();
       }
     }
 
@@ -719,7 +806,70 @@
       }, 700);
     }
 
-    // 5. BALLOON POP LOGIC
+    // 5. SCREEN 3: 3D CYLINDER INITIALIZATION & SWIPE LOGIC
+    let carouselInitialized = false;
+    let currentAngle = 0;
+    let autoSpin = true;
+    let isTouching = false;
+    let touchStartX = 0;
+
+    function setup3DCarousel() {
+      if (carouselInitialized) return;
+      carouselInitialized = true;
+
+      const ring = document.getElementById('carousel-ring');
+      const items = document.querySelectorAll('.card-3d-item');
+      const total = items.length;
+      const radius = 190; // 3D depth inside mobile card
+      const step = 360 / total;
+
+      items.forEach((item, idx) => {
+        const theta = idx * step;
+        item.style.transform = `rotateY(${theta}deg) translateZ(${radius}px)`;
+      });
+
+      function spinStep() {
+        if (autoSpin) {
+          currentAngle += 0.3;
+          ring.style.transform = `rotateY(${currentAngle}deg)`;
+        }
+        requestAnimationFrame(spinStep);
+      }
+      spinStep();
+
+      const viewport = document.getElementById('viewport-touch');
+      viewport.addEventListener('pointerdown', (e) => {
+        isTouching = true;
+        autoSpin = false;
+        touchStartX = e.clientX;
+      });
+
+      window.addEventListener('pointermove', (e) => {
+        if (!isTouching) return;
+        const delta = e.clientX - touchStartX;
+        currentAngle += delta * 0.55;
+        ring.style.transform = `rotateY(${currentAngle}deg)`;
+        touchStartX = e.clientX;
+      });
+
+      window.addEventListener('pointerup', () => {
+        if (!isTouching) return;
+        isTouching = false;
+        setTimeout(() => { autoSpin = true; }, 2500);
+      });
+    }
+
+    function cardCelebration(title) {
+      playSfx('pop');
+      confetti({
+        particleCount: 45,
+        spread: 60,
+        origin: { y: 0.6 },
+        colors: ['#ffdd59', '#ff3838', '#ffffff']
+      });
+    }
+
+    // 6. SCREEN 4: BALLOON POP LOGIC
     let poppedCount = 0;
     function popBalloon(id, msg) {
       const el = document.getElementById(id);
