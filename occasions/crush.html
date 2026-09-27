@@ -145,7 +145,59 @@
       font-size: 0.85rem; cursor: pointer; transition: 0.15s ease;
     }
 
-    /* PAGE 5: FINAL WHATSAPP CARD */
+    /* PAGE 5: 3D INTERACTIVE ENVELOPE (VIDEO REPLICA) */
+    .envelope-stage {
+      position: relative; width: 280px; height: 210px; margin: 30px auto 20px;
+      perspective: 800px;
+    }
+    .env-wrapper {
+      position: relative; width: 100%; height: 100%;
+      background: #f7d770; border-radius: 0 0 16px 16px;
+      box-shadow: 0 16px 35px rgba(0,0,0,0.25);
+      cursor: pointer;
+    }
+    /* Top Triangular Flap */
+    .env-flap {
+      position: absolute; top: 0; left: 0; width: 0; height: 0;
+      border-left: 140px solid transparent; border-right: 140px solid transparent;
+      border-top: 115px solid #ebd068; transform-origin: top;
+      transition: transform 0.6s ease; z-index: 5;
+    }
+    .open-flap .env-flap {
+      transform: rotateX(180deg); z-index: 1;
+    }
+    /* Pocket Front with "Place your hand here" */
+    .env-pocket {
+      position: absolute; inset: 0; z-index: 4;
+      display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.05) 100%);
+      border-radius: 0 0 16px 16px; pointer-events: none;
+    }
+    .hand-prompt {
+      font-family: 'Playfair Display', serif; font-size: 1.15rem; color: #4a2e0a;
+      font-weight: 600; text-shadow: 0 1px 2px rgba(255,255,255,0.6);
+    }
+    /* Sliding Letter Card Inside */
+    .env-letter {
+      position: absolute; top: 12px; left: 16px; right: 16px; height: 175px;
+      background: #ffffff; border-radius: 12px; padding: 16px 14px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.12); z-index: 2;
+      transition: transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; border: 1px dashed #ff99b6;
+    }
+    .open-flap .env-letter {
+      transform: translateY(-110px); z-index: 6;
+      box-shadow: 0 12px 30px rgba(255, 105, 180, 0.45);
+    }
+    .env-letter h3 {
+      font-family: 'Playfair Display', serif; font-size: 1.05rem; color: #a1114b;
+      margin-bottom: 6px; line-height: 1.35;
+    }
+    .env-letter p { font-size: 0.78rem; color: #662238; line-height: 1.35; }
+    .env-bears { font-size: 1.9rem; margin-top: 5px; }
+
+    /* PAGE 6: FINAL WHATSAPP CARD */
     .big-heart { font-size: 4.2rem; animation: pulseSparkle 1.4s infinite; }
     @keyframes pulseSparkle { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
     .reply-box {
@@ -229,15 +281,39 @@
       </div>
     </div>
 
-    <!-- PAGE 5: FINAL CELEBRATION & DIRECT WHATSAPP TO 8688431772 -->
+    <!-- PAGE 5: 3D INTERACTIVE UNFOLDING LOVE ENVELOPE (VIDEO STYLE) -->
     <div class="crush-card" id="page-5" style="display:none;">
+      <h2 class="card-heading">A Special Love Letter 💌</h2>
+      <p class="card-desc">Tap the envelope to unveil your hidden love slogan!</p>
+
+      <div class="envelope-stage" id="env-box" onclick="toggleEnvelope()">
+        <div class="env-wrapper">
+          <div class="env-flap"></div>
+          <div class="env-letter">
+            <h3>You are one in a million feeling, Devi! ❤️</h3>
+            <p>You are my forever and always Bangaram! 🥰🤌🏻</p>
+            <div class="env-bears">🐰🐻❤️</div>
+          </div>
+          <div class="env-pocket">
+            <span class="hand-prompt">Place your hand here 🌸</span>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-action" id="btn-goto-final" style="display:none; margin-top:20px;" onclick="goToPage(6)">
+        Send Love to Ganesh ➔
+      </button>
+    </div>
+
+    <!-- PAGE 6: FINAL CELEBRATION & DIRECT WHATSAPP TO GANESH (8688431772) -->
+    <div class="crush-card" id="page-6" style="display:none;">
       <div class="big-heart">💖🌸</div>
       <h2 class="card-heading">I Knew It, Devi! 🥰</h2>
       <p class="card-desc">You are my forever and always, Bangaram. Love you to the moon and back!</p>
 
       <div class="reply-box">
         <label>💌 Send Your Reply to Ganesh (8688431772):</label>
-        <input type="text" id="crush-reply" value="I love you too Ganesh! 🥰❤️" />
+        <input type="text" id="crush-reply" value="I love you too Ganesh! You are my Bangaram! 🥰❤️" />
         <button class="btn-wa-reply" onclick="sendToGanesh()">
           <span>Reply to Ganesh on WhatsApp</span> 📲
         </button>
@@ -269,7 +345,7 @@
           isMusicPlaying = true;
           document.getElementById('music-toggle-btn').innerText = "🎵 Music: ON";
         }).catch(err => {
-          console.log("Audio waiting for interaction:", err);
+          console.log("Audio waiting for user gesture:", err);
         });
       }
     }
@@ -314,6 +390,15 @@
           gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
           osc.start(now);
           osc.stop(now + 0.2);
+        } else if (type === 'paper') {
+          // Soft rustle chime
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(440, now);
+          osc.frequency.exponentialRampToValueAtTime(880, now + 0.35);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+          osc.start(now);
+          osc.stop(now + 0.35);
         } else if (type === 'cheer') {
           [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
             const o = audioCtx.createOscillator();
@@ -404,28 +489,24 @@
       "You have no choice now Devi! 😂"
     ];
 
-        function dodgeNo() {
+    function dodgeNo() {
       playSfx('dodge');
       noCount++;
       const yesBtn = document.getElementById('btn-yes');
       const noBtn = document.getElementById('btn-no');
 
-      // Make YES button grow bigger
       const currentScale = 1 + (noCount * 0.22);
       yesBtn.style.transform = `scale(${currentScale})`;
 
-      // Change headline playfully without adding count numbers to the No button
       if (noCount <= noPhrases.length) {
         document.getElementById('ask-heading').innerText = noPhrases[noCount - 1];
         noBtn.innerText = "No";
       }
 
-      // Move NO button away
       const randomX = (Math.random() - 0.5) * 160;
       const randomY = (Math.random() - 0.5) * 120;
       noBtn.style.transform = `translate(${randomX}px, ${randomY}px)`;
 
-      // Vanish NO button after 5 clicks
       if (noCount >= 5) {
         noBtn.style.display = 'none';
         document.getElementById('ask-sub').innerText = "Now you can only click YES for Ganesh! ❤️";
@@ -438,7 +519,23 @@
       setTimeout(() => goToPage(5), 500);
     }
 
-    // --- PAGE 5: SEND DIRECT WHATSAPP TO GANESH (8688431772) ---
+    // --- PAGE 5: 3D ENVELOPE UNFOLD INTERACTION ---
+    let envelopeOpen = false;
+    function toggleEnvelope() {
+      const box = document.getElementById('env-box');
+      envelopeOpen = !envelopeOpen;
+      playSfx('paper');
+
+      if (envelopeOpen) {
+        box.classList.add('open-flap');
+        confetti({ particleCount: 70, spread: 75, colors: ['#ff007f', '#ffd700', '#ffffff'] });
+        document.getElementById('btn-goto-final').style.display = 'block';
+      } else {
+        box.classList.remove('open-flap');
+      }
+    }
+
+    // --- PAGE 6: SEND DIRECT WHATSAPP TO GANESH (8688431772) ---
     function sendToGanesh() {
       const reply = document.getElementById('crush-reply').value.trim();
       if (!reply) return alert("Please type your sweet message!");
