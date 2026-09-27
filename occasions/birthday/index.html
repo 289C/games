@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Birthday Wishes Hub 🎂🎉</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
+    body, html { width: 100%; min-height: 100%; background: #050d1a; color: #fff; overflow-x: hidden; }
+
+    /* Birthday Party Glow Background */
+    .menu-wrap {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px 50px;
+      background: radial-gradient(circle at 50% 12%, #0a2540 0%, #051329 55%, #020814 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Floating Party Icons & Balloons */
+    .bg-particle {
+      position: absolute; pointer-events: none;
+      font-size: 1.3rem; animation: floatUpward 7s linear infinite;
+      filter: drop-shadow(0 0 6px rgba(0, 180, 216, 0.5));
+    }
+    @keyframes floatUpward {
+      0% { transform: translateY(105vh) rotate(0deg) scale(0.8); opacity: 0; }
+      20% { opacity: 0.9; }
+      80% { opacity: 0.9; }
+      100% { transform: translateY(-10vh) rotate(360deg) scale(1.15); opacity: 0; }
+    }
+
+    /* Top Nav Bar */
+    .top-nav {
+      width: 100%; max-width: 480px;
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 16px; z-index: 20;
+    }
+    .pill-btn {
+      background: rgba(0, 180, 216, 0.15); border: 1px solid rgba(0, 180, 216, 0.35);
+      color: #bbf2f6; padding: 7px 15px; border-radius: 20px; font-size: 0.8rem;
+      cursor: pointer; text-decoration: none; backdrop-filter: blur(10px);
+      box-shadow: 0 4px 15px rgba(0, 180, 216, 0.2);
+    }
+
+    /* DEVELOPER PROFILE HEADER */
+    .dev-profile-card {
+      width: 100%; max-width: 480px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1.5px solid rgba(0, 180, 216, 0.35);
+      border-radius: 22px; padding: 14px 18px;
+      display: flex; align-items: center; justify-content: space-between;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 20px rgba(0, 180, 216, 0.2);
+      margin-bottom: 24px; z-index: 20;
+      text-decoration: none; color: #fff;
+      transition: transform 0.25s ease, border-color 0.25s ease;
+    }
+    .dev-profile-card:hover {
+      transform: translateY(-2px);
+      border-color: #00e5ff;
+    }
+    .dev-left { display: flex; align-items: center; gap: 14px; }
+    .dev-avatar-wrap {
+      position: relative; width: 52px; height: 52px;
+      border-radius: 50%; padding: 2.5px;
+      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      animation: spinGlow 4s linear infinite;
+    }
+    @keyframes spinGlow {
+      0% { filter: hue-rotate(0deg); }
+      100% { filter: hue-rotate(360deg); }
+    }
+    .dev-avatar {
+      width: 100%; height: 100%; border-radius: 50%;
+      object-fit: cover; background: #051329; display: block;
+    }
+    .dev-info h3 { font-size: 0.95rem; font-weight: 700; color: #fff; line-height: 1.2; }
+    .dev-info p { font-size: 0.72rem; color: #90e0ef; margin-top: 2px; }
+    .insta-chip {
+      background: linear-gradient(135deg, #fd1d1d, #833ab4);
+      padding: 6px 12px; border-radius: 14px; font-size: 0.72rem;
+      font-weight: 700; display: inline-flex; align-items: center; gap: 4px;
+      box-shadow: 0 4px 12px rgba(225, 48, 108, 0.4);
+    }
+
+    /* SECTION TITLE */
+    .title-box { text-align: center; margin-bottom: 22px; z-index: 10; }
+    .title-box h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.85rem; color: #caf0f8;
+      text-shadow: 0 0 15px rgba(0, 180, 216, 0.45);
+    }
+    .title-box p { font-size: 0.82rem; color: #90e0ef; margin-top: 4px; }
+
+    /* SLOTS GRID */
+    .slots-container {
+      width: 100%; max-width: 480px;
+      display: flex; flex-direction: column; gap: 16px;
+      z-index: 10;
+    }
+    .slot-card {
+      position: relative;
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.07) 0%, rgba(0, 180, 216, 0.05) 100%);
+      border: 1.5px solid rgba(0, 180, 216, 0.25);
+      border-radius: 20px; padding: 18px 20px;
+      display: flex; align-items: center; justify-content: space-between;
+      backdrop-filter: blur(12px); text-decoration: none; color: #fff;
+      cursor: pointer; transition: all 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+    }
+    .slot-card:hover, .slot-card:active {
+      transform: translateY(-3px) scale(1.02);
+      border-color: #00b4d8;
+      box-shadow: 0 12px 30px rgba(0, 180, 216, 0.35);
+    }
+    .slot-card.featured-example {
+      border: 1.5px solid #00b4d8;
+      background: linear-gradient(145deg, rgba(0, 180, 216, 0.18) 0%, rgba(114, 9, 183, 0.12) 100%);
+      box-shadow: 0 10px 28px rgba(0, 180, 216, 0.3);
+    }
+    .slot-left { display: flex; align-items: center; gap: 16px; }
+    .slot-badge-num {
+      width: 44px; height: 44px; border-radius: 14px;
+      background: linear-gradient(135deg, #00b4d8, #0077b6);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 1.1rem; color: #fff;
+      box-shadow: 0 4px 15px rgba(0, 180, 216, 0.4);
+      flex-shrink: 0;
+    }
+    .slot-details h3 { font-size: 0.98rem; font-weight: 700; color: #ffffff; }
+    .slot-details p { font-size: 0.74rem; color: #caf0f8; margin-top: 2px; }
+    .slot-status {
+      padding: 5px 10px; border-radius: 12px;
+      font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .status-live { background: rgba(37, 211, 102, 0.2); color: #25d366; border: 1px solid rgba(37, 211, 102, 0.5); }
+    .status-demo { background: rgba(0, 180, 216, 0.25); color: #00e5ff; border: 1px solid rgba(0, 180, 216, 0.6); }
+    .status-ready { background: rgba(255, 215, 0, 0.2); color: #ffd700; border: 1px solid rgba(255, 215, 0, 0.5); }
+    .status-custom { background: rgba(255, 105, 180, 0.2); color: #ff69b4; border: 1px solid rgba(255, 105, 180, 0.5); }
+  </style>
+</head>
+<body>
+
+  <div class="menu-wrap" id="wrap-container">
+    <div class="top-nav">
+      <a href="../index.html" class="pill-btn">← Categories</a>
+      <span class="pill-btn">🎂 Birthday Hub</span>
+    </div>
+
+    <!-- DEVELOPER BRANDING -->
+    <a href="https://instagram.com/_satish_official_16" target="_blank" class="dev-profile-card">
+      <div class="dev-left">
+        <div class="dev-avatar-wrap">
+          <img src="../../Insta.jpg" alt="Satish Kommana" class="dev-avatar" onerror="this.onerror=null; this.src='/games/Insta.jpg';" />
+        </div>
+        <div class="dev-info">
+          <h3>Satish Kommana</h3>
+          <p>Lead Developer & Creator</p>
+        </div>
+      </div>
+      <div class="insta-chip">
+        <span>@_satish_official_16</span> ↗
+      </div>
+    </a>
+
+    <div class="title-box">
+      <h1>Birthday Wishes Hub 🎂🎉</h1>
+      <p>Celebrate another wonderful year with interactive birthday cards</p>
+    </div>
+
+    <!-- 5 SLOTS GRID -->
+    <div class="slots-container">
+
+      <!-- TOP FEATURED: EXAMPLE / DEMO SLOT -->
+      <a href="example.html" class="slot-card featured-example" onclick="triggerConfetti()">
+        <div class="slot-left">
+          <div class="slot-badge-num" style="background: linear-gradient(135deg, #00b4d8, #7209b7);">★</div>
+          <div class="slot-details">
+            <h3>Interactive Cake & Party Demo 🎬</h3>
+            <p>Blow The Candle • Balloon Pop • Photo Reel</p>
+          </div>
+        </div>
+        <span class="slot-status status-demo">Example ✨</span>
+      </a>
+
+      <!-- SLOT 1 -->
+      <a href="slot1.html" class="slot-card" onclick="triggerConfetti()">
+        <div class="slot-left">
+          <div class="slot-badge-num">1</div>
+          <div class="slot-details">
+            <h3>Special Birthday Wish Slot 1 🎈</h3>
+            <p>Cake Cutting Animation • Birthday Song • Gift Box</p>
+          </div>
+        </div>
+        <span class="slot-status status-live">Live 🚀</span>
+      </a>
+
+      <!-- SLOT 2 -->
+      <a href="slot2.html" class="slot-card">
+        <div class="slot-left">
+          <div class="slot-badge-num" style="background: linear-gradient(135deg, #7209b7, #b5179e);">2</div>
+          <div class="slot-details">
+            <h3>Neon Birthday Party Slot 2 🎆</h3>
+            <p>Ready to customize with age, photos & music</p>
+          </div>
+        </div>
+        <span class="slot-status status-ready">Ready ✨</span>
+      </a>
+
+      <!-- SLOT 3 -->
+      <a href="slot3.html" class="slot-card">
+        <div class="slot-left">
+          <div class="slot-badge-num" style="background: linear-gradient(135deg, #ff4081, #d81b60);">3</div>
+          <div class="slot-details">
+            <h3>Bestie Birthday Bash Slot 3 🥳</h3>
+            <p>Funny Nicknames & Memory Photo Reel</p>
+          </div>
+        </div>
+        <span class="slot-status status-custom">Custom 💖</span>
+      </a>
+
+      <!-- SLOT 4 -->
+      <a href="slot4.html" class="slot-card">
+        <div class="slot-left">
+          <div class="slot-badge-num" style="background: linear-gradient(135deg, #f72585, #4361ee);">4</div>
+          <div class="slot-details">
+            <h3>Pop The Balloons Slot 4 🎈</h3>
+            <p>Touch-to-Pop balloons with hidden birthday notes</p>
+          </div>
+        </div>
+        <span class="slot-status status-custom">Custom 💖</span>
+      </a>
+
+      <!-- SLOT 5 -->
+      <a href="slot5.html" class="slot-card">
+        <div class="slot-left">
+          <div class="slot-badge-num" style="background: linear-gradient(135deg, #00b4d8, #48cae4);">5</div>
+          <div class="slot-details">
+            <h3>Midnight Surprise Slot 5 🎁</h3>
+            <p>3D Unfolding Gift Box & Virtual Fireworks</p>
+          </div>
+        </div>
+        <span class="slot-status status-ready">Ready ✨</span>
+      </a>
+
+    </div>
+  </div>
+
+  <script>
+    const wrap = document.getElementById('wrap-container');
+    const icons = ['🎂', '🎉', '🎈', '✨', '🎁', '🥳'];
+    for (let i = 0; i < 16; i++) {
+      const p = document.createElement('div');
+      p.className = 'bg-particle';
+      p.innerText = icons[Math.floor(Math.random() * icons.length)];
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.animationDelay = (Math.random() * 6) + 's';
+      p.style.animationDuration = (5 + Math.random() * 4) + 's';
+      wrap.appendChild(p);
+    }
+
+    function triggerConfetti() {
+      confetti({ particleCount: 75, spread: 80, colors: ['#00b4d8', '#7209b7', '#f72585', '#ffd700', '#ffffff'] });
+    }
+  </script>
+</body>
+</html>
