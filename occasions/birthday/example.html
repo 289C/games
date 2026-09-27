@@ -547,33 +547,31 @@
       box-shadow: 0 15px 35px rgba(0,0,0,0.8);
     }
 
-    /* FLOATING AIR-LIFTED TREASURE CARD */
+    /* PERFECTLY CENTERED FLOATING TREASURE CARD */
     .gift-inner-treasure {
       position: absolute;
       top: 50%;
       left: 50%;
-      width: 220px;
-      height: 140px;
-      margin-left: -110px;
-      margin-top: -70px;
+      width: 250px;
+      height: 155px;
       background: linear-gradient(135deg, #fff3b0 0%, #ffd700 45%, #ffb703 100%);
       border: 2px solid #ffffff;
-      border-radius: 18px;
+      border-radius: 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       color: #3a0ca3;
-      padding: 14px;
+      padding: 16px 14px;
       text-align: center;
       font-weight: 800;
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.9), 0 0 30px rgba(255, 215, 0, 0.7);
+      box-shadow: 0 16px 45px rgba(0, 0, 0, 0.9), 0 0 30px rgba(255, 215, 0, 0.7);
       opacity: 0;
       pointer-events: none;
-      z-index: 50;
-      transform: translate3d(0, 0, 0) scale(0.2);
-      transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.35s, 
-                  opacity 0.5s ease 0.35s;
+      z-index: 100;
+      transform: translate(-50%, -50%) scale(0.3);
+      transition: transform 0.65s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.3s, 
+                  opacity 0.45s ease 0.3s;
     }
 
     .gift-inner-treasure h4 {
@@ -585,7 +583,7 @@
     }
 
     .gift-inner-treasure p {
-      font-size: 0.75rem;
+      font-size: 0.76rem;
       font-weight: 600;
       color: #5a189a;
       line-height: 1.35;
@@ -604,21 +602,18 @@
     .gift-box-3d.step-exploded .wall-back   { transform: rotateX(90deg) rotateY(180deg) translateZ(65px); }
     .gift-box-3d.step-exploded .wall-left   { transform: rotateZ(-90deg) rotateY(-90deg) translateZ(65px); }
     .gift-box-3d.step-exploded .wall-right  { transform: rotateZ(90deg) rotateY(90deg) translateZ(65px); }
-    
-    .gift-box-3d.step-exploded .gift-inner-treasure {
+
+    /* Centers directly into the viewport with gentle floating animation */
+    .stage-card.box-revealed-active .gift-inner-treasure {
       opacity: 1;
       pointer-events: auto;
-      transform: translate3d(0px, -95px, 140px) rotateX(22deg) rotateY(-32deg) scale(1.1);
-      animation: floatInAir 2.8s ease-in-out infinite alternate 1.2s;
+      transform: translate(-50%, -55%) scale(1);
+      animation: centerGentleFloat 3s ease-in-out infinite alternate 0.95s;
     }
 
-    @keyframes floatInAir {
-      0% {
-        transform: translate3d(0px, -95px, 140px) rotateX(22deg) rotateY(-32deg) scale(1.1);
-      }
-      100% {
-        transform: translate3d(0px, -110px, 150px) rotateX(20deg) rotateY(-30deg) scale(1.14);
-      }
+    @keyframes centerGentleFloat {
+      0% { transform: translate(-50%, -55%) scale(1); }
+      100% { transform: translate(-50%, -60%) scale(1.03); }
     }
 
     /* ROAST & TOAST 3D FLIP CARDS GRID (SCREEN 6) */
@@ -916,12 +911,13 @@
       </button>
     </div>
 
-    <!-- SCREEN 5: IDEA 5 - 3D EXPLOSION UNFOLDING GIFT BOX WITH FLOATING AIR CARD -->
+    <!-- SCREEN 5: IDEA 5 - 3D EXPLOSION GIFT BOX WITH CENTERED AIR-LIFTED CARD -->
     <div class="stage-card" id="screen-giftbox" style="display: none;">
       <h2 class="card-heading">Mystery Gift Box 🎁</h2>
       <p class="card-desc" id="gift-instruction">Tap the box to open your surprise!</p>
 
       <div class="gift-3d-viewport">
+        <!-- 3D Gift Cube -->
         <div class="gift-box-3d" id="gift-cube" onclick="advanceGiftStep()">
           <div class="gift-lid" id="box-lid">
             <span class="gift-ribbon-bow">🎀</span>
@@ -931,13 +927,13 @@
           <div class="gift-wall wall-left"></div>
           <div class="gift-wall wall-right"></div>
           <div class="gift-wall wall-bottom"></div>
+        </div>
 
-          <!-- FLOATING GOLDEN TREASURE CARD -->
-          <div class="gift-inner-treasure" id="gift-card-popup">
-            <span style="font-size: 2rem; margin-bottom: 2px;">👑✨</span>
-            <h4>VIP LIFETIME PASS!</h4>
-            <p>Unlimited happiness, true friendship & zero bad vibes forever! 💖</p>
-          </div>
+        <!-- PERFECTLY CENTERED FLOATING TREASURE CARD -->
+        <div class="gift-inner-treasure" id="gift-card-popup">
+          <span style="font-size: 2.2rem; margin-bottom: 2px;">👑✨</span>
+          <h4>VIP LIFETIME PASS!</h4>
+          <p>Unlimited happiness, true friendship & zero bad vibes forever! 💖</p>
         </div>
       </div>
 
@@ -1422,11 +1418,12 @@
       }
     }
 
-    // 8. SCREEN 5: IDEA 5 - 3D EXPLOSION GIFT BOX LOGIC
+    // 8. SCREEN 5: IDEA 5 - 3D EXPLOSION GIFT BOX WITH CENTER ACTIVATION
     let giftStageStep = 0;
     function advanceGiftStep() {
       const cube = document.getElementById('gift-cube');
       const label = document.getElementById('gift-instruction');
+      const screenCard = document.getElementById('screen-giftbox');
 
       if (giftStageStep === 0) {
         playSfx('slice');
@@ -1436,6 +1433,7 @@
       } else if (giftStageStep === 1) {
         playSfx('cheer');
         cube.classList.add('step-exploded');
+        screenCard.classList.add('box-revealed-active'); // Activates center-aligned card
         label.innerText = "🎉 VIP Surprise Unlocked!";
         giftStageStep = 2;
 
