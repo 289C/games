@@ -141,6 +141,7 @@
       outline: none;
     }
     .form-input:focus { border-color: #ffd700; }
+    select.form-input option { background: #071120; color: #fff; }
 
     /* Line-wise Menu Log Table */
     .log-table-wrap {
@@ -262,22 +263,32 @@
           </div>
         </div>
 
-        <!-- IDEA 1: GLOBAL ANNOUNCEMENT BANNER CONTROL -->
+        <!-- TARGETED ANNOUNCEMENT BANNER CONTROL -->
         <div class="admin-card">
-          <h2 class="card-title">Announcement Banner</h2>
-          <p class="card-sub">Broadcast live message to all visitor screens</p>
+          <h2 class="card-title">Page Banner Manager</h2>
+          <p class="card-sub">Select a page and broadcast a custom live banner</p>
+
+          <div class="form-group">
+            <label class="form-label">Select Target Page:</label>
+            <select id="target-page-select" class="form-input" onchange="loadCurrentBannerForPage()">
+              <option value="main_hub">Main Hub / Games Home</option>
+              <option value="anniversary">Anniversary Page (Akka & Bava)</option>
+              <option value="birthday">Birthday Page (Devi)</option>
+              <option value="crush">Crush Proposal Page</option>
+            </select>
+          </div>
 
           <div class="form-group">
             <label class="form-label">Banner Message:</label>
-            <input type="text" id="banner-text-input" class="form-input" placeholder="e.g. Happy Anniversary Akka & Bava! ❤️" />
+            <input type="text" id="banner-text-input" class="form-input" placeholder="Enter message for selected page..." />
           </div>
 
-          <button class="btn-action" onclick="saveAnnouncementBanner()">
-            <span>Broadcast Banner 📡</span>
+          <button class="btn-action" onclick="saveTargetedBanner()">
+            <span>Publish Banner to Page 📡</span>
           </button>
         </div>
 
-        <!-- IDEA 2: PASSCODE & SETTINGS MANAGER -->
+        <!-- PASSCODE & SETTINGS MANAGER -->
         <div class="admin-card">
           <h2 class="card-title">Security Settings</h2>
           <p class="card-sub">Update site access passcode instantly</p>
@@ -292,7 +303,7 @@
           </button>
         </div>
 
-        <!-- IDEA 3: LINE-WISE LOGS + CSV EXPORT -->
+        <!-- LINE-WISE LOGS + CSV EXPORT -->
         <div class="admin-card">
           <h2 class="card-title">Visitor Logs & Export</h2>
           <p class="card-sub">Line-wise menu of recent user sessions</p>
@@ -358,9 +369,11 @@
       // 2. Load current settings into inputs
       db.ref('admin_settings').once('value', (snapshot) => {
         const settings = snapshot.val() || {};
-        if (settings.announcement) document.getElementById('banner-text-input').value = settings.announcement;
         if (settings.site_pin) document.getElementById('setting-pin-input').value = settings.site_pin;
       });
+
+      // Load initial banner for selected dropdown option
+      loadCurrentBannerForPage();
 
       // 3. Track Total Views, Today's Usage & Line-wise Menu Log
       db.ref('visitors').on('value', (snapshot) => {
@@ -410,15 +423,30 @@
       });
     }
 
-    // IDEA 1: Save Announcement Banner to Firebase
-    function saveAnnouncementBanner() {
-      const msg = document.getElementById('banner-text-input').value.trim();
-      firebase.database().ref('admin_settings/announcement').set(msg, (error) => {
-        if (!error) alert("Announcement broadcasted successfully to all visitor pages! 📡");
+    // Load existing banner when changing dropdown selection
+    function loadCurrentBannerForPage() {
+      const pageKey = document.getElementById('target-page-select').value;
+      if (!window.firebase || !firebase.apps.length) return;
+      
+      firebase.database().ref(`admin_settings/banners/${pageKey}`).once('value', (snapshot) => {
+        const msg = snapshot.val() || "";
+        document.getElementById('banner-text-input').value = msg;
       });
     }
 
-    // IDEA 2: Save Passcode Settings to Firebase
+    // Save targeted banner to Firebase
+    function saveTargetedBanner() {
+      const pageKey = document.getElementById('target-page-select').value;
+      const msg = document.getElementById('banner-text-input').value.trim();
+      
+      firebase.database().ref(`admin_settings/banners/${pageKey}`).set(msg, (error) => {
+        if (!error) {
+          alert(`Banner updated successfully for ${pageKey}! 📡`);
+        }
+      });
+    }
+
+    // Save Passcode Settings to Firebase
     function saveSecuritySettings() {
       const newPin = document.getElementById('setting-pin-input').value.trim();
       if (!newPin) {
@@ -430,7 +458,7 @@
       });
     }
 
-    // IDEA 3: One-Click CSV Data Export
+    // One-Click CSV Data Export
     function exportLogsToCSV() {
       let csvContent = "data:text/csv;charset=utf-8,Timestamp,Page,Device\n";
       
