@@ -1443,7 +1443,7 @@
   if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 
   // CHANGE THIS KEY PER PAGE: 'main_hub', 'anniversary', 'birthday', or 'crush'
-  const MY_PAGE_KEY = 'anniversary'; 
+  const MY_PAGE_KEY = 'main_hub'; 
 
   firebase.database().ref(`admin_settings/banners/${MY_PAGE_KEY}`).on('value', (snapshot) => {
     const message = snapshot.val();
