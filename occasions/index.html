@@ -6,8 +6,6 @@
   <title>3D Wishes Studio ✨</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   
   <style>
     * {
@@ -341,6 +339,9 @@
   <div class="header-pill">
     <h1>✨ Select Wishing Category</h1>
   </div>
+<div style="font-size: 0.78rem; color: #25d366; margin-top: 10px; font-weight: 650; display: inline-flex; align-items: center; gap: 6px; background: rgba(37, 211, 102, 0.1); padding: 4px 12px; border-radius: 12px; border: 1px solid rgba(37, 211, 102, 0.3);">
+  🟢 Users Online Now: <span id="online-users-count">1</span>
+</div>
 
   <!-- COMPACT DM & WHATSAPP PROMO BANNER -->
   <div class="promo-banner">
@@ -482,18 +483,41 @@
     }
   </script>
 <script>
-  // Your Firebase project config
+<!-- REAL-TIME ONLINE USERS TRACKER -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
   const firebaseConfig = {
     databaseURL: "https://friendsgame-872f5-default-rtdb.firebaseio.com/"
   };
-  firebase.initializeApp(firebaseConfig);
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
+  
   const db = firebase.database();
 
-  // Push visitor log into Firebase
-  db.ref('visitors').push({
-    page: window.location.pathname,
-    time: new Date().toLocaleString(),
-    device: navigator.userAgent
+  // Reference to online presence list
+  const userRef = db.ref('online_users').push();
+  const connectedRef = db.ref('.info/connected');
+
+  connectedRef.on('value', (snapshot) => {
+    if (snapshot.val() === true) {
+      // Remove user gracefully when they disconnect/close tab
+      userRef.onDisconnect().remove();
+      // Set user as online
+      userRef.set({
+        online_at: new Date().toLocaleTimeString(),
+        device: navigator.userAgent
+      });
+    }
+  });
+
+  // Listen in real-time and count how many users are connected right now
+  db.ref('online_users').on('value', (snapshot) => {
+    const activeCount = snapshot.numChildren();
+    document.querySelectorAll('#online-users-count').forEach(el => {
+      el.innerText = activeCount > 0 ? activeCount : 1;
+    });
   });
 </script>
 </body>
