@@ -2,383 +2,333 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>3D Interactive Celebration</title>
-  <!-- Three.js and Canvas Confetti -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Admin Dashboard 👑 | Live Analytics</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-    body, html { width: 100%; height: 100%; overflow: hidden; background: #0b0c10; color: #fff; }
-    #canvas-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
 
-    /* UI Overlay */
-    .hud {
-      position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
-      z-index: 10; text-align: center; pointer-events: none; width: 90%; max-width: 500px;
+    body, html {
+      width: 100%;
+      min-height: 100vh;
+      background: #060914;
+      color: #ffffff;
+      overflow-x: hidden;
     }
-    .hud h1 { font-size: 1.8rem; color: #66fcf1; text-shadow: 0 0 12px rgba(102, 252, 241, 0.6); }
-    .hud p { font-size: 0.95rem; color: #c5c6c7; margin-top: 6px; }
 
-    /* Interactive Buttons */
-    .controls {
-      position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
-      z-index: 10; display: flex; gap: 12px;
+    .admin-wrapper {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 70px 16px 40px;
+      background: radial-gradient(circle at 50% 15%, #10213d 0%, #071120 55%, #03060c 100%);
+      position: relative;
     }
-    .btn {
-      padding: 12px 24px; border: none; border-radius: 25px;
-      background: linear-gradient(135deg, #45a29e, #66fcf1); color: #0b0c10;
-      font-weight: 700; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .btn:hover { transform: scale(1.05); box-shadow: 0 0 15px rgba(102, 252, 241, 0.5); }
 
-    /* Pop-up Message Modal for Balloon Text */
-    #note-modal {
-      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.8);
-      background: rgba(20, 20, 30, 0.92); border: 1px solid #66fcf1; border-radius: 16px;
-      padding: 24px; text-align: center; z-index: 20; max-width: 320px; width: 85%;
-      box-shadow: 0 0 30px rgba(102, 252, 241, 0.3); opacity: 0; pointer-events: none;
-      transition: 0.3s ease-in-out;
+    .top-bar {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 50;
     }
-    #note-modal.active { opacity: 1; pointer-events: auto; transform: translate(-50%, -50%) scale(1); }
-    #note-modal h3 { color: #ffe600; margin-bottom: 8px; }
-    #note-modal p { font-size: 1.05rem; color: #fff; margin-bottom: 16px; }
+    .pill-btn {
+      background: rgba(0, 180, 216, 0.15);
+      border: 1px solid rgba(0, 180, 216, 0.4);
+      color: #bbf2f6;
+      padding: 7px 16px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      text-decoration: none;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 15px rgba(0, 180, 216, 0.2);
+    }
 
-    /* Final Card Container */
-    #final-view {
-      position: absolute; bottom: 15%; left: 50%; transform: translateX(-50%);
-      text-align: center; z-index: 10; background: rgba(0, 0, 0, 0.65);
-      border: 1px solid rgba(255, 255, 255, 0.2); backdrop-filter: blur(8px);
-      padding: 20px 30px; border-radius: 12px; display: none; width: 85%; max-width: 420px;
+    .dashboard-container {
+      width: 100%;
+      max-width: 440px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      z-index: 10;
     }
-    #final-view h2 { color: #ff007f; margin-bottom: 8px; }
+
+    .admin-card {
+      background: linear-gradient(165deg, rgba(255, 255, 255, 0.06) 0%, rgba(10, 22, 44, 0.92) 100%);
+      border: 1.5px solid rgba(0, 180, 216, 0.35);
+      border-radius: 28px;
+      padding: 22px 18px;
+      box-shadow: 0 20px 45px rgba(0,0,0,0.7), 0 0 25px rgba(0, 180, 216, 0.18);
+      backdrop-filter: blur(16px);
+      text-align: center;
+    }
+
+    .card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.35rem;
+      color: #fff2b2;
+      margin-bottom: 4px;
+      text-shadow: 0 0 12px rgba(255, 215, 0, 0.4);
+    }
+    .card-sub {
+      font-size: 0.76rem;
+      color: #90e0ef;
+      margin-bottom: 14px;
+    }
+
+    /* Metric Grid Boxes */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .metric-box {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(0, 180, 216, 0.3);
+      border-radius: 20px;
+      padding: 16px 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .metric-value {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: #ffd166;
+      margin: 4px 0;
+      text-shadow: 0 0 10px rgba(255, 209, 102, 0.4);
+    }
+    .metric-label {
+      font-size: 0.72rem;
+      color: #caf0f8;
+      font-weight: 600;
+    }
+
+    /* Line-wise Menu Log Table */
+    .log-table-wrap {
+      max-height: 280px;
+      overflow-y: auto;
+      border-radius: 16px;
+      border: 1px solid rgba(0, 180, 216, 0.25);
+      background: rgba(0, 0, 0, 0.4);
+      text-align: left;
+    }
+    .log-table-wrap::-webkit-scrollbar { width: 5px; }
+    .log-table-wrap::-webkit-scrollbar-thumb { background: #00b4d8; border-radius: 10px; }
+
+    .log-row {
+      padding: 10px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      font-size: 0.75rem;
+    }
+    .log-row:last-child { border-bottom: none; }
+    .log-row-top {
+      display: flex;
+      justify-content: space-between;
+      color: #ffd166;
+      font-weight: 700;
+    }
+    .log-row-bottom {
+      color: #90e0ef;
+      font-size: 0.68rem;
+      word-break: break-all;
+    }
+
+    /* Admin Password Lock Screen */
+    .lock-field-box { width: 100%; margin: 14px 0 14px; }
+    .lock-input {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 20px;
+      border: 1.5px solid rgba(0, 180, 216, 0.5);
+      background: rgba(0, 0, 0, 0.4);
+      color: #fff;
+      font-size: 0.95rem;
+      text-align: center;
+      outline: none;
+    }
+    .btn-action {
+      width: 100%;
+      padding: 12px;
+      border-radius: 22px;
+      border: none;
+      background: linear-gradient(135deg, #00b4d8, #0077b6);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(0, 180, 216, 0.4);
+    }
   </style>
 </head>
 <body>
 
-  <div id="canvas-container"></div>
-
-  <div class="hud">
-    <h1 id="title-text">Stage 1: Blow the Candles 🎂</h1>
-    <p id="sub-text">Blow directly into your mic or click below to blow out the candles!</p>
-  </div>
-
-  <div class="controls" id="btn-group">
-    <button class="btn" id="mic-btn" onclick="startMicDetection()">Enable Mic 🎙️</button>
-    <button class="btn" id="blow-btn" onclick="extinguishCandles()">Manual Blow 💨</button>
-  </div>
-
-  <!-- Note Reveal Modal -->
-  <div id="note-modal">
-    <h3 id="modal-tag">Surprise! 🎈</h3>
-    <p id="modal-text">Default Text</p>
-    <button class="btn" onclick="closeModal()">Next Balloon</button>
-  </div>
-
-  <!-- Final Stage Screen -->
-  <div id="final-view">
-    <h2 id="final-receiver">Dear Friend,</h2>
-    <p id="final-message" style="margin-bottom: 12px; color: #ddd;"></p>
-    <p id="final-sender" style="color: #66fcf1; font-weight: bold;"></p>
-  </div>
-
-  <script>
-    // URL Parameter Customization (e.g. ?name=Rohit&from=Satish&note=You+are+the+best)
-    const urlParams = new URLSearchParams(window.location.search);
-    const receiverName = urlParams.get('name') || "Special Friend";
-    const senderName = urlParams.get('from') || "Your Best Buddy";
-    const customFinalNote = urlParams.get('note') || "May this new year bring you limitless joy, peace, and milestone achievements!";
+  <div class="admin-wrapper" id="main-wrap">
     
-    // Custom messages inside the balloons
-    const balloonWishes = [
-      "Keep shining brighter every day! ⭐",
-      "May all your coding bugs be squashed! 🚀",
-      "Health, Wealth, and Pure Happiness! 🌟"
-    ];
+    <div class="top-bar">
+      <a href="index.html" class="pill-btn">← Back to Hub</a>
+      <span class="pill-btn">👑 Admin Dashboard</span>
+    </div>
 
-    let currentStage = 1;
-    let scene, camera, renderer, cakeGroup, balloonsGroup = [];
-    let candleLights = [], flameMeshes = [];
-    let isBlownOut = false;
-    let audioContext, analyser, microphone;
+    <div class="dashboard-container">
 
-    // --- INIT THREE.JS SCENE ---
-    function init() {
-      const container = document.getElementById('canvas-container');
-      scene = new THREE.Scene();
-      camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-      camera.position.set(0, 4, 12);
-      camera.lookAt(0, 1, 0);
+      <!-- STEP 1: ADMIN PASSCODE GATE -->
+      <div class="admin-card" id="admin-lock-screen">
+        <div style="font-size: 3rem; margin-bottom: 6px;">🔐👑</div>
+        <h2 class="card-title">Admin Portal</h2>
+        <p class="card-desc">Enter admin passcode to view real-time site analytics</p>
 
-      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      renderer.setPixelRatio(window.devicePixelRatio);
-      container.appendChild(renderer.domElement);
+        <div class="lock-field-box">
+          <input type="password" id="admin-pass-input" class="lock-input" placeholder="Enter admin passkey" autocomplete="off" />
+        </div>
+        <p id="lock-error" style="font-size: 0.75rem; color: #ff4d6d; min-height: 18px; margin-bottom: 8px; font-weight: 600;"></p>
 
-      // Ambient & Spot Lighting
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
-      scene.add(ambientLight);
+        <button class="btn-action" onclick="verifyAdminPass()">
+          <span>Access Dashboard ➔</span>
+        </button>
+      </div>
 
-      const spotLight = new THREE.SpotLight(0xfffaed, 1.2);
-      spotLight.position.set(5, 12, 8);
-      scene.add(spotLight);
+      <!-- STEP 2: LIVE ANALYTICS DASHBOARD (Hidden until correct PIN) -->
+      <div id="admin-dashboard-content" style="display: none; display: flex; flex-direction: column; gap: 16px;">
+        
+        <!-- Live Metrics Overview -->
+        <div class="admin-card">
+          <h2 class="card-title">Live Usage Overview</h2>
+          <p class="card-sub">Real-time engagement tracking</p>
 
-      buildCake();
-      window.addEventListener('resize', onWindowResize);
-      window.addEventListener('pointerdown', onSceneClick);
-      animate();
+          <div class="metrics-grid">
+            <div class="metric-box">
+              <span style="font-size: 1.2rem;">🟢</span>
+              <div class="metric-value" id="stat-online">0</div>
+              <div class="metric-label">Users Online Now</div>
+            </div>
+            <div class="metric-box">
+              <span style="font-size: 1.2rem;">📅</span>
+              <div class="metric-value" id="stat-today">0</div>
+              <div class="metric-label">Today's Visits</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Line-wise User Details Menu -->
+        <div class="admin-card">
+          <h2 class="card-title">User Logs & Activity</h2>
+          <p class="card-sub">Line-wise menu of recent visitors</p>
+
+          <div class="log-table-wrap" id="visitor-log-container">
+            <div class="log-row">
+              <div class="log-row-top"><span>Loading logs...</span><span>--:--</span></div>
+              <div class="log-row-bottom">Fetching Firebase database records</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- FIREBASE REALTIME ANALYTICS SCRIPT -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script>
+    const ADMIN_PASSCODE = "@breakup"; // Updated admin passcode
+
+    function verifyAdminPass() {
+      const input = document.getElementById('admin-pass-input').value.trim();
+      const errorMsg = document.getElementById('lock-error');
+
+      if (input === ADMIN_PASSCODE) {
+        errorMsg.innerText = "";
+        document.getElementById('admin-lock-screen').style.display = 'none';
+        document.getElementById('admin-dashboard-content').style.display = 'flex';
+        initAdminFirebase();
+      } else {
+        errorMsg.innerText = "Incorrect Admin Passcode! 🔒";
+      }
     }
 
-    // --- STAGE 1: BUILD 3D CAKE ---
-    function buildCake() {
-      cakeGroup = new THREE.Group();
+    document.getElementById('admin-pass-input').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') verifyAdminPass();
+    });
 
-      // Plate
-      const plateGeo = new THREE.CylinderGeometry(3.6, 3.2, 0.2, 32);
-      const plateMat = new THREE.MeshStandardMaterial({ color: 0xcccccc, metalness: 0.3 });
-      cakeGroup.add(new THREE.Mesh(plateGeo, plateMat));
+    function initAdminFirebase() {
+      const firebaseConfig = {
+        databaseURL: "https://friendsgame-872f5-default-rtdb.firebaseio.com/"
+      };
+      if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+      }
+      const db = firebase.database();
 
-      // Bottom Tier
-      const tier1Geo = new THREE.CylinderGeometry(3, 3, 1.5, 32);
-      const tier1Mat = new THREE.MeshStandardMaterial({ color: 0xff6b81, roughness: 0.4 });
-      const tier1 = new THREE.Mesh(tier1Geo, tier1Mat);
-      tier1.position.y = 0.85;
-      cakeGroup.add(tier1);
-
-      // Top Tier
-      const tier2Geo = new THREE.CylinderGeometry(2, 2, 1.2, 32);
-      const tier2Mat = new THREE.MeshStandardMaterial({ color: 0xfff0f5, roughness: 0.4 });
-      const tier2 = new THREE.Mesh(tier2Geo, tier2Mat);
-      tier2.position.y = 2.2;
-      cakeGroup.add(tier2);
-
-      // Candles with Flames
-      const candlePositions = [[-0.7, 0], [0.7, 0], [0, 0.7], [0, -0.7]];
-      candlePositions.forEach(([x, z]) => {
-        // Wax Stick
-        const stickGeo = new THREE.CylinderGeometry(0.08, 0.08, 0.8, 16);
-        const stickMat = new THREE.MeshStandardMaterial({ color: 0x48dbfb });
-        const stick = new THREE.Mesh(stickGeo, stickMat);
-        stick.position.set(x, 3.2, z);
-        cakeGroup.add(stick);
-
-        // Flame
-        const flameGeo = new THREE.SphereGeometry(0.12, 16, 16);
-        flameGeo.scale(1, 1.8, 1);
-        const flameMat = new THREE.MeshBasicMaterial({ color: 0xffa502 });
-        const flame = new THREE.Mesh(flameGeo, flameMat);
-        flame.position.set(x, 3.7, z);
-        cakeGroup.add(flame);
-        flameMeshes.push(flame);
-
-        // Candle Light Glow
-        const light = new THREE.PointLight(0xff7700, 1.5, 4);
-        light.position.set(x, 3.8, z);
-        cakeGroup.add(light);
-        candleLights.push(light);
+      // 1. Track Online Users
+      db.ref('online_users').on('value', (snapshot) => {
+        const count = snapshot.numChildren();
+        document.getElementById('stat-online').innerText = count > 0 ? count : 1;
       });
 
-      scene.add(cakeGroup);
-    }
+      // 2. Track Total & Today's Usage + Line-wise Menu Log
+      db.ref('visitors').on('value', (snapshot) => {
+        const data = snapshot.val() || {};
+        const keys = Object.keys(data);
+        
+        let todayCount = 0;
+        const todayStr = new Date().toLocaleDateString();
+        const logContainer = document.getElementById('visitor-log-container');
+        logContainer.innerHTML = "";
 
-    // --- MICROPHONE BLOW DETECTION ---
-    async function startMicDetection() {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-        audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        analyser = audioContext.createAnalyser();
-        microphone = audioContext.createMediaStreamSource(stream);
-        microphone.connect(analyser);
-        analyser.fftSize = 256;
+        const reversedKeys = keys.reverse();
 
-        document.getElementById('mic-btn').innerText = "Mic Active 🎙️";
-        listenAudioLevels();
-      } catch (err) {
-        alert("Microphone access denied or unsupported. Use the 'Manual Blow' button instead!");
-      }
-    }
-
-    function listenAudioLevels() {
-      if (isBlownOut) return;
-      const bufferLength = analyser.frequencyBinCount;
-      const dataArray = new Uint8Array(bufferLength);
-      analyser.getByteFrequencyData(dataArray);
-
-      let sum = 0;
-      for (let i = 0; i < bufferLength; i++) sum += dataArray[i];
-      let average = sum / bufferLength;
-
-      // Noise threshold when blowing directly into microphone
-      if (average > 65) {
-        extinguishCandles();
-        return;
-      }
-      requestAnimationFrame(listenAudioLevels);
-    }
-
-    function extinguishCandles() {
-      if (isBlownOut) return;
-      isBlownOut = true;
-
-      // Remove flame visuals & point lights
-      flameMeshes.forEach(f => f.scale.set(0, 0, 0));
-      candleLights.forEach(l => l.intensity = 0);
-
-      // Trigger Confetti
-      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-
-      // Transition to Stage 2 after 1.5 seconds
-      setTimeout(() => {
-        transitionToStage2();
-      }, 1500);
-    }
-
-    // --- STAGE 2: 3D BALLOON POPPING GAME ---
-    function transitionToStage2() {
-      currentStage = 2;
-      document.getElementById('title-text').innerText = "Stage 2: Tap the Balloons 🎈";
-      document.getElementById('sub-text').innerText = "Click floating balloons to reveal secret wishes!";
-      document.getElementById('btn-group').style.display = 'none';
-
-      // Animate cake downward out of sight
-      let removeCake = setInterval(() => {
-        cakeGroup.position.y -= 0.15;
-        if (cakeGroup.position.y < -8) {
-          clearInterval(removeCake);
-          scene.remove(cakeGroup);
-          spawnBalloons();
+        if (reversedKeys.length === 0) {
+          logContainer.innerHTML = '<div class="log-row"><div class="log-row-top"><span>No visitors recorded yet</span></div></div>';
+          document.getElementById('stat-today').innerText = "0";
+          return;
         }
-      }, 20);
-    }
 
-    function spawnBalloons() {
-      const colors = [0xff4757, 0x2ed573, 0x1e90ff];
-      const positions = [-2.8, 0, 2.8];
+        reversedKeys.forEach((key) => {
+          const visitor = data[key];
+          const timeRecorded = visitor.time || "Unknown Time";
+          const pageVisited = visitor.page || "Unknown Page";
+          const userAgent = visitor.device || "Unknown Device";
 
-      positions.forEach((xPos, idx) => {
-        const balloonNode = new THREE.Group();
+          if (timeRecorded.includes(todayStr) || timeRecorded.includes(new Date().getDate())) {
+            todayCount++;
+          }
 
-        // Balloon Body
-        const geo = new THREE.SphereGeometry(1, 32, 32);
-        geo.scale(1, 1.25, 1);
-        const mat = new THREE.MeshStandardMaterial({
-          color: colors[idx],
-          roughness: 0.2,
-          metalness: 0.1
+          const row = document.createElement('div');
+          row.className = 'log-row';
+          row.innerHTML = `
+            <div class="log-row-top">
+              <span>📄 ${pageVisited}</span>
+              <span>🕒 ${timeRecorded}</span>
+            </div>
+            <div class="log-row-bottom">
+              📱 ${userAgent}
+            </div>
+          `;
+          logContainer.appendChild(row);
         });
-        const mesh = new THREE.Mesh(geo, mat);
-        balloonNode.add(mesh);
 
-        // String
-        const stringGeo = new THREE.CylinderGeometry(0.015, 0.015, 2, 8);
-        const stringMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
-        const stringMesh = new THREE.Mesh(stringGeo, stringMat);
-        stringMesh.position.y = -2;
-        balloonNode.add(stringMesh);
-
-        balloonNode.position.set(xPos, -0.5, 0);
-        balloonNode.userData = { id: idx, message: balloonWishes[idx] };
-
-        scene.add(balloonNode);
-        balloonsGroup.push(balloonNode);
+        document.getElementById('stat-today').innerText = todayCount;
       });
     }
-
-    // --- CLICK / RAYCASTING INTERACTIONS ---
-    const raycaster = new THREE.Raycaster();
-    const mouse = new THREE.Vector2();
-
-    function onSceneClick(event) {
-      if (currentStage !== 2) return;
-
-      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-      raycaster.setFromCamera(mouse, camera);
-      const intersects = raycaster.intersectObjects(scene.children, true);
-
-      if (intersects.length > 0) {
-        // Find which balloon was clicked
-        let obj = intersects[0].object;
-        while (obj.parent && obj.parent !== scene) {
-          obj = obj.parent;
-        }
-
-        const bIndex = balloonsGroup.indexOf(obj);
-        if (bIndex > -1) {
-          popBalloon(obj, bIndex);
-        }
-      }
-    }
-
-    function popBalloon(balloon, index) {
-      // Confetti burst from balloon position
-      confetti({ particleCount: 50, spread: 60, origin: { x: (balloon.position.x / 10) + 0.5, y: 0.5 } });
-
-      // Show note
-      document.getElementById('modal-text').innerText = balloon.userData.message;
-      document.getElementById('note-modal').classList.add('active');
-
-      scene.remove(balloon);
-      balloonsGroup.splice(index, 1);
-
-      if (balloonsGroup.length === 0) {
-        setTimeout(transitionToStage3, 1000);
-      }
-    }
-
-    function closeModal() {
-      document.getElementById('note-modal').classList.remove('active');
-    }
-
-    // --- STAGE 3: FINAL NOTE VIEW ---
-    function transitionToStage3() {
-      currentStage = 3;
-      closeModal();
-      document.getElementById('title-text').innerText = `Celebration Completed! ✨`;
-      document.getElementById('sub-text').innerText = "";
-
-      const finalView = document.getElementById('final-view');
-      document.getElementById('final-receiver').innerText = `To ${receiverName},`;
-      document.getElementById('final-message').innerText = customFinalNote;
-      document.getElementById('final-sender').innerText = `— Warmly sent by ${senderName}`;
-      finalView.style.display = 'block';
-
-      // Endless subtle celebration fireworks
-      setInterval(() => {
-        confetti({ particleCount: 30, spread: 360, startVelocity: 25, origin: { x: Math.random(), y: Math.random() * 0.5 } });
-      }, 1200);
-    }
-
-    // --- ANIMATION LOOP ---
-    function animate() {
-      requestAnimationFrame(animate);
-
-      // Flickering candle effect in Stage 1
-      if (currentStage === 1 && !isBlownOut) {
-        candleLights.forEach(l => {
-          l.intensity = 1.2 + Math.sin(Date.now() * 0.02) * 0.3;
-        });
-      }
-
-      // Gentle floating animation for balloons
-      if (currentStage === 2) {
-        balloonsGroup.forEach((b, i) => {
-          b.position.y += Math.sin(Date.now() * 0.003 + i) * 0.005;
-          b.rotation.y += 0.008;
-        });
-      }
-
-      renderer.render(scene, camera);
-    }
-
-    function onWindowResize() {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-    }
-
-    window.onload = init;
   </script>
 </body>
 </html>
