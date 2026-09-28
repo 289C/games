@@ -533,7 +533,7 @@
     <!-- Top Action Bar -->
     <div class="top-bar">
       <a href="index.html" class="pill-btn">← Back</a>
-      <span class="pill-btn" id="stage-tag" onclick="toggleMusic()" style="cursor: pointer;" title="Tap to Toggle Music">🎵 Play Music</span>
+      <span class="pill-btn" id="stage-tag" onclick="toggleMusic()" style="cursor: pointer;" title="Tap to Toggle Music">🎵 Music</span>
     </div>
 
     <!-- SCREEN 1: MOBILE-STYLE NUMERIC PIN LOCK GATE -->
@@ -810,7 +810,7 @@
 
   </div>
 
-  <!-- FIREBASE VISITOR TRACKER[span_0](start_span)[span_0](end_span) -->
+  <!-- FIREBASE VISITOR TRACKER -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   <script>
@@ -833,16 +833,16 @@
 
     // BACKGROUND MUSIC CONTROLLER
     const bgMusic = document.getElementById('bg-music');
-    bgMusic.volume = 0.5;
+    bgMusic.volume = 0.6;
     let musicStarted = false;
 
-    function startMusic() {
+    function playBackgroundMusic() {
       if (!musicStarted) {
         bgMusic.play().then(() => {
           musicStarted = true;
-          document.getElementById('stage-tag').innerText = "🔊 Music Playing";
+          document.getElementById('stage-tag').innerText = "🔊 Playing 1.mp3";
         }).catch(err => {
-          console.log("Audio autoplay restricted by browser.");
+          console.log("Audio autoplay restricted by browser policies.");
         });
       }
     }
@@ -850,7 +850,7 @@
     function toggleMusic() {
       if (bgMusic.paused) {
         bgMusic.play();
-        document.getElementById('stage-tag').innerText = "🔊 Music Playing";
+        document.getElementById('stage-tag').innerText = "🔊 Playing 1.mp3";
       } else {
         bgMusic.pause();
         document.getElementById('stage-tag').innerText = "🔇 Music Paused";
@@ -959,7 +959,6 @@
 
     // 4. MOBILE PIN PAD LOGIC
     function pressKey(num) {
-      startMusic(); // Trigger background music playback on first interaction
       if (enteredPin.length < 4) {
         enteredPin += num;
         updatePinDots();
@@ -1003,6 +1002,10 @@
       if (enteredPin === SECRET_PIN) {
         errorMsg.innerText = "";
         playSfx('unlock');
+        
+        // AUTOMATICALLY PLAY MUSIC (1.mp3) UPON CORRECT PASSCODE
+        playBackgroundMusic();
+
         confetti({ particleCount: 85, spread: 85, origin: { y: 0.6 }, colors: ['#00b4d8', '#ff4081', '#ffffff'] });
         setTimeout(() => showScreen('screen-cake'), 350);
       } else {
