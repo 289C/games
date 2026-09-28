@@ -1436,5 +1436,27 @@
     });
   });
 </script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
+  const firebaseConfig = { databaseURL: "https://friendsgame-872f5-default-rtdb.firebaseio.com/" };
+  if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+
+  // CHANGE THIS KEY PER PAGE: 'main_hub', 'anniversary', 'birthday', or 'crush'
+  const MY_PAGE_KEY = 'anniversary'; 
+
+  firebase.database().ref(`admin_settings/banners/${MY_PAGE_KEY}`).on('value', (snapshot) => {
+    const message = snapshot.val();
+    const bannerEl = document.getElementById('targeted-live-banner');
+    const textEl = document.getElementById('targeted-banner-text');
+    
+    if (message && message.trim() !== "") {
+      textEl.innerText = message;
+      bannerEl.style.display = 'block';
+    } else {
+      bannerEl.style.display = 'none';
+    }
+  });
+</script>
 </body>
 </html>
