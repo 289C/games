@@ -1394,5 +1394,34 @@
     }
     animate();
   </script>
+  <!-- LIVE VISITOR COUNTER & TRACKER -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    databaseURL: "https://friendsgame-872f5-default-rtdb.firebaseio.com/"
+  };
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
+  
+  const db = firebase.database();
+  
+  // Log this visit into Firebase
+  db.ref('visitors').push({
+    page: window.location.pathname,
+    time: new Date().toLocaleString(),
+    device: navigator.userAgent
+  });
+
+  // Listen in real-time and update the view count on screen
+  db.ref('visitors').on('value', (snapshot) => {
+    const totalVisits = snapshot.numChildren();
+    // Look for all elements with the visitor-counter ID and update them
+    document.querySelectorAll('#visitor-counter').forEach(el => {
+      el.innerText = totalVisits;
+    });
+  });
+</script>
 </body>
 </html>
