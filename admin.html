@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <title>Admin Dashboard 👑 | Live Analytics</title>
+  <title>Admin Dashboard 👑 | Pro Analytics & Controls</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <style>
@@ -93,6 +93,7 @@
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
       gap: 8px;
+      margin-bottom: 12px;
     }
     .metric-box {
       background: rgba(0, 0, 0, 0.35);
@@ -117,14 +118,39 @@
       font-weight: 600;
     }
 
+    /* Form Inputs & Settings */
+    .form-group {
+      text-align: left;
+      margin-bottom: 12px;
+    }
+    .form-label {
+      font-size: 0.74rem;
+      color: #90e0ef;
+      font-weight: 600;
+      margin-bottom: 4px;
+      display: block;
+    }
+    .form-input {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 14px;
+      border: 1.2px solid rgba(0, 180, 216, 0.4);
+      background: rgba(0, 0, 0, 0.4);
+      color: #fff;
+      font-size: 0.85rem;
+      outline: none;
+    }
+    .form-input:focus { border-color: #ffd700; }
+
     /* Line-wise Menu Log Table */
     .log-table-wrap {
-      max-height: 280px;
+      max-height: 220px;
       overflow-y: auto;
       border-radius: 16px;
       border: 1px solid rgba(0, 180, 216, 0.25);
       background: rgba(0, 0, 0, 0.4);
       text-align: left;
+      margin-bottom: 10px;
     }
     .log-table-wrap::-webkit-scrollbar { width: 5px; }
     .log-table-wrap::-webkit-scrollbar-thumb { background: #00b4d8; border-radius: 10px; }
@@ -175,6 +201,11 @@
       cursor: pointer;
       box-shadow: 0 6px 20px rgba(0, 180, 216, 0.4);
     }
+    .btn-alt {
+      background: linear-gradient(135deg, #ffd166, #f4a261);
+      color: #1a0800;
+      margin-top: 8px;
+    }
   </style>
 </head>
 <body>
@@ -183,7 +214,7 @@
     
     <div class="top-bar">
       <a href="index.html" class="pill-btn">← Back to Hub</a>
-      <span class="pill-btn">👑 Admin Dashboard</span>
+      <span class="pill-btn">👑 Pro Admin Portal</span>
     </div>
 
     <div class="dashboard-container">
@@ -192,7 +223,7 @@
       <div class="admin-card" id="admin-lock-screen">
         <div style="font-size: 3rem; margin-bottom: 6px;">🔐👑</div>
         <h2 class="card-title">Admin Portal</h2>
-        <p class="card-desc">Enter admin passcode to view real-time site analytics</p>
+        <p class="card-desc">Enter admin passcode (@breakup) to access controls</p>
 
         <div class="lock-field-box">
           <input type="password" id="admin-pass-input" class="lock-input" placeholder="Enter admin passkey" autocomplete="off" />
@@ -204,12 +235,12 @@
         </button>
       </div>
 
-      <!-- STEP 2: LIVE ANALYTICS DASHBOARD (Completely hidden until correct PIN is entered) -->
+      <!-- STEP 2: PRO ANALYTICS & CONTROL DASHBOARD -->
       <div id="admin-dashboard-content" style="display: none; flex-direction: column; gap: 16px;">
         
         <!-- Live Metrics Overview -->
         <div class="admin-card">
-          <h2 class="card-title">Live Usage Overview</h2>
+          <h2 class="card-title">Live Traffic Analytics</h2>
           <p class="card-sub">Real-time engagement tracking</p>
 
           <div class="metrics-grid">
@@ -231,10 +262,40 @@
           </div>
         </div>
 
-        <!-- Line-wise User Details Menu -->
+        <!-- IDEA 1: GLOBAL ANNOUNCEMENT BANNER CONTROL -->
         <div class="admin-card">
-          <h2 class="card-title">User Logs & Activity</h2>
-          <p class="card-sub">Line-wise menu of recent visitors</p>
+          <h2 class="card-title">Announcement Banner</h2>
+          <p class="card-sub">Broadcast live message to all visitor screens</p>
+
+          <div class="form-group">
+            <label class="form-label">Banner Message:</label>
+            <input type="text" id="banner-text-input" class="form-input" placeholder="e.g. Happy Anniversary Akka & Bava! ❤️" />
+          </div>
+
+          <button class="btn-action" onclick="saveAnnouncementBanner()">
+            <span>Broadcast Banner 📡</span>
+          </button>
+        </div>
+
+        <!-- IDEA 2: PASSCODE & SETTINGS MANAGER -->
+        <div class="admin-card">
+          <h2 class="card-title">Security Settings</h2>
+          <p class="card-sub">Update site access passcode instantly</p>
+
+          <div class="form-group">
+            <label class="form-label">New Website PIN Code:</label>
+            <input type="text" id="setting-pin-input" class="form-input" placeholder="e.g. 1432 or 2026" />
+          </div>
+
+          <button class="btn-action btn-alt" onclick="saveSecuritySettings()">
+            <span>Update Passcode 🔒</span>
+          </button>
+        </div>
+
+        <!-- IDEA 3: LINE-WISE LOGS + CSV EXPORT -->
+        <div class="admin-card">
+          <h2 class="card-title">Visitor Logs & Export</h2>
+          <p class="card-sub">Line-wise menu of recent user sessions</p>
 
           <div class="log-table-wrap" id="visitor-log-container">
             <div class="log-row">
@@ -242,6 +303,10 @@
               <div class="log-row-bottom">Fetching Firebase database records</div>
             </div>
           </div>
+
+          <button class="btn-action" onclick="exportLogsToCSV()" style="background: linear-gradient(135deg, #25d366, #128c7e);">
+            <span>📥 Export Logs to CSV File</span>
+          </button>
         </div>
 
       </div>
@@ -254,7 +319,8 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   <script>
-    const ADMIN_PASSCODE = "@breakup"; // Admin passcode
+    const ADMIN_PASSCODE = "@breakup";
+    let globalVisitorsData = {};
 
     function verifyAdminPass() {
       const input = document.getElementById('admin-pass-input').value.trim();
@@ -289,17 +355,23 @@
         document.getElementById('stat-online').innerText = count > 0 ? count : 1;
       });
 
-      // 2. Track Total Views, Today's Usage & Line-wise Menu Log
+      // 2. Load current settings into inputs
+      db.ref('admin_settings').once('value', (snapshot) => {
+        const settings = snapshot.val() || {};
+        if (settings.announcement) document.getElementById('banner-text-input').value = settings.announcement;
+        if (settings.site_pin) document.getElementById('setting-pin-input').value = settings.site_pin;
+      });
+
+      // 3. Track Total Views, Today's Usage & Line-wise Menu Log
       db.ref('visitors').on('value', (snapshot) => {
-        const data = snapshot.val() || {};
-        const keys = Object.keys(data);
+        globalVisitorsData = snapshot.val() || {};
+        const keys = Object.keys(globalVisitorsData);
         
         let todayCount = 0;
         const todayStr = new Date().toLocaleDateString();
         const logContainer = document.getElementById('visitor-log-container');
         logContainer.innerHTML = "";
 
-        // Set total views counter
         document.getElementById('stat-total').innerText = keys.length;
 
         const reversedKeys = keys.reverse();
@@ -311,7 +383,7 @@
         }
 
         reversedKeys.forEach((key) => {
-          const visitor = data[key];
+          const visitor = globalVisitorsData[key];
           const timeRecorded = visitor.time || "Unknown Time";
           const pageVisited = visitor.page || "Unknown Page";
           const userAgent = visitor.device || "Unknown Device";
@@ -336,6 +408,49 @@
 
         document.getElementById('stat-today').innerText = todayCount;
       });
+    }
+
+    // IDEA 1: Save Announcement Banner to Firebase
+    function saveAnnouncementBanner() {
+      const msg = document.getElementById('banner-text-input').value.trim();
+      firebase.database().ref('admin_settings/announcement').set(msg, (error) => {
+        if (!error) alert("Announcement broadcasted successfully to all visitor pages! 📡");
+      });
+    }
+
+    // IDEA 2: Save Passcode Settings to Firebase
+    function saveSecuritySettings() {
+      const newPin = document.getElementById('setting-pin-input').value.trim();
+      if (!newPin) {
+        alert("Please enter a valid PIN code.");
+        return;
+      }
+      firebase.database().ref('admin_settings/site_pin').set(newPin, (error) => {
+        if (!error) alert("Website passcode updated successfully! 🔒");
+      });
+    }
+
+    // IDEA 3: One-Click CSV Data Export
+    function exportLogsToCSV() {
+      let csvContent = "data:text/csv;charset=utf-8,Timestamp,Page,Device\n";
+      
+      Object.keys(globalVisitorsData).forEach((key) => {
+        const v = globalVisitorsData[key];
+        const row = [
+          `"${v.time || ''}"`,
+          `"${v.page || ''}"`,
+          `"${(v.device || '').replace(/"/g, '""')}"`
+        ];
+        csvContent += row.join(",") + "\n";
+      });
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "visitor_analytics_logs.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
   </script>
 </body>
