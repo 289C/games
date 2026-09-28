@@ -412,5 +412,42 @@
       });
     }
   </script>
+<!-- REAL-TIME ONLINE USERS TRACKER -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    databaseURL: "https://friendsgame-872f5-default-rtdb.firebaseio.com/"
+  };
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
+  
+  const db = firebase.database();
+
+  // Reference to online presence list
+  const userRef = db.ref('online_users').push();
+  const connectedRef = db.ref('.info/connected');
+
+  connectedRef.on('value', (snapshot) => {
+    if (snapshot.val() === true) {
+      // Remove user gracefully when they disconnect/close tab
+      userRef.onDisconnect().remove();
+      // Set user as online
+      userRef.set({
+        online_at: new Date().toLocaleTimeString(),
+        device: navigator.userAgent
+      });
+    }
+  });
+
+  // Listen in real-time and count how many users are connected right now
+  db.ref('online_users').on('value', (snapshot) => {
+    const activeCount = snapshot.numChildren();
+    document.querySelectorAll('#online-users-count').forEach(el => {
+      el.innerText = activeCount > 0 ? activeCount : 1;
+    });
+  });
+</script>
 </body>
 </html>
