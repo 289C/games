@@ -91,28 +91,28 @@
     /* Metric Grid Boxes */
     .metrics-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
     }
     .metric-box {
       background: rgba(0, 0, 0, 0.35);
       border: 1px solid rgba(0, 180, 216, 0.3);
-      border-radius: 20px;
-      padding: 16px 10px;
+      border-radius: 16px;
+      padding: 12px 6px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
     }
     .metric-value {
-      font-size: 1.8rem;
+      font-size: 1.4rem;
       font-weight: 800;
       color: #ffd166;
       margin: 4px 0;
       text-shadow: 0 0 10px rgba(255, 209, 102, 0.4);
     }
     .metric-label {
-      font-size: 0.72rem;
+      font-size: 0.65rem;
       color: #caf0f8;
       font-weight: 600;
     }
@@ -204,8 +204,8 @@
         </button>
       </div>
 
-      <!-- STEP 2: LIVE ANALYTICS DASHBOARD (Hidden until correct PIN) -->
-      <div id="admin-dashboard-content" style="display: none; display: flex; flex-direction: column; gap: 16px;">
+      <!-- STEP 2: LIVE ANALYTICS DASHBOARD (Completely hidden until correct PIN is entered) -->
+      <div id="admin-dashboard-content" style="display: none; flex-direction: column; gap: 16px;">
         
         <!-- Live Metrics Overview -->
         <div class="admin-card">
@@ -214,14 +214,19 @@
 
           <div class="metrics-grid">
             <div class="metric-box">
-              <span style="font-size: 1.2rem;">🟢</span>
+              <span style="font-size: 1rem;">🟢</span>
               <div class="metric-value" id="stat-online">0</div>
-              <div class="metric-label">Users Online Now</div>
+              <div class="metric-label">Online Now</div>
             </div>
             <div class="metric-box">
-              <span style="font-size: 1.2rem;">📅</span>
+              <span style="font-size: 1rem;">📅</span>
               <div class="metric-value" id="stat-today">0</div>
-              <div class="metric-label">Today's Visits</div>
+              <div class="metric-label">Today</div>
+            </div>
+            <div class="metric-box">
+              <span style="font-size: 1rem;">👁️</span>
+              <div class="metric-value" id="stat-total">0</div>
+              <div class="metric-label">Total Views</div>
             </div>
           </div>
         </div>
@@ -249,7 +254,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   <script>
-    const ADMIN_PASSCODE = "@breakup"; // Updated admin passcode
+    const ADMIN_PASSCODE = "@breakup"; // Admin passcode
 
     function verifyAdminPass() {
       const input = document.getElementById('admin-pass-input').value.trim();
@@ -284,7 +289,7 @@
         document.getElementById('stat-online').innerText = count > 0 ? count : 1;
       });
 
-      // 2. Track Total & Today's Usage + Line-wise Menu Log
+      // 2. Track Total Views, Today's Usage & Line-wise Menu Log
       db.ref('visitors').on('value', (snapshot) => {
         const data = snapshot.val() || {};
         const keys = Object.keys(data);
@@ -293,6 +298,9 @@
         const todayStr = new Date().toLocaleDateString();
         const logContainer = document.getElementById('visitor-log-container');
         logContainer.innerHTML = "";
+
+        // Set total views counter
+        document.getElementById('stat-total').innerText = keys.length;
 
         const reversedKeys = keys.reverse();
 
