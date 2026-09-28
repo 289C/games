@@ -516,323 +516,36 @@
   <span class="counter-txt">Games Available</span>
   <span class="pulse-dot"></span>
 </div>
+<!-- CLICKABLE PREMIUM LIVE ANNOUNCEMENT BANNER -->
+<a href="occasions/index.html" id="targeted-live-banner" style="display: none; width: 100%; max-width: 410px; margin: 14px auto; background: linear-gradient(135deg, rgba(20, 10, 35, 0.85), rgba(45, 15, 60, 0.9)); border: 1.5px solid rgba(255, 215, 0, 0.5); border-radius: 20px; padding: 14px 18px; color: #fff; box-shadow: 0 0 25px rgba(255, 215, 0, 0.25), inset 0 0 15px rgba(255, 215, 0, 0.1); backdrop-filter: blur(12px); position: relative; overflow: hidden; z-index: 60; text-decoration: none; transition: transform 0.2s ease, box-shadow 0.2s ease; animation: bannerPulseGlow 3s infinite ease-in-out;" ontouchstart="this.style.transform='scale(0.97)'" ontouchend="this.style.transform='scale(1)'">
+  
+  <!-- Glowing Background Accent Light -->
+  <div style="position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,215,0,0.12) 0%, transparent 60%); pointer-events: none;"></div>
 
-
-<div class="banner-3d-wrapper">
-  <div class="banner-3d-card" id="bannerCard" onclick="window.location.href='occasions/index.html'">
-    <div class="banner-ambient-glow"></div>
-    <div class="banner-shimmer"></div>
-
-    <div class="banner-stage">
-      <div class="floating-orb orb-1"></div>
-      <div class="floating-orb orb-2"></div>
-      
-      <div class="floating-item float-cake">🎂</div>
-      <div class="floating-item float-gift">🎁</div>
-      <div class="floating-item float-sparkle">✨</div>
-      <div class="floating-item float-balloon">🎈</div>
-
-      <div class="stage-tag">
-        <span class="pulse-dot"></span> 3D EXPERIENCE STUDIO
+  <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; position: relative; z-index: 2;">
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <span style="font-size: 1.4rem; animation: bounceIcon 1.5s infinite;">📢</span>
+      <div style="display: flex; flex-direction: column; gap: 2px; text-align: left;">
+        <span style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1.5px; color: #ffd700; font-weight: 700;">Live Announcement</span>
+        <span id="targeted-banner-text" style="font-size: 0.82rem; font-weight: 600; color: #fff2b2; line-height: 1.3;"></span>
       </div>
-      <h2 class="stage-headline">Interactive 3D Celebrations</h2>
-      <p class="stage-subline">Blow candles, pop balloons & share customized wishes</p>
     </div>
-
-    <div class="banner-bottom-bar">
-      <div class="banner-app-info">
-        <div class="banner-app-icon">
-          <span>🎉</span>
-        </div>
-        <div class="banner-app-text">
-          <div class="banner-app-title">WishCraft 3D</div>
-          <div class="banner-app-category">Occasions & Memories Studio</div>
-        </div>
-      </div>
-
-      <a href="occasions/index.html" class="banner-cta-btn" onclick="event.stopPropagation();">
-        <span>Create</span>
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="5" y1="12" x2="19" y2="12"></line>
-          <polyline points="12 5 19 12 12 19"></polyline>
-        </svg>
-      </a>
-    </div>
+    <span style="font-size: 1.1rem; color: #ffd700; font-weight: 700; padding-right: 4px;">➔</span>
   </div>
-</div>
+</a>
 
 <style>
-  /* --- 3D BANNER STYLING --- */
-  .banner-3d-wrapper {
-    width: 100%;
-    max-width: 480px;
-    margin: 16px auto 24px auto;
-    perspective: 1000px;
-    padding: 0 10px;
+  @keyframes bannerPulseGlow {
+    0% { border-color: rgba(255, 215, 0, 0.4); box-shadow: 0 0 15px rgba(255, 215, 0, 0.2), inset 0 0 10px rgba(255, 215, 0, 0.05); }
+    50% { border-color: rgba(255, 215, 0, 0.9); box-shadow: 0 0 30px rgba(255, 215, 0, 0.45), inset 0 0 20px rgba(255, 215, 0, 0.15); }
+    100% { border-color: rgba(255, 215, 0, 0.4); box-shadow: 0 0 15px rgba(255, 215, 0, 0.2), inset 0 0 10px rgba(255, 215, 0, 0.05); }
   }
-
-  .banner-3d-card {
-    position: relative;
-    border-radius: 26px;
-    background: linear-gradient(145deg, rgba(26, 28, 44, 0.95), rgba(13, 15, 24, 0.98));
-    border: 1px solid rgba(255, 117, 140, 0.28);
-    box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.7),
-                0 0 28px -5px rgba(255, 64, 129, 0.22);
-    overflow: hidden;
-    cursor: pointer;
-    transform-style: preserve-3d;
-    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s ease, border-color 0.3s ease;
-  }
-
-  .banner-3d-card:hover {
-    transform: translateY(-4px) scale(1.01);
-    border-color: rgba(102, 252, 241, 0.6);
-    box-shadow: 0 22px 50px -10px rgba(0, 0, 0, 0.85),
-                0 0 35px 2px rgba(102, 252, 241, 0.28);
-  }
-
-  /* Shimmer Light Sweep */
-  .banner-shimmer {
-    position: absolute;
-    top: 0;
-    left: -150%;
-    width: 80%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.18), transparent);
-    transform: skewX(-22deg);
-    animation: bannerSweep 5.5s infinite ease-in-out;
-    pointer-events: none;
-    z-index: 5;
-  }
-
-  @keyframes bannerSweep {
-    0% { left: -150%; }
-    40%, 100% { left: 220%; }
-  }
-
-  /* Glowing Orbs */
-  .banner-ambient-glow {
-    position: absolute;
-    top: -40px;
-    right: -40px;
-    width: 170px;
-    height: 170px;
-    background: radial-gradient(circle, rgba(255, 64, 129, 0.35), transparent 70%);
-    pointer-events: none;
-    z-index: 1;
-  }
-
-  /* Top Stage Section */
-  .banner-stage {
-    position: relative;
-    padding: 24px 20px 20px 20px;
-    background: linear-gradient(180deg, rgba(255, 117, 140, 0.08) 0%, rgba(0, 0, 0, 0.1) 100%);
-    overflow: hidden;
-    z-index: 2;
-  }
-
-  .floating-orb {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(28px);
-    pointer-events: none;
-  }
-  .orb-1 {
-    width: 90px;
-    height: 90px;
-    background: #ff007f;
-    opacity: 0.25;
-    top: 10px;
-    right: 25px;
-    animation: orbFloat 6s ease-in-out infinite alternate;
-  }
-  .orb-2 {
-    width: 80px;
-    height: 80px;
-    background: #00d2ff;
-    opacity: 0.2;
-    bottom: -10px;
-    left: 10px;
-    animation: orbFloat 7s ease-in-out infinite alternate-reverse;
-  }
-
-  @keyframes orbFloat {
-    0% { transform: translateY(0px) scale(1); }
-    100% { transform: translateY(-14px) scale(1.15); }
-  }
-
-  /* 3D Floating Celebration Emojis */
-  .floating-item {
-    position: absolute;
-    font-size: 1.8rem;
-    pointer-events: none;
-    filter: drop-shadow(0 6px 12px rgba(0,0,0,0.5));
-    user-select: none;
-  }
-  .float-cake {
-    right: 22px;
-    top: 26px;
-    font-size: 2.7rem;
-    animation: floatAnim1 4s ease-in-out infinite;
-  }
-  .float-gift {
-    right: 90px;
-    top: 50px;
-    font-size: 1.6rem;
-    animation: floatAnim2 4.6s ease-in-out infinite 0.5s;
-  }
-  .float-sparkle {
-    right: 32px;
-    bottom: 12px;
-    font-size: 1.3rem;
-    animation: floatAnim1 3.2s ease-in-out infinite 1s;
-  }
-  .float-balloon {
-    right: 125px;
-    top: 18px;
-    font-size: 1.5rem;
-    animation: floatAnim2 5s ease-in-out infinite 1.2s;
-  }
-
-  @keyframes floatAnim1 {
-    0%, 100% { transform: translateY(0) rotate(0deg); }
-    50% { transform: translateY(-9px) rotate(6deg); }
-  }
-  @keyframes floatAnim2 {
-    0%, 100% { transform: translateY(0) rotate(0deg); }
-    50% { transform: translateY(-7px) rotate(-6deg); }
-  }
-
-  /* Stage Content */
-  .stage-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 4px 12px;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 20px;
-    font-size: 0.68rem;
-    font-weight: 700;
-    letter-spacing: 0.8px;
-    color: #66fcf1;
-    text-transform: uppercase;
-    margin-bottom: 10px;
-  }
-  .pulse-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: #66fcf1;
-    box-shadow: 0 0 8px #66fcf1;
-    animation: dotPulse 1.6s infinite;
-  }
-  @keyframes dotPulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.4; transform: scale(0.8); }
-  }
-
-  .stage-headline {
-    font-size: 1.22rem;
-    font-weight: 700;
-    line-height: 1.3;
-    color: #ffffff;
-    max-width: 65%;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
-  }
-  .stage-subline {
-    font-size: 0.78rem;
-    color: #b0b4c3;
-    margin-top: 6px;
-    max-width: 65%;
-    line-height: 1.4;
-  }
-
-  /* Bottom App Bar */
-  .banner-bottom-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 18px;
-    background: rgba(15, 17, 26, 0.85);
-    border-top: 1px solid rgba(255, 255, 255, 0.06);
-    position: relative;
-    z-index: 2;
-  }
-
-  .banner-app-info {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .banner-app-icon {
-    width: 44px;
-    height: 44px;
-    border-radius: 13px;
-    background: linear-gradient(135deg, #ff007f, #7928ca);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.35rem;
-    box-shadow: 0 4px 12px rgba(255, 0, 127, 0.35);
-    flex-shrink: 0;
-  }
-
-  .banner-app-title {
-    font-size: 0.92rem;
-    font-weight: 700;
-    color: #ffffff;
-    letter-spacing: 0.2px;
-  }
-
-  .banner-app-category {
-    font-size: 0.72rem;
-    color: #8c90a4;
-    margin-top: 2px;
-  }
-
-  /* Modern CTA Button */
-  .banner-cta-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 9px 18px;
-    border-radius: 20px;
-    background: linear-gradient(135deg, #00d2ff, #005bea);
-    color: #ffffff;
-    font-size: 0.84rem;
-    font-weight: 700;
-    text-decoration: none;
-    box-shadow: 0 4px 16px rgba(0, 91, 234, 0.45);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    flex-shrink: 0;
-  }
-
-  .banner-cta-btn:hover {
-    transform: translateY(-2px) scale(1.03);
-    box-shadow: 0 6px 20px rgba(0, 210, 255, 0.6);
+  @keyframes bounceIcon {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
   }
 </style>
-
-<script>
-  // Dynamic 3D card tilt effect on mouse movement / touch interaction
-  const banner = document.getElementById('bannerCard');
-  if (banner) {
-    banner.addEventListener('mousemove', (e) => {
-      const rect = banner.getBoundingClientRect();
-      const x = e.clientX - rect.left - rect.width / 2;
-      const y = e.clientY - rect.top - rect.height / 2;
-      const rotX = -(y / rect.height) * 10;
-      const rotY = (x / rect.width) * 10;
-      banner.style.transform = `perspective(1000px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale3d(1.01, 1.01, 1.01)`;
-    });
-
-    banner.addEventListener('mouseleave', () => {
-      banner.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
-    });
-  }
-  </script>
+  
 
   <!-- Games Grid -->
   <main class="grid">
