@@ -516,23 +516,47 @@
   <span class="counter-txt">Games Available</span>
   <span class="pulse-dot"></span>
 </div>
-<!-- CLICKABLE PREMIUM LIVE ANNOUNCEMENT BANNER -->
-<a href="occasions/index.html" id="targeted-live-banner" style="display: none; width: 100%; max-width: 410px; margin: 14px auto; background: linear-gradient(135deg, rgba(20, 10, 35, 0.85), rgba(45, 15, 60, 0.9)); border: 1.5px solid rgba(255, 215, 0, 0.5); border-radius: 20px; padding: 14px 18px; color: #fff; box-shadow: 0 0 25px rgba(255, 215, 0, 0.25), inset 0 0 15px rgba(255, 215, 0, 0.1); backdrop-filter: blur(12px); position: relative; overflow: hidden; z-index: 60; text-decoration: none; transition: transform 0.2s ease, box-shadow 0.2s ease; animation: bannerPulseGlow 3s infinite ease-in-out;" ontouchstart="this.style.transform='scale(0.97)'" ontouchend="this.style.transform='scale(1)'">
+<!-- INTERACTIVE WISHES & CONTACT BANNER -->
+<div style="width: 100%; max-width: 410px; margin: 14px auto; background: linear-gradient(135deg, rgba(20, 10, 35, 0.9), rgba(45, 15, 60, 0.95)); border: 1.5px solid rgba(255, 215, 0, 0.6); border-radius: 22px; padding: 16px 18px; color: #fff; box-shadow: 0 0 25px rgba(255, 215, 0, 0.25), inset 0 0 15px rgba(255, 215, 0, 0.1); backdrop-filter: blur(12px); position: relative; overflow: hidden; z-index: 60; animation: bannerPulseGlow 3s infinite ease-in-out;">
   
   <!-- Glowing Background Accent Light -->
   <div style="position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,215,0,0.12) 0%, transparent 60%); pointer-events: none;"></div>
 
-  <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; position: relative; z-index: 2;">
-    <div style="display: flex; align-items: center; gap: 12px;">
-      <span style="font-size: 1.4rem; animation: bounceIcon 1.5s infinite;">📢</span>
-      <div style="display: flex; flex-direction: column; gap: 2px; text-align: left;">
-        <span style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1.5px; color: #ffd700; font-weight: 700;">Live Announcement</span>
-        <span id="targeted-banner-text" style="font-size: 0.82rem; font-weight: 600; color: #fff2b2; line-height: 1.3;"></span>
+  <div style="display: flex; flex-direction: column; gap: 12px; position: relative; z-index: 2;">
+    
+    <!-- Top row: Icon & Clickable Link to Example Wishes Page -->
+    <a href="occasions/index.html" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; text-decoration: none; color: inherit;">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <span style="font-size: 1.5rem; animation: bounceIcon 1.5s infinite;">🎉</span>
+        <div style="display: flex; flex-direction: column; gap: 2px; text-align: left;">
+          <span style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1.5px; color: #ffd700; font-weight: 700;">Custom Wishes Studio</span>
+          <span style="font-size: 0.82rem; font-weight: 600; color: #fff2b2; line-height: 1.3;">Tap to view example wishes (Anniversaries, Birthdays & More) ➔</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- Divider Line -->
+    <div style="width: 100%; height: 1px; background: rgba(255, 215, 0, 0.2);"></div>
+
+    <!-- Bottom row: Call to action & Contact Buttons -->
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <span style="font-size: 0.72rem; color: #bbf2f6; font-weight: 600; text-align: center;">💬 DM me for any type of custom wishes!</span>
+      
+      <div style="display: flex; gap: 8px;">
+        <!-- Instagram Button -->
+        <a href="https://instagram.com/_satish_official_16" target="_blank" style="flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px; background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045); color: #fff; padding: 8px 12px; border-radius: 14px; font-size: 0.75rem; font-weight: 700; text-decoration: none; box-shadow: 0 4px 12px rgba(253, 29, 29, 0.3);">
+          <span>📷 Instagram DM</span>
+        </a>
+
+        <!-- WhatsApp Button -->
+        <a href="https://wa.me/?text=Hi%20Satish,%20I%20want%20to%20create%20a%20custom%20wish%20website!" target="_blank" style="flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px; background: linear-gradient(135deg, #25d366, #128c7e); color: #fff; padding: 8px 12px; border-radius: 14px; font-size: 0.75rem; font-weight: 700; text-decoration: none; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);">
+          <span>💬 WhatsApp Chat</span>
+        </a>
       </div>
     </div>
-    <span style="font-size: 1.1rem; color: #ffd700; font-weight: 700; padding-right: 4px;">➔</span>
+
   </div>
-</a>
+</div>
 
 <style>
   @keyframes bannerPulseGlow {
@@ -545,7 +569,7 @@
     50% { transform: translateY(-4px); }
   }
 </style>
-  
+
 
   <!-- Games Grid -->
   <main class="grid">
