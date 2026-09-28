@@ -270,6 +270,12 @@
       color: #ffccd5;
       line-height: 1.35;
     }
+    
+@keyframes pulseDot {
+  0% { transform: scale(0.9); opacity: 0.6; }
+  50% { transform: scale(1.3); opacity: 1; }
+  100% { transform: scale(0.9); opacity: 0.6; }
+}
 
     .slot-tag {
       font-size: 0.65rem;
@@ -305,9 +311,11 @@
 
       <span class="top-pill-btn" onclick="fireParty(event)">✨ Hub</span>
     </div>
-    <div style="font-size: 0.78rem; color: #25d366; margin-top: 10px; font-weight: 650; display: inline-flex; align-items: center; gap: 6px; background: rgba(37, 211, 102, 0.1); padding: 4px 12px; border-radius: 12px; border: 1px solid rgba(37, 211, 102, 0.3);">
-  🟢 Users Online Now: <span id="online-users-count">1</span>
-    </div>
+<div style="font-size: 0.72rem; color: #25d366; font-weight: 700; display: inline-flex; align-items: center; gap: 5px; background: rgba(37, 211, 102, 0.12); padding: 5px 12px; border-radius: 20px; border: 1px solid rgba(37, 211, 102, 0.4); backdrop-filter: blur(10px); box-shadow: 0 4px 12px rgba(37, 211, 102, 0.2);">
+  <span style="width: 7px; height: 7px; background: #25d366; border-radius: 50%; display: inline-block; box-shadow: 0 0 6px #25d366; animation: pulseDot 1.5s infinite;"></span>
+  <span>Online: <span id="online-users-count">1</span></span>
+</div>
+
     
 
     <!-- Developer Profile Card -->
