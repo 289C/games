@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>HOLE.IO 2 - City</title>
+  <title>HOLE.IO 2 - 3D City Remastered</title>
   <style>
     * {
       box-sizing: border-box;
@@ -18,7 +18,7 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background-color: #6a935b;
+      background-color: #4e6b43;
       color: #fff;
       touch-action: none;
     }
@@ -156,7 +156,7 @@
     }
 
     .title {
-      font-size: 32px;
+      font-size: 30px;
       font-weight: 900;
       letter-spacing: 2px;
       background: linear-gradient(135deg, #c084fc, #a855f7);
@@ -242,8 +242,8 @@
     }
 
     @keyframes floatUp {
-      0% { opacity: 1; transform: translateY(0); }
-      100% { opacity: 0; transform: translateY(-40px); }
+      0% { opacity: 1; transform: translateY(0) scale(1); }
+      100% { opacity: 0; transform: translateY(-50px) scale(1.2); }
     }
   </style>
 </head>
@@ -283,9 +283,9 @@
   <div id="lobbyScreen" class="screen-overlay">
     <div class="card">
       <h1 class="title">HOLE.IO 2</h1>
-      <p style="color: #94a3b8; font-size: 13px; margin-bottom: 10px;">Play solo or 1v1 with friends live!</p>
+      <p style="color: #94a3b8; font-size: 13px; margin-bottom: 10px;">3D City Edition - Play Solo & 1v1</p>
       
-      <input type="text" id="playerName" class="input-box" value="Satish" maxlength="12" placeholder="Your Name" />
+      <input type="text" id="playerName" class="input-box" value="Satish Kommana" maxlength="16" placeholder="Your Name" />
       
       <button id="btnSolo" type="button" class="btn btn-purple" onclick="startMatch(true)">Play Solo (vs Bots)</button>
 
@@ -313,7 +313,7 @@
   <!-- Game Over Screen -->
   <div id="gameOverScreen" class="screen-overlay hidden">
     <div class="card">
-      <h2 style="font-size: 26px; font-weight: 900; margin-bottom: 4px;">TIME'S UP!</h2>
+      <h2 style="font-size: 26px; font-weight: 900; margin-bottom: 4px;">TIME'ROS UP!</h2>
       <div style="font-size: 40px; font-weight: 900; color: #38bdf8;" id="endScore">0</div>
       <div style="font-size: 14px; color: #94a3b8; margin-bottom: 12px;" id="endSize">Hole size: 2.4m</div>
 
@@ -457,21 +457,21 @@
 
         ctx.save();
         ctx.beginPath();
-        ctx.arc(sx, sy, this.radius + 6, 0, Math.PI * 2);
+        ctx.arc(sx, sy, this.radius + 7, 0, Math.PI * 2);
         ctx.fillStyle = this.color;
         ctx.shadowColor = this.color;
-        ctx.shadowBlur = 16;
+        ctx.shadowBlur = 18;
         ctx.fill();
 
         ctx.beginPath();
         ctx.arc(sx, sy, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = '#260d36';
+        ctx.fillStyle = '#1d072b';
         ctx.shadowBlur = 0;
         ctx.fill();
 
         ctx.beginPath();
-        ctx.arc(sx, sy, this.radius * 0.72, 0, Math.PI * 2);
-        ctx.fillStyle = '#140520';
+        ctx.arc(sx, sy, this.radius * 0.75, 0, Math.PI * 2);
+        ctx.fillStyle = '#0f0217';
         ctx.fill();
 
         ctx.beginPath();
@@ -490,9 +490,6 @@
     class Vehicle {
       constructor(type) {
         this.type = type;
-        this.isFalling = false;
-        this.fall = 1.0;
-        this.targetHole = null;
         this.init();
       }
 
@@ -503,15 +500,15 @@
         this.horizontal = Math.random() < 0.5;
 
         if (this.type === 'bus') {
-          this.w = 70;
-          this.h = 24;
+          this.w = 72;
+          this.h = 28;
           this.color = '#eab308';
           this.reqRadius = 46;
           this.points = 120;
           this.speed = (Math.random() * 0.8 + 1.2) * (Math.random() < 0.5 ? 1 : -1);
         } else {
-          this.w = 34;
-          this.h = 18;
+          this.w = 36;
+          this.h = 20;
           const colors = ['#ef4444', '#3b82f6', '#10b981', '#f97316'];
           this.color = colors[Math.floor(Math.random() * colors.length)];
           this.reqRadius = 30;
@@ -535,10 +532,10 @@
 
       update() {
         if (this.isFalling) {
-          this.fall -= 0.06;
+          this.fall -= 0.08;
           if (this.targetHole) {
-            this.x += (this.targetHole.x - this.x) * 0.18;
-            this.y += (this.targetHole.y - this.y) * 0.18;
+            this.x += (this.targetHole.x - this.x) * 0.2;
+            this.y += (this.targetHole.y - this.y) * 0.2;
           }
           return;
         }
@@ -561,17 +558,17 @@
         ctx.translate(sx, sy);
         if (this.isFalling) ctx.scale(Math.max(0, this.fall), Math.max(0, this.fall));
 
-        ctx.fillStyle = 'rgba(0,0,0,0.28)';
-        ctx.fillRect(-this.w / 2 + 3, -this.h / 2 + 3, this.w, this.h);
+        ctx.fillStyle = 'rgba(0,0,0,0.35)';
+        ctx.fillRect(-this.w / 2 + 4, -this.h / 2 + 6, this.w, this.h);
 
         ctx.fillStyle = this.color;
         ctx.fillRect(-this.w / 2, -this.h / 2, this.w, this.h);
 
         ctx.fillStyle = '#bae6fd';
         if (this.w > this.h) {
-          ctx.fillRect(-this.w / 2 + 4, -this.h / 2 + 3, this.w - 8, this.h - 6);
+          ctx.fillRect(-this.w / 2 + 5, -this.h / 2 + 4, this.w - 10, this.h - 8);
         } else {
-          ctx.fillRect(-this.w / 2 + 3, -this.h / 2 + 4, this.w - 6, this.h - 8);
+          ctx.fillRect(-this.w / 2 + 4, -this.h / 2 + 5, this.w - 8, this.h - 10);
         }
         ctx.restore();
       }
@@ -594,10 +591,10 @@
 
       update() {
         if (this.isFalling) {
-          this.fall -= 0.08;
+          this.fall -= 0.1;
           if (this.targetHole) {
-            this.x += (this.targetHole.x - this.x) * 0.2;
-            this.y += (this.targetHole.y - this.y) * 0.2;
+            this.x += (this.targetHole.x - this.x) * 0.22;
+            this.y += (this.targetHole.y - this.y) * 0.22;
           }
           return;
         }
@@ -632,25 +629,26 @@
         this.angle = 0;
         this.tiltSpeed = (Math.random() - 0.5) * 0.12;
         this.targetHole = null;
+        this.height3D = isTree ? 18 : 65 + Math.random() * 45;
 
         if (isTree) {
-          this.radius = 16;
-          this.reqRadius = 24;
+          this.radius = 18;
+          this.reqRadius = 26;
           this.points = 25;
         } else {
           this.radius = Math.max(w, h) / 2;
-          this.reqRadius = this.radius * 0.95;
+          this.reqRadius = this.radius * 0.92;
           this.points = 350;
         }
       }
 
       update() {
         if (this.isFalling) {
-          this.fall -= 0.04;
+          this.fall -= 0.05;
           this.angle += this.tiltSpeed;
           if (this.targetHole) {
-            this.x += (this.targetHole.x - this.x) * 0.14;
-            this.y += (this.targetHole.y - this.y) * 0.14;
+            this.x += (this.targetHole.x - this.x) * 0.15;
+            this.y += (this.targetHole.y - this.y) * 0.15;
           }
         }
       }
@@ -667,33 +665,61 @@
         }
 
         if (this.isTree) {
-          ctx.fillStyle = 'rgba(0,0,0,0.2)';
+          ctx.fillStyle = 'rgba(0,0,0,0.3)';
           ctx.beginPath();
-          ctx.arc(2, 2, 14, 0, Math.PI * 2);
+          ctx.arc(3, 4, 16, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.fillStyle = '#16a34a';
+          ctx.beginPath();
+          ctx.arc(0, 0, 16, 0, Math.PI * 2);
           ctx.fill();
 
           ctx.fillStyle = '#22c55e';
           ctx.beginPath();
-          ctx.arc(0, 0, 14, 0, Math.PI * 2);
+          ctx.arc(-3, -3, 10, 0, Math.PI * 2);
           ctx.fill();
         } else {
-          ctx.fillStyle = 'rgba(0,0,0,0.25)';
-          ctx.fillRect(-this.w / 2 + 6, -this.h / 2 + 6, this.w, this.h);
+          // 3D Isometric Extrusion (Building Walls & Roof)
+          const offX = 14;
+          const offY = -this.height3D;
 
+          // Drop shadow
+          ctx.fillStyle = 'rgba(0,0,0,0.35)';
+          ctx.fillRect(-this.w / 2 + 8, -this.h / 2 + 10, this.w, this.h);
+
+          // Right Wall (Isometric Depth)
+          ctx.fillStyle = '#334155';
+          ctx.beginPath();
+          ctx.moveTo(this.w / 2, -this.h / 2);
+          ctx.lineTo(this.w / 2 + offX, -this.h / 2 + offY);
+          ctx.lineTo(this.w / 2 + offX, this.h / 2 + offY);
+          ctx.lineTo(this.w / 2, this.h / 2);
+          ctx.closePath();
+          ctx.fill();
+
+          // Front Wall
+          ctx.fillStyle = '#475569';
+          ctx.beginPath();
+          ctx.moveTo(-this.w / 2, this.h / 2);
+          ctx.lineTo(this.w / 2, this.h / 2);
+          ctx.lineTo(this.w / 2 + offX, this.h / 2 + offY);
+          ctx.lineTo(-this.w / 2 + offX, this.h / 2 + offY);
+          ctx.closePath();
+          ctx.fill();
+
+          // Roof Top
           ctx.fillStyle = '#64748b';
-          ctx.fillRect(-this.w / 2, -this.h / 2, this.w, this.h);
+          ctx.fillRect(-this.w / 2 + offX, -this.h / 2 + offY, this.w, this.h);
 
-          ctx.fillStyle = '#94a3b8';
-          ctx.fillRect(-this.w / 2, -this.h / 2, this.w, 14);
-
-          ctx.fillStyle = '#fef08a';
-          for (let row = 18; row < this.h - 8; row += 16) {
-            for (let col = 8; col < this.w - 8; col += 14) {
-              ctx.fillRect(-this.w / 2 + col, -this.h / 2 + row, 8, 8);
+          // Glass Windows on Roof
+          ctx.fillStyle = '#38bdf8';
+          for (let row = 14; row < this.h - 10; row += 18) {
+            for (let col = 12; col < this.w - 10; col += 16) {
+              ctx.fillRect(-this.w / 2 + offX + col, -this.h / 2 + offY + row, 8, 10);
             }
           }
         }
-      }
         ctx.restore();
       }
     }
@@ -737,7 +763,7 @@
     }
 
     function drawRealCityGround(camX, camY) {
-      ctx.fillStyle = '#7da06d';
+      ctx.fillStyle = '#5c804f';
       ctx.fillRect(0, 0, screenW, screenH);
 
       const step = BLOCK_SIZE + ROAD_WIDTH;
@@ -751,14 +777,14 @@
           const bx = c * step - camX;
           const by = r * step - camY;
 
-          ctx.fillStyle = '#d1d5db';
-          ctx.fillRect(bx - 12, by - 12, BLOCK_SIZE + 24, BLOCK_SIZE + 24);
+          ctx.fillStyle = '#cbd5e1';
+          ctx.fillRect(bx - 14, by - 14, BLOCK_SIZE + 28, BLOCK_SIZE + 28);
 
-          ctx.fillStyle = '#9cb988';
+          ctx.fillStyle = '#789c68';
           ctx.fillRect(bx, by, BLOCK_SIZE, BLOCK_SIZE);
 
-          ctx.fillStyle = '#8eae7b';
-          ctx.fillRect(bx + 16, by + 16, BLOCK_SIZE - 32, BLOCK_SIZE - 32);
+          ctx.fillStyle = '#6a8f5b';
+          ctx.fillRect(bx + 18, by + 18, BLOCK_SIZE - 36, BLOCK_SIZE - 36);
 
           const rx = bx + BLOCK_SIZE;
           const ry = by + BLOCK_SIZE;
@@ -769,11 +795,6 @@
           }
           for (let i = 0; i < BLOCK_SIZE; i += 40) {
             ctx.fillRect(rx + ROAD_WIDTH / 2 - 2, by + i, 4, 22);
-          }
-
-          for (let w = 0; w < 4; w++) {
-            ctx.fillRect(rx + 12 + w * 26, by + 4, 14, 26);
-            ctx.fillRect(bx + 4, ry + 12 + w * 26, 26, 14);
           }
         }
       }
@@ -938,7 +959,7 @@
 
     function saveAndGetLeaderboard(name, score) {
       let list = [
-        { name: 'Satish', score: 26820 },
+        { name: 'Satish Kommana', score: 26820 },
         { name: 'Ganesh', score: 24730 },
         { name: 'Durga', score: 21130 },
         { name: 'Sai', score: 18070 },
@@ -952,7 +973,7 @@
         if (saved) list = JSON.parse(saved);
       } catch (e) {}
 
-      list.push({ name: name || 'Satish', score: score || 0 });
+      list.push({ name: name || 'Satish Kommana', score: score || 0 });
       list.sort((a, b) => b.score - a.score);
 
       const rank = list.findIndex(i => i.name === name && i.score === score) + 1;
@@ -969,7 +990,7 @@
       isPlaying = true;
       matchTime = 120;
 
-      const pName = document.getElementById('playerName').value.trim() || 'Satish';
+      const pName = document.getElementById('playerName').value.trim() || 'Satish Kommana';
       player = new BlackHole(WORLD_W / 2, WORLD_H / 2, 24, '#a855f7', pName, false);
 
       camera.x = player.x - screenW / 2;
@@ -1020,7 +1041,7 @@
       const listEl = document.getElementById('leaderboardList');
       if (listEl) {
         listEl.innerHTML = '';
-        const { rank, topList } = saveAndGetLeaderboard(player ? player.name : 'Satish', finalScore);
+        const { rank, topList } = saveAndGetLeaderboard(player ? player.name : 'Satish Kommana', finalScore);
 
         topList.forEach((item, index) => {
           const isMe = player && item.name === player.name && item.score === finalScore;
@@ -1068,5 +1089,3 @@
   </script>
 </body>
 </html>
-
-    
