@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <title>Festival Greetings & Menu 🪔✨ | Satish</title>
+  <title>Festival Wishes Hub 🪔✨ | Satish Kommana</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <style>
@@ -24,7 +24,7 @@
       overflow-x: hidden;
     }
 
-    .festival-wrapper {
+    .hub-wrapper {
       min-height: 100vh;
       display: flex;
       flex-direction: column;
@@ -76,109 +76,142 @@
 
     .container {
       width: 100%;
-      max-width: 410px;
+      max-width: 390px;
       display: flex;
       flex-direction: column;
       gap: 16px;
       z-index: 10;
     }
 
-    /* Glassmorphic Menu Card */
-    .menu-card {
+    /* Creator Profile Card */
+    .profile-card {
       background: linear-gradient(165deg, rgba(255, 255, 255, 0.06) 0%, rgba(20, 14, 5, 0.92) 100%);
-      border: 1.5px solid rgba(255, 215, 0, 0.45);
-      border-radius: 28px;
-      padding: 24px 18px;
-      box-shadow: 0 20px 45px rgba(0,0,0,0.7), 0 0 25px rgba(255, 215, 0, 0.18);
-      backdrop-filter: blur(16px);
-      text-align: center;
+      border: 1.5px solid rgba(255, 215, 0, 0.4);
+      border-radius: 24px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      backdrop-filter: blur(14px);
+    }
+    .profile-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .profile-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #ffd700;
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+    }
+    .profile-info h3 {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #fff2b2;
+    }
+    .profile-info p {
+      font-size: 0.68rem;
+      color: #d1b880;
+    }
+    .profile-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045);
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-decoration: none;
+      box-shadow: 0 4px 12px rgba(253, 29, 29, 0.3);
     }
 
-    .card-title {
+    /* Hub Header Section */
+    .hub-header {
+      text-align: center;
+      padding: 8px 0;
+    }
+    .hub-title {
       font-family: 'Playfair Display', serif;
-      font-size: 1.5rem;
+      font-size: 1.65rem;
       color: #ffd700;
       margin-bottom: 4px;
-      text-shadow: 0 0 12px rgba(255, 215, 0, 0.4);
+      text-shadow: 0 0 16px rgba(255, 215, 0, 0.4);
     }
-    .card-sub {
-      font-size: 0.78rem;
+    .hub-desc {
+      font-size: 0.8rem;
       color: #ffe8a3;
-      margin-bottom: 16px;
+      line-height: 1.4;
     }
 
-    /* Festival Banner Options */
-    .banner-option {
-      background: rgba(0, 0, 0, 0.4);
-      border: 1px solid rgba(255, 215, 0, 0.3);
-      border-radius: 18px;
-      padding: 14px 16px;
-      margin-bottom: 12px;
+    /* Slot Cards */
+    .slot-card {
+      background: linear-gradient(165deg, rgba(255, 255, 255, 0.05) 0%, rgba(20, 14, 5, 0.88) 100%);
+      border: 1.5px solid rgba(255, 215, 0, 0.35);
+      border-radius: 24px;
+      padding: 16px 18px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       text-decoration: none;
       color: inherit;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      backdrop-filter: blur(14px);
       transition: transform 0.2s ease, border-color 0.2s ease;
     }
-    .banner-option:active {
+    .slot-card:active {
       transform: scale(0.97);
       border-color: #ffd700;
     }
 
-    .banner-info {
+    .slot-left {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
       text-align: left;
     }
-    .banner-icon {
-      font-size: 1.8rem;
-      background: rgba(255, 215, 0, 0.15);
-      padding: 8px;
-      border-radius: 12px;
+    .slot-icon-box {
+      width: 46px;
+      height: 46px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #f39c12, #d35400);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(243, 156, 18, 0.4);
+      flex-shrink: 0;
     }
-    .banner-text h4 {
+    .slot-details h4 {
       font-size: 0.88rem;
       font-weight: 700;
       color: #fff2b2;
+      margin-bottom: 2px;
     }
-    .banner-text p {
-      font-size: 0.7rem;
+    .slot-details p {
+      font-size: 0.68rem;
       color: #d1b880;
-    }
-    .arrow-icon {
-      font-size: 1.1rem;
-      color: #ffd700;
-      font-weight: 700;
+      line-height: 1.3;
     }
 
-    /* Social Contact Box */
-    .social-box {
-      margin-top: 10px;
-      background: rgba(0, 0, 0, 0.4);
-      border: 1.5px solid rgba(255, 215, 0, 0.3);
-      border-radius: 20px;
-      padding: 16px;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .social-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      color: #fff;
-      padding: 11px 16px;
-      border-radius: 18px;
-      font-size: 0.8rem;
+    .status-badge {
+      font-size: 0.68rem;
       font-weight: 700;
-      text-decoration: none;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+      padding: 5px 10px;
+      border-radius: 12px;
+      white-space: nowrap;
+      border: 1px solid rgba(255, 215, 0, 0.4);
     }
+    .badge-example { background: rgba(0, 180, 216, 0.2); color: #90e0ef; border-color: rgba(0, 180, 216, 0.4); }
+    .badge-live { background: rgba(37, 211, 102, 0.2); color: #25d366; border-color: rgba(37, 211, 102, 0.4); }
+    .badge-ready { background: rgba(255, 215, 0, 0.2); color: #ffd700; border-color: rgba(255, 215, 0, 0.4); }
   </style>
 </head>
 <body>
@@ -186,52 +219,71 @@
   <!-- BACKGROUND MUSIC AUDIO ELEMENT -->
   <audio id="bg-music" src="../1.mp3" loop preload="auto"></audio>
 
-  <div class="festival-wrapper" id="main-wrap">
+  <div class="hub-wrapper" id="main-wrap">
     
     <!-- Top Action Bar -->
     <div class="top-bar">
-      <a href="../index.html" class="pill-btn">← Main Hub</a>
-      <span class="pill-btn" id="stage-tag" onclick="toggleMusic()" style="cursor: pointer;" title="Toggle Music">🎵 Music</span>
+      <a href="../index.html" class="pill-btn">← Categories</a>
+      <span class="pill-btn" id="stage-tag" onclick="toggleMusic()" style="cursor: pointer;" title="Toggle Music">🪔 Festival Hub</span>
     </div>
 
     <div class="container">
       
-      <!-- MENU HEADER CARD -->
-      <div class="menu-card">
-        <div style="font-size: 2.5rem; margin-bottom: 4px;">🪔✨</div>
-        <h2 class="card-title">Festival Hub & Menu</h2>
-        <p class="card-sub">Choose a celebration banner or explore the feast menu curated by Satish</p>
-
-        <!-- FESTIVAL BANNER OPTIONS -->
-        <a href="menu.html" class="banner-option">
-          <div class="banner-info">
-            <span class="banner-icon">🍽️</span>
-            <div class="banner-text">
-              <h4>Festival Feast Menu</h4>
-              <p>Explore traditional recipes & royal dishes</p>
-            </div>
+      <!-- CREATOR PROFILE CARD -->
+      <div class="profile-card">
+        <div class="profile-left">
+          <img src="../Insta.jpg" alt="Satish Kommana" class="profile-avatar" onerror="this.src='https://placehold.co/100x100/900/fff?text=SK';" />
+          <div class="profile-info">
+            <h3>Satish Kommana</h3>
+            <p>Lead Developer & Creator</p>
           </div>
-          <span class="arrow-icon">➔</span>
-        </a>
-
-        <!-- SOCIAL CONTACT & DM SECTION -->
-        <div class="social-box">
-          <span style="font-size: 0.8rem; color: #ffd700; font-weight: 700;">💬 Connect with Satish</span>
-
-          <!-- WhatsApp Button -->
-          <a href="https://wa.me/9281267188?text=Hi%20Satish,%20I%20saw%20your%20festival%20website!" target="_blank" class="social-btn" style="background: linear-gradient(135deg, #25d366, #128c7e);">
-            <span style="font-size: 1.1rem;">💬</span>
-            <span>WhatsApp: 9281267188</span>
-          </a>
-
-          <!-- Instagram Button with Insta.jpg Logo -->
-          <a href="https://instagram.com/_satish_official_16" target="_blank" class="social-btn" style="background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045);">
-            <img src="../Insta.jpg" alt="Instagram Logo" style="width: 22px; height: 22px; border-radius: 50%; object-fit: cover; border: 1px solid #fff;" onerror="this.src='https://placehold.co/40x40/900/fff?text=IG';" />
-            <span>IG: @_satish_official_16</span>
-          </a>
         </div>
-
+        <a href="https://instagram.com/_satish_official_16" target="_blank" class="profile-badge">
+          <span>@_satish_official_16 ↗</span>
+        </a>
       </div>
+
+      <!-- HUB HEADER -->
+      <div class="hub-header">
+        <h2 class="hub-title">Festival Wishes Hub 🪔</h2>
+        <p class="hub-desc">Celebrate joyous occasions with interactive festival greeting cards & royal feasts</p>
+      </div>
+
+      <!-- SLOT 1: INTERACTIVE FESTIVAL DEMO -->
+      <a href="index.html" class="slot-card" onclick="alert('You are exploring the live interactive festival demo!')">
+        <div class="slot-left">
+          <div class="slot-icon-box" style="background: linear-gradient(135deg, #00b4d8, #0077b6);">✨</div>
+          <div class="slot-details">
+            <h4>Interactive Festival Demo 🎆</h4>
+            <p>Scratch Card • Gift Box • 3D Photo Deck • Music</p>
+          </div>
+        </div>
+        <span class="status-badge badge-example">EXAMPLE ✨</span>
+      </a>
+
+      <!-- SLOT 2: FESTIVAL FEAST MENU -->
+      <a href="menu.html" class="slot-card">
+        <div class="slot-left">
+          <div class="slot-icon-box" style="background: linear-gradient(135deg, #25d366, #128c7e);">🍽️</div>
+          <div class="slot-details">
+            <h4>Festival Feast Menu 🍛</h4>
+            <p>Traditional Starters, Royal Biryani & Sweets</p>
+          </div>
+        </div>
+        <span class="status-badge badge-live">LIVE 🪔</span>
+      </a>
+
+      <!-- SLOT 3: CUSTOM FESTIVAL SLOT -->
+      <a href="https://wa.me/9281267188?text=Hi%20Satish,%20I%20want%20to%20create%20a%20custom%20festival%20website!" target="_blank" class="slot-card">
+        <div class="slot-left">
+          <div class="slot-icon-box" style="background: linear-gradient(135deg, #833ab4, #fd1d1d);">🪔</div>
+          <div class="slot-details">
+            <h4>Custom Festival Slot 🌟</h4>
+            <p>Request custom wishes, photos, music & greetings</p>
+          </div>
+        </div>
+        <span class="status-badge badge-ready">READY ✨</span>
+      </a>
 
     </div>
 
