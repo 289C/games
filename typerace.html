@@ -68,7 +68,6 @@
             font-size: 16px;
             flex: 1;
         }
-        /* Race Track */
         .track {
             background: #222b45;
             border-radius: 8px;
@@ -101,7 +100,6 @@
             padding: 3px 8px;
             border-radius: 4px;
         }
-        /* Typing Area */
         .text-display {
             background: #0f3460;
             padding: 15px;
@@ -154,16 +152,16 @@
             <p>Generate a room code to play with friends (1-5 members) or test your speed against bots[span_0](start_span)[span_0](end_span)!</p>
             
             <div style="display: flex; align-items: center; gap: 10px;">
-                <button onclick="generateRoom()">Generate Room Code</button>
+                <button type="button" onclick="generateRoom()">Generate Room Code</button>
                 <span id="roomCodeDisplay" style="font-weight: bold; color: var(--primary-color); font-size: 18px;"></span>
             </div>
 
             <div style="display: flex; gap: 10px;">
                 <input type="text" id="joinCodeInput" placeholder="Enter Room Code">
-                <button onclick="joinRoom()">Join Room</button>
+                <button type="button" onclick="joinRoom()">Join Room</button>
             </div>
 
-            <button onclick="startSoloGame()" style="background: #2ecc71;">Play with Bots (Solo)</button>
+            <button type="button" onclick="startSoloGame()" style="background: #2ecc71;">Play with Bots (Solo)</button>
         </div>
 
         <!-- GAME SCREEN SECTION -->
@@ -199,7 +197,6 @@
         const randomCode = Math.random().toString(36).substring(2, 7).toUpperCase();
         document.getElementById("roomCodeDisplay").innerText = `Code: ${randomCode}`;
         
-        // Automatically start game session after generating code
         setTimeout(() => {
             startSoloGame();
         }, 800);
@@ -211,25 +208,21 @@
             alert("Please enter a valid room code first.");
             return;
         }
-        alert(`Successfully joined room: ${code.toUpperCase()}`);
+        alert("Successfully joined room: " + code.toUpperCase());
         startSoloGame();
     }
 
     function startSoloGame() {
-        // Switch views safely
         document.getElementById("lobby").classList.add("hidden");
         document.getElementById("gameScreen").classList.remove("hidden");
 
-        // Pick dynamic syntax sentence
         currentText = sentences[Math.floor(Math.random() * sentences.length)];
         wordsArr = currentText.split(" ");
         wordIndex = 0;
 
-        // Render words
         const display = document.getElementById("textDisplay");
-        display.innerHTML = wordsArr.map((w, i) => `<span class="word ${i === 0 ? 'current' : ''}">${w}</span>`).join("");
+        display.innerHTML = wordsArr.map((w, i) => '<span class="word ' + (i === 0 ? 'current' : '') + '">' + w + '</span>').join("");
 
-        // Setup Racers (Player + Bots - up to 3-5 members limit)
         racers = [
             { name: "You", progress: 0, speed: 0, type: "player", emoji: "🏎️" },
             { name: "Bot 1 (Jaguar)", progress: 0, speed: 0.70, type: "bot", emoji: "🚙" },
@@ -238,7 +231,6 @@
 
         renderTrack();
 
-        // Delay before enabling typing box
         setTimeout(() => {
             const inputField = document.getElementById("typingInput");
             inputField.removeAttribute("disabled");
@@ -291,30 +283,27 @@
                 finishGame();
             }
 
-            // Update Player car progress percentage
             racers[0].progress = (wordIndex / wordsArr.length) * 100;
         }
     });
 
     function gameLoop() {
         const elapsedTime = (Date.now() - startTime) / 1000;
-        document.getElementById("timerDisplay").innerText = `Time: ${elapsedTime.toFixed(2)}s`;
+        document.getElementById("timerDisplay").innerText = "Time: " + elapsedTime.toFixed(2) + "s";
 
-        // Calculate WPM
         const minutes = elapsedTime / 60;
         const wpm = minutes > 0 ? Math.round((wordIndex / minutes)) : 0;
-        document.getElementById("wpmDisplay").innerText = `WPM: ${wpm}`;
+        document.getElementById("wpmDisplay").innerText = "WPM: " + wpm;
 
-        // Move Bot Racers smoothly
         racers.forEach((racer, index) => {
             if (racer.type === "bot" && racer.progress < 100) {
                 racer.progress += racer.speed * 0.3;
                 if (racer.progress > 100) racer.progress = 100;
             }
 
-            const carEl = document.getElementById(`car-${index}`);
+            const carEl = document.getElementById("car-" + index);
             if (carEl) {
-                carEl.style.left = `${Math.min(racer.progress, 90)}%`;
+                carEl.style.left = Math.min(racer.progress, 90) + "%";
             }
         });
 
@@ -326,8 +315,9 @@
     function finishGame() {
         isPlaying = false;
         clearInterval(timerInterval);
-        document.getElementById("typingInputsetAttribute"]?.("disabled", "true");
-        document.getElementById("typingInput").disabled = true;
+        const inputField = document.getElementById("typingInput");
+        inputField.setAttribute("disabled", "true");
+        inputField.disabled = true;
         alert("Race Over! Great typing session.");
     }
 </script>
