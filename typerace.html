@@ -8,7 +8,7 @@
         :root {
             --primary: #8b5cf6;
             --accent: #00f0ff;
-            --bg-overlay: rgba(11, 15, 25, 0.88);
+            --bg-overlay: rgba(11, 15, 25, 0.9);
         }
         * { box-sizing: border-box; }
         body {
@@ -84,18 +84,24 @@
             background: linear-gradient(135deg, #4338ca, #6d28d9);
             color: #fff;
             border: none;
-            padding: 14px 22px;
+            padding: 14px 20px;
             font-weight: 700;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 15px;
+            font-size: 14px;
             flex: 1;
-            min-width: 140px;
+            min-width: 130px;
             box-shadow: 0 4px 12px rgba(67, 56, 202, 0.4);
+            transition: opacity 0.2s;
         }
+        .btn-action:hover { opacity: 0.85; }
         .btn-action.join {
             background: linear-gradient(135deg, #701a75, #a21caf);
             box-shadow: 0 4px 12px rgba(162, 28, 175, 0.4);
+        }
+        .btn-action.solo {
+            background: linear-gradient(135deg, #059669, #10b981);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
         }
         .input-box {
             background: #ffffff;
@@ -130,7 +136,7 @@
             background: rgba(13, 19, 34, 0.9);
             border-radius: 8px;
             padding: 10px;
-            min-height: 120px;
+            min-height: 110px;
             display: flex;
             flex-direction: column;
             justify-content: space-around;
@@ -147,7 +153,7 @@
             position: absolute;
             left: 0%;
             font-size: 20px;
-            transition: left 0.15s linear;
+            transition: left 0.1s linear;
         }
         .racer-label {
             position: absolute;
@@ -214,18 +220,26 @@
             
             <!-- LOBBY SCREEN -->
             <div id="lobbyScreen">
+                <!-- Single Player Button -->
                 <div class="lobby-group">
-                    <button class="btn-action" onclick="generateNewGame()">New Game</button>
-                    <input type="text" id="usernameInput" class="input-box" placeholder="Your Username" value="Player 1">
+                    <button class="btn-action solo" onclick="startSinglePlayer()">Single Player</button>
+                    <input type="text" id="singleUsername" class="input-box" placeholder="Your Username" value="Player 1">
                 </div>
 
+                <!-- Generate Room Code Section -->
+                <div class="lobby-group">
+                    <button class="btn-action" onclick="generateRoomCode()">Generate Code</button>
+                    <input type="text" id="hostUsername" class="input-box" placeholder="Your Username" value="Host Player">
+                </div>
+                <div id="displayGeneratedCode" style="margin-bottom: 15px; color: var(--accent); font-weight: bold; font-size: 18px; text-align: center;"></div>
+
+                <!-- Join Game Section -->
                 <div class="lobby-group">
                     <button class="btn-action join" onclick="joinGameCode()">Join Game</button>
-                    <input type="text" id="codeJoinInput" class="input-box" placeholder="Room Code (e.g. F29X)" maxlength="6">
-                    <input type="text" id="joinUsernameInput" class="input-box" placeholder="Username">
+                    <input type="text" id="codeJoinInput" class="input-box" placeholder="Paste Code (e.g. A9B2)" maxlength="6">
+                    <input type="text" id="joinUsername" class="input-box" placeholder="Username" value="Guest Player">
                 </div>
-                
-                <div id="roomCodeAlert" style="margin-top: 10px; color: var(--accent); font-weight: bold; text-align: center;"></div>
+                <div id="lobbyStatusMsg" style="color: #f59e0b; font-size: 13px; text-align: center; font-weight: bold;"></div>
             </div>
 
             <!-- GAME RACING SCREEN -->
@@ -269,47 +283,115 @@
     let timerInterval = null;
     let isPlaying = false;
     let totalMistakes = 0;
-    let activeRacers = [];
+    
+    let isMultiplayer = false;
+    let roomCode = "";
+    let playerRole = ""; // 'host' or 'guest'
+    let syncInterval = null;
 
-    function generateNewGame() {
-        const username = document.getElementById("usernameInput").value.trim() || "Player 1";
-        const randomRoomCode = Math.random().toString(36).substring(2, 6).toUpperCase();
+    // 1. SINGLE PLAYER MODE
+    function startSinglePlayer() {
+        isMultiplayer = false;
+        const username = document.getElementById("singleUsername").value.trim() || "Player 1";
         
-        document.getElementById("roomCodeAlert").innerText = `Room Code Generated: ${randomRoomCode}`;
-        
-        activeRacers = [
+        setupGameSession([
             { name: username, progress: 0, emoji: "🏎️" },
-            { name: "Friend (Waiting)", progress: 0, emoji: "🚗" }
-        ];
-
-        setTimeout(launchGameArena, 700);
+            { name: "Solo Practice", progress: 0, emoji: "🚗" }
+        ]);
     }
 
-    function joinGameCode() {
-        const code = document.getElementById("codeJoinInput").value.trim().toUpperCase();
-        const username = document.getElementById("joinUsernameInput").value.trim() || "Guest";
+    // 2. GENERATE CODE (Multiplayer Host)
+    function generateRoomCode() {
+        roomCode = Math.random().toString(36).substring(2, 6).toUpperCase();
+        const username = document.getElementById("hostUsername").value.trim() || "Host Player";
+        
+        document.getElementById("displayGeneratedCode").innerText = `Room Code: ${roomCode} (Share this code!)`;
+        document.getElementById("lobbyStatusMsg").innerText = "Waiting for another player to join using this code...";
 
-        if (!code) {
+        playerRole = 'host';
+        isMultiplayer = true;
+
+        // Initialize room state in localStorage
+        const roomData = {
+            sentence: syntaxBank[Math.floor(Math.random() * syntaxBank.length)],
+            hostName: username,
+            guestName: null,
+            hostProgress: 0,
+            guestProgress: 0,
+            status: "waiting"
+        };
+        localStorage.setItem("fastfingers_room_" + roomCode, JSON.stringify(roomData));
+
+        // Poll for guest joining
+        syncInterval = setInterval(() => {
+            const data = JSON.parse(localStorage.getItem("fastfingers_room_" + roomCode));
+            if (data && data.guestName) {
+                clearInterval(syncInterval);
+                document.getElementById("lobbyStatusMsg").innerText = "Player joined! Starting game...";
+                setTimeout(() => startGameWithData(data), 600);
+            }
+        }, 500);
+    }
+
+    // 3. JOIN GAME (Multiplayer Guest)
+    function joinGameCode() {
+        roomCode = document.getElementById("codeJoinInput").value.trim().toUpperCase();
+        const username = document.getElementById("joinUsername").value.trim() || "Guest Player";
+
+        if (!roomCode) {
             alert("Please enter a valid room code.");
             return;
         }
 
-        document.getElementById("roomCodeAlert").innerText = `Joined Room: ${code}`;
-        
-        activeRacers = [
-            { name: username, progress: 0, emoji: "🏎️" },
-            { name: "Room Host", progress: 0, emoji: "🚙" }
-        ];
+        const roomKey = "fastfingers_room_" + roomCode;
+        const roomData = JSON.parse(localStorage.getItem(roomKey));
 
-        launchGameArena();
+        if (!roomData) {
+            alert("Room code not found! Make sure the host has generated one.");
+            return;
+        }
+
+        playerRole = 'guest';
+        isMultiplayer = true;
+
+        roomData.guestName = username;
+        roomData.status = "playing";
+        localStorage.setItem(roomKey, JSON.stringify(roomData));
+
+        startGameWithData(roomData);
     }
 
-    function launchGameArena() {
+    // Initialize and start race with synced sentence data
+    function startGameWithData(roomData) {
+        currentText = roomData.sentence;
+        setupGameSession([
+            { name: playerRole === 'host' ? roomData.hostName : roomData.guestName, progress: 0, emoji: "🏎️" },
+            { name: playerRole === 'host' ? (roomData.guestName || "Waiting...") : roomData.hostName, progress: 0, emoji: "🚙" }
+        ]);
+
+        if (isMultiplayer) {
+            // Start sync loop for opponents
+            syncInterval = setInterval(() => {
+                const data = JSON.parse(localStorage.getItem("fastfingers_room_" + roomCode));
+                if (data) {
+                    if (playerRole === 'host') {
+                        updateOpponentProgress(data.guestProgress);
+                    } else {
+                        updateOpponentProgress(data.hostProgress);
+                    }
+                }
+            }, 300);
+        }
+    }
+
+    function setupGameSession(racersList) {
         document.getElementById("lobbyScreen").classList.add("hidden");
         document.getElementById("gameScreen").classList.remove("hidden");
 
-        // Fresh syntax generated for each game round
-        currentText = syntaxBank[Math.floor(Math.random() * syntaxBank.length)];
+        if (!isMultiplayer) {
+            currentText = syntaxBank[Math.floor(Math.random() * syntaxBank.length)];
+        }
+
         wordsArr = currentText.split(" ");
         wordIndex = 0;
         totalMistakes = 0;
@@ -317,6 +399,7 @@
         const display = document.getElementById("textDisplay");
         display.innerHTML = wordsArr.map((w, i) => `<span class="word ${i === 0 ? 'current' : ''}">${w}</span>`).join("");
 
+        window.activeRacers = racersList;
         renderTrackLanes();
 
         setTimeout(() => {
@@ -334,7 +417,7 @@
     function renderTrackLanes() {
         const trackContainer = document.getElementById("trackContainer");
         trackContainer.innerHTML = "";
-        activeRacers.forEach((racer, idx) => {
+        window.activeRacers.forEach((racer, idx) => {
             trackContainer.innerHTML += `
                 <div class="lane">
                     <div class="car" id="racer-car-${idx}" style="left: 0%">${racer.emoji}</div>
@@ -342,6 +425,12 @@
                 </div>
             `;
         });
+    }
+
+    function updateOpponentProgress(progressValue) {
+        if (window.activeRacers && window.activeRacers[1]) {
+            window.activeRacers[1].progress = progressValue;
+        }
     }
 
     const inputField = document.getElementById("typingInput");
@@ -374,7 +463,19 @@
                 endGameSession();
             }
 
-            activeRacers[0].progress = (wordIndex / wordsArr.length) * 100;
+            const myProgress = (wordIndex / wordsArr.length) * 100;
+            window.activeRacers[0].progress = myProgress;
+
+            // Push multiplayer progress to localStorage
+            if (isMultiplayer && roomCode) {
+                const roomKey = "fastfingers_room_" + roomCode;
+                const data = JSON.parse(localStorage.getItem(roomKey));
+                if (data) {
+                    if (playerRole === 'host') data.hostProgress = myProgress;
+                    else data.guestProgress = myProgress;
+                    localStorage.setItem(roomKey, JSON.stringify(data));
+                }
+            }
         }
     });
 
@@ -393,14 +494,14 @@
         document.getElementById("accDisplay").innerText = `🎯 Acc: ${accuracy}%`;
         document.getElementById("mistakeDisplay").innerText = `❌ Errors: ${totalMistakes}`;
 
-        activeRacers.forEach((racer, idx) => {
+        window.activeRacers.forEach((racer, idx) => {
             const carEl = document.getElementById(`racer-car-${idx}`);
             if (carEl) {
                 carEl.style.left = `${Math.min(racer.progress, 88)}%`;
             }
         });
 
-        if (activeRacers[0].progress >= 100) {
+        if (window.activeRacers[0].progress >= 100) {
             endGameSession();
         }
     }
@@ -409,6 +510,7 @@
         if (!isPlaying) return;
         isPlaying = false;
         clearInterval(timerInterval);
+        if (syncInterval) clearInterval(syncInterval);
 
         const inputField = document.getElementById("typingInput");
         inputField.setAttribute("disabled", "true");
@@ -419,7 +521,7 @@
         const finalWpm = minutes > 0 ? Math.round((wordsArr.length / minutes)) : 0;
         const accuracy = Math.max(0, Math.round(((wordsArr.length - totalMistakes) / wordsArr.length) * 100));
         
-        // Final score calculation based on speed, accuracy, and error penalties
+        // Final score calculation points based on speed, accuracy, and error penalties
         const finalPoints = Math.max(0, Math.round((finalWpm * accuracy) - (totalMistakes * 15)));
 
         document.getElementById("typingInput").classList.add("hidden");
