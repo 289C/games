@@ -3,217 +3,260 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TypeRush - High Performance Race</title>
+    <title>FastFingers - Type Race</title>
     <style>
         :root {
-            --primary: #00f0ff;
-            --secondary: #ff007f;
-            --bg: #0b0f19;
-            --panel: #111827;
-            --text: #ffffff;
+            --primary: #8b5cf6;
+            --secondary: #6d28d9;
+            --accent: #00f0ff;
+            --bg-overlay: rgba(11, 15, 25, 0.85);
         }
         * { box-sizing: border-box; }
         body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            padding: 0;
             min-height: 100vh;
-            overflow-x: hidden;
-        }
-        h1 {
-            color: var(--primary);
-            margin: 5px 0 15px 0;
-            font-style: italic;
-            text-transform: lowercase;
-            letter-spacing: 3px;
-            text-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
-        }
-        .container {
-            width: 100%;
-            max-width: 750px;
-            background: var(--panel);
-            padding: 20px;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-            border: 1px solid rgba(255,255,255,0.08);
-            position: relative;
-        }
-        .lobby, .game-screen {
+            background: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1920&q=80') no-repeat center center fixed;
+            background-size: cover;
+            color: #ffffff;
             display: flex;
             flex-direction: column;
-            gap: 15px;
         }
-        .hidden { display: none !important; }
-        
-        button {
-            background: linear-gradient(135deg, var(--primary), #0077ff);
-            color: #000;
-            border: none;
-            padding: 14px 20px;
-            font-weight: 800;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            box-shadow: 0 4px 15px rgba(0, 240, 255, 0.3);
-            transition: all 0.2s ease;
-        }
-        button:active { transform: scale(0.97); }
-        
-        input {
-            padding: 14px;
-            border-radius: 8px;
-            border: 1px solid rgba(255,255,255,0.2);
-            background: #1f2937;
-            color: #fff;
-            font-size: 16px;
-            flex: 1;
-            outline: none;
-        }
-        input:focus { border-color: var(--primary); box-shadow: 0 0 8px rgba(0,240,255,0.3); }
 
-        /* Animated High-Tech Race Track */
-        .track {
-            background: linear-gradient(180deg, #131b2e 0%, #0d1322 100%);
+        /* Top Navigation Bar */
+        header {
+            background-color: #3d1c1c;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 25px;
+            border-bottom: 2px solid rgba(255,255,255,0.1);
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 900;
+            font-size: 20px;
+            letter-spacing: 1px;
+            color: #fff;
+            text-transform: uppercase;
+        }
+        .logo span { color: #f59e0b; }
+        nav a {
+            color: #ffffff;
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: color 0.2s;
+        }
+        nav a:hover { color: #f59e0b; }
+
+        /* Main Container */
+        .main-wrapper {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .card-container {
+            width: 100%;
+            max-width: 650px;
+            background: var(--bg-overlay);
+            backdrop-filter: blur(10px);
+            padding: 30px;
             border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.7);
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+
+        .hidden { display: none !important; }
+
+        /* Lobby Form Controls layout */
+        .lobby-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn-action {
+            background: linear-gradient(135deg, #4338ca, #6d28d9);
+            color: #fff;
+            border: none;
+            padding: 14px 22px;
+            font-weight: 700;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 15px;
+            flex: 1;
+            min-width: 140px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+            box-shadow: 0 4px 12px rgba(67, 56, 202, 0.4);
+            transition: transform 0.1s, opacity 0.2s;
+        }
+        .btn-action:active { transform: scale(0.98); }
+        .btn-action.join {
+            background: linear-gradient(135deg, #701a75, #a21caf);
+            box-shadow: 0 4px 12px rgba(162, 28, 175, 0.4);
+        }
+
+        .input-box {
+            background: #ffffff;
+            color: #111;
+            border: none;
+            padding: 14px 16px;
+            border-radius: 6px;
+            font-size: 15px;
+            flex: 2;
+            outline: none;
+            font-weight: 500;
+        }
+        .input-box::placeholder { color: #6b7280; }
+
+        /* Game Race Arena UI */
+        .game-screen { display: flex; flex-direction: column; gap: 20px; }
+        
+        .stats-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 16px;
+            font-weight: bold;
+            background: rgba(17, 24, 39, 0.8);
+            padding: 12px 18px;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent);
+        }
+
+        /* Pure Friends Track (No Bots) */
+        .track {
+            background: rgba(13, 19, 34, 0.9);
+            border-radius: 8px;
             padding: 12px;
-            position: relative;
-            height: 180px;
+            min-height: 130px;
             display: flex;
             flex-direction: column;
             justify-content: space-around;
-            border: 2px solid rgba(0, 240, 255, 0.2);
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
-            overflow: hidden;
+            border: 1px solid rgba(0, 240, 255, 0.3);
         }
         .lane {
-            border-bottom: 2px dashed rgba(255,255,255,0.15);
             position: relative;
-            height: 40px;
+            height: 32px;
+            border-bottom: 1px dashed rgba(255,255,255,0.15);
             display: flex;
             align-items: center;
         }
         .car {
             position: absolute;
             left: 0%;
-            font-size: 26px;
-            transition: left 0.15s cubic-bezier(0.1, 0.7, 0.3, 1);
-            filter: drop-shadow(0 0 5px rgba(255,255,255,0.5));
+            font-size: 22px;
+            transition: left 0.15s linear;
         }
-        .car-label {
+        .racer-label {
             position: absolute;
             right: 8px;
             font-size: 11px;
-            font-weight: 700;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 3px 8px;
-            border-radius: 6px;
-            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.6);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #d1d5db;
         }
 
-        /* Stats Header Bar */
-        .stats-bar {
-            display: flex;
-            justify-content: space-between;
-            font-size: 18px;
-            font-weight: bold;
-            background: #1f2937;
-            padding: 10px 15px;
-            border-radius: 8px;
-            border-left: 4px solid var(--primary);
-        }
-
-        /* Dynamic Typing Field Box */
+        /* Text Display & Typing Field */
         .text-display {
-            background: #131b2e;
+            background: rgba(15, 23, 42, 0.95);
             padding: 18px;
-            border-radius: 10px;
+            border-radius: 8px;
             font-size: 18px;
             line-height: 1.7;
-            border: 1px solid rgba(255,255,255,0.1);
-            max-height: 140px;
+            max-height: 150px;
             overflow-y: auto;
+            border: 1px solid rgba(255,255,255,0.1);
         }
-        .word {
-            display: inline-block;
-            margin-right: 6px;
-            transition: color 0.1s;
-        }
+        .word { display: inline-block; margin-right: 6px; }
         .word.correct { color: #10b981; }
         .word.incorrect { color: #ef4444; text-decoration: underline; }
-        .word.current {
-            background: rgba(0, 240, 255, 0.2);
-            border-radius: 4px;
-            padding: 0 4px;
-            border-bottom: 2px solid var(--primary);
-        }
+        .word.current { background: rgba(0, 240, 255, 0.25); border-radius: 3px; padding: 0 3px; }
 
-        /* Mobile Keyboard Trigger Input */
         textarea {
             width: 100%;
             height: 75px;
             background: #1f2937;
             color: #fff;
-            border: 2px solid var(--primary);
+            border: 2px solid var(--accent);
             border-radius: 8px;
             padding: 12px;
             font-size: 16px;
             resize: none;
             outline: none;
-            box-shadow: 0 0 10px rgba(0,240,255,0.2);
         }
     </style>
 </head>
 <body>
 
-    <h1>typerush</h1>
-    
-    <div class="container">
-        <!-- LOBBY SCREEN -->
-        <div id="lobby" class="lobby">
-            <h3>Multiplayer & Bot Arena</h3>
-            <p style="color: #9ca3af; font-size: 14px; margin-top: 0;">Play with up to 5 friends using a room code or race against intelligent bots.</p>
+    <!-- Header styled like reference screenshot -->
+    <header>
+        <div class="logo">🖐️ <span>FASTFINGERS</span></div>
+        <nav>
+            <a href="#">HOME</a>
+            <a href="#">COMPETE</a>
+            <a href="#">CONTACT</a>
+        </nav>
+    </header>
+
+    <div class="main-wrapper">
+        <div class="card-container">
             
-            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-                <button type="button" onclick="generateRoom()" style="flex: 1;">Generate Room Code</button>
-                <span id="roomCodeDisplay" style="font-weight: bold; color: var(--primary); font-size: 20px; letter-spacing: 2px;"></span>
+            <!-- LOBBY SCREEN -->
+            <div id="lobbyScreen">
+                <div class="lobby-group">
+                    <button class="btn-action" onclick="startNewGame()">New Game</button>
+                    <input type="text" id="usernameInput" class="input-box" placeholder="Your Username" value="Player 1">
+                </div>
+
+                <div class="lobby-group">
+                    <button class="btn-action join" onclick="joinGame()">Join Game</button>
+                    <input type="text" id="codeJoinInput" class="input-box" placeholder="Room Code (e.g. F29X)" maxlength="6">
+                    <input type="text" id="joinUsernameInput" class="input-box" placeholder="Username">
+                </div>
+                
+                <div id="roomCodeAlert" style="margin-top: 10px; color: var(--accent); font-weight: bold; text-align: center;"></div>
             </div>
 
-            <div style="display: flex; gap: 10px;">
-                <input type="text" id="joinCodeInput" placeholder="Enter Room Code (e.g. AB42)" maxlength="6">
-                <button type="button" onclick="joinRoom()" style="background: linear-gradient(135deg, #10b981, #059669);">Join Room</button>
+            <!-- GAME RACING SCREEN -->
+            <div id="gameScreen" class="game-screen hidden">
+                <div class="stats-header">
+                    <span id="wpmDisplay">⚡ WPM: 0</span>
+                    <span id="roomInfoDisplay">Room: SOLO</span>
+                    <span id="timerDisplay">⏱️ 0.00s</span>
+                </div>
+
+                <!-- Pure Multiplayer Friend Track -->
+                <div class="track" id="trackContainer"></div>
+
+                <!-- Dynamic Syntax Text Container -->
+                <div class="text-display" id="textDisplay"></div>
+
+                <!-- Mobile Keyboard Input Box -->
+                <textarea id="typingInput" placeholder="Tap here to open keyboard and start typing..." disabled autocomplete="off" autocapitalize="off" spellcheck="false"></textarea>
             </div>
 
-            <button type="button" onclick="startRaceGame()" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: #fff;">Play with Bots (Solo)</button>
-        </div>
-
-        <!-- GAME RACING SCREEN -->
-        <div id="gameScreen" class="game-screen hidden">
-            <div class="stats-bar">
-                <span id="wpmDisplay">⚡ WPM: 0</span>
-                <span id="timerDisplay">⏱️ Time: 0.00s</span>
-            </div>
-
-            <div class="track" id="trackContainer"></div>
-
-            <div class="text-display" id="textDisplay"></div>
-            
-            <!-- Tap here on mobile to bring up device keyboard -->
-            <textarea id="typingInput" placeholder="Tap here and start typing fast..." disabled autocomplete="off" autocapitalize="off" spellcheck="false"></textarea>
         </div>
     </div>
 
 <script>
-    const sentences = [
+    // Diverse dynamic text syntax bank (new syntax generated every game)
+    const syntaxBank = [
         "that Canada is about 23.5 times bigger than California yet California has more people than all of Canada right now",
-        "coding fast requires consistent practice focus and good finger placement on standard home row keys",
-        "artificial intelligence and modern web frameworks make building real time browser multiplayer applications seamless"
+        "asynchronous programming in modern JavaScript allows developers to handle network requests efficiently without blocking threads",
+        "responsive web design ensures that applications scale seamlessly across mobile phones tablets and desktop monitors",
+        "cybersecurity protocols protect sensitive user databases from malicious breaches through encryption and secure authentication",
+        "artificial intelligence models leverage massive datasets to recognize complex patterns and automate repetitive workflows"
     ];
 
     let currentText = "";
@@ -222,70 +265,85 @@
     let startTime = null;
     let timerInterval = null;
     let isPlaying = false;
-    let racers = [];
+    let activeRacers = [];
 
-    function generateRoom() {
-        const randomCode = Math.random().toString(36).substring(2, 6).toUpperCase();
-        document.getElementById("roomCodeDisplay").innerText = `CODE: ${randomCode}`;
-        
-        // Smooth transition into game arena with bots simulation
-        setTimeout(() => {
-            startRaceGame();
-        }, 1000);
+    function getRandomSentence() {
+        return syntaxBank[Math.floor(Math.random() * syntaxBank.length)];
     }
 
-    function joinRoom() {
-        const code = document.getElementById("joinCodeInput").value.trim();
+    function startNewGame() {
+        const username = document.getElementById("usernameInput").value.trim() || "Player";
+        const randomRoomCode = Math.random().toString(36).substring(2, 6).toUpperCase();
+        
+        document.getElementById("roomInfoDisplay").innerText = `Room Code: ${randomRoomCode}`;
+        document.getElementById("roomCodeAlert").innerText = `Room Created! Code: ${randomRoomCode}`;
+        
+        // Setup single/multiplayer session without bots
+        activeRacers = [
+            { name: username, progress: 0, emoji: "🏎️" },
+            { name: "Friend (Waiting...)", progress: 0, emoji: "🚗" }
+        ];
+
+        setTimeout(() => {
+            launchGameArena();
+        }, 800);
+    }
+
+    function joinGame() {
+        const code = document.getElementById("codeJoinInput").value.trim().toUpperCase();
+        const username = document.getElementById("joinUsernameInput").value.trim() || "Guest";
+
         if (!code) {
-            alert("Please type a valid room code first.");
+            alert("Please enter a valid room code.");
             return;
         }
-        alert(`Connected successfully to room: ${code.toUpperCase()}`);
-        startRaceGame();
+
+        document.getElementById("roomInfoDisplay").innerText = `Room: ${code}`;
+        
+        activeRacers = [
+            { name: username, progress: 0, emoji: "🏎️" },
+            { name: "Host Player", progress: 0, emoji: "🚙" }
+        ];
+
+        launchGameArena();
     }
 
-    function startRaceGame() {
-        document.getElementById("lobby").classList.add("hidden");
+    function launchGameArena() {
+        document.getElementById("lobbyScreen").classList.add("hidden");
         document.getElementById("gameScreen").classList.remove("hidden");
 
-        currentText = sentences[Math.floor(Math.random() * sentences.length)];
+        // Generate brand new unique syntax for this game round
+        currentText = getRandomSentence();
         wordsArr = currentText.split(" ");
         wordIndex = 0;
 
+        // Render syntax words
         const display = document.getElementById("textDisplay");
         display.innerHTML = wordsArr.map((w, i) => `<span class="word ${i === 0 ? 'current' : ''}">${w}</span>`).join("");
 
-        // Up to 4-5 participants (You + 3 Smart Bots)
-        racers = [
-            { name: "You", progress: 0, speed: 0, type: "player", emoji: "🏎️️" },
-            { name: "Bot 1 (Jaguar)", progress: 0, speed: 0.65, type: "bot", emoji: "🚙" },
-            { name: "Bot 2 (Super)", progress: 0, speed: 0.58, type: "bot", emoji: "🚗" },
-            { name: "Bot 3 (Viper)", progress: 0, speed: 0.52, type: "bot", emoji: "🏎️" }
-        ];
+        renderTrackLanes();
 
-        renderTrack();
-
-        // Focus input to prompt mobile software keyboard
+        // Focus input to prompt mobile software keyboard automatically
         setTimeout(() => {
             const inputField = document.getElementById("typingInput");
             inputField.removeAttribute("disabled");
             inputField.value = "";
             inputField.focus();
-            
+
             startTime = Date.now();
             isPlaying = true;
-            timerInterval = setInterval(gameLoop, 80);
-        }, 800);
+            timerInterval = setInterval(gameLoop, 100);
+        }, 600);
     }
 
-    function renderTrack() {
+    function renderTrackLanes() {
         const trackContainer = document.getElementById("trackContainer");
         trackContainer.innerHTML = "";
-        racers.forEach((racer, index) => {
+        activeRacers.forEach((racer, idx) => {
             trackContainer.innerHTML += `
                 <div class="lane">
-                    <div class="car" id="car-${index}" style="left: 0%">${racer.emoji}</div>
-                    <div class="car-label">#${index + 1} ${racer.name}</div>
+                    <div class="car" id="racer-car-${idx}" style="left: 0%">${racer.emoji}</div>
+                    <div class="racer-label">${racer.name}</div>
                 </div>
             `;
         });
@@ -311,53 +369,48 @@
             }
 
             wordIndex++;
-            inputField.value = ""; // Reset box for next word
+            inputField.value = ""; // Clear input for next word
 
             if (wordIndex < wordsArr.length) {
                 wordSpans[wordIndex].classList.add("current");
-                // Auto-scroll text view smoothly
                 wordSpans[wordIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             } else {
-                finishGame();
+                endGameSession();
             }
 
-            racers[0].progress = (wordIndex / wordsArr.length) * 100;
+            // Update player track progress
+            activeRacers[0].progress = (wordIndex / wordsArr.length) * 100;
         }
     });
 
     function gameLoop() {
         const elapsedTime = (Date.now() - startTime) / 1000;
-        document.getElementById("timerDisplay").innerText = `⏱️ Time: ${elapsedTime.toFixed(2)}s`;
+        document.getElementById("timerDisplay").innerText = `⏱️️ ${elapsedTime.toFixed(2)}s`;
 
         const minutes = elapsedTime / 60;
         const wpm = minutes > 0 ? Math.round((wordIndex / minutes)) : 0;
         document.getElementById("wpmDisplay").innerText = `⚡ WPM: ${wpm}`;
 
-        // Animate bots forward smoothly
-        racers.forEach((racer, index) => {
-            if (racer.type === "bot" && racer.progress < 100) {
-                racer.progress += racer.speed * 0.35;
-                if (racer.progress > 100) racer.progress = 100;
-            }
-
-            const carEl = document.getElementById(`car-${index}`);
+        // Render car positioning on track
+        activeRacers.forEach((racer, idx) => {
+            const carEl = document.getElementById(`racer-car-${idx}`);
             if (carEl) {
                 carEl.style.left = `${Math.min(racer.progress, 88)}%`;
             }
         });
 
-        if (racers[0].progress >= 100) {
-            finishGame();
+        if (activeRacers[0].progress >= 100) {
+            endGameSession();
         }
     }
 
-    function finishGame() {
+    function endGameSession() {
         isPlaying = false;
         clearInterval(timerInterval);
         const inputField = document.getElementById("typingInput");
         inputField.setAttribute("disabled", "true");
         inputField.blur();
-        alert("🏁 Race finished successfully! Check your stats.");
+        alert("🏁 Race Complete! Great performance.");
     }
 </script>
 
