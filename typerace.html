@@ -7,9 +7,8 @@
     <style>
         :root {
             --primary: #8b5cf6;
-            --secondary: #6d28d9;
             --accent: #00f0ff;
-            --bg-overlay: rgba(11, 15, 25, 0.85);
+            --bg-overlay: rgba(11, 15, 25, 0.88);
         }
         * { box-sizing: border-box; }
         body {
@@ -50,7 +49,6 @@
             margin-left: 20px;
             font-size: 14px;
             font-weight: 600;
-            letter-spacing: 0.5px;
             transition: color 0.2s;
         }
         nav a:hover { color: #f59e0b; }
@@ -63,28 +61,25 @@
             align-items: center;
             padding: 20px;
         }
-
         .card-container {
             width: 100%;
             max-width: 650px;
             background: var(--bg-overlay);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(12px);
             padding: 30px;
             border-radius: 12px;
             box-shadow: 0 15px 35px rgba(0,0,0,0.7);
             border: 1px solid rgba(255,255,255,0.15);
         }
-
         .hidden { display: none !important; }
 
-        /* Lobby Form Controls layout */
+        /* Lobby Form Controls */
         .lobby-group {
             display: flex;
             gap: 12px;
             margin-bottom: 15px;
             flex-wrap: wrap;
         }
-
         .btn-action {
             background: linear-gradient(135deg, #4338ca, #6d28d9);
             color: #fff;
@@ -96,16 +91,12 @@
             font-size: 15px;
             flex: 1;
             min-width: 140px;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.4);
             box-shadow: 0 4px 12px rgba(67, 56, 202, 0.4);
-            transition: transform 0.1s, opacity 0.2s;
         }
-        .btn-action:active { transform: scale(0.98); }
         .btn-action.join {
             background: linear-gradient(135deg, #701a75, #a21caf);
             box-shadow: 0 4px 12px rgba(162, 28, 175, 0.4);
         }
-
         .input-box {
             background: #ffffff;
             color: #111;
@@ -120,25 +111,26 @@
         .input-box::placeholder { color: #6b7280; }
 
         /* Game Race Arena UI */
-        .game-screen { display: flex; flex-direction: column; gap: 20px; }
-        
+        .game-screen { display: flex; flex-direction: column; gap: 18px; }
         .stats-header {
-            display: flex;
-            justify-content: space-between;
-            font-size: 16px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            font-size: 13px;
             font-weight: bold;
-            background: rgba(17, 24, 39, 0.8);
-            padding: 12px 18px;
+            background: rgba(17, 24, 39, 0.85);
+            padding: 10px 14px;
             border-radius: 8px;
             border-left: 4px solid var(--accent);
+            text-align: center;
         }
 
         /* Pure Friends Track (No Bots) */
         .track {
             background: rgba(13, 19, 34, 0.9);
             border-radius: 8px;
-            padding: 12px;
-            min-height: 130px;
+            padding: 10px;
+            min-height: 120px;
             display: flex;
             flex-direction: column;
             justify-content: space-around;
@@ -146,7 +138,7 @@
         }
         .lane {
             position: relative;
-            height: 32px;
+            height: 30px;
             border-bottom: 1px dashed rgba(255,255,255,0.15);
             display: flex;
             align-items: center;
@@ -154,7 +146,7 @@
         .car {
             position: absolute;
             left: 0%;
-            font-size: 22px;
+            font-size: 20px;
             transition: left 0.15s linear;
         }
         .racer-label {
@@ -170,11 +162,11 @@
         /* Text Display & Typing Field */
         .text-display {
             background: rgba(15, 23, 42, 0.95);
-            padding: 18px;
+            padding: 16px;
             border-radius: 8px;
-            font-size: 18px;
+            font-size: 17px;
             line-height: 1.7;
-            max-height: 150px;
+            max-height: 140px;
             overflow-y: auto;
             border: 1px solid rgba(255,255,255,0.1);
         }
@@ -195,11 +187,19 @@
             resize: none;
             outline: none;
         }
+
+        /* Result Modal Overlay */
+        .result-box {
+            background: rgba(17, 24, 39, 0.95);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid var(--accent);
+        }
     </style>
 </head>
 <body>
 
-    <!-- Header styled like reference screenshot -->
     <header>
         <div class="logo">🖐️ <span>FASTFINGERS</span></div>
         <nav>
@@ -215,12 +215,12 @@
             <!-- LOBBY SCREEN -->
             <div id="lobbyScreen">
                 <div class="lobby-group">
-                    <button class="btn-action" onclick="startNewGame()">New Game</button>
+                    <button class="btn-action" onclick="generateNewGame()">New Game</button>
                     <input type="text" id="usernameInput" class="input-box" placeholder="Your Username" value="Player 1">
                 </div>
 
                 <div class="lobby-group">
-                    <button class="btn-action join" onclick="joinGame()">Join Game</button>
+                    <button class="btn-action join" onclick="joinGameCode()">Join Game</button>
                     <input type="text" id="codeJoinInput" class="input-box" placeholder="Room Code (e.g. F29X)" maxlength="6">
                     <input type="text" id="joinUsernameInput" class="input-box" placeholder="Username">
                 </div>
@@ -232,25 +232,28 @@
             <div id="gameScreen" class="game-screen hidden">
                 <div class="stats-header">
                     <span id="wpmDisplay">⚡ WPM: 0</span>
-                    <span id="roomInfoDisplay">Room: SOLO</span>
+                    <span id="accDisplay">🎯 Acc: 100%</span>
+                    <span id="mistakeDisplay">❌ Errors: 0</span>
                     <span id="timerDisplay">⏱️ 0.00s</span>
                 </div>
 
-                <!-- Pure Multiplayer Friend Track -->
                 <div class="track" id="trackContainer"></div>
 
-                <!-- Dynamic Syntax Text Container -->
                 <div class="text-display" id="textDisplay"></div>
 
-                <!-- Mobile Keyboard Input Box -->
                 <textarea id="typingInput" placeholder="Tap here to open keyboard and start typing..." disabled autocomplete="off" autocapitalize="off" spellcheck="false"></textarea>
+                
+                <div id="resultModal" class="result-box hidden">
+                    <h3>🎉 Race Finished!</h3>
+                    <p id="finalStatsText"></p>
+                    <button class="btn-action" onclick="location.reload()">Play Again</button>
+                </div>
             </div>
 
         </div>
     </div>
 
 <script>
-    // Diverse dynamic text syntax bank (new syntax generated every game)
     const syntaxBank = [
         "that Canada is about 23.5 times bigger than California yet California has more people than all of Canada right now",
         "asynchronous programming in modern JavaScript allows developers to handle network requests efficiently without blocking threads",
@@ -265,44 +268,36 @@
     let startTime = null;
     let timerInterval = null;
     let isPlaying = false;
+    let totalMistakes = 0;
+    let totalTypedChars = 0;
     let activeRacers = [];
 
-    function getRandomSentence() {
-        return syntaxBank[Math.floor(Math.random() * syntaxBank.length)];
-    }
-
-    function startNewGame() {
-        const username = document.getElementById("usernameInput").value.trim() || "Player";
+    function generateNewGame() {
+        const username = document.getElementById("usernameInput").value.trim() || "Player 1";
         const randomRoomCode = Math.random().toString(36).substring(2, 6).toUpperCase();
         
-        document.getElementById("roomInfoDisplay").innerText = `Room Code: ${randomRoomCode}`;
-        document.getElementById("roomCodeAlert").innerText = `Room Created! Code: ${randomRoomCode}`;
+        document.getElementById("roomCodeAlert").innerText = `Room Generated! Code: ${randomRoomCode} (Share with friends)`;
         
-        // Setup single/multiplayer session without bots
         activeRacers = [
             { name: username, progress: 0, emoji: "🏎️" },
-            { name: "Friend (Waiting...)", progress: 0, emoji: "🚗" }
+            { name: "Friend Slot", progress: 0, emoji: "🚗" }
         ];
 
-        setTimeout(() => {
-            launchGameArena();
-        }, 800);
+        setTimeout(launchGameArena, 700);
     }
 
-    function joinGame() {
+    function joinGameCode() {
         const code = document.getElementById("codeJoinInput").value.trim().toUpperCase();
         const username = document.getElementById("joinUsernameInput").value.trim() || "Guest";
 
         if (!code) {
-            alert("Please enter a valid room code.");
+            alert("Please enter a valid room code to join.");
             return;
         }
 
-        document.getElementById("roomInfoDisplay").innerText = `Room: ${code}`;
-        
         activeRacers = [
             { name: username, progress: 0, emoji: "🏎️" },
-            { name: "Host Player", progress: 0, emoji: "🚙" }
+            { name: "Room Host", progress: 0, emoji: "🚙" }
         ];
 
         launchGameArena();
@@ -312,18 +307,18 @@
         document.getElementById("lobbyScreen").classList.add("hidden");
         document.getElementById("gameScreen").classList.remove("hidden");
 
-        // Generate brand new unique syntax for this game round
-        currentText = getRandomSentence();
+        // Fresh syntax generated for each game instance
+        currentText = syntaxBank[Math.floor(Math.random() * syntaxBank.length)];
         wordsArr = currentText.split(" ");
         wordIndex = 0;
+        totalMistakes = 0;
+        totalTypedChars = 0;
 
-        // Render syntax words
         const display = document.getElementById("textDisplay");
         display.innerHTML = wordsArr.map((w, i) => `<span class="word ${i === 0 ? 'current' : ''}">${w}</span>`).join("");
 
         renderTrackLanes();
 
-        // Focus input to prompt mobile software keyboard automatically
         setTimeout(() => {
             const inputField = document.getElementById("typingInput");
             inputField.removeAttribute("disabled");
@@ -333,7 +328,7 @@
             startTime = Date.now();
             isPlaying = true;
             timerInterval = setInterval(gameLoop, 100);
-        }, 600);
+        }, 500);
     }
 
     function renderTrackLanes() {
@@ -359,6 +354,7 @@
         if (typedValue.endsWith(" ")) {
             const enteredWord = typedValue.trim();
             const wordSpans = document.getElementById("textDisplay").children;
+            totalTypedChars += enteredWord.length + 1;
 
             if (enteredWord === currentWord) {
                 wordSpans[wordIndex].classList.remove("current", "incorrect");
@@ -366,10 +362,11 @@
             } else {
                 wordSpans[wordIndex].classList.remove("current");
                 wordSpans[wordIndex].classList.add("incorrect");
+                totalMistakes++;
             }
 
             wordIndex++;
-            inputField.value = ""; // Clear input for next word
+            inputField.value = "";
 
             if (wordIndex < wordsArr.length) {
                 wordSpans[wordIndex].classList.add("current");
@@ -378,20 +375,26 @@
                 endGameSession();
             }
 
-            // Update player track progress
             activeRacers[0].progress = (wordIndex / wordsArr.length) * 100;
         }
     });
 
     function gameLoop() {
         const elapsedTime = (Date.now() - startTime) / 1000;
-        document.getElementById("timerDisplay").innerText = `⏱️️ ${elapsedTime.toFixed(2)}s`;
+        document.getElementById("timerDisplay").innerText = `⏱ ${elapsedTime.toFixed(1)}s`;
 
         const minutes = elapsedTime / 60;
         const wpm = minutes > 0 ? Math.round((wordIndex / minutes)) : 0;
         document.getElementById("wpmDisplay").innerText = `⚡ WPM: ${wpm}`;
 
-        // Render car positioning on track
+        // Accuracy Calculation
+        const totalChecked = wordIndex;
+        const correctWords = totalChecked - totalMistakes;
+        const accuracy = totalChecked > 0 ? Math.max(0, Math.round((correctWords / totalChecked) * 100)) : 100;
+        
+        document.getElementById("accDisplay").innerText = `🎯 Acc: ${accuracy}%`;
+        document.getElementById("mistakeDisplay").innerText = `❌ Errors: ${totalMistakes}`;
+
         activeRacers.forEach((racer, idx) => {
             const carEl = document.getElementById(`racer-car-${idx}`);
             if (carEl) {
@@ -405,12 +408,30 @@
     }
 
     function endGameSession() {
+        if (!isPlaying) return;
         isPlaying = false;
         clearInterval(timerInterval);
+
         const inputField = document.getElementById("typingInput");
         inputField.setAttribute("disabled", "true");
         inputField.blur();
-        alert("🏁 Race Complete! Great performance.");
+
+        const elapsedTime = (Date.now() - startTime) / 1000;
+        const minutes = elapsedTime / 60;
+        const finalWpm = minutes > 0 ? Math.round((wordsArr.length / minutes)) : 0;
+        const accuracy = Math.max(0, Math.round(((wordsArr.length - totalMistakes) / wordsArr.length) * 100));
+        
+        // Final Points calculation formula based on speed, accuracy, and spelling penalties
+        const finalPoints = Math.max(0, Math.round((finalWpm * accuracy) - (totalMistakes * 15)));
+
+        document.getElementById("typingInput").classList.add("hidden");
+        document.getElementById("resultModal").classList.remove("hidden");
+        document.getElementById("finalStatsText").innerHTML = `
+            Speed: <b>${finalWpm} WPM</b><br>
+            Accuracy: <b>${accuracy}%</b><br>
+            Spelling Errors: <b>${totalMistakes}</b><br>
+            Total Score Points: <b style="color: var(--accent); font-size: 20px;">${finalPoints} pts</b>
+        `;
     }
 </script>
 
