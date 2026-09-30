@@ -125,7 +125,7 @@
             text-align: center;
         }
 
-        /* Pure Friends Track (No Bots) */
+        /* Racing Track */
         .track {
             background: rgba(13, 19, 34, 0.9);
             border-radius: 8px;
@@ -188,7 +188,7 @@
             outline: none;
         }
 
-        /* Result Modal Overlay */
+        /* Result Modal */
         .result-box {
             background: rgba(17, 24, 39, 0.95);
             padding: 20px;
@@ -246,7 +246,7 @@
                 <div id="resultModal" class="result-box hidden">
                     <h3>🎉 Race Finished!</h3>
                     <p id="finalStatsText"></p>
-                    <button class="btn-action" onclick="location.reload()">Play Again</button>
+                    <button class="btn-action" onclick="location.reload()" style="margin-top: 10px;">Play Again</button>
                 </div>
             </div>
 
@@ -269,18 +269,17 @@
     let timerInterval = null;
     let isPlaying = false;
     let totalMistakes = 0;
-    let totalTypedChars = 0;
     let activeRacers = [];
 
     function generateNewGame() {
         const username = document.getElementById("usernameInput").value.trim() || "Player 1";
         const randomRoomCode = Math.random().toString(36).substring(2, 6).toUpperCase();
         
-        document.getElementById("roomCodeAlert").innerText = `Room Generated! Code: ${randomRoomCode} (Share with friends)`;
+        document.getElementById("roomCodeAlert").innerText = `Room Code Generated: ${randomRoomCode}`;
         
         activeRacers = [
             { name: username, progress: 0, emoji: "🏎️" },
-            { name: "Friend Slot", progress: 0, emoji: "🚗" }
+            { name: "Friend (Waiting)", progress: 0, emoji: "🚗" }
         ];
 
         setTimeout(launchGameArena, 700);
@@ -291,10 +290,12 @@
         const username = document.getElementById("joinUsernameInput").value.trim() || "Guest";
 
         if (!code) {
-            alert("Please enter a valid room code to join.");
+            alert("Please enter a valid room code.");
             return;
         }
 
+        document.getElementById("roomCodeAlert").innerText = `Joined Room: ${code}`;
+        
         activeRacers = [
             { name: username, progress: 0, emoji: "🏎️" },
             { name: "Room Host", progress: 0, emoji: "🚙" }
@@ -307,12 +308,11 @@
         document.getElementById("lobbyScreen").classList.add("hidden");
         document.getElementById("gameScreen").classList.remove("hidden");
 
-        // Fresh syntax generated for each game instance
+        // Fresh syntax generated for each game round
         currentText = syntaxBank[Math.floor(Math.random() * syntaxBank.length)];
         wordsArr = currentText.split(" ");
         wordIndex = 0;
         totalMistakes = 0;
-        totalTypedChars = 0;
 
         const display = document.getElementById("textDisplay");
         display.innerHTML = wordsArr.map((w, i) => `<span class="word ${i === 0 ? 'current' : ''}">${w}</span>`).join("");
@@ -354,7 +354,6 @@
         if (typedValue.endsWith(" ")) {
             const enteredWord = typedValue.trim();
             const wordSpans = document.getElementById("textDisplay").children;
-            totalTypedChars += enteredWord.length + 1;
 
             if (enteredWord === currentWord) {
                 wordSpans[wordIndex].classList.remove("current", "incorrect");
@@ -366,7 +365,7 @@
             }
 
             wordIndex++;
-            inputField.value = "";
+            inputField.value = ""; 
 
             if (wordIndex < wordsArr.length) {
                 wordSpans[wordIndex].classList.add("current");
@@ -387,10 +386,9 @@
         const wpm = minutes > 0 ? Math.round((wordIndex / minutes)) : 0;
         document.getElementById("wpmDisplay").innerText = `⚡ WPM: ${wpm}`;
 
-        // Accuracy Calculation
-        const totalChecked = wordIndex;
-        const correctWords = totalChecked - totalMistakes;
-        const accuracy = totalChecked > 0 ? Math.max(0, Math.round((correctWords / totalChecked) * 100)) : 100;
+        const checkedWords = wordIndex;
+        const correctWords = checkedWords - totalMistakes;
+        const accuracy = checkedWords > 0 ? Math.max(0, Math.round((correctWords / checkedWords) * 100)) : 100;
         
         document.getElementById("accDisplay").innerText = `🎯 Acc: ${accuracy}%`;
         document.getElementById("mistakeDisplay").innerText = `❌ Errors: ${totalMistakes}`;
@@ -421,7 +419,7 @@
         const finalWpm = minutes > 0 ? Math.round((wordsArr.length / minutes)) : 0;
         const accuracy = Math.max(0, Math.round(((wordsArr.length - totalMistakes) / wordsArr.length) * 100));
         
-        // Final Points calculation formula based on speed, accuracy, and spelling penalties
+        // Final score calculation based on speed, accuracy, and error penalties
         const finalPoints = Math.max(0, Math.round((finalWpm * accuracy) - (totalMistakes * 15)));
 
         document.getElementById("typingInput").classList.add("hidden");
@@ -430,7 +428,7 @@
             Speed: <b>${finalWpm} WPM</b><br>
             Accuracy: <b>${accuracy}%</b><br>
             Spelling Errors: <b>${totalMistakes}</b><br>
-            Total Score Points: <b style="color: var(--accent); font-size: 20px;">${finalPoints} pts</b>
+            Total Points: <b style="color: var(--accent); font-size: 20px;">${finalPoints} pts</b>
         `;
     }
 </script>
