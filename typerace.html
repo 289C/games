@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TypeRush Clone</title>
+    <style>
+        :root {
+            --primary-color: #00f0ff;
+            --bg-color: #1a1a2e;
+            --panel-bg: #16213e;
+            --text-color: #ffffff;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 5px;
+            font-style: italic;
+            text-transform: lowercase;
+            letter-spacing: 2px;
+        }
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: var(--panel-bg);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+        }
+        .lobby, .game-screen {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .hidden {
+            display: none !important;
+        }
+        button {
+            background: var(--primary-color);
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        button:hover {
+            opacity: 0.8;
+        }
+        input {
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #444;
+            background: #0f3460;
+            color: #fff;
+            font-size: 16px;
+        }
+        /* Race Track Design */
+        .track {
+            background: #222b45;
+            border-radius: 8px;
+            padding: 10px;
+            position: relative;
+            height: 160px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            overflow: hidden;
+            border: 2px solid #0f3460;
+        }
+        .lane {
+            border-bottom: 2px dashed rgba(255,255,255,0.1);
+            position: relative;
+            height: 35px;
+            display: flex;
+            align-items: center;
+        }
+        .car {
+            position: absolute;
+            left: 0;
+            font-size: 24px;
+            transition: left 0.1s linear;
+        }
+        .car-label {
+            position: absolute;
+            right: 10px;
+            font-size: 12px;
+            background: rgba(0,0,0,0.5);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        /* Typing Box Area */
+        .text-display {
+            background: #0f3460;
+            padding: 15px;
+            border-radius: 6px;
+            font-size: 18px;
+            line-height: 1.6;
+            letter-spacing: 0.5px;
+            word-break: break-word;
+        }
+        .word {
+            display: inline-block;
+            margin-right: 5px;
+        }
+        .word.correct {
+            color: #2ecc71;
+        }
+        .word.incorrect {
+            color: #e74c3c;
+            text-decoration: underline;
+        }
+        .word.current {
+            background: rgba(0, 240, 255, 0.2);
+            border-radius: 3px;
+        }
+        textarea {
+            width: 100%;
+            height: 80px;
+            background: #0f3460;
+            color: #fff;
+            border: 1px solid #444;
+            border-radius: 6px;
+            padding: 10px;
+            font-size: 16px;
+            resize: none;
+        }
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>typerush</h1>
+    <div class="container">
+        <!-- LOBBY SCREEN -->
+        <div id="lobby" class="lobby">
+            <h3>Multiplayer / Practice Lobby</h3>
+            <p>Play with up to 4 players using a room code or race against bots!</p>
+            <div>
+                <button onclick="generateRoom()">Generate Room Code</button>
+                <span id="roomCodeDisplay" style="margin-left: 10px; font-weight: bold; color: var(--primary-color);"></span>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <input type="text" id="joinCodeInput" placeholder="Enter Room Code">
+                <button onclick="joinRoom()">Join Room</button>
+            </div>
+            <button onclick="startSoloGame()" style="background: #2ecc71;">Play with Bots (Solo)</button>
+        </div>
+
+        <!-- GAME SCREEN -->
+        <div id="gameScreen" class="game-screen hidden">
+            <div class="stats-bar">
+                <span id="wpmDisplay">WPM: 0</span>
+                <span id="timerDisplay">Time: 0.00s</span>
+            </div>
+
+            <!-- Race Track -->
+            <div class="track" id="trackContainer">
+                <!-- Lanes injected dynamically -->
+            </div>
+
+            <!-- Typing Section -->
+            <div class="text-display" id="textDisplay"></div>
+            <textarea id="typingInput" placeholder="Wait for the race to start..." disabled></textarea>
+        </div>
+    </div>
+
+<script>
+    const sampleSentences = [
+        "that Canada is about 23.5 times bigger than California yet California has more people than all of Canada right now",
+        "coding fast requires consistent practice focus and good finger placement on the standard home row keys",
+        "artificial intelligence and machine learning are rapidly changing how modern web applications are built today"
+    ];
+
+    let currentText = "";
+    let wordsArr = [];
+    let wordIndex = 0;
+    let startTime = null;
+    let timerInterval = null;
+    let isPlaying = false;
+    let racers = [];
+
+    function generateRoom() {
+        const code = Math.random().toString(36.substring(2, 7)).toUpperCase();
+        document.getElementById("roomCodeDisplay").innerText = `Code: ${code}`;
+        alert(`Room created successfully with code: ${code}. Starting game with bots/simulation.`);
+        startSoloGame();
+    }
+
+    function joinRoom() {
+        const code = document.getElementById("joinCodeInput").value;
+        if(!code) {
+            alert("Please enter a valid room code.");
+            return;
+        }
+        alert(`Joined room ${code} successfully!`);
+        startSoloGame();
+    }
+
+    function startSoloGame() {
+        document.getElementById("lobby").classList.add("hidden");
+        document.getElementById("gameScreen").classList.remove("hidden");
+        
+        // Pick new syntax/sentence
+        currentText = sampleSentences[Math.floor(Math.random() * sampleSentences.length)];
+        wordsArr = currentText.split(" ");
+        wordIndex = 0;
+
+        // Setup text view
+        const display = document.getElementById("textDisplay");
+        display.innerHTML = wordsArr.map((w, i) => `<span class="word ${i === 0 ? 'current' : ''}">${w}</span>`).join("");
+
+        // Setup Racers (You + 2 Bots = 3 total members, fits < 5 rule)
+        racers = [
+            { name: "You", progress: 0, speed: 0, type: "player", emoji: "🏎️" },
+            { name: "Bot 1 (Jaguar)", progress: 0, speed: 0.75, type: "bot", emoji: "🚙" },
+            { name: "Bot 2 (Super)", progress: 0, speed: 0.65, type: "bot", emoji: "🚗" }
+        ];
+
+        renderTrack();
+
+        setTimeout(() => {
+            document.getElementById("typingInput").removeAttribute("disabled");
+            document.getElementById("typingInput").focus();
+            startTime = Date.now();
+            isPlaying = true;
+            timerInterval = setInterval(updateGameLoop, 100);
+        }, 1000);
+    }
+
+    function renderTrack() {
+        const trackContainer = document.getElementById("trackContainer");
+        trackContainer.innerHTML = "";
+        racers.forEach((racer, index) => {
+            trackContainer.innerHTML += `
+                <div class="lane">
+                    <div class="car" id="car-${index}" style="left: 0%">${racer.emoji}</div>
+                    <div class="car-label">#${index + 1} ${racer.name}</div>
+                </div>
+            `;
+        });
+    }
+
+    const inputField = document.getElementById("typingInput");
+    inputField.addEventListener("input", (e) => {
+        if (!isPlaying) return;
+
+        const typedValue = e.target.value;
+        const currentWord = wordsArr[wordIndex];
+
+        if (typedValue.endsWith(" ")) {
+            const enteredWord = typedValue.trim();
+            const wordSpans = document.getElementById("textDisplay").children;
+
+            if (enteredWord === currentWord) {
+                wordSpans[wordIndex].classList.remove("current", "incorrect");
+                wordSpans[wordIndex].classList.add("correct");
+            } else {
+                wordSpans[wordIndex].classList.remove("current");
+                wordSpans[wordIndex].classList.add("incorrect");
+            }
+
+            wordIndex++;
+            inputField.value = "";
+
+            if (wordIndex < wordsArr.length) {
+                wordSpans[wordIndex].classList.add("current");
+            } else {
+                endGame();
+            }
+
+            // Update Player Progress percentage
+            racers[0].progress = (wordIndex / wordsArr.length) * 100;
+        }
+    });
+
+    function updateGameLoop() {
+        const elapsedTime = (Date.now() - startTime) / 1000;
+        document.getElementById("timerDisplay").innerText = `Time: ${elapsedTime.toFixed(2)}s`;
+
+        // Calculate Player WPM
+        const minutes = elapsedTime / 60;
+        const wpm = minutes > 0 ? Math.round((wordIndex / minutes)) : 0;
+        document.getElementById("wpmDisplay").innerText = `WPM: ${wpm}`;
+
+        // Move Bots
+        racers.forEach((racer, index) => {
+            if (racer.type === "bot" && racer.progress < 100) {
+                racer.progress += racer.speed * 0.25;
+                if (racer.progress > 100) racer.progress = 100;
+            }
+            
+            // Update DOM element position
+            const carEl = document.getElementById(`car-${index}`);
+            if (carEl) {
+                carEl.style.left = `${Math.min(racer.progress, 92)}%`;
+            }
+        });
+
+        if (racers[0].progress >= 100) {
+            endGame();
+        }
+    }
+
+    function endGame() {
+        isPlaying = false;
+        clearInterval(timerInterval);
+        document.getElementById("typingInput").setAttribute("disabled", "true");
+        alert("Race Finished!");
+    }
+</script>
+
+</body>
+</html>
