@@ -90,7 +90,7 @@
         sun.castShadow = true;
         scene.add(sun);
 
-        // --- Asset Loading ---
+        // --- Asset Loading Manager ---
         const manager = new THREE.LoadingManager();
         const loader = new GLTFLoader(manager);
         
@@ -106,70 +106,63 @@
         // Models
         let playerModel, mixer, animations = {};
         
-loader.load('girl.glb', (gltf) => {
-    playerModel = gltf.scene;
-    playerModel.scale.set(0.5, 0.5, 0.5);
-    playerModel.rotation.y = Math.PI; 
-    playerModel.traverse(child => { if (child.isMesh) child.castShadow = true; });
-    scene.add(playerModel);
+        // Load Character Model (girl.glb)
+        loader.load('girl.glb', (gltf) => {
+            playerModel = gltf.scene;
+            playerModel.scale.set(0.5, 0.5, 0.5);
+            playerModel.rotation.y = Math.PI; 
+            playerModel.traverse(child => { if (child.isMesh) child.castShadow = true; });
+            scene.add(playerModel);
 
-    mixer = new THREE.AnimationMixer(playerModel);
-    
-    // Play the first available animation if it exists
-    if (gltf.animations.length > 0) {
-        const firstAnim = gltf.animations[0].name;
-        animations[firstAnim] = mixer.clipAction(gltf.animations[0]);
-        animations[firstAnim].play();
-    }
-}, (xhr) => {
-    // This logs the loading progress percentage to your browser console!
-    if (xhr.total > 0) {
-        console.log(Math.round(xhr.loaded / xhr.total * 100) + '% loaded');
-    }
-}, (error) => {
-    console.error('An error happened loading girl.glb:', error);
-});
-
-        // --- Track Generation ---
-        const trackSegments = [];
-        const segmentCount = 10;
-        const segmentLength = 20;
-
-        function createTrackSegment(z) {
-            const group = new THREE.Group();
+            mixer = new THREE.AnimationMixer(playerModel);
             
-            // Floor
-            const geo = new THREE.BoxGeometry(12, 0.5, segmentLength);
-            const mat = new THREE.MeshStandardMaterial({ color: 0x333333 });
-            const floor = new THREE.Mesh(geo, mat);
-            floor.receiveShadow = true;
-            group.add(floor);
+            gltf.animations.forEach(clip => {
+                animations[clip.name] = mixer.clipAction(clip);
+            });
+            
+            if (gltf.animations.length > 0) {
+                const firstAnim = gltf.animations[0].name;
+                animations[firstAnim] = mixer.clipAction(gltf.animations[0]);
+                animations[firstAnim].play();
+            }
+        }, undefined, (error) => {
+            console.error('An error happened loading girl.glb:', error);
+        });
 
-            // Side Railings (Temple Style)
-            const railGeo = new THREE.BoxGeometry(1, 2, segmentLength);
-            const railMat = new THREE.MeshStandardMaterial({ color: 0x554433 });
-            const leftRail = new THREE.Mesh(railGeo, railMat);
-            leftRail.position.set(-6, 1, 0);
-            group.add(leftRail);
+        // --- Endless Track Generation (sub.glb) ---
+        const trackSegments = [];
+        const segmentCount = 8;     // Number of track pieces kept in a looping pool
+        const segmentLength = 30;   // Adjust this if your sub.glb track piece is longer/shorter
+        let templateTrack = null;
 
-            const rightRail = new THREE.Mesh(railGeo, railMat);
-            rightRail.position.set(6, 1, 0);
-            group.add(rightRail);
+        loader.load('sub.glb', (gltf) => {
+            templateTrack = gltf.scene;
+            templateTrack.scale.set(1, 1, 1); // Adjust scale if needed
+            templateTrack.traverse(child => { 
+                if (child.isMesh) child.receiveShadow = true; 
+            });
 
-            group.position.z = z;
-            scene.add(group);
-            trackSegments.push(group);
+            // Spawn initial continuous track line stretching forward
+            for (let i = 0; i < segmentCount; i++) {
+                spawnSegment(-i * segmentLength);
+            }
+        }, undefined, (error) => {
+            console.error('Error loading sub.glb:', error);
+        });
+
+        function spawnSegment(zPos) {
+            if (!templateTrack) return;
+            const segment = templateTrack.clone();
+            segment.position.z = zPos;
+            scene.add(segment);
+            trackSegments.push(segment);
         }
 
-        for (let i = 0; i < segmentCount; i++) {
-            createTrackSegment(-i * segmentLength);
-        }
-
-        // --- Obstacles & Coins ---
+        // --- Obstacles ---
         const obstacles = [];
         function spawnObstacle(z) {
             const lane = LANES[Math.floor(Math.random() * 3)];
-            const isHigh = Math.random() > 0.7; // Slide or Jump
+            const isHigh = Math.random() > 0.7; 
             
             const geo = isHigh ? new THREE.BoxGeometry(3, 4, 1) : new THREE.BoxGeometry(3, 1, 1);
             const mat = new THREE.MeshStandardMaterial({ color: 0xff0000 });
@@ -189,20 +182,14 @@ loader.load('girl.glb', (gltf) => {
             
             if ((e.key === 'ArrowUp' || e.key === 'w') && !isJumping) {
                 isJumping = true;
-                if (animations['Running']) animations['Running'].crossFadeTo(animations['Jump'], 0.2, true);
-                animations['Jump'].play();
-                
-                setTimeout(() => {
-                    animations['Jump'].crossFadeTo(animations['Running'], 0.2, true);
-                    isJumping = false;
-                }, 800);
+                setTimeout(() => { isJumping = false; }, 800);
             }
 
             if ((e.key === 'ArrowDown' || e.key === 's') && !isSliding) {
                 isSliding = true;
-                playerModel.scale.y = 0.2; // Visual slide hack
+                if (playerModel) playerModel.scale.y = 0.2; 
                 setTimeout(() => {
-                    playerModel.scale.y = 0.5;
+                    if (playerModel) playerModel.scale.y = 0.5;
                     isSliding = false;
                 }, 700);
             }
@@ -222,44 +209,48 @@ loader.load('girl.glb', (gltf) => {
             if (speed < maxSpeed) speed += 0.0001;
             document.getElementById('speed-val').innerText = (speed * 2).toFixed(1);
 
-            // Move Player
-            const targetX = LANES[currentLane];
-            playerModel.position.x = THREE.MathUtils.lerp(playerModel.position.x, targetX, 0.1);
-            
-            // Vertical Jump Logic
-            if (isJumping) {
-                playerModel.position.y = Math.sin((Date.now() * 0.005)) * 3; 
-                // Note: Simplified jump for the demo. In prod, use a velocity-based gravity system.
-                if (playerModel.position.y < 0) playerModel.position.y = 0;
-            } else {
-                playerModel.position.y = 0;
+            // Move Player smoothly between lanes
+            if (playerModel) {
+                const targetX = LANES[currentLane];
+                playerModel.position.x = THREE.MathUtils.lerp(playerModel.position.x, targetX, 0.1);
+                
+                // Vertical Jump Logic
+                if (isJumping) {
+                    playerModel.position.y = Math.sin((Date.now() * 0.005)) * 3; 
+                    if (playerModel.position.y < 0) playerModel.position.y = 0;
+                } else {
+                    playerModel.position.y = 0;
+                }
             }
 
-            // Move Track & Obstacles
+            // Move Track Segments & Recycle Infinitely
             trackSegments.forEach(seg => {
                 seg.position.z += speed;
-                if (seg.position.z > segmentLength) {
-                    seg.position.z -= segmentCount * segmentLength;
-                    spawnObstacle(seg.position.z - 50); // Spawn ahead
+                
+                // When a segment passes behind the player, teleport it infinitely to the front
+                if (seg.position.z > 15) {
+                    let minZ = Math.min(...trackSegments.map(s => s.position.z));
+                    seg.position.z = minZ - segmentLength;
+                    spawnObstacle(seg.position.z - 20); // Spawn new obstacle ahead
                 }
             });
 
+            // Move Obstacles & Check Collisions
             obstacles.forEach((obs, index) => {
                 obs.position.z += speed;
 
-                // Collision Detection
-                const distZ = Math.abs(obs.position.z - playerModel.position.z);
-                const distX = Math.abs(obs.position.x - playerModel.position.x);
+                if (playerModel) {
+                    const distZ = Math.abs(obs.position.z - playerModel.position.z);
+                    const distX = Math.abs(obs.position.x - playerModel.position.x);
 
-                if (distZ < 1 && distX < 1.5) {
-                    const isHigh = obs.userData.type === 'high';
-                    // If high obstacle and NOT sliding OR low obstacle and NOT jumping
-                    if ((isHigh && !isSliding) || (!isHigh && !isJumping)) {
-                        endGame();
+                    if (distZ < 1 && distX < 1.5) {
+                        const isHigh = obs.userData.type === 'high';
+                        if ((isHigh && !isSliding) || (!isHigh && !isJumping)) {
+                            endGame();
+                        }
                     }
                 }
 
-                // Cleanup
                 if (obs.position.z > 10) {
                     scene.remove(obs);
                     obstacles.splice(index, 1);
@@ -269,17 +260,16 @@ loader.load('girl.glb', (gltf) => {
             });
 
             // Camera follow
-            camera.position.set(playerModel.position.x * 0.5, 5, 10);
-            camera.lookAt(playerModel.position.x, 2, -5);
+            if (playerModel) {
+                camera.position.set(playerModel.position.x * 0.5, 5, 10);
+                camera.lookAt(playerModel.position.x, 2, -5);
+            }
 
             renderer.render(scene, camera);
         }
 
         function endGame() {
             isDead = true;
-            if (animations['Running']) animations['Running'].stop();
-            if (animations['Death']) animations['Death'].play();
-            
             document.getElementById('game-over').style.display = 'flex';
             document.getElementById('final-score').innerText = "SCORE: " + score;
         }
