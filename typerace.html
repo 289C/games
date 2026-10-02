@@ -1,82 +1,181 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2-Player TypeRacer</title>
+    <title>Ultimate TypeRacer</title>
     <style>
-        :root { --primary: #4a90e2; --bg: #f4f7f6; --success: #2ecc71; --error: #e74c3c; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; justify-content: center; padding: 20px; margin: 0; }
-        .container { background: white; width: 100%; max-width: 700px; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        h1 { text-align: center; color: var(--primary); margin-top: 0; }
-        
+        :root {
+            --primary: #4a90e2;
+            --bg: #f4f7f6;
+            --card: #ffffff;
+            --text: #333;
+            --track: #e0e0e0;
+            --success: #2ecc71;
+            --error: #e74c3c;
+            --finish: #333;
+        }
+
+        [data-theme="dark"] {
+            --bg: #1a1a2e;
+            --card: #16213e;
+            --text: #e9e9e9;
+            --track: #0f3460;
+            --primary: #4ecca3;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            margin: 0;
+            transition: background 0.3s ease;
+            overflow-x: hidden;
+        }
+
+        /* --- Clouds Animation --- */
+        .cloud-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0.5;
+        }
+        .cloud {
+            position: absolute;
+            font-size: 50px;
+            animation: moveClouds linear infinite;
+        }
+        @keyframes moveClouds {
+            from { transform: translateX(-100px); }
+            to { transform: translateX(110vw); }
+        }
+
+        .container {
+            background: var(--card);
+            width: 100%;
+            max-width: 750px;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            position: relative;
+        }
+
+        /* --- Header & Theme Toggle --- */
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .theme-toggle { cursor: pointer; font-size: 1.5rem; background: none; border: none; padding: 5px; }
+
         .screen { display: none; }
         .active { display: block; }
 
-        .menu-grid { display: grid; gap: 15px; }
-        button { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; background: var(--primary); color: white; transition: 0.3s; }
-        button:hover { opacity: 0.9; transform: translateY(-1px); }
-        button:disabled { background: #ccc; cursor: not-allowed; }
+        button { 
+            padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer; 
+            font-weight: bold; background: var(--primary); color: white; transition: 0.2s; 
+        }
+        button:hover { filter: brightness(1.1); transform: translateY(-2px); }
+        input { 
+            padding: 12px; border: 2px solid var(--track); border-radius: 10px; 
+            background: var(--card); color: var(--text); width: 100%; box-sizing: border-box; 
+        }
 
-        input { padding: 12px; border: 2px solid #ddd; border-radius: 8px; margin-bottom: 10px; width: 100%; box-sizing: border-box; }
+        /* --- Avatar Picker --- */
+        .avatar-picker { display: flex; gap: 10px; justify-content: center; margin: 15px 0; }
+        .avatar-option { 
+            font-size: 2rem; cursor: pointer; padding: 10px; border-radius: 10px; 
+            border: 2px solid transparent; transition: 0.2s; 
+        }
+        .avatar-option.selected { border-color: var(--primary); background: rgba(74, 144, 226, 0.1); }
 
-        /* Racing Track */
-        .track { background: #eee; padding: 15px; border-radius: 10px; margin: 20px 0; border: 2px solid #ddd; }
-        .lane { height: 50px; position: relative; border-bottom: 1px dashed #bbb; display: flex; align-items: center; }
+        /* --- Racing Track --- */
+        .track { 
+            background: var(--track); padding: 15px; border-radius: 15px; margin: 25px 0; 
+            position: relative; overflow: hidden; 
+        }
+        .lane { 
+            height: 60px; position: relative; border-bottom: 2px dashed rgba(255,255,255,0.2); 
+            display: flex; align-items: center; 
+        }
         .lane:last-child { border-bottom: none; }
-        .car { position: absolute; font-size: 28px; transition: left 0.2s linear; z-index: 5; line-height: 1; }
-        .label { position: absolute; font-size: 11px; top: -15px; background: #333; color: white; padding: 2px 6px; border-radius: 4px; white-space: nowrap; }
+        
+        .finish-line {
+            position: absolute; right: 0; top: 0; bottom: 0; width: 30px;
+            background: repeating-conic-gradient(#fff 0% 25%, #000 0% 50%) 50% / 15px 15px;
+            opacity: 0.3;
+        }
 
-        /* Text Area */
-        #text-display { font-size: 1.4rem; line-height: 1.6; margin-bottom: 15px; padding: 20px; background: #fafafa; border-radius: 8px; border: 1px solid #eee; user-select: none; min-height: 60px; }
+        .car { position: absolute; font-size: 32px; transition: left 0.3s cubic-bezier(0.1, 0.7, 1.0, 0.1); z-index: 10; }
+        .trail { 
+            position: absolute; left: 0; height: 4px; background: var(--primary); 
+            bottom: 10px; border-radius: 2px; opacity: 0.4; transition: width 0.3s;
+        }
+        .label { 
+            position: absolute; font-size: 11px; top: -18px; left: 0;
+            background: var(--primary); color: white; padding: 2px 6px; border-radius: 4px; 
+        }
+
+        /* --- Typing UI --- */
+        #text-display { 
+            font-size: 1.4rem; line-height: 1.6; margin-bottom: 15px; padding: 20px; 
+            background: rgba(0,0,0,0.03); border-radius: 12px; border: 1px solid rgba(0,0,0,0.1);
+        }
         .correct { color: var(--success); }
-        .wrong { background: #ffcdd2; color: var(--error); }
-        #typing-input { width: 100%; padding: 15px; font-size: 1.2rem; border: 2px solid #ddd; border-radius: 8px; outline: none; }
-        #typing-input:focus { border-color: var(--primary); }
+        .wrong { background: var(--error); color: white; border-radius: 3px; }
+        #typing-input { font-size: 1.3rem; border-width: 3px; }
 
-        .status-box { background: #e3f2fd; padding: 20px; border-radius: 8px; text-align: center; margin-top: 20px; border: 1px solid #bbdefb; }
-        .stats-row { display: flex; justify-content: space-around; margin-top: 20px; font-weight: bold; font-size: 1.1rem; }
-        #room-code-display { font-size: 1.8rem; letter-spacing: 4px; color: #1976d2; display: block; margin: 10px 0; }
+        .stats-row { display: flex; justify-content: space-around; font-size: 1.2rem; font-weight: bold; margin-top: 15px; }
+        .countdown { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 5rem; font-weight: 900; color: var(--primary); z-index: 100; text-shadow: 0 5px 15px rgba(0,0,0,0.3); display: none; }
     </style>
 </head>
 <body>
 
+<div class="cloud-bg" id="clouds"></div>
+
 <div class="container">
-    <h1>🏎️ TypeRacer JS</h1>
+    <div class="header">
+        <h1 style="margin:0;">🏎️ TypeRacer Pro</h1>
+        <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark/Light Mode">🌓</button>
+    </div>
 
     <!-- MAIN MENU -->
     <div id="menu-screen" class="screen active">
-        <div class="menu-grid">
-            <button onclick="startSinglePlayer()">Single Player Mode</button>
-            <div style="text-align: center; color: #999; margin: 5px 0;">OR</div>
-            <button onclick="showScreen('lobby-screen')" style="background: #673ab7;">Play with a Friend (2 Players)</button>
+        <p style="text-align:center;">Choose your Avatar:</p>
+        <div class="avatar-picker">
+            <div class="avatar-option selected" onclick="selectAvatar(this, '🏎️')">🏎️</div>
+            <div class="avatar-option" onclick="selectAvatar(this, '🚀')">🚀</div>
+            <div class="avatar-option" onclick="selectAvatar(this, '🏍️')">🏍️</div>
+            <div class="avatar-option" onclick="selectAvatar(this, '🦄')">🦄</div>
+            <div class="avatar-option" onclick="selectAvatar(this, '🛸')">🛸</div>
+        </div>
+        <div style="display:grid; gap:10px;">
+            <button onclick="startSinglePlayer()">Single Player</button>
+            <button onclick="showScreen('lobby-screen')" style="background: #673ab7;">Play with a Friend</button>
         </div>
     </div>
 
     <!-- LOBBY SCREEN -->
     <div id="lobby-screen" class="screen">
-        <div class="menu-grid">
-            <button id="btn-create" onclick="createRoom()">Create New Room</button>
-            <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #eee;">
-                <input type="text" id="join-code" placeholder="Enter Room Code">
-                <button onclick="joinRoom()" style="width: 100%; background: #2ecc71;">Join Room</button>
-            </div>
-            <button onclick="location.reload()" style="background:#777;">Back to Home</button>
+        <input type="text" id="join-code" placeholder="Enter Room Code">
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:10px;">
+            <button onclick="createRoom()" style="background:#4a90e2;">Create Room</button>
+            <button onclick="joinRoom()" style="background:#2ecc71;">Join Room</button>
         </div>
-
-        <div id="room-status" class="status-box" style="display:none;">
-            Room Code: <strong id="room-code-display">---</strong>
-            <p id="wait-msg">Waiting for a friend to join...</p>
-            <button id="start-btn" style="display:none; width: 100%; font-size: 1.2rem; background: #ff9800;" onclick="triggerStart()">START THE RACE</button>
+        <div id="room-status" style="display:none; text-align:center; margin-top:20px; padding:15px; background:rgba(0,0,0,0.05); border-radius:10px;">
+            <p>Code: <strong id="display-code" style="font-size:1.5rem; letter-spacing:3px;">---</strong></p>
+            <p id="wait-msg">Waiting for friend...</p>
+            <button id="start-btn" style="display:none; width:100%; background:#f39c12;" onclick="triggerStart()">START RACE</button>
         </div>
+        <button onclick="location.reload()" style="background:#777; width:100%; margin-top:10px;">Back</button>
     </div>
 
     <!-- GAME SCREEN -->
-    <div id="game-screen" class="screen">
+    <div id="game-screen" class="screen" style="position:relative;">
+        <div id="countdown" class="countdown">3</div>
         <div class="track" id="track"></div>
         <div id="text-display"></div>
-        <input type="text" id="typing-input" autocomplete="off" placeholder="Start typing when the race begins..." disabled>
-        
+        <input type="text" id="typing-input" autocomplete="off" disabled>
         <div class="stats-row">
             <div>WPM: <span id="stat-wpm">0</span></div>
             <div>Time: <span id="stat-time">0</span>s</div>
@@ -101,209 +200,199 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
+    // --- Audio Logic (No files needed) ---
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playSound(freq, type, duration, vol=0.1) {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(); osc.stop(audioCtx.currentTime + duration);
+    }
+
+    const sounds = {
+        click: () => playSound(600, 'square', 0.05, 0.05),
+        beep: () => playSound(400, 'sine', 0.2, 0.2),
+        go: () => playSound(800, 'sine', 0.4, 0.2),
+        win: () => {
+            [440, 554, 659, 880].forEach((f, i) => setTimeout(() => playSound(f, 'triangle', 0.5, 0.2), i*150));
+        }
+    };
+
+    // --- State & Config ---
     const quotes = [
-        "Knowledge is power but only if you use it correctly.",
-        "The quick brown fox jumps over the lazy dog.",
-        "A journey of a thousand miles begins with a single step.",
-        "To be or not to be that is the question we ask ourselves.",
-        "Success is not final failure is not fatal it is courage that counts."
+        "The universe is under no obligation to make sense to you.",
+        "Your time is limited so do not waste it living someone else's life.",
+        "Design is not just what it looks like and feels like. Design is how it works.",
+        "The quick brown fox jumps over the lazy dog in a spectacular display of agility.",
+        "Code is like humor. When you have to explain it, it’s bad."
     ];
 
-    let myId = "p_" + Math.floor(Math.random() * 9000 + 1000);
+    let myId = "p" + Math.floor(Math.random() * 9999);
+    let myAvatar = "🏎️";
+    let isHost = false;
     let currentRoom = null;
     let targetQuote = "";
-    let isMultiplayer = false;
-    let isHost = false;
     let startTime;
     let timerInterval;
 
-    // UI Navigation helper
+    // --- Visual setup ---
+    window.toggleTheme = () => {
+        const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', theme);
+    };
+
+    window.selectAvatar = (el, emoji) => {
+        document.querySelectorAll('.avatar-option').forEach(opt => opt.classList.remove('selected'));
+        el.classList.add('selected');
+        myAvatar = emoji;
+        sounds.click();
+    };
+
+    function spawnClouds() {
+        const container = document.getElementById('clouds');
+        for(let i=0; i<6; i++) {
+            const cloud = document.createElement('div');
+            cloud.className = 'cloud';
+            cloud.innerText = '☁️';
+            cloud.style.top = Math.random() * 80 + '%';
+            cloud.style.animationDuration = (Math.random() * 20 + 20) + 's';
+            cloud.style.animationDelay = (Math.random() * 20) + 's';
+            container.appendChild(cloud);
+        }
+    }
+    spawnClouds();
+
+    // --- Navigation ---
     window.showScreen = (id) => {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById(id).classList.add('active');
+        sounds.click();
     };
 
-    // --- SINGLE PLAYER ---
-    window.startSinglePlayer = () => {
-        isMultiplayer = false;
-        isHost = false;
-        targetQuote = quotes[Math.floor(Math.random() * quotes.length)];
-        setupGameUI({ [myId]: { name: "You", progress: 0 } });
-        beginRace();
-    };
-
-    // --- MULTIPLAYER ---
+    // --- Multiplayer Logic ---
     window.createRoom = async () => {
-        const code = Math.random().toString(36).substring(2, 8).toUpperCase();
-        currentRoom = code;
-        isHost = true;
-        isMultiplayer = true;
-
-        document.getElementById('btn-create').disabled = true;
-
+        const code = Math.random().toString(36).substring(2, 7).toUpperCase();
+        currentRoom = code; isHost = true;
         await set(ref(db, `rooms/${code}`), {
             status: 'waiting',
             quote: quotes[Math.floor(Math.random() * quotes.length)],
-            players: {
-                [myId]: { name: "Host (You)", progress: 0 }
-            }
+            players: { [myId]: { name: "Host", avatar: myAvatar, progress: 0 } }
         });
-
         document.getElementById('room-status').style.display = 'block';
-        document.getElementById('room-code-display').innerText = code;
+        document.getElementById('display-code').innerText = code;
         listenToRoom(code);
     };
 
     window.joinRoom = async () => {
         const code = document.getElementById('join-code').value.toUpperCase().trim();
-        if(!code) return alert("Enter a code");
-
-        const roomRef = ref(db, `rooms/${code}`);
-        const snap = await get(roomRef);
-
-        if (snap.exists()) {
-            const data = snap.val();
-            const players = data.players || {};
-            if (Object.keys(players).length >= 2) return alert("Room is full!");
-
-            currentRoom = code;
-            isHost = false;
-            isMultiplayer = true;
-
-            await update(ref(db, `rooms/${code}/players/${myId}`), { name: "Guest", progress: 0 });
-            
+        const snap = await get(ref(db, `rooms/${code}`));
+        if (snap.exists() && Object.keys(snap.val().players).length < 2) {
+            currentRoom = code; isHost = false;
+            await update(ref(db, `rooms/${code}/players/${myId}`), { name: "Guest", avatar: myAvatar, progress: 0 });
             document.getElementById('room-status').style.display = 'block';
-            document.getElementById('room-code-display').innerText = code;
-            document.getElementById('wait-msg').innerText = "Connected! Waiting for Host to start...";
+            document.getElementById('display-code').innerText = code;
+            document.getElementById('wait-msg').innerText = "Joined! Waiting for Host...";
             listenToRoom(code);
-        } else {
-            alert("Room not found.");
-        }
+        } else alert("Room full or not found!");
     };
 
     function listenToRoom(code) {
         onValue(ref(db, `rooms/${code}`), (snap) => {
-            const data = snap.val();
-            if (!data) return;
-
-            const players = data.players || {};
-            const playerCount = Object.keys(players).length;
-
-            // Host side: Show Start Button when exactly 2 players are in
-            if (isHost && playerCount === 2 && data.status === 'waiting') {
+            const data = snap.val(); if (!data) return;
+            const pCount = Object.keys(data.players).length;
+            if (isHost && pCount === 2 && data.status === 'waiting') {
                 document.getElementById('start-btn').style.display = 'block';
-                document.getElementById('wait-msg').innerText = "Friend joined! Click below to start.";
+                document.getElementById('wait-msg').innerText = "Ready to race!";
             }
-
-            // Everyone: Handle game start command from Firebase
             if (data.status === 'racing' && !startTime) {
                 targetQuote = data.quote;
-                setupGameUI(players);
-                beginRace();
+                startRaceSequence(data.players);
             }
-
-            // Everyone: Update cars position in real-time
             if (data.status === 'racing') {
-                Object.keys(players).forEach(id => {
+                Object.keys(data.players).forEach(id => {
                     const car = document.getElementById(`car-${id}`);
-                    if (car) car.style.left = `calc(${players[id].progress}% - 35px)`;
+                    const trail = document.getElementById(`trail-${id}`);
+                    if (car) car.style.left = `calc(${data.players[id].progress}% - 40px)`;
+                    if (trail) trail.style.width = `${data.players[id].progress}%`;
                 });
             }
         });
     }
 
-    window.triggerStart = () => {
-        if (!currentRoom) return;
-        update(ref(db, `rooms/${currentRoom}`), { status: 'racing' });
+    window.startSinglePlayer = () => {
+        targetQuote = quotes[Math.floor(Math.random() * quotes.length)];
+        startRaceSequence({ [myId]: { name: "You", avatar: myAvatar, progress: 0 } });
     };
 
-    // --- CORE GAME ENGINE ---
-    function setupGameUI(players) {
-        showScreen('game-screen');
-        const track = document.getElementById('track');
-        track.innerHTML = '';
+    window.triggerStart = () => update(ref(db, `rooms/${currentRoom}`), { status: 'racing' });
 
-        // Create one lane per player
+    // --- Race Sequence ---
+    function startRaceSequence(players) {
+        showScreen('game-screen');
+        const track = document.getElementById('track'); track.innerHTML = '<div class="finish-line"></div>';
         Object.keys(players).forEach(id => {
-            const lane = document.createElement('div');
-            lane.className = 'lane';
-            lane.innerHTML = `
-                <div class="car" id="car-${id}">
-                    <span class="label">${players[id].name}</span>
-                    🏎️
-                </div>`;
+            const lane = document.createElement('div'); lane.className = 'lane';
+            lane.innerHTML = `<div class="trail" id="trail-${id}"></div><div class="car" id="car-${id}"><span class="label">${players[id].name}</span>${players[id].avatar}</div>`;
             track.appendChild(lane);
         });
 
-        // Split quote into spans for coloring
-        const display = document.getElementById('text-display');
-        display.innerHTML = '';
-        targetQuote.split('').forEach(char => {
-            const span = document.createElement('span');
-            span.innerText = char;
-            display.appendChild(span);
-        });
+        const display = document.getElementById('text-display'); display.innerHTML = '';
+        targetQuote.split('').forEach(c => { const s = document.createElement('span'); s.innerText = c; display.appendChild(s); });
+
+        const countEl = document.getElementById('countdown');
+        countEl.style.display = 'block';
+        let count = 3;
+        const timer = setInterval(() => {
+            if(count > 0) { sounds.beep(); countEl.innerText = count; }
+            else if(count === 0) { sounds.go(); countEl.innerText = "GO!"; beginTyping(); }
+            else { countEl.style.display = 'none'; clearInterval(timer); }
+            count--;
+        }, 1000);
     }
 
-    function beginRace() {
+    function beginTyping() {
         const input = document.getElementById('typing-input');
-        input.disabled = false;
-        input.value = '';
-        input.focus();
+        input.disabled = false; input.value = ''; input.focus();
         startTime = new Date();
-
         timerInterval = setInterval(() => {
-            const elapsed = Math.floor((new Date() - startTime) / 1000);
-            document.getElementById('stat-time').innerText = elapsed;
+            document.getElementById('stat-time').innerText = Math.floor((new Date() - startTime)/1000);
         }, 1000);
-
-        input.addEventListener('input', handleTyping);
+        input.oninput = handleTyping;
     }
 
     function handleTyping() {
         const input = document.getElementById('typing-input');
-        const val = input.value;
         const spans = document.querySelectorAll('#text-display span');
-        let correctCount = 0;
-        let error = false;
-
+        let correct = 0, error = false;
+        
+        sounds.click();
+        
         spans.forEach((span, i) => {
-            const char = val[i];
-            if (char == null) {
-                span.className = '';
-            } else if (char === span.innerText && !error) {
-                span.className = 'correct';
-                correctCount++;
-            } else {
-                span.className = 'wrong';
-                error = true;
-            }
+            const char = input.value[i];
+            if (char == null) span.className = '';
+            else if (char === span.innerText && !error) { span.className = 'correct'; correct++; }
+            else { span.className = 'wrong'; error = true; }
         });
 
-        const progress = (correctCount / targetQuote.length) * 100;
-        
-        // Local feedback
-        const myCar = document.getElementById(`car-${myId}`);
-        if (myCar) myCar.style.left = `calc(${progress}% - 35px)`;
-
-        // Sync to Firebase
-        if (isMultiplayer && currentRoom) {
-            update(ref(db, `rooms/${currentRoom}/players/${myId}`), { progress: progress });
+        const prog = (correct / targetQuote.length) * 100;
+        if (currentRoom) update(ref(db, `rooms/${currentRoom}/players/${myId}`), { progress: prog });
+        else {
+            document.getElementById(`car-${myId}`).style.left = `calc(${prog}% - 40px)`;
+            document.getElementById(`trail-${myId}`).style.width = `${prog}%`;
         }
 
-        // Stats
-        const wordCount = val.trim().split(/\s+/).length;
-        const timeSpentMins = (new Date() - startTime) / 60000;
-        document.getElementById('stat-wpm').innerText = Math.round(wordCount / timeSpentMins) || 0;
+        const wpm = Math.round((input.value.length / 5) / ((new Date() - startTime) / 60000)) || 0;
+        document.getElementById('stat-wpm').innerText = wpm;
 
-        // Finish Logic
-        if (correctCount === targetQuote.length) {
+        if (correct === targetQuote.length) {
             clearInterval(timerInterval);
             input.disabled = true;
-            setTimeout(() => {
-                alert("Race Finished! Your Speed: " + document.getElementById('stat-wpm').innerText + " WPM");
-                location.reload();
-            }, 500);
+            sounds.win();
+            setTimeout(() => { alert(`Finish! Speed: ${wpm} WPM`); location.reload(); }, 500);
         }
     }
 </script>
