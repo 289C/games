@@ -106,22 +106,29 @@
         // Models
         let playerModel, mixer, animations = {};
         
-        // Load Runner (RobotExpressive is perfect for this as it has Run/Jump/Death)
-        loader.load('girl.glb', (gltf) => {
-            playerModel = gltf.scene;
-            playerModel.scale.set(0.5, 0.5, 0.5);
-            playerModel.rotation.y = Math.PI; // Face forward
-            playerModel.traverse(child => { if (child.isMesh) child.castShadow = true; });
-            scene.add(playerModel);
+loader.load('girl.glb', (gltf) => {
+    playerModel = gltf.scene;
+    playerModel.scale.set(0.5, 0.5, 0.5);
+    playerModel.rotation.y = Math.PI; 
+    playerModel.traverse(child => { if (child.isMesh) child.castShadow = true; });
+    scene.add(playerModel);
 
-            mixer = new THREE.AnimationMixer(playerModel);
-            gltf.animations.forEach(clip => {
-                animations[clip.name] = mixer.clipAction(clip);
-            });
-            
-            // Start Running
-            if (animations['Running']) animations['Running'].play();
-        });
+    mixer = new THREE.AnimationMixer(playerModel);
+    
+    // Play the first available animation if it exists
+    if (gltf.animations.length > 0) {
+        const firstAnim = gltf.animations[0].name;
+        animations[firstAnim] = mixer.clipAction(gltf.animations[0]);
+        animations[firstAnim].play();
+    }
+}, (xhr) => {
+    // This logs the loading progress percentage to your browser console!
+    if (xhr.total > 0) {
+        console.log(Math.round(xhr.loaded / xhr.total * 100) + '% loaded');
+    }
+}, (error) => {
+    console.error('An error happened loading girl.glb:', error);
+});
 
         // --- Track Generation ---
         const trackSegments = [];
