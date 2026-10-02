@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D GLTF Runner - Pro Edition</title>
+    <style>
+        body { margin: 0; overflow: hidden; background: #000; font-family: 'Courier New', Courier, monospace; }
+        #ui {
+            position: absolute; top: 20px; left: 20px; color: #00ff00;
+            font-size: 24px; text-shadow: 2px 2px #000; pointer-events: none;
+        }
+        #loading-screen {
+            position: absolute; width: 100%; height: 100%; background: #111;
+            display: flex; flex-direction: column; justify-content: center;
+            align-items: center; color: white; z-index: 100;
+        }
+        .progress-bar { width: 200px; height: 10px; background: #333; margin-top: 20px; border-radius: 5px; }
+        #progress { width: 0%; height: 100%; background: #00ff00; border-radius: 5px; }
+        #game-over {
+            position: absolute; width: 100%; height: 100%; background: rgba(0,0,0,0.8);
+            display: none; flex-direction: column; justify-content: center;
+            align-items: center; color: white; z-index: 90;
+        }
+        button {
+            padding: 15px 30px; font-size: 20px; background: #00ff00; border: none;
+            cursor: pointer; font-weight: bold; margin-top: 20px;
+        }
+        button:hover { background: #00cc00; }
+    </style>
+</head>
+<body>
+
+    <div id="loading-screen">
+        <h1>LOADING TEMPLE ASSETS...</h1>
+        <div class="progress-bar"><div id="progress"></div></div>
+    </div>
+
+    <div id="ui">
+        SCORE: <span id="score">0</span><br>
+        SPEED: <span id="speed-val">1.0</span>x
+    </div>
+
+    <div id="game-over">
+        <h1 style="color: #ff0000; font-size: 60px;">CRASHED!</h1>
+        <h2 id="final-score">SCORE: 0</h2>
+        <button onclick="location.reload()">RESTART RUN</button>
+    </div>
+
+    <!-- Three.js and Loaders via CDN -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+        // --- Game Config ---
+        const LANES = [-4, 0, 4];
+        let currentLane = 1;
+        let score = 0;
+        let speed = 0.5;
+        const maxSpeed = 1.5;
+        let isDead = false;
+        let isJumping = false;
+        let isSliding = false;
+
+        // --- Three.js Essentials ---
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x111122);
+        scene.fog = new THREE.FogExp2(0x111122, 0.02);
+
+        const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        document.body.appendChild(renderer.domElement);
+
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+        scene.add(ambientLight);
+
+        const sun = new THREE.DirectionalLight(0xffffff, 1.2);
+        sun.position.set(10, 20, 10);
+        sun.castShadow = true;
+        scene.add(sun);
+
+        // --- Asset Loading ---
+        const manager = new THREE.LoadingManager();
+        const loader = new GLTFLoader(manager);
+        
+        manager.onProgress = (url, itemsLoaded, itemsTotal) => {
+            document.getElementById('progress').style.width = (itemsLoaded / itemsTotal * 100) + '%';
+        };
+
+        manager.onLoad = () => {
+            document.getElementById('loading-screen').style.display = 'none';
+            animate();
+        };
+
+        // Models
+        let playerModel, mixer, animations = {};
+        
+        // Load Runner (RobotExpressive is perfect for this as it has Run/Jump/Death)
+        loader.load('https://threejs.org/examples/models/gltf/RobotExpressive/RobotExpressive.glb', (gltf) => {
+            playerModel = gltf.scene;
+            playerModel.scale.set(0.5, 0.5, 0.5);
+            playerModel.rotation.y = Math.PI; // Face forward
+            playerModel.traverse(child => { if (child.isMesh) child.castShadow = true; });
+            scene.add(playerModel);
+
+            mixer = new THREE.AnimationMixer(playerModel);
+            gltf.animations.forEach(clip => {
+                animations[clip.name] = mixer.clipAction(clip);
+            });
+            
+            // Start Running
+            if (animations['Running']) animations['Running'].play();
+        });
+
+        // --- Track Generation ---
+        const trackSegments = [];
+        const segmentCount = 10;
+        const segmentLength = 20;
+
+        function createTrackSegment(z) {
+            const group = new THREE.Group();
+            
+            // Floor
+            const geo = new THREE.BoxGeometry(12, 0.5, segmentLength);
+            const mat = new THREE.MeshStandardMaterial({ color: 0x333333 });
+            const floor = new THREE.Mesh(geo, mat);
+            floor.receiveShadow = true;
+            group.add(floor);
+
+            // Side Railings (Temple Style)
+            const railGeo = new THREE.BoxGeometry(1, 2, segmentLength);
+            const railMat = new THREE.MeshStandardMaterial({ color: 0x554433 });
+            const leftRail = new THREE.Mesh(railGeo, railMat);
+            leftRail.position.set(-6, 1, 0);
+            group.add(leftRail);
+
+            const rightRail = new THREE.Mesh(railGeo, railMat);
+            rightRail.position.set(6, 1, 0);
+            group.add(rightRail);
+
+            group.position.z = z;
+            scene.add(group);
+            trackSegments.push(group);
+        }
+
+        for (let i = 0; i < segmentCount; i++) {
+            createTrackSegment(-i * segmentLength);
+        }
+
+        // --- Obstacles & Coins ---
+        const obstacles = [];
+        function spawnObstacle(z) {
+            const lane = LANES[Math.floor(Math.random() * 3)];
+            const isHigh = Math.random() > 0.7; // Slide or Jump
+            
+            const geo = isHigh ? new THREE.BoxGeometry(3, 4, 1) : new THREE.BoxGeometry(3, 1, 1);
+            const mat = new THREE.MeshStandardMaterial({ color: 0xff0000 });
+            const mesh = new THREE.Mesh(geo, mat);
+            
+            mesh.position.set(lane, isHigh ? 3 : 0.5, z);
+            mesh.userData.type = isHigh ? 'high' : 'low';
+            scene.add(mesh);
+            obstacles.push(mesh);
+        }
+
+        // --- Controls ---
+        window.addEventListener('keydown', (e) => {
+            if (isDead) return;
+            if ((e.key === 'ArrowLeft' || e.key === 'a') && currentLane > 0) currentLane--;
+            if ((e.key === 'ArrowRight' || e.key === 'd') && currentLane < 2) currentLane++;
+            
+            if ((e.key === 'ArrowUp' || e.key === 'w') && !isJumping) {
+                isJumping = true;
+                if (animations['Running']) animations['Running'].crossFadeTo(animations['Jump'], 0.2, true);
+                animations['Jump'].play();
+                
+                setTimeout(() => {
+                    animations['Jump'].crossFadeTo(animations['Running'], 0.2, true);
+                    isJumping = false;
+                }, 800);
+            }
+
+            if ((e.key === 'ArrowDown' || e.key === 's') && !isSliding) {
+                isSliding = true;
+                playerModel.scale.y = 0.2; // Visual slide hack
+                setTimeout(() => {
+                    playerModel.scale.y = 0.5;
+                    isSliding = false;
+                }, 700);
+            }
+        });
+
+        // --- Game Loop ---
+        const clock = new THREE.Clock();
+
+        function animate() {
+            if (isDead) return;
+            requestAnimationFrame(animate);
+            const delta = clock.getDelta();
+
+            if (mixer) mixer.update(delta);
+
+            // Increase speed
+            if (speed < maxSpeed) speed += 0.0001;
+            document.getElementById('speed-val').innerText = (speed * 2).toFixed(1);
+
+            // Move Player
+            const targetX = LANES[currentLane];
+            playerModel.position.x = THREE.MathUtils.lerp(playerModel.position.x, targetX, 0.1);
+            
+            // Vertical Jump Logic
+            if (isJumping) {
+                playerModel.position.y = Math.sin((Date.now() * 0.005)) * 3; 
+                // Note: Simplified jump for the demo. In prod, use a velocity-based gravity system.
+                if (playerModel.position.y < 0) playerModel.position.y = 0;
+            } else {
+                playerModel.position.y = 0;
+            }
+
+            // Move Track & Obstacles
+            trackSegments.forEach(seg => {
+                seg.position.z += speed;
+                if (seg.position.z > segmentLength) {
+                    seg.position.z -= segmentCount * segmentLength;
+                    spawnObstacle(seg.position.z - 50); // Spawn ahead
+                }
+            });
+
+            obstacles.forEach((obs, index) => {
+                obs.position.z += speed;
+
+                // Collision Detection
+                const distZ = Math.abs(obs.position.z - playerModel.position.z);
+                const distX = Math.abs(obs.position.x - playerModel.position.x);
+
+                if (distZ < 1 && distX < 1.5) {
+                    const isHigh = obs.userData.type === 'high';
+                    // If high obstacle and NOT sliding OR low obstacle and NOT jumping
+                    if ((isHigh && !isSliding) || (!isHigh && !isJumping)) {
+                        endGame();
+                    }
+                }
+
+                // Cleanup
+                if (obs.position.z > 10) {
+                    scene.remove(obs);
+                    obstacles.splice(index, 1);
+                    score += 10;
+                    document.getElementById('score').innerText = score;
+                }
+            });
+
+            // Camera follow
+            camera.position.set(playerModel.position.x * 0.5, 5, 10);
+            camera.lookAt(playerModel.position.x, 2, -5);
+
+            renderer.render(scene, camera);
+        }
+
+        function endGame() {
+            isDead = true;
+            if (animations['Running']) animations['Running'].stop();
+            if (animations['Death']) animations['Death'].play();
+            
+            document.getElementById('game-over').style.display = 'flex';
+            document.getElementById('final-score').innerText = "SCORE: " + score;
+        }
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+    </script>
+</body>
+</html>
