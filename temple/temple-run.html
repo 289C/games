@@ -107,7 +107,7 @@
         let playerModel, mixer, animations = {};
         
         // Load Runner (RobotExpressive is perfect for this as it has Run/Jump/Death)
-        loader.load('https://threejs.org/examples/models/gltf/RobotExpressive/RobotExpressive.glb', (gltf) => {
+        loader.load('girl.glb', (gltf) => {
             playerModel = gltf.scene;
             playerModel.scale.set(0.5, 0.5, 0.5);
             playerModel.rotation.y = Math.PI; // Face forward
