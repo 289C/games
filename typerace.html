@@ -3,331 +3,411 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JS TypeRacer - Solo & Multiplayer</title>
-    <!-- PeerJS for Multiplayer -->
-    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+    <title>TypeRacer - Firebase Edition</title>
     <style>
         :root {
-            --bg: #f4f7f6;
-            --card: #ffffff;
             --primary: #4a90e2;
-            --correct: #2ecc71;
-            --wrong: #e74c3c;
-            --text: #333;
+            --bg: #f8f9fa;
+            --success: #2ecc71;
+            --error: #e74c3c;
+            --dark: #2c3e50;
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
+            background-color: var(--bg);
+            color: var(--dark);
             margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
 
         .container {
+            background: white;
+            width: 90%;
             max-width: 800px;
-            width: 100%;
-            background: var(--card);
             padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
 
-        h1 { text-align: center; color: var(--primary); }
+        h1 { text-align: center; color: var(--primary); margin-bottom: 30px; }
+
+        /* UI Screens */
+        .screen { display: none; }
+        .screen.active { display: block; }
+
+        .btn-group { display: flex; gap: 15px; justify-content: center; margin-bottom: 20px; flex-wrap: wrap; }
+        
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            background: var(--primary);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        button:hover { background: #357abd; transform: translateY(-2px); }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+
+        input[type="text"] {
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+        }
 
         /* Racing Track */
         .track {
-            margin: 20px 0;
             background: #eee;
-            padding: 10px;
-            border-radius: 8px;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
             position: relative;
         }
-        .car-row {
-            height: 40px;
+
+        .lane {
+            height: 50px;
+            border-bottom: 2px dashed #ddd;
+            position: relative;
             display: flex;
             align-items: center;
-            border-bottom: 1px dashed #ccc;
-            position: relative;
         }
-        .car-row:last-child { border: none; }
+
+        .lane:last-child { border-bottom: none; }
+
         .car {
             position: absolute;
-            left: 0;
+            font-size: 30px;
             transition: left 0.3s ease;
-            font-size: 24px;
+            z-index: 2;
+        }
+
+        .car-info {
+            position: absolute;
+            font-size: 10px;
+            top: -15px;
+            background: black;
+            color: white;
+            padding: 2px 5px;
+            border-radius: 3px;
             white-space: nowrap;
         }
-        .car-label { font-size: 12px; margin-left: 35px; color: #666; }
 
-        /* Text Area */
+        /* Typing Area */
         #quote-display {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             line-height: 1.6;
             margin: 20px 0;
             padding: 15px;
-            background: #f9f9f9;
-            border-radius: 8px;
-            letter-spacing: 0.5px;
+            background: #fdfdfd;
+            border-left: 5px solid var(--primary);
+            user-select: none;
         }
-        .correct { color: var(--correct); }
-        .incorrect { background-color: #ffc9c9; color: var(--wrong); text-decoration: underline; }
+
+        .correct { color: var(--success); }
+        .wrong { background-color: #ffdada; color: var(--error); text-decoration: underline; }
         .current { border-bottom: 3px solid var(--primary); }
 
-        #type-input {
+        #typing-input {
             width: 100%;
             padding: 15px;
             font-size: 1.2rem;
             border: 2px solid #ddd;
             border-radius: 8px;
-            outline: none;
             box-sizing: border-box;
         }
-        #type-input:focus { border-color: var(--primary); }
 
-        /* Stats */
         .stats {
             display: flex;
             justify-content: space-around;
             margin-top: 20px;
             font-weight: bold;
+            font-size: 1.1rem;
         }
 
-        /* Lobby / UI Controls */
-        .controls {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            background: var(--primary);
-            color: white;
-            font-weight: bold;
-        }
-        button:disabled { background: #ccc; }
-        .multiplayer-box {
-            background: #eef;
-            padding: 15px;
+        .room-badge {
+            text-align: center;
+            background: #eef5ff;
+            padding: 10px;
             border-radius: 8px;
-            margin-bottom: 20px;
-            display: none;
+            margin-bottom: 15px;
+            border: 1px solid var(--primary);
         }
-        .active { display: block; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>🏎️ JS TypeRacer</h1>
+    <h1>🏎️ Firebase TypeRacer</h1>
 
-    <div class="controls">
-        <button id="solo-btn">Single Player</button>
-        <button id="multi-btn">Play with Friends</button>
-        <button id="reset-btn">Reset</button>
-    </div>
-
-    <!-- Multiplayer Lobby -->
-    <div id="lobby" class="multiplayer-box">
-        <p>Your ID: <strong id="my-id">...</strong></p>
-        <div style="display:flex; gap:10px;">
-            <input type="text" id="friend-id" placeholder="Paste Friend's ID here" style="flex:1; padding:5px;">
-            <button id="connect-btn">Connect & Race</button>
-        </div>
-        <p id="conn-status" style="font-size: 0.9rem; color: #666; margin-top:10px;">Status: Waiting...</p>
-    </div>
-
-    <!-- The Track -->
-    <div class="track">
-        <div class="car-row">
-            <div id="player-car" class="car">🏎️<span class="car-label">You</span></div>
-        </div>
-        <div class="car-row" id="opponent-row" style="display:none;">
-            <div id="opponent-car" class="car">🏎️<span class="car-label">Friend</span></div>
+    <!-- Menu Screen -->
+    <div id="screen-menu" class="screen active">
+        <div class="btn-group">
+            <button onclick="startSoloGame()">Single Player</button>
+            <button onclick="showMultiplayer()">Play with Friends</button>
         </div>
     </div>
 
-    <div id="quote-display">Select a mode to start!</div>
-    <input type="text" id="type-input" placeholder="Type here..." disabled>
+    <!-- Lobby Screen -->
+    <div id="screen-lobby" class="screen">
+        <div class="btn-group">
+            <button onclick="createRoom()">Create New Room</button>
+            <div style="display: flex; gap: 5px;">
+                <input type="text" id="room-input" placeholder="Enter Room Code">
+                <button onclick="joinRoom()">Join</button>
+            </div>
+        </div>
+        <div id="lobby-info" style="display: none;">
+            <div class="room-badge">
+                Room Code: <strong id="display-code">----</strong>
+            </div>
+            <p id="player-count">Waiting for players...</p>
+            <button id="start-btn" style="display: none;" onclick="hostStartGame()">Start Race</button>
+        </div>
+        <button onclick="location.reload()" style="background:#666; margin-top:20px;">Back</button>
+    </div>
 
-    <div class="stats">
-        <div>WPM: <span id="wpm">0</span></div>
-        <div>Accuracy: <span id="accuracy">100</span>%</div>
-        <div>Time: <span id="timer">0</span>s</div>
+    <!-- Game Screen -->
+    <div id="screen-game" class="screen">
+        <div class="track" id="race-track">
+            <!-- Cars will be injected here -->
+        </div>
+        <div id="quote-display"></div>
+        <input type="text" id="typing-input" placeholder="Type the text above..." autocomplete="off">
+        <div class="stats">
+            <div>WPM: <span id="wpm">0</span></div>
+            <div>Time: <span id="timer">0</span>s</div>
+        </div>
     </div>
 </div>
 
-<script>
+<!-- Firebase SDK -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+    import { getDatabase, ref, set, onValue, update, get, child } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js";
+
+    // Your Firebase Configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyBzLchy5M2fLne4c7Ghw1KNN8wVrlZdd8M",
+        authDomain: "friendsgame-872f5.firebaseapp.com",
+        databaseURL: "https://friendsgame-872f5-default-rtdb.firebaseio.com",
+        projectId: "friendsgame-872f5",
+        storageBucket: "friendsgame-872f5.firebasestorage.app",
+        messagingSenderId: "522534013233",
+        appId: "1:522534013233:web:f5faa6e6795023d0420810",
+        measurementId: "G-PW5H3G97QR"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // Game Variables
     const quotes = [
         "The quick brown fox jumps over the lazy dog.",
-        "To be or not to be, that is the question.",
-        "Success is not final, failure is not fatal: it is the courage to continue that counts.",
-        "In the middle of every difficulty lies opportunity.",
-        "Believe you can and you're halfway there."
+        "Programming is not about what you know, it is about what you can figure out.",
+        "Success is a ladder that cannot be climbed with your hands in your pockets.",
+        "Hard work beats talent when talent doesn't work hard.",
+        "The only way to do great work is to love what you do."
     ];
 
-    let currentQuote = "";
-    let startTime, timerInterval;
-    let isRacing = false;
-    let peer, conn;
+    let myId = "player_" + Math.floor(Math.random() * 10000);
+    let currentRoom = null;
+    let targetQuote = "";
+    let startTime = null;
+    let timerInterval = null;
+    let isMultiplayer = false;
 
-    const quoteDisplay = document.getElementById('quote-display');
-    const typeInput = document.getElementById('type-input');
-    const wpmLabel = document.getElementById('wpm');
-    const accuracyLabel = document.getElementById('accuracy');
-    const timerLabel = document.getElementById('timer');
-    const playerCar = document.getElementById('player-car');
-    const opponentCar = document.getElementById('opponent-car');
-    const opponentRow = document.getElementById('opponent-row');
+    // --- Navigation Functions ---
+    window.showMultiplayer = () => {
+        switchScreen('screen-lobby');
+    };
 
-    // --- Core Game Logic ---
+    function switchScreen(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+    }
 
-    function startRace(quote) {
-        currentQuote = quote || quotes[Math.floor(Math.random() * quotes.length)];
+    // --- Multiplayer Logic ---
+    window.createRoom = async () => {
+        const roomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+        currentRoom = roomCode;
+        isMultiplayer = true;
+
+        const roomRef = ref(db, 'rooms/' + roomCode);
+        await set(roomRef, {
+            status: 'waiting',
+            quote: quotes[Math.floor(Math.random() * quotes.length)],
+            players: {
+                [myId]: { name: "Host", progress: 0, wpm: 0 }
+            }
+        });
+
+        listenToRoom(roomCode);
+        document.getElementById('lobby-info').style.display = 'block';
+        document.getElementById('display-code').innerText = roomCode;
+        document.getElementById('start-btn').style.display = 'block';
+    };
+
+    window.joinRoom = async () => {
+        const roomCode = document.getElementById('room-input').value.toUpperCase();
+        if (!roomCode) return alert("Enter a code!");
+
+        const roomRef = ref(db, 'rooms/' + roomCode);
+        const snapshot = await get(roomRef);
+
+        if (snapshot.exists()) {
+            currentRoom = roomCode;
+            isMultiplayer = true;
+            await update(ref(db, `rooms/${roomCode}/players/${myId}`), {
+                name: "Guest",
+                progress: 0,
+                wpm: 0
+            });
+            listenToRoom(roomCode);
+            document.getElementById('lobby-info').style.display = 'block';
+            document.getElementById('display-code').innerText = roomCode;
+            document.getElementById('start-btn').style.display = 'none';
+        } else {
+            alert("Room not found!");
+        }
+    };
+
+    function listenToRoom(code) {
+        onValue(ref(db, 'rooms/' + code), (snapshot) => {
+            const data = snapshot.val();
+            if (!data) return;
+
+            // Update player count
+            const players = data.players;
+            const count = Object.keys(players).length;
+            document.getElementById('player-count').innerText = `Players in lobby: ${count}`;
+
+            // If game started by host
+            if (data.status === 'racing' && !startTime) {
+                targetQuote = data.quote;
+                initGameUI(players);
+            }
+
+            // Sync Car Positions
+            if (data.status === 'racing') {
+                for (let id in players) {
+                    const car = document.getElementById('car-' + id);
+                    if (car) car.style.left = `calc(${players[id].progress}% - 40px)`;
+                }
+            }
+        });
+    }
+
+    window.hostStartGame = () => {
+        update(ref(db, 'rooms/' + currentRoom), { status: 'racing' });
+    };
+
+    // --- Solo Player Logic ---
+    window.startSoloGame = () => {
+        isMultiplayer = false;
+        targetQuote = quotes[Math.floor(Math.random() * quotes.length)];
+        const soloPlayers = { [myId]: { name: "You", progress: 0 } };
+        initGameUI(soloPlayers);
+    };
+
+    // --- Core Racing Engine ---
+    function initGameUI(playersData) {
+        switchScreen('screen-game');
+        const track = document.getElementById('race-track');
+        track.innerHTML = '';
+
+        // Create Lanes
+        Object.keys(playersData).forEach(id => {
+            const lane = document.createElement('div');
+            lane.className = 'lane';
+            lane.innerHTML = `
+                <div class="car" id="car-${id}">
+                    <span class="car-info">${playersData[id].name}</span>
+                    🏎️
+                </div>
+            `;
+            track.appendChild(lane);
+        });
+
         renderQuote();
-        typeInput.value = "";
-        typeInput.disabled = false;
-        typeInput.focus();
-        isRacing = true;
-        startTime = new Date();
-        
-        clearInterval(timerInterval);
-        timerInterval = setInterval(updateStats, 100);
+        setupTyping();
     }
 
     function renderQuote() {
-        quoteDisplay.innerHTML = '';
-        currentQuote.split('').forEach(char => {
+        const display = document.getElementById('quote-display');
+        display.innerHTML = '';
+        targetQuote.split('').forEach(char => {
             const span = document.createElement('span');
             span.innerText = char;
-            quoteDisplay.appendChild(span);
+            display.appendChild(span);
         });
     }
 
-    typeInput.addEventListener('input', () => {
-        const inputChars = typeInput.value.split('');
-        const quoteSpans = quoteDisplay.querySelectorAll('span');
-        let correctCount = 0;
-        let isError = false;
-
-        quoteSpans.forEach((span, index) => {
-            const char = inputChars[index];
-            if (char == null) {
-                span.className = '';
-            } else if (char === span.innerText && !isError) {
-                span.className = 'correct';
-                correctCount++;
-            } else {
-                span.className = 'incorrect';
-                isError = true;
-            }
-        });
-
-        // Update Car Position
-        const progress = (correctCount / currentQuote.length) * 100;
-        playerCar.style.left = `calc(${progress}% - 30px)`;
-
-        // Multiplayer: Sync progress
-        if (conn && conn.open) {
-            conn.send({ type: 'progress', value: progress });
-        }
-
-        // Finish Game
-        if (correctCount === currentQuote.length) {
-            finishRace();
-        }
-    });
-
-    function updateStats() {
-        const timeElapsed = (new Date() - startTime) / 1000;
-        timerLabel.innerText = Math.floor(timeElapsed);
+    function setupTyping() {
+        const input = document.getElementById('typing-input');
+        input.value = '';
+        input.focus();
+        startTime = new Date();
         
-        const wordsTyped = typeInput.value.trim().split(/\s+/).length;
-        const wpm = Math.round((wordsTyped / timeElapsed) * 60) || 0;
-        wpmLabel.innerText = wpm;
-    }
+        timerInterval = setInterval(() => {
+            const now = new Date();
+            const sec = Math.floor((now - startTime) / 1000);
+            document.getElementById('timer').innerText = sec;
+        }, 1000);
 
-    function finishRace() {
-        clearInterval(timerInterval);
-        isRacing = false;
-        typeInput.disabled = true;
-        alert(`Finished! Your WPM: ${wpmLabel.innerText}`);
-    }
+        input.addEventListener('input', () => {
+            const userVal = input.value;
+            const spans = document.querySelectorAll('#quote-display span');
+            let correctChars = 0;
+            let errorFound = false;
 
-    // --- Multiplayer Logic (PeerJS) ---
+            spans.forEach((span, i) => {
+                const char = userVal[i];
+                if (char == null) {
+                    span.className = '';
+                } else if (char === span.innerText && !errorFound) {
+                    span.className = 'correct';
+                    correctChars++;
+                } else {
+                    span.className = 'wrong';
+                    errorFound = true;
+                }
+            });
 
-    document.getElementById('multi-btn').addEventListener('click', () => {
-        document.getElementById('lobby').classList.toggle('active');
-        initPeer();
-    });
-
-    function initPeer() {
-        if (peer) return;
-        peer = new Peer(); // Creates a unique ID automatically via PeerJS cloud
-
-        peer.on('open', (id) => {
-            document.getElementById('my-id').innerText = id;
-            document.getElementById('conn-status').innerText = "Status: Online. Share ID with friend.";
-        });
-
-        // Receiving a connection
-        peer.on('connection', (connection) => {
-            conn = connection;
-            setupConnListeners();
-            opponentRow.style.display = 'block';
-            document.getElementById('conn-status').innerText = "Status: Friend Connected!";
+            // Calculate Progress
+            const progress = (correctChars / targetQuote.length) * 100;
             
-            // Host sends the quote to the guest
-            const sharedQuote = quotes[Math.floor(Math.random() * quotes.length)];
-            setTimeout(() => {
-                conn.send({ type: 'start', quote: sharedQuote });
-                startRace(sharedQuote);
-            }, 1000);
-        });
-    }
+            // Move Local Car
+            document.getElementById('car-' + myId).style.left = `calc(${progress}% - 40px)`;
 
-    document.getElementById('connect-btn').addEventListener('click', () => {
-        const friendId = document.getElementById('friend-id').value;
-        if (!friendId) return;
-        
-        conn = peer.connect(friendId);
-        setupConnListeners();
-        opponentRow.style.display = 'block';
-        document.getElementById('conn-status').innerText = "Status: Connecting...";
-    });
+            // Sync to Firebase if Multiplayer
+            if (isMultiplayer) {
+                update(ref(db, `rooms/${currentRoom}/players/${myId}`), { progress: progress });
+            }
 
-    function setupConnListeners() {
-        conn.on('open', () => {
-            document.getElementById('conn-status').innerText = "Status: Connected! Waiting for host...";
-        });
+            // Calculate WPM
+            const words = userVal.trim().split(/\s+/).length;
+            const timeMins = (new Date() - startTime) / 60000;
+            const wpm = Math.round(words / timeMins) || 0;
+            document.getElementById('wpm').innerText = wpm;
 
-        conn.on('data', (data) => {
-            if (data.type === 'start') {
-                startRace(data.quote);
-            } else if (data.type === 'progress') {
-                opponentCar.style.left = `calc(${data.value}% - 30px)`;
+            // Finish
+            if (correctChars === targetQuote.length) {
+                clearInterval(timerInterval);
+                input.disabled = true;
+                alert(`🏁 Finished! Your speed: ${wpm} WPM`);
             }
         });
     }
-
-    // --- UI Button Handlers ---
-
-    document.getElementById('solo-btn').addEventListener('click', () => {
-        opponentRow.style.display = 'none';
-        startRace();
-    });
-
-    document.getElementById('reset-btn').addEventListener('click', () => {
-        location.reload();
-    });
-
 </script>
+
 </body>
 </html>
