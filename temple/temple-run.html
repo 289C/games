@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Temple Runner - Ultra Edition</title>
+    <title>3D Temple Runner - Fixed Edition</title>
     <style>
         :root { --neon-green: #00ff00; --gold: #ffd700; }
         body { margin: 0; overflow: hidden; background: #000; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
@@ -91,17 +91,17 @@
         import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
         // --- Configuration & State ---
-        const LANES = [-4, 0, 4];
+        const LANES = [-3, 0, 3];
         let currentLane = 1;
         let score = 0;
         let coinCount = 0;
-        let speed = 0.6;
+        let speed = 0.5;
         const maxSpeed = 2.0;
         let isDead = false;
         let isJumping = false;
         let isSliding = false;
 
-        // Sound URLs (Using placeholders - swap these for your own files)
+        // Sound URLs
         const SOUND_SOURCES = {
             collect: 'https://actions.google.com/sounds/v1/foley/refrigerator_ice_clink.ogg',
             jump: 'https://actions.google.com/sounds/v1/foley/wind_swoosh.ogg',
@@ -114,7 +114,7 @@
         scene.background = new THREE.Color(0x0a0a0f);
         scene.fog = new THREE.FogExp2(0x0a0a0f, 0.015);
 
-        const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(window.devicePixelRatio);
@@ -143,10 +143,10 @@
         loadSound('bgm', SOUND_SOURCES.bgm, true, 0.3);
 
         const sun = new THREE.DirectionalLight(0xffffff, 1.5);
-        sun.position.set(10, 20, 10);
+        sun.position.set(10, 25, 15);
         sun.castShadow = true;
         scene.add(sun);
-        scene.add(new THREE.AmbientLight(0x404040, 1));
+        scene.add(new THREE.AmbientLight(0xffffff, 0.8));
 
         // --- Asset Loading ---
         const manager = new THREE.LoadingManager();
@@ -164,23 +164,28 @@
             animate();
         };
 
-        // Load Character (girl.glb)
+        // Load Character (girl.glb) - Positioned safely forward
         loader.load('girl.glb', (gltf) => {
             playerModel = gltf.scene;
-            playerModel.scale.set(0.5, 0.5, 0.5);
+            playerModel.scale.set(0.4, 0.4, 0.4);
+            playerModel.position.set(0, 0, 0);
             playerModel.rotation.y = Math.PI; 
             playerModel.traverse(c => { if(c.isMesh) c.castShadow = true; });
             scene.add(playerModel);
             mixer = new THREE.AnimationMixer(playerModel);
             gltf.animations.forEach(clip => { animations[clip.name] = mixer.clipAction(clip); });
             if(gltf.animations[0]) animations[gltf.animations[0].name].play();
+        }, undefined, (error) => {
+            console.error('Error loading girl.glb:', error);
         });
 
         // Load Track (sub.glb)
         loader.load('sub.glb', (gltf) => {
             templateTrack = gltf.scene;
             templateTrack.traverse(c => { if(c.isMesh) c.receiveShadow = true; });
-            for (let i = 0; i < 10; i++) spawnSegment(-i * 30);
+            for (let i = 0; i < 12; i++) spawnSegment(-i * 25);
+        }, undefined, (error) => {
+            console.error('Error loading sub.glb:', error);
         });
 
         // --- Objects Management ---
@@ -199,25 +204,25 @@
         function spawnProps(z) {
             const lane = LANES[Math.floor(Math.random() * 3)];
             
-            // Spawn Obstacle (Red)
-            if (Math.random() > 0.4) {
+            // Spawn Obstacle further ahead so player doesn't crash on start
+            if (Math.random() > 0.3) {
                 const isHigh = Math.random() > 0.7;
                 const obs = new THREE.Mesh(
-                    new THREE.BoxGeometry(2.5, isHigh ? 4 : 1, 1),
+                    new THREE.BoxGeometry(2.2, isHigh ? 3 : 0.8, 0.8),
                     new THREE.MeshStandardMaterial({ color: 0xff0044, emissive: 0x550000 })
                 );
-                obs.position.set(lane, isHigh ? 3 : 0.5, z);
+                obs.position.set(lane, isHigh ? 2.2 : 0.4, z);
                 obs.userData.type = isHigh ? 'high' : 'low';
                 scene.add(obs);
                 obstacles.push(obs);
             }
 
-            // Spawn Coin (Gold)
-            const coinGeo = new THREE.CylinderGeometry(0.5, 0.5, 0.1, 16);
+            // Spawn Coin
+            const coinGeo = new THREE.CylinderGeometry(0.4, 0.4, 0.1, 16);
             const coinMat = new THREE.MeshPhongMaterial({ color: 0xffd700, emissive: 0xaa8800 });
             const coin = new THREE.Mesh(coinGeo, coinMat);
             coin.rotation.x = Math.PI / 2;
-            coin.position.set(LANES[Math.floor(Math.random() * 3)], 1.5, z - 10);
+            coin.position.set(LANES[Math.floor(Math.random() * 3)], 1.2, z - 10);
             scene.add(coin);
             coins.push(coin);
         }
@@ -231,13 +236,13 @@
             if ((e.key === 'ArrowUp' || e.key === 'w') && !isJumping) {
                 isJumping = true;
                 if(sounds.jump) sounds.jump.play();
-                setTimeout(() => isJumping = false, 800);
+                setTimeout(() => isJumping = false, 700);
             }
 
             if ((e.key === 'ArrowDown' || e.key === 's') && !isSliding) {
                 isSliding = true;
-                if (playerModel) playerModel.scale.y = 0.25; 
-                setTimeout(() => { if (playerModel) playerModel.scale.y = 0.5; isSliding = false; }, 700);
+                if (playerModel) playerModel.scale.set(0.4, 0.15, 0.4); 
+                setTimeout(() => { if (playerModel) playerModel.scale.set(0.4, 0.4, 0.4); isSliding = false; }, 600);
             }
         });
 
@@ -249,52 +254,46 @@
             requestAnimationFrame(animate);
             const delta = clock.getDelta();
 
-            // Update Animations and Speed Scaling
             if (mixer) {
                 mixer.update(delta);
-                // Scaling the animation speed to match running speed
-                mixer.timeScale = speed * 1.5; 
+                mixer.timeScale = speed * 1.4; 
             }
 
-            // Progressively increase speed
-            if (speed < maxSpeed) speed += 0.0001;
+            if (speed < maxSpeed) speed += 0.00008;
             
-            // Visual Speed Effects (FOV Warp)
-            camera.fov = 70 + (speed * 15);
+            camera.fov = 65 + (speed * 10);
             camera.updateProjectionMatrix();
-            document.getElementById('vignette').style.boxShadow = `inset 0 0 ${speed * 100}px rgba(0,255,0,${speed-0.5})`;
             document.getElementById('speed-val').innerText = (speed * 2).toFixed(1) + "x";
 
-            // Move Player
+            // Move Player smoothly
             if (playerModel) {
                 const targetX = LANES[currentLane];
-                playerModel.position.x = THREE.MathUtils.lerp(playerModel.position.x, targetX, 0.15);
-                playerModel.rotation.z = (playerModel.position.x - targetX) * 0.1; // Lean effect
+                playerModel.position.x = THREE.MathUtils.lerp(playerModel.position.x, targetX, 0.2);
+                playerModel.rotation.z = (playerModel.position.x - targetX) * 0.08; 
                 
                 if (isJumping) {
-                    playerModel.position.y = Math.sin((Date.now() * 0.006)) * 3.5;
+                    playerModel.position.y = Math.sin((Date.now() * 0.007)) * 2.8;
                     if(playerModel.position.y < 0) playerModel.position.y = 0;
                 } else {
-                    playerModel.position.y = THREE.MathUtils.lerp(playerModel.position.y, 0, 0.2);
+                    playerModel.position.y = THREE.MathUtils.lerp(playerModel.position.y, 0, 0.3);
                 }
             }
 
             // Infinite Track Loop
             trackSegments.forEach(seg => {
-                seg.position.z += speed * 50 * delta;
-                if (seg.position.z > 20) {
+                seg.position.z += speed * 40 * delta;
+                if (seg.position.z > 25) {
                     let minZ = Math.min(...trackSegments.map(s => s.position.z));
-                    seg.position.z = minZ - 30;
-                    spawnProps(seg.position.z - 10);
+                    seg.position.z = minZ - 25;
+                    spawnProps(seg.position.z - 15);
                 }
             });
 
             // Handle Coins
             coins.forEach((coin, i) => {
-                coin.position.z += speed * 50 * delta;
-                coin.rotation.z += 0.1; // Spin coin
+                coin.position.z += speed * 40 * delta;
+                coin.rotation.z += 0.1; 
                 
-                // Collision with coin
                 if (playerModel && coin.position.distanceTo(playerModel.position) < 1.5) {
                     coinCount++;
                     if(sounds.collect) {
@@ -310,13 +309,16 @@
 
             // Handle Obstacles & Collision
             obstacles.forEach((obs, index) => {
-                obs.position.z += speed * 50 * delta;
+                obs.position.z += speed * 40 * delta;
                 if (playerModel) {
                     const distZ = Math.abs(obs.position.z - playerModel.position.z);
                     const distX = Math.abs(obs.position.x - playerModel.position.x);
-                    if (distZ < 1.2 && distX < 1.6) {
+                    
+                    if (distZ < 0.9 && distX < 1.0) {
                         const isHigh = obs.userData.type === 'high';
-                        if ((isHigh && !isSliding) || (!isHigh && !isJumping)) endGame();
+                        if ((isHigh && !isSliding) || (!isHigh && !isJumping)) {
+                            endGame();
+                        }
                     }
                 }
                 if (obs.position.z > 10) { 
@@ -327,9 +329,9 @@
                 }
             });
 
-            // Dynamic Camera Follow
-            camera.position.set(playerModel.position.x * 0.5, 6, 12);
-            camera.lookAt(playerModel.position.x, 2, -5);
+            // Fixed Camera Position (Clean view behind character)
+            camera.position.set(0, 4.5, 9);
+            camera.lookAt(0, 1.2, -4);
 
             renderer.render(scene, camera);
         }
