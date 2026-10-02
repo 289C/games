@@ -3,189 +3,137 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate TypeRacer</title>
+    <title>TypeRacer Pro: Categories & Custom</title>
     <style>
         :root {
-            --primary: #4a90e2;
-            --bg: #f4f7f6;
-            --card: #ffffff;
-            --text: #333;
-            --track: #e0e0e0;
-            --success: #2ecc71;
-            --error: #e74c3c;
-            --finish: #333;
+            --primary: #4a90e2; --bg: #f4f7f6; --card: #ffffff; --text: #333;
+            --track: #e0e0e0; --success: #2ecc71; --error: #e74c3c; --accent: #f39c12;
         }
-
         [data-theme="dark"] {
-            --bg: #1a1a2e;
-            --card: #16213e;
-            --text: #e9e9e9;
-            --track: #0f3460;
-            --primary: #4ecca3;
+            --bg: #1a1a2e; --card: #16213e; --text: #e9e9e9; --track: #0f3460; --primary: #4ecca3;
         }
 
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            display: flex;
-            justify-content: center;
-            padding: 20px;
-            margin: 0;
-            transition: background 0.3s ease;
-            overflow-x: hidden;
-        }
-
-        /* --- Clouds Animation --- */
-        .cloud-bg {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1;
-            pointer-events: none;
-            opacity: 0.5;
-        }
-        .cloud {
-            position: absolute;
-            font-size: 50px;
-            animation: moveClouds linear infinite;
-        }
-        @keyframes moveClouds {
-            from { transform: translateX(-100px); }
-            to { transform: translateX(110vw); }
-        }
-
-        .container {
-            background: var(--card);
-            width: 100%;
-            max-width: 750px;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-            position: relative;
-        }
-
-        /* --- Header & Theme Toggle --- */
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); display: flex; justify-content: center; padding: 20px; margin: 0; transition: 0.3s; }
+        .container { background: var(--card); width: 100%; max-width: 800px; padding: 30px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); position: relative; }
+        
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .theme-toggle { cursor: pointer; font-size: 1.5rem; background: none; border: none; padding: 5px; }
-
         .screen { display: none; }
         .active { display: block; }
 
-        button { 
-            padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer; 
-            font-weight: bold; background: var(--primary); color: white; transition: 0.2s; 
-        }
+        /* Buttons & Inputs */
+        button { padding: 12px 20px; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; background: var(--primary); color: white; transition: 0.2s; }
         button:hover { filter: brightness(1.1); transform: translateY(-2px); }
-        input { 
+        select, input, textarea { 
             padding: 12px; border: 2px solid var(--track); border-radius: 10px; 
-            background: var(--card); color: var(--text); width: 100%; box-sizing: border-box; 
+            background: var(--card); color: var(--text); width: 100%; box-sizing: border-box; margin-bottom: 10px;
         }
 
-        /* --- Avatar Picker --- */
-        .avatar-picker { display: flex; gap: 10px; justify-content: center; margin: 15px 0; }
-        .avatar-option { 
-            font-size: 2rem; cursor: pointer; padding: 10px; border-radius: 10px; 
-            border: 2px solid transparent; transition: 0.2s; 
-        }
-        .avatar-option.selected { border-color: var(--primary); background: rgba(74, 144, 226, 0.1); }
+        /* Avatar & Categories */
+        .grid-options { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 15px 0; }
+        .avatar-picker { display: flex; gap: 10px; justify-content: center; margin-bottom: 15px; }
+        .avatar-opt { font-size: 1.8rem; cursor: pointer; padding: 8px; border-radius: 10px; border: 2px solid transparent; }
+        .avatar-opt.selected { border-color: var(--primary); background: rgba(74, 144, 226, 0.1); }
 
-        /* --- Racing Track --- */
-        .track { 
-            background: var(--track); padding: 15px; border-radius: 15px; margin: 25px 0; 
-            position: relative; overflow: hidden; 
-        }
-        .lane { 
-            height: 60px; position: relative; border-bottom: 2px dashed rgba(255,255,255,0.2); 
-            display: flex; align-items: center; 
-        }
-        .lane:last-child { border-bottom: none; }
-        
-        .finish-line {
-            position: absolute; right: 0; top: 0; bottom: 0; width: 30px;
-            background: repeating-conic-gradient(#fff 0% 25%, #000 0% 50%) 50% / 15px 15px;
-            opacity: 0.3;
-        }
+        /* Track */
+        .track { background: var(--track); padding: 15px; border-radius: 15px; margin: 20px 0; position: relative; }
+        .lane { height: 50px; position: relative; border-bottom: 1px dashed rgba(0,0,0,0.1); display: flex; align-items: center; }
+        .car { position: absolute; font-size: 28px; transition: left 0.3s linear; z-index: 10; }
+        .label { position: absolute; font-size: 10px; top: -15px; background: var(--primary); color: white; padding: 2px 5px; border-radius: 4px; }
+        .finish-line { position: absolute; right: 0; top: 0; bottom: 0; width: 20px; background: repeating-linear-gradient(black 0 5px, white 5px 10px); opacity: 0.2; }
 
-        .car { position: absolute; font-size: 32px; transition: left 0.3s cubic-bezier(0.1, 0.7, 1.0, 0.1); z-index: 10; }
-        .trail { 
-            position: absolute; left: 0; height: 4px; background: var(--primary); 
-            bottom: 10px; border-radius: 2px; opacity: 0.4; transition: width 0.3s;
-        }
-        .label { 
-            position: absolute; font-size: 11px; top: -18px; left: 0;
-            background: var(--primary); color: white; padding: 2px 6px; border-radius: 4px; 
-        }
-
-        /* --- Typing UI --- */
-        #text-display { 
-            font-size: 1.4rem; line-height: 1.6; margin-bottom: 15px; padding: 20px; 
-            background: rgba(0,0,0,0.03); border-radius: 12px; border: 1px solid rgba(0,0,0,0.1);
-        }
+        /* Typing Area */
+        #text-display { font-size: 1.3rem; line-height: 1.6; padding: 20px; background: rgba(0,0,0,0.03); border-radius: 12px; margin-bottom: 15px; min-height: 80px; }
         .correct { color: var(--success); }
-        .wrong { background: var(--error); color: white; border-radius: 3px; }
-        #typing-input { font-size: 1.3rem; border-width: 3px; }
+        .wrong { background: var(--error); color: white; }
+        #typing-input { font-size: 1.2rem; border-width: 3px; }
 
-        .stats-row { display: flex; justify-content: space-around; font-size: 1.2rem; font-weight: bold; margin-top: 15px; }
-        .countdown { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 5rem; font-weight: 900; color: var(--primary); z-index: 100; text-shadow: 0 5px 15px rgba(0,0,0,0.3); display: none; }
+        /* Modal Scoreboard */
+        .modal-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 1000; 
+        }
+        .modal { background: var(--card); padding: 30px; border-radius: 20px; width: 90%; max-width: 500px; text-align: center; }
+        .score-row { display: flex; justify-content: space-between; padding: 15px; border-bottom: 1px solid var(--track); }
+        .winner { color: var(--success); font-weight: bold; font-size: 1.5rem; margin-bottom: 20px; }
+
+        .countdown-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 6rem; font-weight: 900; color: var(--primary); z-index: 100; display: none; }
     </style>
 </head>
 <body>
 
-<div class="cloud-bg" id="clouds"></div>
-
 <div class="container">
     <div class="header">
-        <h1 style="margin:0;">🏎️ TypeRacer Pro</h1>
-        <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark/Light Mode">🌓</button>
+        <h2>🏎️ TypeRacer Pro</h2>
+        <button onclick="toggleTheme()">🌓</button>
     </div>
 
-    <!-- MAIN MENU -->
+    <!-- MENU SCREEN -->
     <div id="menu-screen" class="screen active">
-        <p style="text-align:center;">Choose your Avatar:</p>
         <div class="avatar-picker">
-            <div class="avatar-option selected" onclick="selectAvatar(this, '🏎️')">🏎️</div>
-            <div class="avatar-option" onclick="selectAvatar(this, '🚀')">🚀</div>
-            <div class="avatar-option" onclick="selectAvatar(this, '🏍️')">🏍️</div>
-            <div class="avatar-option" onclick="selectAvatar(this, '🦄')">🦄</div>
-            <div class="avatar-option" onclick="selectAvatar(this, '🛸')">🛸</div>
+            <div class="avatar-opt selected" onclick="pickAvatar(this, '🏎️')">🏎️</div>
+            <div class="avatar-opt" onclick="pickAvatar(this, '🚀')">🚀</div>
+            <div class="avatar-opt" onclick="pickAvatar(this, '🏍️')">🏍️</div>
+            <div class="avatar-opt" onclick="pickAvatar(this, '🦄')">🦄</div>
+            <div class="avatar-opt" onclick="pickAvatar(this, '🛸')">🛸</div>
         </div>
-        <div style="display:grid; gap:10px;">
-            <button onclick="startSinglePlayer()">Single Player</button>
-            <button onclick="showScreen('lobby-screen')" style="background: #673ab7;">Play with a Friend</button>
+
+        <label>Select Category:</label>
+        <select id="category-select">
+            <option value="easy">Easy (Short Sentences)</option>
+            <option value="hard">Hard (Advanced Vocabulary)</option>
+            <option value="coding">Coding (JS/HTML/CSS Snippets)</option>
+            <option value="movies">Famous Movie Quotes</option>
+            <option value="custom">-- Custom Text --</option>
+        </select>
+
+        <textarea id="custom-text" placeholder="Paste your custom text here (only used if Custom category is selected)..." style="height: 80px; display: none;"></textarea>
+
+        <div class="grid-options">
+            <button onclick="startMode('solo')">Solo Practice</button>
+            <button onclick="showScreen('lobby-screen')" style="background: #673ab7;">Play Friend</button>
         </div>
     </div>
 
     <!-- LOBBY SCREEN -->
     <div id="lobby-screen" class="screen">
         <input type="text" id="join-code" placeholder="Enter Room Code">
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:10px;">
-            <button onclick="createRoom()" style="background:#4a90e2;">Create Room</button>
+        <div class="grid-options">
+            <button onclick="createRoom()">Create Room</button>
             <button onclick="joinRoom()" style="background:#2ecc71;">Join Room</button>
         </div>
-        <div id="room-status" style="display:none; text-align:center; margin-top:20px; padding:15px; background:rgba(0,0,0,0.05); border-radius:10px;">
-            <p>Code: <strong id="display-code" style="font-size:1.5rem; letter-spacing:3px;">---</strong></p>
-            <p id="wait-msg">Waiting for friend...</p>
-            <button id="start-btn" style="display:none; width:100%; background:#f39c12;" onclick="triggerStart()">START RACE</button>
+        <div id="room-status" style="display:none; text-align:center; margin-top:20px; padding:15px; border-radius:10px; background:rgba(0,0,0,0.05);">
+            <p>Room: <strong id="display-code" style="letter-spacing:2px; font-size:1.2rem;">---</strong></p>
+            <p id="wait-msg">Waiting for opponent...</p>
+            <button id="start-btn" style="display:none; width:100%; background:#f39c12;" onclick="hostTriggerCountdown()">START 3-2-1 COUNTDOWN</button>
         </div>
         <button onclick="location.reload()" style="background:#777; width:100%; margin-top:10px;">Back</button>
     </div>
 
     <!-- GAME SCREEN -->
     <div id="game-screen" class="screen" style="position:relative;">
-        <div id="countdown" class="countdown">3</div>
+        <div id="count-num" class="countdown-overlay">3</div>
         <div class="track" id="track"></div>
         <div id="text-display"></div>
-        <input type="text" id="typing-input" autocomplete="off" disabled>
-        <div class="stats-row">
+        <input type="text" id="typing-input" autocomplete="off" disabled placeholder="Wait for GO!">
+        <div style="display:flex; justify-content: space-around; margin-top:15px; font-weight:bold;">
             <div>WPM: <span id="stat-wpm">0</span></div>
-            <div>Time: <span id="stat-time">0</span>s</div>
+            <div>Acc: <span id="stat-acc">100</span>%</div>
         </div>
+    </div>
+</div>
+
+<!-- SCOREBOARD MODAL -->
+<div id="score-modal" class="modal-overlay">
+    <div class="modal">
+        <div id="winner-text" class="winner">Race Finished!</div>
+        <div id="scoreboard-content"></div>
+        <button onclick="location.reload()" style="margin-top:20px; width:100%;">Play Again</button>
     </div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-    import { getDatabase, ref, set, onValue, update, get } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js";
+    import { getDatabase, ref, set, onValue, update, get, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyBzLchy5M2fLne4c7Ghw1KNN8wVrlZdd8M",
@@ -200,200 +148,197 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    // --- Audio Logic (No files needed) ---
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    function playSound(freq, type, duration, vol=0.1) {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = type;
-        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-        gain.gain.setValueAtTime(vol, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
-        osc.connect(gain); gain.connect(audioCtx.destination);
-        osc.start(); osc.stop(audioCtx.currentTime + duration);
-    }
-
-    const sounds = {
-        click: () => playSound(600, 'square', 0.05, 0.05),
-        beep: () => playSound(400, 'sine', 0.2, 0.2),
-        go: () => playSound(800, 'sine', 0.4, 0.2),
-        win: () => {
-            [440, 554, 659, 880].forEach((f, i) => setTimeout(() => playSound(f, 'triangle', 0.5, 0.2), i*150));
-        }
+    const quoteLib = {
+        easy: ["Life is short.", "The sky is blue.", "I love to code.", "Type fast to win."],
+        hard: ["Phenomenal cosmic power, itty bitty living space.", "The juxtaposition of complex algorithms is daunting.", "Inquisitive minds explore the depths of philosophy."],
+        coding: ["for(let i=0; i<arr.length; i++) { console.log(arr[i]); }", "document.getElementById('app').innerHTML = 'Hello';", "<div class='flex-container'></div>"],
+        movies: ["May the Force be with you.", "I'm going to make him an offer he can't refuse.", "Here's looking at you, kid."]
     };
-
-    // --- State & Config ---
-    const quotes = [
-        "The universe is under no obligation to make sense to you.",
-        "Your time is limited so do not waste it living someone else's life.",
-        "Design is not just what it looks like and feels like. Design is how it works.",
-        "The quick brown fox jumps over the lazy dog in a spectacular display of agility.",
-        "Code is like humor. When you have to explain it, it’s bad."
-    ];
 
     let myId = "p" + Math.floor(Math.random() * 9999);
     let myAvatar = "🏎️";
-    let isHost = false;
     let currentRoom = null;
     let targetQuote = "";
-    let startTime;
-    let timerInterval;
+    let isHost = false;
+    let startTime, timerInterval;
+    let totalCharsPressed = 0;
+    let errorCount = 0;
 
-    // --- Visual setup ---
+    // --- Logic ---
     window.toggleTheme = () => {
-        const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-        document.documentElement.setAttribute('data-theme', theme);
+        const t = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', t);
     };
 
-    window.selectAvatar = (el, emoji) => {
-        document.querySelectorAll('.avatar-option').forEach(opt => opt.classList.remove('selected'));
+    document.getElementById('category-select').onchange = (e) => {
+        document.getElementById('custom-text').style.display = e.target.value === 'custom' ? 'block' : 'none';
+    };
+
+    window.pickAvatar = (el, icon) => {
+        document.querySelectorAll('.avatar-opt').forEach(o => o.classList.remove('selected'));
         el.classList.add('selected');
-        myAvatar = emoji;
-        sounds.click();
+        myAvatar = icon;
     };
 
-    function spawnClouds() {
-        const container = document.getElementById('clouds');
-        for(let i=0; i<6; i++) {
-            const cloud = document.createElement('div');
-            cloud.className = 'cloud';
-            cloud.innerText = '☁️';
-            cloud.style.top = Math.random() * 80 + '%';
-            cloud.style.animationDuration = (Math.random() * 20 + 20) + 's';
-            cloud.style.animationDelay = (Math.random() * 20) + 's';
-            container.appendChild(cloud);
-        }
-    }
-    spawnClouds();
-
-    // --- Navigation ---
     window.showScreen = (id) => {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById(id).classList.add('active');
-        sounds.click();
     };
 
-    // --- Multiplayer Logic ---
+    // --- Multiplayer ---
     window.createRoom = async () => {
+        const cat = document.getElementById('category-select').value;
+        const custom = document.getElementById('custom-text').value;
+        const quote = cat === 'custom' ? custom : quoteLib[cat][Math.floor(Math.random()*quoteLib[cat].length)];
+        
+        if(!quote) return alert("Please enter custom text first.");
+
         const code = Math.random().toString(36).substring(2, 7).toUpperCase();
         currentRoom = code; isHost = true;
         await set(ref(db, `rooms/${code}`), {
             status: 'waiting',
-            quote: quotes[Math.floor(Math.random() * quotes.length)],
-            players: { [myId]: { name: "Host", avatar: myAvatar, progress: 0 } }
+            quote: quote,
+            players: { [myId]: { name: "Host", avatar: myAvatar, progress: 0, wpm: 0, acc: 100, finished: false } }
         });
         document.getElementById('room-status').style.display = 'block';
         document.getElementById('display-code').innerText = code;
-        listenToRoom(code);
+        listenRoom(code);
     };
 
     window.joinRoom = async () => {
         const code = document.getElementById('join-code').value.toUpperCase().trim();
         const snap = await get(ref(db, `rooms/${code}`));
-        if (snap.exists() && Object.keys(snap.val().players).length < 2) {
+        if (snap.exists()) {
             currentRoom = code; isHost = false;
-            await update(ref(db, `rooms/${code}/players/${myId}`), { name: "Guest", avatar: myAvatar, progress: 0 });
+            await update(ref(db, `rooms/${code}/players/${myId}`), { name: "Guest", avatar: myAvatar, progress: 0, wpm: 0, acc: 100, finished: false });
             document.getElementById('room-status').style.display = 'block';
             document.getElementById('display-code').innerText = code;
-            document.getElementById('wait-msg').innerText = "Joined! Waiting for Host...";
-            listenToRoom(code);
-        } else alert("Room full or not found!");
+            listenRoom(code);
+        } else alert("Room not found");
     };
 
-    function listenToRoom(code) {
+    function listenRoom(code) {
         onValue(ref(db, `rooms/${code}`), (snap) => {
             const data = snap.val(); if (!data) return;
-            const pCount = Object.keys(data.players).length;
-            if (isHost && pCount === 2 && data.status === 'waiting') {
+            const players = data.players;
+            
+            if (isHost && Object.keys(players).length === 2 && data.status === 'waiting') {
                 document.getElementById('start-btn').style.display = 'block';
-                document.getElementById('wait-msg').innerText = "Ready to race!";
+                document.getElementById('wait-msg').innerText = "Friend joined!";
             }
-            if (data.status === 'racing' && !startTime) {
+
+            if (data.status === 'countdown' && !startTime) {
                 targetQuote = data.quote;
-                startRaceSequence(data.players);
+                startRaceSequence(players);
             }
-            if (data.status === 'racing') {
-                Object.keys(data.players).forEach(id => {
-                    const car = document.getElementById(`car-${id}`);
-                    const trail = document.getElementById(`trail-${id}`);
-                    if (car) car.style.left = `calc(${data.players[id].progress}% - 40px)`;
-                    if (trail) trail.style.width = `${data.players[id].progress}%`;
+
+            if (data.status === 'racing' || data.status === 'finished') {
+                Object.keys(players).forEach(id => {
+                    const c = document.getElementById(`car-${id}`);
+                    if (c) c.style.left = `calc(${players[id].progress}% - 35px)`;
                 });
             }
+
+            // Show scoreboard when both finish
+            const allFinished = Object.values(players).every(p => p.finished);
+            if (allFinished) showScoreboard(players);
         });
     }
 
-    window.startSinglePlayer = () => {
-        targetQuote = quotes[Math.floor(Math.random() * quotes.length)];
+    window.hostTriggerCountdown = () => update(ref(db, `rooms/${currentRoom}`), { status: 'countdown' });
+
+    // --- Game Logic ---
+    window.startMode = (mode) => {
+        const cat = document.getElementById('category-select').value;
+        const custom = document.getElementById('custom-text').value;
+        targetQuote = cat === 'custom' ? custom : quoteLib[cat][Math.floor(Math.random()*quoteLib[cat].length)];
+        if(!targetQuote) return alert("Enter custom text");
         startRaceSequence({ [myId]: { name: "You", avatar: myAvatar, progress: 0 } });
     };
 
-    window.triggerStart = () => update(ref(db, `rooms/${currentRoom}`), { status: 'racing' });
-
-    // --- Race Sequence ---
     function startRaceSequence(players) {
         showScreen('game-screen');
-        const track = document.getElementById('track'); track.innerHTML = '<div class="finish-line"></div>';
+        const tr = document.getElementById('track'); tr.innerHTML = '<div class="finish-line"></div>';
         Object.keys(players).forEach(id => {
             const lane = document.createElement('div'); lane.className = 'lane';
-            lane.innerHTML = `<div class="trail" id="trail-${id}"></div><div class="car" id="car-${id}"><span class="label">${players[id].name}</span>${players[id].avatar}</div>`;
-            track.appendChild(lane);
+            lane.innerHTML = `<div class="car" id="car-${id}"><span class="label">${players[id].name}</span>${players[id].avatar}</div>`;
+            tr.appendChild(lane);
         });
 
-        const display = document.getElementById('text-display'); display.innerHTML = '';
-        targetQuote.split('').forEach(c => { const s = document.createElement('span'); s.innerText = c; display.appendChild(s); });
+        const td = document.getElementById('text-display'); td.innerHTML = '';
+        targetQuote.split('').forEach(c => { const s = document.createElement('span'); s.innerText = c; td.appendChild(s); });
 
-        const countEl = document.getElementById('countdown');
-        countEl.style.display = 'block';
-        let count = 3;
-        const timer = setInterval(() => {
-            if(count > 0) { sounds.beep(); countEl.innerText = count; }
-            else if(count === 0) { sounds.go(); countEl.innerText = "GO!"; beginTyping(); }
-            else { countEl.style.display = 'none'; clearInterval(timer); }
-            count--;
+        const countDiv = document.getElementById('count-num');
+        countDiv.style.display = 'block';
+        let c = 3;
+        const t = setInterval(() => {
+            if(c > 0) countDiv.innerText = c;
+            else if(c === 0) { countDiv.innerText = "GO!"; initInput(); }
+            else { countDiv.style.display = 'none'; clearInterval(t); }
+            c--;
         }, 1000);
     }
 
-    function beginTyping() {
-        const input = document.getElementById('typing-input');
-        input.disabled = false; input.value = ''; input.focus();
+    function initInput() {
+        const inp = document.getElementById('typing-input');
+        inp.disabled = false; inp.value = ''; inp.focus();
         startTime = new Date();
         timerInterval = setInterval(() => {
             document.getElementById('stat-time').innerText = Math.floor((new Date() - startTime)/1000);
         }, 1000);
-        input.oninput = handleTyping;
+        inp.oninput = handleTyping;
     }
 
     function handleTyping() {
-        const input = document.getElementById('typing-input');
+        const inp = document.getElementById('typing-input');
         const spans = document.querySelectorAll('#text-display span');
         let correct = 0, error = false;
-        
-        sounds.click();
-        
-        spans.forEach((span, i) => {
-            const char = input.value[i];
-            if (char == null) span.className = '';
-            else if (char === span.innerText && !error) { span.className = 'correct'; correct++; }
-            else { span.className = 'wrong'; error = true; }
+        totalCharsPressed++;
+
+        spans.forEach((s, i) => {
+            const char = inp.value[i];
+            if (char == null) s.className = '';
+            else if (char === s.innerText && !error) { s.className = 'correct'; correct++; }
+            else { s.className = 'wrong'; if(i === inp.value.length-1) errorCount++; error = true; }
         });
 
         const prog = (correct / targetQuote.length) * 100;
-        if (currentRoom) update(ref(db, `rooms/${currentRoom}/players/${myId}`), { progress: prog });
-        else {
-            document.getElementById(`car-${myId}`).style.left = `calc(${prog}% - 40px)`;
-            document.getElementById(`trail-${myId}`).style.width = `${prog}%`;
-        }
-
-        const wpm = Math.round((input.value.length / 5) / ((new Date() - startTime) / 60000)) || 0;
+        const wpm = Math.round((inp.value.length / 5) / ((new Date() - startTime) / 60000)) || 0;
+        const acc = Math.max(0, Math.round(((totalCharsPressed - errorCount) / totalCharsPressed) * 100));
+        
         document.getElementById('stat-wpm').innerText = wpm;
+        document.getElementById('stat-acc').innerText = acc;
+
+        if (currentRoom) {
+            update(ref(db, `rooms/${currentRoom}/players/${myId}`), { progress: prog, wpm: wpm, acc: acc, finished: correct === targetQuote.length });
+        } else {
+            document.getElementById(`car-${myId}`).style.left = `calc(${prog}% - 35px)`;
+            if(correct === targetQuote.length) showScoreboard({ [myId]: { name: "You", wpm, acc } });
+        }
 
         if (correct === targetQuote.length) {
             clearInterval(timerInterval);
-            input.disabled = true;
-            sounds.win();
-            setTimeout(() => { alert(`Finish! Speed: ${wpm} WPM`); location.reload(); }, 500);
+            inp.disabled = true;
+            if(currentRoom) update(ref(db, `rooms/${currentRoom}`), { status: 'finished' });
         }
+    }
+
+    function showScoreboard(players) {
+        const modal = document.getElementById('score-modal');
+        const content = document.getElementById('scoreboard-content');
+        modal.style.display = 'flex';
+        content.innerHTML = '';
+        
+        let sorted = Object.values(players).sort((a,b) => b.wpm - a.wpm);
+        document.getElementById('winner-text').innerText = sorted[0].name + " Wins!";
+
+        sorted.forEach(p => {
+            content.innerHTML += `
+                <div class="score-row">
+                    <span>${p.avatar} <strong>${p.name}</strong></span>
+                    <span>${p.wpm} WPM / ${p.acc}% Acc</span>
+                </div>`;
+        });
     }
 </script>
 </body>
