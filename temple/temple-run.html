@@ -3,385 +3,287 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Arcade Runner - Pro Edition</title>
+    <title>Cyber Runner - High Fidelity</title>
     <style>
-        :root { --neon-cyan: #00f3ff; --neon-pink: #ff0055; --gold: #ffd700; }
-        body { margin: 0; overflow: hidden; background: #05050a; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; user-select: none; }
+        :root { --neon-cyan: #00f2ff; --neon-green: #00ff8c; --gold: #ffcc00; }
+        body { margin: 0; overflow: hidden; background: #000; font-family: 'Arial Black', sans-serif; }
         
-        #ui {
-            position: absolute; top: 25px; left: 25px; color: white;
-            font-size: 20px; text-shadow: 0 0 10px rgba(0,243,255,0.5); pointer-events: none;
-            display: flex; flex-direction: column; gap: 8px; z-index: 10;
-        }
-        .stat-label { font-size: 12px; color: var(--neon-cyan); text-transform: uppercase; letter-spacing: 3px; font-weight: 700; }
-        .stat-value { font-size: 32px; font-weight: 900; }
-        .coin-text { color: var(--gold); text-shadow: 0 0 10px rgba(255,215,0,0.6); }
-
-        #loading-screen {
-            position: absolute; width: 100%; height: 100%; background: radial-gradient(circle, #1a1a2e, #05050a);
-            display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; z-index: 100;
-        }
-        .progress-bar { width: 280px; height: 10px; background: rgba(255,255,255,0.1); margin-top: 25px; border-radius: 10px; overflow: hidden; border: 1px solid rgba(0,243,255,0.3); }
-        #progress { width: 0%; height: 100%; background: var(--neon-cyan); box-shadow: 0 0 20px var(--neon-cyan); transition: width 0.3s ease; }
-
-        #game-over {
-            position: absolute; width: 100%; height: 100%; background: rgba(5,5,10,0.9);
-            display: none; flex-direction: column; justify-content: center; align-items: center; color: white; z-index: 90;
-            backdrop-filter: blur(8px);
-        }
+        /* High-End Game UI from Video */
+        #game-ui { position: absolute; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
         
-        .speed-vignette {
-            position: absolute; top:0; left:0; width:100%; height:100%; pointer-events: none;
-            box-shadow: inset 0 0 120px rgba(0,243,255,0); transition: box-shadow 0.3s;
-        }
+        .top-left { position: absolute; top: 20px; left: 20px; display: flex; gap: 10px; }
+        .profile { width: 60px; height: 60px; border: 2px solid #fff; border-radius: 8px; background: url('https://api.dicebear.com/7.x/avataaars/svg?seed=Felix') center/cover; }
+        .energy-container { display: flex; flex-direction: column; gap: 5px; }
+        .bar-bg { width: 140px; height: 10px; background: rgba(255,255,255,0.2); border: 1px solid #fff; border-radius: 3px; overflow: hidden; }
+        .bar-fill { height: 100%; width: 80%; background: linear-gradient(90deg, #ff8000, #ffcc00); }
 
-        button {
-            padding: 16px 45px; font-size: 20px; background: linear-gradient(45deg, var(--neon-cyan), #0066ff); color: white; border: none;
-            cursor: pointer; font-weight: 800; margin-top: 25px; border-radius: 50px; letter-spacing: 1px;
-            box-shadow: 0 0 25px rgba(0,243,255,0.4); transition: transform 0.2s, box-shadow 0.2s;
-        }
-        button:hover { transform: scale(1.08); box-shadow: 0 0 35px rgba(0,243,255,0.8); }
+        .top-center { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); text-align: center; color: white; }
+        .progress-line { width: 250px; height: 4px; background: rgba(255,255,255,0.3); position: relative; margin-top: 10px; }
+        .progress-dot { width: 12px; height: 12px; background: var(--gold); border-radius: 50%; position: absolute; top: -4px; left: 10%; box-shadow: 0 0 10px var(--gold); }
+
+        .top-right { position: absolute; top: 20px; right: 20px; text-align: right; color: white; }
+        .score-num { font-size: 36px; font-weight: 900; font-style: italic; text-shadow: 0 0 15px var(--neon-cyan); }
+        .mult { color: #ff8000; font-size: 24px; margin-right: 10px; }
+
+        .bottom-left { position: absolute; bottom: 30px; left: 20px; }
+        .health-bar { width: 180px; height: 15px; background: rgba(0,0,0,0.5); border: 2px solid #fff; position: relative; }
+        .health-fill { height: 100%; width: 70%; background: linear-gradient(90deg, #0044ff, #00f2ff); box-shadow: 0 0 15px var(--neon-cyan); }
+
+        /* Overlays */
+        #loading { position: absolute; width: 100%; height: 100%; background: #000; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; z-index: 100; }
+        #game-over { position: absolute; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; flex-direction: column; justify-content: center; align-items: center; color: white; z-index: 200; }
+        
+        button { padding: 15px 40px; font-size: 20px; background: var(--neon-green); border: none; cursor: pointer; font-weight: bold; border-radius: 50px; text-transform: uppercase; margin-top: 20px; }
+        
+        .speed-vignette { position: absolute; top:0; left:0; width:100%; height:100%; pointer-events: none; transition: box-shadow 0.2s; z-index: 5; }
     </style>
 </head>
 <body>
 
-    <div id="loading-screen">
-        <h1 style="letter-spacing: 6px; color: var(--neon-cyan); text-shadow: 0 0 20px rgba(0,243,255,0.5);">CYBER RUNNER</h1>
-        <div class="progress-bar"><div id="progress"></div></div>
-        <p id="loading-msg" style="color: #8888aa; margin-top: 15px; font-size: 14px; letter-spacing: 1px;">Loading assets...</p>
+    <div id="loading">
+        <h1 style="letter-spacing: 10px;">CYBER RUNNER</h1>
+        <div style="width: 200px; height: 4px; background: #222;"><div id="load-bar" style="width: 0%; height: 100%; background: var(--neon-cyan);"></div></div>
     </div>
 
-    <div class="speed-vignette" id="vignette"></div>
+    <div class="speed-vignette" id="vfx"></div>
 
-    <div id="ui">
-        <div>
-            <div class="stat-label">Distance</div>
-            <div id="score" class="stat-value">0m</div>
+    <div id="game-ui">
+        <div class="top-left">
+            <div class="profile"></div>
+            <div class="energy-container">
+                <div class="bar-bg"><div class="bar-fill"></div></div>
+                <div style="color:var(--gold); font-size: 14px;">🪙 <span id="coins-ui">1211</span></div>
+            </div>
         </div>
-        <div>
-            <div class="stat-label">Credits</div>
-            <div id="coins" class="stat-value coin-text">0</div>
+
+        <div class="top-center">
+            <div style="font-size: 12px; opacity: 0.8;">LEVEL 12</div>
+            <div class="progress-line"><div class="progress-dot"></div></div>
         </div>
-        <div>
-            <div class="stat-label">Speed Multiplier</div>
-            <div id="speed-val" class="stat-value" style="color: var(--neon-pink);">1.0x</div>
+
+        <div class="top-right">
+            <span class="mult">x2</span>
+            <div id="score-ui" class="score-num">000.00</div>
+        </div>
+
+        <div class="bottom-left">
+            <div class="health-bar"><div class="health-fill" id="energy-bar"></div></div>
         </div>
     </div>
 
     <div id="game-over">
-        <h1 style="color: var(--neon-pink); font-size: 65px; margin-bottom: 0; text-shadow: 0 0 30px rgba(255,0,85,0.6);">SYSTEM CRASH</h1>
-        <p style="letter-spacing: 4px; color: #aaa; margin-top: 10px;">CONNECTION TERMINATED</p>
-        <h2 id="final-stats" style="letter-spacing: 2px; margin: 20px 0;">DISTANCE: 0m | CREDITS: 0</h2>
-        <button onclick="location.reload()">RE-INITIATE</button>
+        <h1 style="color: #ff0044; font-size: 60px;">CONNECTION LOST</h1>
+        <h2 id="final-stats"></h2>
+        <button onclick="location.reload()">REBOOT SYSTEM</button>
     </div>
 
     <script type="importmap">
-        {
-            "imports": {
-                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
-            }
-        }
+        { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js", "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/" } }
     </script>
 
     <script type="module">
         import * as THREE from 'three';
         import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-        // --- Game Config & Variables ---
-        const LANES = [-3, 0, 3];
-        let currentLane = 1;
-        let score = 0;
-        let coinCount = 0;
-        let speed = 0.6;
-        const maxSpeed = 2.2;
-        let isDead = false;
-        let isJumping = false;
-        let isSliding = false;
+        // --- Configuration & URLs ---
+        const ASSETS = {
+            player: 'https://threejs.org/examples/models/gltf/RobotExpressive/RobotExpressive.glb',
+            coinSound: 'https://actions.google.com/sounds/v1/foley/refrigerator_ice_clink.ogg'
+        };
 
-        // Sound Effects (Web Audio API Synthesizers)
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        function playTone(freq, type, duration) {
-            try {
-                if (audioCtx.state === 'suspended') audioCtx.resume();
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = type;
-                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start();
-                osc.stop(audioCtx.currentTime + duration);
-            } catch(e) {}
-        }
+        const LANES = [-4, 0, 4];
+        let state = { lane: 1, score: 0, coins: 1211, speed: 0.8, dead: false, jumping: false, sliding: false };
 
-        // --- Three.js Scene Setup ---
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x05050a);
-        scene.fog = new THREE.FogExp2(0x05050a, 0.018);
+        scene.background = new THREE.Color(0x000505);
+        scene.fog = new THREE.FogExp2(0x000505, 0.02);
 
-        const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        renderer.shadowMap.enabled = true;
+        renderer.setPixelRatio(window.devicePixelRatio);
         document.body.appendChild(renderer.domElement);
 
-        // Lighting
-        const ambientLight = new THREE.AmbientLight(0xffffff, 1.0);
-        scene.add(ambientLight);
+        // --- High-End Neon Lighting ---
+        const ambient = new THREE.AmbientLight(0xffffff, 0.5);
+        scene.add(ambient);
+        const pointLight = new THREE.PointLight(0x00f2ff, 10, 50);
+        pointLight.position.set(0, 5, 5);
+        scene.add(pointLight);
 
-        const sun = new THREE.DirectionalLight(0x00f3ff, 2.0);
-        sun.position.set(10, 30, 15);
-        sun.castShadow = true;
-        scene.add(sun);
-
-        const pinkLight = new THREE.PointLight(0xff0055, 3, 50);
-        pinkLight.position.set(-10, 5, -10);
-        scene.add(pinkLight);
-
-        // --- Loading Manager ---
+        // --- Loader & Assets ---
         const manager = new THREE.LoadingManager();
-        manager.onProgress = (url, items, total) => {
-            const pct = Math.round((items / total) * 100);
-            document.getElementById('progress').style.width = pct + '%';
-        };
+        const loader = new GLTFLoader(manager);
+        let player, mixer, anims = {};
+
+        manager.onProgress = (u, l, t) => document.getElementById('load-bar').style.width = (l/t*100)+'%';
         manager.onLoad = () => {
-            document.getElementById('loading-screen').style.display = 'none';
+            document.getElementById('loading').style.display = 'none';
             animate();
         };
 
-        const loader = new GLTFLoader(manager);
-        let playerModel, mixer, animations = {};
-
-        // Load Character from file (girl.glb)
-        loader.load('girl.glb', (gltf) => {
-            playerModel = gltf.scene;
-            playerModel.scale.set(0.4, 0.4, 0.4);
-            playerModel.position.set(0, 0, 0);
-            playerModel.rotation.y = Math.PI; 
-            playerModel.traverse(c => { if(c.isMesh) c.castShadow = true; });
-            scene.add(playerModel);
-            mixer = new THREE.AnimationMixer(playerModel);
-            gltf.animations.forEach(clip => { animations[clip.name] = mixer.clipAction(clip); });
-            if(gltf.animations[0]) animations[gltf.animations[0].name].play();
-        }, undefined, (error) => {
-            console.error('Error loading girl.glb:', error);
-            // Fallback placeholder model if file is missing
-            playerModel = new THREE.Mesh(new THREE.BoxGeometry(1,2,1), new THREE.MeshStandardMaterial({color: 0x00f3ff}));
-            scene.add(playerModel);
-            manager.itemLoaded('girl.glb');
+        // Load Character
+        loader.load(ASSETS.player, (gltf) => {
+            player = gltf.scene;
+            player.scale.set(0.5, 0.5, 0.5);
+            player.rotation.y = Math.PI;
+            scene.add(player);
+            mixer = new THREE.AnimationMixer(player);
+            gltf.animations.forEach(a => anims[a.name.toLowerCase()] = mixer.clipAction(a));
+            if(anims['running']) anims['running'].play();
         });
 
-        // --- Procedural Glowing Arcade Track Generation ---
+        // --- Procedural Online Track (Cyber Grid) ---
         const trackSegments = [];
-        const segmentCount = 14;
-        const segmentLength = 25;
+        const obstacles = [];
+        const coins = [];
 
-        function createTrackSegment(zPos) {
+        function createTrack(z) {
             const group = new THREE.Group();
             
-            // Main Road Platform
-            const roadGeo = new THREE.BoxGeometry(10, 0.6, segmentLength);
-            const roadMat = new THREE.MeshStandardMaterial({ color: 0x0c0c16, roughness: 0.6 });
-            const road = new THREE.Mesh(roadGeo, roadMat);
-            road.receiveShadow = true;
-            group.add(road);
+            // Neon Grid Floor
+            const geo = new THREE.PlaneGeometry(12, 30);
+            const mat = new THREE.MeshStandardMaterial({ 
+                color: 0x000000, 
+                emissive: 0x00f2ff, 
+                emissiveIntensity: 0.2,
+                wireframe: true 
+            });
+            const grid = new THREE.Mesh(geo, mat);
+            grid.rotation.x = -Math.PI / 2;
+            group.add(grid);
 
-            // Glowing Neon Side Rails
-            const railGeo = new THREE.BoxGeometry(0.2, 1.2, segmentLength);
-            const railMat = new THREE.MeshBasicMaterial({ color: 0x00f3ff });
-            const leftRail = new THREE.Mesh(railGeo, railMat); leftRail.position.set(-5, 0.5, 0);
-            const rightRail = new THREE.Mesh(railGeo, railMat); rightRail.position.set(5, 0.5, 0);
-            group.add(leftRail);
-            group.add(rightRail);
+            // Side Railings (Glowing Lines)
+            const railGeo = new THREE.BoxGeometry(0.2, 0.2, 30);
+            const railMat = new THREE.MeshBasicMaterial({ color: 0x00f2ff });
+            const railL = new THREE.Mesh(railGeo, railMat);
+            railL.position.set(-6, 0.1, 0);
+            group.add(railL);
+            const railR = railL.clone();
+            railR.position.set(6, 0.1, 0);
+            group.add(railR);
 
-            // Center Lane Dividers
-            const lineGeo = new THREE.BoxGeometry(0.08, 0.65, segmentLength);
-            const lineMat = new THREE.MeshBasicMaterial({ color: 0xff0055 });
-            const line1 = new THREE.Mesh(lineGeo, lineMat); line1.position.set(-1.5, 0.05, 0);
-            const line2 = new THREE.Mesh(lineGeo, lineMat); line2.position.set(1.5, 0.05, 0);
-            group.add(line1);
-            group.add(line2);
-
-            group.position.z = zPos;
+            group.position.z = z;
             scene.add(group);
             trackSegments.push(group);
         }
 
-        for (let i = 0; i < segmentCount; i++) {
-            createTrackSegment(-i * segmentLength);
-        }
-
-        // --- Obstacles & Collectibles ---
-        const obstacles = [];
-        const coins = [];
+        for(let i=0; i<10; i++) createTrack(-i * 30);
 
         function spawnProps(z) {
             const lane = LANES[Math.floor(Math.random() * 3)];
             
-            // Neon Barrier Obstacles
-            if (Math.random() > 0.25) {
-                const isHigh = Math.random() > 0.7;
-                const obs = new THREE.Mesh(
-                    new THREE.BoxGeometry(2.4, isHigh ? 3.2 : 0.9, 0.8),
-                    new THREE.MeshStandardMaterial({ color: 0xff0055, emissive: 0x550022, roughness: 0.2 })
-                );
-                obs.position.set(lane, isHigh ? 2.4 : 0.45, z);
-                obs.userData.type = isHigh ? 'high' : 'low';
-                scene.add(obs);
-                obstacles.push(obs);
-            }
+            // Neon Obstacle (Red Gate)
+            const isHigh = Math.random() > 0.7;
+            const obsGeo = isHigh ? new THREE.TorusGeometry(3, 0.1, 8, 20) : new THREE.BoxGeometry(3, 0.8, 0.5);
+            const obsMat = new THREE.MeshBasicMaterial({ color: 0xff0044 });
+            const obs = new THREE.Mesh(obsGeo, obsMat);
+            obs.position.set(lane, isHigh ? 3 : 0.4, z);
+            obs.userData.type = isHigh ? 'slide' : 'jump';
+            scene.add(obs);
+            obstacles.push(obs);
 
-            // Glowing Floating Credits (Coins)
-            const coinGeo = new THREE.CylinderGeometry(0.45, 0.45, 0.12, 18);
-            const coinMat = new THREE.MeshStandardMaterial({ color: 0xffd700, emissive: 0xaa8800, roughness: 0.1 });
-            const coin = new THREE.Mesh(coinGeo, coinMat);
+            // Coin (Gold Hexagon)
+            const cGeo = new THREE.CylinderGeometry(0.5, 0.5, 0.1, 6);
+            const cMat = new THREE.MeshStandardMaterial({ color: 0xffcc00, emissive: 0xff8800 });
+            const coin = new THREE.Mesh(cGeo, cMat);
             coin.rotation.x = Math.PI / 2;
-            coin.position.set(LANES[Math.floor(Math.random() * 3)], 1.3, z - 12);
+            coin.position.set(LANES[Math.floor(Math.random()*3)], 1.5, z - 10);
             scene.add(coin);
             coins.push(coin);
         }
 
-        // --- Touch & Keyboard Controls ---
-        window.addEventListener('keydown', (e) => {
-            if (isDead) return;
-            if ((e.key === 'ArrowLeft' || e.key === 'a') && currentLane > 0) { currentLane--; playTone(400, 'sine', 0.1); }
-            if ((e.key === 'ArrowRight' || e.key === 'd') && currentLane < 2) { currentLane++; playTone(450, 'sine', 0.1); }
-            
-            if ((e.key === 'ArrowUp' || e.key === 'w') && !isJumping) {
-                isJumping = true;
-                playTone(600, 'triangle', 0.2);
-                setTimeout(() => isJumping = false, 700);
+        // --- Input Controls ---
+        window.onkeydown = (e) => {
+            if (state.dead) return;
+            if ((e.key==='a' || e.key==='ArrowLeft') && state.lane > 0) state.lane--;
+            if ((e.key==='d' || e.key==='ArrowRight') && state.lane < 2) state.lane++;
+            if ((e.key==='w' || e.key==='ArrowUp') && !state.jumping) {
+                state.jumping = true;
+                if(anims['jump']) anims['jump'].reset().play();
+                setTimeout(() => { state.jumping = false; }, 800);
             }
-
-            if ((e.key === 'ArrowDown' || e.key === 's') && !isSliding) {
-                isSliding = true;
-                playTone(300, 'sawtooth', 0.15);
-                if (playerModel) playerModel.scale.set(0.4, 0.16, 0.4); 
-                setTimeout(() => { if (playerModel) playerModel.scale.set(0.4, 0.4, 0.4); isSliding = false; }, 600);
+            if ((e.key==='s' || e.key==='ArrowDown') && !state.sliding) {
+                state.sliding = true;
+                player.scale.y = 0.25; // Visual slide
+                setTimeout(() => { state.sliding = false; player.scale.y = 0.5; }, 800);
             }
-        });
+        };
 
-        // Mobile touch swipe support
-        let touchStartX = 0, touchStartY = 0;
-        window.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; touchStartY = e.touches[0].clientY; });
-        window.addEventListener('touchend', e => {
-            if (isDead) return;
-            let diffX = e.changedTouches[0].clientX - touchStartX;
-            let diffY = e.changedTouches[0].clientY - touchStartY;
-            if (Math.abs(diffX) > Math.abs(diffY)) {
-                if (diffX > 40 && currentLane < 2) { currentLane++; playTone(450, 'sine', 0.1); }
-                else if (diffX < -40 && currentLane > 0) { currentLane--; playTone(400, 'sine', 0.1); }
-            } else {
-                if (diffY < -40 && !isJumping) { isJumping = true; playTone(600, 'triangle', 0.2); setTimeout(() => isJumping = false, 700); }
-                else if (diffY > 40 && !isSliding) { isSliding = true; playTone(300, 'sawtooth', 0.15); if(playerModel) playerModel.scale.set(0.4,0.16,0.4); setTimeout(()=>{if(playerModel)playerModel.scale.set(0.4,0.4,0.4);isSliding=false;},600); }
-            }
-        });
-
-        // --- Core Game Loop ---
+        // --- Main Game Loop ---
         const clock = new THREE.Clock();
-
         function animate() {
-            if (isDead) return;
+            if (state.dead) return;
             requestAnimationFrame(animate);
             const delta = clock.getDelta();
+            if (mixer) mixer.update(delta);
 
-            if (mixer) {
-                mixer.update(delta);
-                mixer.timeScale = speed * 1.4; 
-            }
-
-            if (speed < maxSpeed) speed += 0.00007;
+            // Speed & Score
+            state.speed += 0.0001;
+            state.score += state.speed;
+            document.getElementById('score-ui').innerText = state.score.toFixed(2);
             
-            // Dynamic FOV and Speed Vignette Glow
-            camera.fov = 65 + (speed * 12);
+            // Motion Blur / Speed FX
+            camera.fov = 75 + (state.speed * 15);
             camera.updateProjectionMatrix();
-            document.getElementById('vignette').style.boxShadow = `inset 0 0 ${speed * 90}px rgba(0,243,255,${(speed-0.5)*0.3})`;
-            document.getElementById('speed-val').innerText = (speed * 2).toFixed(1) + "x";
+            document.getElementById('vfx').style.boxShadow = `inset 0 0 ${state.speed*120}px rgba(0,242,255,0.4)`;
 
-            // Smooth Player Movement across lanes & jump arcs
-            if (playerModel) {
-                const targetX = LANES[currentLane];
-                playerModel.position.x = THREE.MathUtils.lerp(playerModel.position.x, targetX, 0.22);
-                playerModel.rotation.z = (playerModel.position.x - targetX) * 0.1; // Banking lean
-                
-                if (isJumping) {
-                    playerModel.position.y = Math.sin((Date.now() * 0.007)) * 2.8;
-                    if(playerModel.position.y < 0) playerModel.position.y = 0;
-                } else {
-                    playerModel.position.y = THREE.MathUtils.lerp(playerModel.position.y, 0, 0.3);
-                }
-            }
+            // Player smooth movement
+            const tx = LANES[state.lane];
+            player.position.x = THREE.MathUtils.lerp(player.position.x, tx, 0.15);
+            if(state.jumping) player.position.y = Math.sin(Date.now()*0.008) * 3.5;
+            else player.position.y = THREE.MathUtils.lerp(player.position.y, 0, 0.1);
 
-            // Endless Track Loop
+            // Track Recycling
             trackSegments.forEach(seg => {
-                seg.position.z += speed * 42 * delta;
-                if (seg.position.z > 25) {
-                    let minZ = Math.min(...trackSegments.map(s => s.position.z));
-                    seg.position.z = minZ - segmentLength;
-                    spawnProps(seg.position.z - 15);
+                seg.position.z += state.speed * 40 * delta;
+                if(seg.position.z > 30) {
+                    seg.position.z = Math.min(...trackSegments.map(s => s.position.z)) - 30;
+                    spawnProps(seg.position.z - 20);
                 }
             });
 
-            // Coin Collection & Animation
-            coins.forEach((coin, i) => {
-                coin.position.z += speed * 42 * delta;
-                coin.rotation.z += 0.15; 
-                
-                if (playerModel && coin.position.distanceTo(playerModel.position) < 1.6) {
-                    coinCount++;
-                    playTone(880, 'sine', 0.1);
-                    document.getElementById('coins').innerText = coinCount;
-                    scene.remove(coin);
-                    coins.splice(i, 1);
-                }
-                if(coin.position.z > 10) { scene.remove(coin); coins.splice(i, 1); }
-            });
-
-            // Precise Collision Detection
-            obstacles.forEach((obs, index) => {
-                obs.position.z += speed * 42 * delta;
-                if (playerModel) {
-                    const distZ = Math.abs(obs.position.z - playerModel.position.z);
-                    const distX = Math.abs(obs.position.x - playerModel.position.x);
-                    
-                    if (distZ < 0.9 && distX < 1.0) {
-                        const isHigh = obs.userData.type === 'high';
-                        if ((isHigh && !isSliding) || (!isHigh && !isJumping)) {
-                            endGame();
-                        }
+            // Collision Detection
+            obstacles.forEach((obs, i) => {
+                obs.position.z += state.speed * 40 * delta;
+                const dZ = Math.abs(obs.position.z - player.position.z);
+                const dX = Math.abs(obs.position.x - player.position.x);
+                if(dZ < 1 && dX < 1.5) {
+                    const fail = (obs.userData.type === 'jump' && !state.jumping) || (obs.userData.type === 'slide' && !state.sliding);
+                    if(fail) { 
+                        state.dead = true; 
+                        document.getElementById('game-over').style.display='flex'; 
+                        document.getElementById('final-stats').innerText = `SCORE: ${state.score.toFixed(0)} | COINS: ${state.coins}`;
                     }
                 }
-                if (obs.position.z > 10) { 
-                    scene.remove(obs); 
-                    obstacles.splice(index, 1); 
-                    score += 10; 
-                    document.getElementById('score').innerText = score + "m";
-                }
+                if(obs.position.z > 15) { scene.remove(obs); obstacles.splice(i, 1); }
             });
 
-            // Cinematic Chase Camera Position
-            camera.position.set(0, 4.2, 8.5);
-            camera.lookAt(0, 1.2, -4);
+            // Coin Collection
+            coins.forEach((c, i) => {
+                c.position.z += state.speed * 40 * delta;
+                c.rotation.y += 0.1;
+                if(player.position.distanceTo(c.position) < 1.5) {
+                    state.coins += 10;
+                    document.getElementById('coins-ui').innerText = state.coins;
+                    scene.remove(c);
+                    coins.splice(i, 1);
+                }
+                if(c.position.z > 15) { scene.remove(c); coins.splice(i, 1); }
+            });
+
+            // Dynamic Camera Follow
+            camera.position.set(player.position.x * 0.5, 5, 11);
+            camera.lookAt(player.position.x, 2, -5);
 
             renderer.render(scene, camera);
         }
 
-        function endGame() {
-            isDead = true;
-            playTone(120, 'sawtooth', 0.5);
-            document.getElementById('game-over').style.display = 'flex';
-            document.getElementById('final-stats').innerText = `DISTANCE: ${score}m | CREDITS: ${coinCount}`;
-        }
-
-        window.addEventListener('resize', () => {
+        window.onresize = () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
-        });
+        };
     </script>
 </body>
 </html>
