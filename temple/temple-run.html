@@ -3,278 +3,690 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cyber Runner - High Fidelity</title>
+    <title>Teacher Portal - Swamy English Medium High School</title>
     <style>
-        :root { --neon-cyan: #00f2ff; --neon-green: #00ff8c; --gold: #ffcc00; }
-        body { margin: 0; overflow: hidden; background: #000; font-family: 'Arial Black', sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f4f6f9; display: flex; flex-direction: column; min-height: 100vh; }
+
+        .school-banner { background: linear-gradient(135deg, #1e3c72, #2a5298, #6a1b9a); color: #ffffff; padding: 25px 15px; text-align: center; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); border-bottom: 4px solid #ff9800; }
+        .school-banner h1 { font-size: 28px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); background: linear-gradient(90deg, #ffeb3b, #ff9800, #ffffff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .school-banner p { color: #e0e0e0; font-size: 13px; margin: 4px 0; font-weight: 500; }
+
+        .top-nav { background-color: #6a1b9a; color: white; padding: 8px 15px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 600; border-bottom: 1px solid #4a126d; }
+        .top-nav a { color: white; text-decoration: none; margin-left: 15px; cursor: pointer; }
+        .top-nav a:hover { text-decoration: underline; }
+
+        .main-layout { display: flex; flex: 1; flex-wrap: wrap; }
+        .sidebar { width: 240px; background-color: #f8f9fa; border-right: 1px solid #ddd; padding: 10px 0; }
+        .menu-header { background-color: #6a1b9a; color: white; padding: 10px 15px; font-weight: bold; font-size: 13px; text-align: center; margin-bottom: 5px; }
+        .menu-item { display: block; padding: 10px 15px; color: #6a1b9a; text-decoration: none; font-size: 13px; font-weight: 600; border-bottom: 1px solid #eee; cursor: pointer; }
+        .menu-item.active { background-color: #e9ecef; border-left: 4px solid #6a1b9a; }
+
+        .content-area { flex: 1; padding: 20px; background-color: #fff; min-width: 300px; }
+        .content-card { background: #fff; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); padding: 20px; max-width: 800px; display: none; }
+        .content-card.active { display: block; }
+        .content-card h2 { color: #6a1b9a; font-size: 18px; border-bottom: 2px solid #6a1b9a; padding-bottom: 8px; margin-bottom: 15px; text-transform: uppercase; }
+
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-weight: 600; color: #333; margin-bottom: 5px; font-size: 13px; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
         
-        #game-ui { position: absolute; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
+        .marks-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #fdfbff; padding: 12px; border: 1px solid #e2d9f3; border-radius: 4px; margin-bottom: 15px; }
+
+        .btn { background: #6a1b9a; color: white; border: none; padding: 10px 20px; border-radius: 4px; font-size: 14px; font-weight: 600; cursor: pointer; width: 100%; margin-top: 10px; }
+        .btn:hover { background: #4a126d; }
+        .btn-holiday { background: #d9534f; margin-bottom: 15px; }
+        .btn-holiday:hover { background: #c9302c; }
+        .success-msg { color: #28a745; font-weight: 600; margin-top: 10px; text-align: center; display: none; }
+
+        .att-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        .att-table th, .att-table td { border: 1px solid #ddd; padding: 8px 12px; font-size: 13px; text-align: left; }
+        .att-table th { background-color: #f5f5f5; }
         
-        .top-left { position: absolute; top: 20px; left: 20px; display: flex; gap: 10px; }
-        .profile { width: 60px; height: 60px; border: 2px solid #fff; border-radius: 8px; background: url('https://api.dicebear.com/7.x/avataaars/svg?seed=Felix') center/cover; }
-        .energy-container { display: flex; flex-direction: column; gap: 5px; }
-        .bar-bg { width: 140px; height: 10px; background: rgba(255,255,255,0.2); border: 1px solid #fff; border-radius: 3px; overflow: hidden; }
-        .bar-fill { height: 100%; width: 80%; background: linear-gradient(90deg, #ff8000, #ffcc00); }
+        .fee-status-box { background: #f8fafc; border: 1px solid #cbd5e0; padding: 12px; border-radius: 4px; margin-bottom: 15px; display: flex; justify-content: space-around; text-align: center; }
+        .fee-stat-item span { display: block; font-size: 11px; color: #555; font-weight: 600; }
+        .fee-stat-item strong { font-size: 16px; color: #1e3c72; }
 
-        .top-center { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); text-align: center; color: white; }
-        .progress-line { width: 250px; height: 4px; background: rgba(255,255,255,0.3); position: relative; margin-top: 10px; }
-        .progress-dot { width: 12px; height: 12px; background: var(--gold); border-radius: 50%; position: absolute; top: -4px; left: 10%; box-shadow: 0 0 10px var(--gold); }
+        .absent-list-box { background: #fff5f5; border: 1px solid #feb2b2; padding: 15px; border-radius: 4px; margin-top: 15px; }
+        .absent-list-box h3 { color: #c53030; font-size: 15px; margin-bottom: 8px; }
 
-        .top-right { position: absolute; top: 20px; right: 20px; text-align: right; color: white; }
-        .score-num { font-size: 36px; font-weight: 900; font-style: italic; text-shadow: 0 0 15px var(--neon-cyan); }
-        .mult { color: #ff8000; font-size: 24px; margin-right: 10px; }
+        .holiday-banner { background: #fff3cd; border: 1px solid #ffeeba; color: #856404; padding: 20px; border-radius: 4px; font-weight: bold; text-align: center; font-size: 16px; margin-top: 10px; }
+        .event-admin-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee; font-size: 14px; }
 
-        .bottom-left { position: absolute; bottom: 30px; left: 20px; }
-        .health-bar { width: 180px; height: 15px; background: rgba(0,0,0,0.5); border: 2px solid #fff; position: relative; }
-        .health-fill { height: 100%; width: 70%; background: linear-gradient(90deg, #0044ff, #00f2ff); box-shadow: 0 0 15px var(--neon-cyan); }
+        .footer { background: #1e3c72; color: white; text-align: center; padding: 10px; font-size: 11px; }
 
-        #loading { position: absolute; width: 100%; height: 100%; background: #000; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; z-index: 100; }
-        #game-over { position: absolute; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; flex-direction: column; justify-content: center; align-items: center; color: white; z-index: 200; }
-        
-        button { padding: 15px 40px; font-size: 20px; background: var(--neon-green); border: none; cursor: pointer; font-weight: bold; border-radius: 50px; text-transform: uppercase; margin-top: 20px; }
-        .speed-vignette { position: absolute; top:0; left:0; width:100%; height:100%; pointer-events: none; transition: box-shadow 0.2s; z-index: 5; }
+        @media(max-width: 768px) {
+            .main-layout { flex-direction: column; }
+            .sidebar { width: 100%; }
+            .marks-grid { grid-template-columns: 1fr; }
+            .fee-status-box { flex-direction: column; gap: 8px; }
+        }
     </style>
+
+    <!-- Firebase SDK Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
 <body>
 
-    <div id="loading">
-        <h1 style="letter-spacing: 10px;">CYBER RUNNER</h1>
-        <div style="width: 200px; height: 4px; background: #222;"><div id="load-bar" style="width: 0%; height: 100%; background: var(--neon-cyan);"></div></div>
+    <div class="school-banner">
+        <h1>Swamy English Medium High School</h1>
+        <p>Recognized by Govt. of A.P. | L.K.G. to X CLASS</p>
+        <p>Opp. 3 APSP, Anjaneya Nagar, Kakinada - 533 005 | Mob: 98483 50583</p>
     </div>
 
-    <div class="speed-vignette" id="vfx"></div>
+    <div class="top-nav">
+        <span>Teacher Control Panel</span>
+        <div><a onclick="location.href='../index.html'">Logout</a></div>
+    </div>
 
-    <div id="game-ui">
-        <div class="top-left">
-            <div class="profile"></div>
-            <div class="energy-container">
-                <div class="bar-bg"><div class="bar-fill"></div></div>
-                <div style="color:var(--gold); font-size: 14px;">🪙 <span id="coins-ui">1211</span></div>
+    <div class="main-layout">
+        <div class="sidebar">
+            <div class="menu-header">TEACHER MENU</div>
+            <a class="menu-item active" onclick="switchTab('editor', this)">STUDENT PROFILE</a>
+            <a class="menu-item" onclick="switchTab('marks', this)">EXAM MARKS (FA/SA)</a>
+            <a class="menu-item" onclick="switchTab('fee', this)">FEE MANAGEMENT</a>
+            <a class="menu-item" onclick="switchTab('attendance', this)">TODAY'S ATTENDANCE</a>
+            <a class="menu-item" onclick="switchTab('events', this)">MANAGE EVENTS</a>
+            <a class="menu-item" onclick="switchTab('password', this)">CHANGE PASSWORD</a>
+        </div>
+
+        <div class="content-area">
+            <!-- TAB 1: Student Profile Editor -->
+            <div id="tab-editor" class="content-card active">
+                <h2>Manage Student Profile & Password</h2>
+                <div class="form-group">
+                    <label for="student-id">Enter Student ID first to load details (e.g., 51)</label>
+                    <input type="text" id="student-id" placeholder="Type ID here..." oninput="fetchStudentData()">
+                </div>
+                <div class="form-group">
+                    <label for="student-name">Student Name</label>
+                    <input type="text" id="student-name" placeholder="Full name">
+                </div>
+                <div class="form-group">
+                    <label for="student-password">Student Password</label>
+                    <input type="text" id="student-password" placeholder="Default is webcap or custom password">
+                </div>
+                <div class="form-group">
+                    <label for="student-remarks">Teacher Remarks</label>
+                    <textarea id="student-remarks" rows="2" placeholder="Enter remarks..."></textarea>
+                </div>
+                <button class="btn" onclick="saveProfileData()">Save Profile & Password Permanently</button>
+                <div id="success-msg" class="success-msg">Profile and password successfully saved!</div>
+            </div>
+
+            <!-- TAB 2: Exam Marks Editor -->
+            <div id="tab-marks" class="content-card">
+                <h2>Exam Marks Manager (FA / SA)</h2>
+                <div class="form-group">
+                    <label for="marks-student-id">Enter Student ID (e.g., 51)</label>
+                    <input type="text" id="marks-student-id" placeholder="Type student ID to load marks..." oninput="fetchStudentMarks()">
+                </div>
+                <div class="form-group">
+                    <label for="exam-select">Select Exam</label>
+                    <select id="exam-select" onchange="populateExamInputs()">
+                        <option value="fa1">FA1 (Max 35 Marks per subject)</option>
+                        <option value="fa2">FA2 (Max 35 Marks per subject)</option>
+                        <option value="sa1">SA1 (Max 100 Marks per subject)</option>
+                        <option value="fa3">FA3 (Max 35 Marks per subject)</option>
+                        <option value="fa4">FA4 (Max 35 Marks per subject)</option>
+                        <option value="sa2">SA2 (Max 100 Marks per subject)</option>
+                    </select>
+                </div>
+
+                <label style="display:block; font-weight:600; color:#333; margin-bottom:5px; font-size:13px;" id="marks-label-hint">Subject-Wise Marks (FA Exam - Out of 35)</label>
+                <div class="marks-grid">
+                    <div class="form-group" style="margin-bottom:0;"><label>Telugu</label><input type="number" id="ex-telugu" placeholder="Marks"></div>
+                    <div class="form-group" style="margin-bottom:0;"><label>English</label><input type="number" id="ex-english" placeholder="Marks"></div>
+                    <div class="form-group" style="margin-bottom:0;"><label>Hindi</label><input type="number" id="ex-hindi" placeholder="Marks"></div>
+                    <div class="form-group" style="margin-bottom:0;"><label>Maths</label><input type="number" id="ex-maths" placeholder="Marks"></div>
+                    <div class="form-group" style="margin-bottom:0;"><label>Science</label><input type="number" id="ex-science" placeholder="Marks"></div>
+                    <div class="form-group" style="margin-bottom:0;"><label>Social</label><input type="number" id="ex-social" placeholder="Marks"></div>
+                </div>
+
+                <button class="btn" onclick="saveExamMarks()">Save Exam Marks</button>
+                <div id="marks-success-msg" class="success-msg">Exam marks saved successfully!</div>
+            </div>
+
+            <!-- TAB 3: Fee Management -->
+            <div id="tab-fee" class="content-card">
+                <h2>Fee Payment & Total Fee Manager</h2>
+                <div class="form-group">
+                    <label for="fee-student-id">Enter Student ID (e.g., 51)</label>
+                    <input type="text" id="fee-student-id" placeholder="Type student ID to check fee..." oninput="fetchFeeStudentData()">
+                </div>
+                <div class="form-group">
+                    <label>Student Name: <strong id="fee-student-name" style="color:#6a1b9a;">-</strong></label>
+                </div>
+
+                <div class="fee-status-box">
+                    <div class="fee-stat-item">
+                        <span>Total Course Fee</span>
+                        <strong id="t-total-fee">₹20,000</strong>
+                    </div>
+                    <div class="fee-stat-item">
+                        <span>Total Paid</span>
+                        <strong id="t-paid-fee" style="color:#28a745;">₹0</strong>
+                    </div>
+                    <div class="fee-stat-item">
+                        <span>Remaining Balance</span>
+                        <strong id="t-rem-fee" style="color:#d9534f;">₹20,000</strong>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="total-fee-input">Edit Total Fee (Default ₹20,000)</label>
+                    <input type="number" id="total-fee-input" value="20000">
+                </div>
+                <button class="btn" onclick="saveTotalFee()" style="background:#337ab7;">Update Total Fee Separately</button>
+                <div id="total-fee-success" class="success-msg">Total fee updated successfully!</div>
+
+                <hr style="margin: 20px 0; border: 0; border-top: 1px solid #ddd;">
+
+                <div class="form-group">
+                    <label for="fee-amount">Record Payment Amount (₹)</label>
+                    <input type="number" id="fee-amount" placeholder="e.g. 5000">
+                </div>
+                <div class="form-group">
+                    <label>Payment Date & Day: <strong id="fee-date-display" style="color:#6a1b9a;"></strong></label>
+                </div>
+                <button class="btn" onclick="recordFeePayment()">Record Payment</button>
+                <div id="fee-success-msg" class="success-msg">Fee payment recorded successfully!</div>
+            </div>
+
+            <!-- TAB 4: Today's Attendance -->
+            <div id="tab-attendance" class="content-card">
+                <h2>First Period Attendance Manager (Today Only)</h2>
+                
+                <button id="btn-declare-holiday" class="btn btn-holiday" onclick="promptHoliday()">Declare Holiday For Today (All School)</button>
+
+                <div id="attendance-holiday-container" style="display: none;">
+                    <div class="holiday-banner">
+                        🎉 TODAY IS DECLARED AS A HOLIDAY FOR ALL SCHOOL!<br>
+                        <span style="font-size: 13px; font-weight: normal; color: #555;">Attendance cannot be opened or edited as a holiday has been declared for today.</span>
+                    </div>
+                    <button class="btn" onclick="undoHoliday()" style="background:#337ab7; margin-top:15px;">Remove Holiday</button>
+                </div>
+
+                <div id="attendance-selection-box">
+                    <div class="form-group">
+                        <label for="att-class">Select Class</label>
+                        <select id="att-class" onchange="checkTodayAttendanceStatus()">
+                            <option value="">-- Choose Class --</option>
+                            <option value="1">Class 1</option>
+                            <option value="2">Class 2</option>
+                            <option value="3">Class 3</option>
+                            <option value="4">Class 4</option>
+                            <option value="5">Class 5</option>
+                            <option value="6">Class 6</option>
+                            <option value="7">Class 7</option>
+                            <option value="8">Class 8</option>
+                            <option value="9">Class 9</option>
+                            <option value="10">Class 10</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Date: <strong id="today-date-display" style="color:#6a1b9a;"></strong></label>
+                    </div>
+                </div>
+
+                <div id="attendance-active-container" style="display: none;">
+                    <table class="att-table">
+                        <thead>
+                            <tr>
+                                <th>Roll No / ID</th>
+                                <th>Attendance Selection</th>
+                            </tr>
+                        </thead>
+                        <tbody id="att-tbody"></tbody>
+                    </table>
+                    <button class="btn" onclick="submitAttendance()">Submit Today's Attendance</button>
+                    <div id="att-success" class="success-msg">Attendance submitted successfully!</div>
+                </div>
+
+                <div id="attendance-locked-container" style="display: none;">
+                    <div style="padding: 12px; background: #e6fffa; border: 1px solid #b2f5ea; border-radius: 4px; margin-bottom: 10px; color: #234e52; font-weight: 600;">
+                        ✅ Attendance for today has already been submitted and locked.
+                    </div>
+                    <div class="absent-list-box">
+                        <h3>Today's Absentees List:</h3>
+                        <ul id="absentee-ul" style="padding-left: 20px; font-size: 14px; color: #2d3748;"></ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 5: Manage Events -->
+            <div id="tab-events" class="content-card">
+                <h2>Publish School Events</h2>
+                <div class="form-group">
+                    <label for="event-name">Event Name (Required)</label>
+                    <input type="text" id="event-name" placeholder="e.g. Annual Sports Day 2026">
+                </div>
+                <div class="form-group">
+                    <label for="event-date">Date (Required)</label>
+                    <input type="text" id="event-date" placeholder="e.g. Oct 15, 2026">
+                </div>
+                <div class="form-group">
+                    <label for="event-day">Day (Optional)</label>
+                    <input type="text" id="event-day" placeholder="e.g. Thursday">
+                </div>
+                <div class="form-group">
+                    <label for="event-address">Address / Venue (Optional)</label>
+                    <input type="text" id="event-address" placeholder="e.g. School Main Ground">
+                </div>
+                <div class="form-group">
+                    <label for="event-image-file">Upload Image from Phone Gallery (Optional)</label>
+                    <input type="file" id="event-image-file" accept="image/*">
+                </div>
+                <div class="form-group">
+                    <label for="event-desc">Additional Details (Optional)</label>
+                    <textarea id="event-desc" rows="2" placeholder="Write any extra instructions..."></textarea>
+                </div>
+                <button class="btn" onclick="publishEvent()">Publish Event</button>
+                <div id="event-success-msg" class="success-msg">Event published successfully!</div>
+
+                <hr style="margin: 25px 0; border: 0; border-top: 1px solid #ddd;">
+                <h3 style="font-size:15px; margin-bottom:10px; color:#6a1b9a;">Existing Published Events</h3>
+                <div id="admin-events-list">Loading events...</div>
+            </div>
+
+            <!-- TAB 6: Change Password -->
+            <div id="tab-password" class="content-card">
+                <h2>Change Teacher Login Password</h2>
+                <div class="form-group">
+                    <label for="new-teacher-password">New Password</label>
+                    <input type="password" id="new-teacher-password" placeholder="Enter new password">
+                </div>
+                <button class="btn" onclick="saveTeacherPassword()">Update Password Permanently</button>
+                <div id="password-success-msg" class="success-msg">Teacher password updated successfully!</div>
             </div>
         </div>
-
-        <div class="top-center">
-            <div style="font-size: 12px; opacity: 0.8;">LEVEL 12</div>
-            <div class="progress-line"><div class="progress-dot"></div></div>
-        </div>
-
-        <div class="top-right">
-            <span class="mult">x2</span>
-            <div id="score-ui" class="score-num">000.00</div>
-        </div>
-
-        <div class="bottom-left">
-            <div class="health-bar"><div class="health-fill" id="energy-bar"></div></div>
-        </div>
     </div>
 
-    <div id="game-over">
-        <h1 style="color: #ff0044; font-size: 60px;">CONNECTION LOST</h1>
-        <h2 id="final-stats"></h2>
-        <button onclick="location.reload()">REBOOT SYSTEM</button>
+    <div class="footer">
+        Copyright &copy; Swamy English Medium High School. All rights reserved.
     </div>
 
-    <script type="importmap">
-        { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js", "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/" } }
-    </script>
-
-    <script type="module">
-        import * as THREE from 'three';
-        import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-
-        const LANES = [-3, 0, 3];
-        let state = { lane: 1, score: 0, coins: 1211, speed: 0.5, dead: false, jumping: false, sliding: false };
-
-        const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x000505);
-        scene.fog = new THREE.FogExp2(0x000505, 0.02);
-
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(window.devicePixelRatio);
-        document.body.appendChild(renderer.domElement);
-
-        const ambient = new THREE.AmbientLight(0xffffff, 0.6);
-        scene.add(ambient);
-        const pointLight = new THREE.PointLight(0x00f2ff, 10, 50);
-        pointLight.position.set(0, 5, 5);
-        scene.add(pointLight);
-
-        const manager = new THREE.LoadingManager();
-        const loader = new GLTFLoader(manager);
-        let player, mixer, anims = {};
-
-        manager.onProgress = (u, l, t) => document.getElementById('load-bar').style.width = (l/t*100)+'%';
-        manager.onLoad = () => {
-            document.getElementById('loading').style.display = 'none';
-            animate();
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBzLchy5M2fLne4c7Ghw1KNN8wVrlZdd8M",
+            authDomain: "friendsgame-872f5.firebaseapp.com",
+            databaseURL: "https://friendsgame-872f5-default-rtdb.firebaseio.com",
+            projectId: "friendsgame-872f5",
+            storageBucket: "friendsgame-872f5.firebasestorage.app",
+            messagingSenderId: "522534013233",
+            appId: "1:522534013233:web:f5faa6e6795023d0420810",
+            measurementId: "G-PW5H3G97QR"
         };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
 
-        // Load your custom character file (girl.glb)
-        loader.load('girl.glb', (gltf) => {
-            player = gltf.scene;
-            player.scale.set(0.4, 0.4, 0.4);
-            player.rotation.y = Math.PI;
-            scene.add(player);
-            mixer = new THREE.AnimationMixer(player);
-            gltf.animations.forEach(a => anims[a.name.toLowerCase()] = mixer.clipAction(a));
-            if(gltf.animations.length > 0) anims[gltf.animations[0].name.toLowerCase()].play();
-        }, undefined, (err) => {
-            console.error('Error loading girl.glb:', err);
-        });
+        const now = new Date();
+        const todayDateStr = now.toISOString().split('T')[0];
+        const todayDayName = now.toLocaleDateString('en-US', { weekday: 'long' });
 
-        // Procedural Track Setup
-        const trackSegments = [];
-        const obstacles = [];
-        const coins = [];
+        document.getElementById('today-date-display').innerText = todayDateStr;
+        document.getElementById('fee-date-display').innerText = `${todayDateStr} (${todayDayName})`;
 
-        function createTrack(z) {
-            const group = new THREE.Group();
-            const geo = new THREE.PlaneGeometry(10, 30);
-            const mat = new THREE.MeshStandardMaterial({ 
-                color: 0x000000, 
-                emissive: 0x00f2ff, 
-                emissiveIntensity: 0.25,
-                wireframe: true 
+        let allStudentMarksCache = {};
+
+        function switchTab(tabId, element) {
+            document.querySelectorAll('.content-card').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.sidebar .menu-item').forEach(m => m.classList.remove('active'));
+            document.getElementById('tab-' + tabId).classList.add('active');
+            element.classList.add('active');
+            if(tabId === 'attendance') {
+                checkGlobalHoliday();
+            }
+            if(tabId === 'events') {
+                loadAdminEventsList();
+            }
+        }
+
+        function fetchStudentData() {
+            const id = document.getElementById("student-id").value.trim();
+            if(!id) return;
+            db.ref('students/' + id).once('value').then((snapshot) => {
+                const val = snapshot.val() || {};
+                document.getElementById("student-name").value = val.name || "";
+                document.getElementById("student-password").value = val.password || "webcap";
+                document.getElementById("student-remarks").value = val.remarks || "";
             });
-            const grid = new THREE.Mesh(geo, mat);
-            grid.rotation.x = -Math.PI / 2;
-            group.add(grid);
-
-            const railGeo = new THREE.BoxGeometry(0.2, 0.2, 30);
-            const railMat = new THREE.MeshBasicMaterial({ color: 0x00f2ff });
-            const railL = new THREE.Mesh(railGeo, railMat);
-            railL.position.set(-5, 0.1, 0);
-            group.add(railL);
-            const railR = railL.clone();
-            railR.position.set(5, 0.1, 0);
-            group.add(railR);
-
-            group.position.z = z;
-            scene.add(group);
-            trackSegments.push(group);
         }
 
-        for(let i = 0; i < 12; i++) createTrack(-i * 30);
-
-        function spawnProps(z) {
-            const lane = LANES[Math.floor(Math.random() * 3)];
-            
-            // Obstacle
-            const isHigh = Math.random() > 0.7;
-            const obsGeo = isHigh ? new THREE.TorusGeometry(2.5, 0.15, 8, 20) : new THREE.BoxGeometry(2.5, 0.8, 0.5);
-            const obsMat = new THREE.MeshBasicMaterial({ color: 0xff0044 });
-            const obs = new THREE.Mesh(obsGeo, obsMat);
-            obs.position.set(lane, isHigh ? 2.5 : 0.4, z);
-            obs.userData.type = isHigh ? 'slide' : 'jump';
-            scene.add(obs);
-            obstacles.push(obs);
-
-            // Coin
-            const cGeo = new THREE.CylinderGeometry(0.4, 0.4, 0.1, 6);
-            const cMat = new THREE.MeshStandardMaterial({ color: 0xffcc00, emissive: 0xff8800 });
-            const coin = new THREE.Mesh(cGeo, cMat);
-            coin.rotation.x = Math.PI / 2;
-            coin.position.set(LANES[Math.floor(Math.random() * 3)], 1.2, z - 10);
-            scene.add(coin);
-            coins.push(coin);
+        function saveProfileData() {
+            const id = document.getElementById("student-id").value.trim();
+            if(!id) { alert("Please load or enter Student ID first"); return; }
+            const data = {
+                name: document.getElementById("student-name").value,
+                password: document.getElementById("student-password").value || "webcap",
+                remarks: document.getElementById("student-remarks").value
+            };
+            db.ref('students/' + id).update(data).then(() => {
+                const msg = document.getElementById("success-msg");
+                msg.style.display = "block";
+                setTimeout(() => msg.style.display = "none", 2500);
+            });
         }
 
-        window.onkeydown = (e) => {
-            if (state.dead) return;
-            if ((e.key === 'a' || e.key === 'ArrowLeft') && state.lane > 0) state.lane--;
-            if ((e.key === 'd' || e.key === 'ArrowRight') && state.lane < 2) state.lane++;
-            if ((e.key === 'w' || e.key === 'ArrowUp') && !state.jumping) {
-                state.jumping = true;
-                setTimeout(() => { state.jumping = false; }, 700);
+        function publishEvent() {
+            const name = document.getElementById("event-name").value.trim();
+            const date = document.getElementById("event-date").value.trim();
+            if(!name || !date) { alert("Event Name and Date are required!"); return; }
+
+            const fileInput = document.getElementById("event-image-file");
+
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    saveEventToFirebase(name, date, e.target.result);
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            } else {
+                saveEventToFirebase(name, date, "");
             }
-            if ((e.key === 's' || e.key === 'ArrowDown') && !state.sliding) {
-                state.sliding = true;
-                if(player) player.scale.set(0.4, 0.15, 0.4);
-                setTimeout(() => { state.sliding = false; if(player) player.scale.set(0.4, 0.4, 0.4); }, 600);
+        }
+
+        function saveEventToFirebase(name, date, imageBase64) {
+            const eventData = {
+                name: name,
+                date: date,
+                day: document.getElementById("event-day").value.trim(),
+                address: document.getElementById("event-address").value.trim(),
+                image: imageBase64,
+                desc: document.getElementById("event-desc").value.trim()
+            };
+
+            db.ref('events').push(eventData).then(() => {
+                const msg = document.getElementById("event-success-msg");
+                msg.style.display = "block";
+                document.getElementById("event-name").value = "";
+                document.getElementById("event-date").value = "";
+                document.getElementById("event-day").value = "";
+                document.getElementById("event-address").value = "";
+                document.getElementById("event-image-file").value = "";
+                document.getElementById("event-desc").value = "";
+                loadAdminEventsList();
+                setTimeout(() => msg.style.display = "none", 2500);
+            });
+        }
+
+        function loadAdminEventsList() {
+            db.ref('events').once('value').then((snapshot) => {
+                const data = snapshot.val() || {};
+                const listDiv = document.getElementById("admin-events-list");
+                listDiv.innerHTML = "";
+
+                const keys = Object.keys(data);
+                if(keys.length === 0) {
+                    listDiv.innerHTML = `<p style="color:#666; font-size:13px;">No events published yet.</p>`;
+                    return;
+                }
+
+                keys.forEach(key => {
+                    const ev = data[key];
+                    let div = document.createElement("div");
+                    div.className = "event-admin-item";
+                    div.innerHTML = `
+                        <span><strong>${ev.name}</strong> (${ev.date})</span>
+                        <button class="btn" style="width: auto; padding: 4px 10px; background: #d9534f; margin-top:0;" onclick="deleteEvent('${key}')">Delete</button>
+                    `;
+                    listDiv.appendChild(div);
+                });
+            });
+        }
+
+        function deleteEvent(key) {
+            if(confirm("Are you sure you want to delete this event?")) {
+                db.ref('events/' + key).remove().then(() => {
+                    loadAdminEventsList();
+                });
             }
-        };
+        }
 
-        const clock = new THREE.Clock();
-        function animate() {
-            if (state.dead) return;
-            requestAnimationFrame(animate);
-            const delta = clock.getDelta();
-            if (mixer) mixer.update(delta);
+        function saveTeacherPassword() {
+            const newPass = document.getElementById("new-teacher-password").value.trim();
+            if(!newPass) { alert("Please enter a new password"); return; }
 
-            state.speed += 0.00008;
-            state.score += state.speed * 10;
-            document.getElementById('score-ui').innerText = state.score.toFixed(0);
-            
-            camera.fov = 75 + (state.speed * 10);
-            camera.updateProjectionMatrix();
-            document.getElementById('vfx').style.boxShadow = `inset 0 0 ${state.speed * 80}px rgba(0,242,255,0.3)`;
+            db.ref('teachers/teacher/password').set(newPass).then(() => {
+                const msg = document.getElementById("password-success-msg");
+                msg.style.display = "block";
+                document.getElementById("new-teacher-password").value = "";
+                setTimeout(() => msg.style.display = "none", 2500);
+            });
+        }
 
-            // Player lateral positioning & jumping motion
-            if (player) {
-                const tx = LANES[state.lane];
-                player.position.x = THREE.MathUtils.lerp(player.position.x, tx, 0.2);
-                player.rotation.z = (player.position.x - tx) * 0.08;
+        function fetchStudentMarks() {
+            const id = document.getElementById("marks-student-id").value.trim();
+            if(!id) return;
+            db.ref('exams/' + id).once('value').then((snapshot) => {
+                allStudentMarksCache = snapshot.val() || {};
+                populateExamInputs();
+            });
+        }
 
-                if (state.jumping) {
-                    player.position.y = Math.sin(Date.now() * 0.007) * 2.8;
-                    if(player.position.y < 0) player.position.y = 0;
+        function populateExamInputs() {
+            const examType = document.getElementById("exam-select").value;
+            if(examType.startsWith('sa')) {
+                document.getElementById("marks-label-hint").innerText = "Subject-Wise Marks (SA Exam - Out of 100)";
+            } else {
+                document.getElementById("marks-label-hint").innerText = "Subject-Wise Marks (FA Exam - Out of 35)";
+            }
+
+            const examData = (allStudentMarksCache && allStudentMarksCache[examType]) || {};
+            document.getElementById("ex-telugu").value = examData.telugu || "";
+            document.getElementById("ex-english").value = examData.english || "";
+            document.getElementById("ex-hindi").value = examData.hindi || "";
+            document.getElementById("ex-maths").value = examData.maths || "";
+            document.getElementById("ex-science").value = examData.science || "";
+            document.getElementById("ex-social").value = examData.social || "";
+        }
+
+        function saveExamMarks() {
+            const id = document.getElementById("marks-student-id").value.trim();
+            const examType = document.getElementById("exam-select").value;
+            if(!id) { alert("Please enter Student ID"); return; }
+
+            const marksData = {
+                telugu: document.getElementById("ex-telugu").value,
+                english: document.getElementById("ex-english").value,
+                hindi: document.getElementById("ex-hindi").value,
+                maths: document.getElementById("ex-maths").value,
+                science: document.getElementById("ex-science").value,
+                social: document.getElementById("ex-social").value
+            };
+
+            db.ref(`exams/${id}/${examType}`).set(marksData).then(() => {
+                if(!allStudentMarksCache) allStudentMarksCache = {};
+                allStudentMarksCache[examType] = marksData;
+                const msg = document.getElementById("marks-success-msg");
+                msg.style.display = "block";
+                setTimeout(() => msg.style.display = "none", 2500);
+            });
+        }
+
+        function fetchFeeStudentData() {
+            const id = document.getElementById("fee-student-id").value.trim();
+            if(!id) {
+                document.getElementById("fee-student-name").innerText = "-";
+                document.getElementById("total-fee-input").value = "20000";
+                document.getElementById("t-total-fee").innerText = "₹20,000";
+                document.getElementById("t-paid-fee").innerText = "₹0";
+                document.getElementById("t-rem-fee").innerText = "₹20,000";
+                return;
+            }
+
+            db.ref('students/' + id).once('value').then((snapshot) => {
+                const val = snapshot.val() || {};
+                document.getElementById("fee-student-name").innerText = val.name || "Unnamed Student";
+                const totalFee = parseFloat(val.totalFee || 20000);
+                document.getElementById("total-fee-input").value = totalFee;
+                document.getElementById("t-total-fee").innerText = "₹" + totalFee.toLocaleString();
+
+                db.ref('feeTransactions/' + id).once('value').then((snapTrans) => {
+                    const transData = snapTrans.val() || {};
+                    let totalPaid = 0;
+                    Object.keys(transData).forEach(k => {
+                        totalPaid += parseFloat(transData[k].amount || 0);
+                    });
+                    let remaining = totalFee - totalPaid;
+                    document.getElementById("t-paid-fee").innerText = "₹" + totalPaid.toLocaleString();
+                    document.getElementById("t-rem-fee").innerText = "₹" + remaining.toLocaleString();
+                });
+            });
+        }
+
+        function saveTotalFee() {
+            const id = document.getElementById("fee-student-id").value.trim();
+            const totalFee = document.getElementById("total-fee-input").value.trim();
+            if(!id) { alert("Please enter Student ID"); return; }
+
+            db.ref('students/' + id).update({ totalFee: totalFee }).then(() => {
+                const msg = document.getElementById("total-fee-success");
+                msg.style.display = "block";
+                fetchFeeStudentData();
+                setTimeout(() => msg.style.display = "none", 2500);
+            });
+        }
+
+        function recordFeePayment() {
+            const id = document.getElementById("fee-student-id").value.trim();
+            const amount = document.getElementById("fee-amount").value.trim();
+            if(!id || !amount) { alert("Enter Student ID and Amount"); return; }
+
+            const paymentRecord = {
+                amount: amount,
+                date: todayDateStr,
+                day: todayDayName,
+                timestamp: Date.now()
+            };
+
+            db.ref(`feeTransactions/${id}`).push(paymentRecord).then(() => {
+                const msg = document.getElementById("fee-success-msg");
+                msg.style.display = "block";
+                document.getElementById("fee-amount").value = "";
+                fetchFeeStudentData();
+                setTimeout(() => msg.style.display = "none", 2500);
+            });
+        }
+
+        function checkGlobalHoliday() {
+            db.ref(`schoolHolidays/${todayDateStr}`).once('value').then((snapshot) => {
+                const isHoliday = snapshot.val();
+
+                if (isHoliday === true) {
+                    document.getElementById("btn-declare-holiday").style.display = "none";
+                    document.getElementById("attendance-holiday-container").style.display = "block";
+                    document.getElementById("attendance-selection-box").style.display = "none";
+                    document.getElementById("attendance-active-container").style.display = "none";
+                    document.getElementById("attendance-locked-container").style.display = "none";
                 } else {
-                    player.position.y = THREE.MathUtils.lerp(player.position.y, 0, 0.3);
-                }
-            }
-
-            // Move track forward to simulate running
-            trackSegments.forEach(seg => {
-                seg.position.z += state.speed * 35 * delta;
-                if(seg.position.z > 25) {
-                    seg.position.z = Math.min(...trackSegments.map(s => s.position.z)) - 30;
-                    spawnProps(seg.position.z - 15);
+                    document.getElementById("btn-declare-holiday").style.display = "block";
+                    document.getElementById("attendance-holiday-container").style.display = "none";
+                    document.getElementById("attendance-selection-box").style.display = "block";
+                    checkTodayAttendanceStatus();
                 }
             });
+        }
 
-            // Obstacles movement & collision
-            obstacles.forEach((obs, i) => {
-                obs.position.z += state.speed * 35 * delta;
-                if (player) {
-                    const dZ = Math.abs(obs.position.z - player.position.z);
-                    const dX = Math.abs(obs.position.x - player.position.x);
-                    if(dZ < 0.9 && dX < 1.0) {
-                        const fail = (obs.userData.type === 'jump' && !state.jumping) || (obs.userData.type === 'slide' && !state.sliding);
-                        if(fail) { 
-                            state.dead = true; 
-                            document.getElementById('game-over').style.display = 'flex'; 
-                            document.getElementById('final-stats').innerText = `SCORE: ${state.score.toFixed(0)} | COINS: ${state.coins}`;
+        function checkTodayAttendanceStatus() {
+            const classNum = document.getElementById("att-class").value;
+            if(!classNum) {
+                document.getElementById("attendance-active-container").style.display = "none";
+                document.getElementById("attendance-locked-container").style.display = "none";
+                return;
+            }
+
+            db.ref(`attendance/${classNum}/${todayDateStr}`).once('value').then((snapshot) => {
+                const existingData = snapshot.val();
+                if (existingData) {
+                    document.getElementById("attendance-active-container").style.display = "none";
+                    document.getElementById("attendance-locked-container").style.display = "block";
+                    
+                    const ul = document.getElementById("absentee-ul");
+                    ul.innerHTML = "";
+                    let absenteesFound = false;
+                    Object.keys(existingData).forEach(studentId => {
+                        if (existingData[studentId] === "Absent") {
+                            absenteesFound = true;
+                            let li = document.createElement("li");
+                            li.innerText = `Student ID: ${studentId}`;
+                            ul.appendChild(li);
                         }
+                    });
+                    if(!absenteesFound) ul.innerHTML = `<li>No absentees today (All present!).</li>`;
+                } else {
+                    document.getElementById("attendance-locked-container").style.display = "none";
+                    document.getElementById("attendance-active-container").style.display = "block";
+                    
+                    const tbody = document.getElementById("att-tbody");
+                    tbody.innerHTML = "";
+                    for(let r = 1; r <= 30; r++) {
+                        let studentId = classNum + r;
+                        let tr = document.createElement("tr");
+                        tr.innerHTML = `
+                            <td><strong>ID: ${studentId}</strong> (Roll ${r})</td>
+                            <td>
+                                <div class="radio-group">
+                                    <label><input type="radio" name="att-${studentId}" value="Present" checked> Present</label>
+                                    <label><input type="radio" name="att-${studentId}" value="Absent"> Absent</label>
+                                </div>
+                            </td>
+                        `;
+                        tbody.appendChild(tr);
                     }
                 }
-                if(obs.position.z > 10) { scene.remove(obs); obstacles.splice(i, 1); }
             });
-
-            // Coins movement & collection
-            coins.forEach((c, i) => {
-                c.position.z += state.speed * 35 * delta;
-                c.rotation.y += 0.1;
-                if (player && player.position.distanceTo(c.position) < 1.5) {
-                    state.coins += 10;
-                    document.getElementById('coins-ui').innerText = state.coins;
-                    scene.remove(c);
-                    coins.splice(i, 1);
-                }
-                if(c.position.z > 10) { scene.remove(c); coins.splice(i, 1); }
-            });
-
-            camera.position.set(0, 4.5, 9);
-            camera.lookAt(0, 1.2, -4);
-
-            renderer.render(scene, camera);
         }
 
-        window.onresize = () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
+        function submitAttendance() {
+            const classNum = document.getElementById("att-class").value;
+            if(!classNum) return;
+            let attendanceRecords = {};
+            for(let r = 1; r <= 30; r++) {
+                let studentId = classNum + r;
+                attendanceRecords[studentId] = document.querySelector(`input[name="att-${studentId}"]:checked`).value;
+            }
+            db.ref(`attendance/${classNum}/${todayDateStr}`).set(attendanceRecords).then(() => checkTodayAttendanceStatus());
+        }
+
+        function promptHoliday() {
+            let confirmHoliday = confirm("Are you sure you want to declare today as a Holiday for the entire school?");
+            if (!confirmHoliday) return;
+
+            let updates = {};
+            updates[`schoolHolidays/${todayDateStr}`] = true;
+
+            for(let c = 1; c <= 10; c++) {
+                let classRecords = {};
+                for(let r = 1; r <= 30; r++) {
+                    classRecords[c + r.toString()] = "Holiday";
+                }
+                updates[`attendance/${c}/${todayDateStr}`] = classRecords;
+            }
+
+            db.ref().update(updates).then(() => {
+                alert("Holiday declared successfully for all school!");
+                checkGlobalHoliday();
+            });
+        }
+
+        function undoHoliday() {
+            let updates = {};
+            updates[`schoolHolidays/${todayDateStr}`] = null;
+            
+            for(let c = 1; c <= 10; c++) {
+                updates[`attendance/${c}/${todayDateStr}`] = null;
+            }
+
+            db.ref().update(updates).then(() => {
+                alert("Holiday removed. Attendance is now re-enabled.");
+                checkGlobalHoliday();
+            });
+        }
+
+        window.onload = function() {
+            checkGlobalHoliday();
         };
     </script>
 </body>
